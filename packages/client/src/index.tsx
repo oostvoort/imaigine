@@ -4,6 +4,7 @@ import { App } from './App'
 import { setup } from './mud/setup'
 import { MUDProvider } from './MUDContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import './index.css'
 
 const rootElement = document.getElementById('react-root')
 if (!rootElement) throw new Error('React root not found')

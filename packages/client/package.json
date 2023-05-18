@@ -24,8 +24,8 @@
     "@latticexyz/world": "2.0.0-alpha.1.149+024f6037",
     "@tanstack/react-query": "^4.29.5",
     "@wagmi/chains": "^0.2.22",
-    "contracts": "workspace:*",
     "async-mutex": "^0.4.0",
+    "contracts": "workspace:*",
     "ethers": "^5.7.2",
     "lodash": "^4.17.21",
     "node-fetch": "^3.3.1",
@@ -36,6 +36,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^3.1.0",

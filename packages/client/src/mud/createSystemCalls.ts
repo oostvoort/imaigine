@@ -1,21 +1,19 @@
-import { getComponentValue } from "@latticexyz/recs";
-import { awaitStreamValue } from "@latticexyz/utils";
-import { ClientComponents } from "./createClientComponents";
-import { SetupNetworkResult } from "./setupNetwork";
+import {SetupNetworkResult} from "./setupNetwork";
+import {
+    CharacterStatsComponentDataStruct,
+    CharacterStoryComponentDataStruct
+} from "contracts/types/ethers-contracts/IWorld";
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
-  { worldSend, txReduced$, singletonEntity }: SetupNetworkResult,
-  { Counter }: ClientComponents
+    {worldSend, txReduced$, singletonEntity}: SetupNetworkResult,
 ) {
-  const increment = async () => {
-    const tx = await worldSend("increment", []);
-    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
-    return getComponentValue(Counter, singletonEntity);
-  };
+    const createPlayerCharacter = async (story: CharacterStoryComponentDataStruct, stats: CharacterStatsComponentDataStruct) => {
+        await worldSend("createPlayerCharacter", [story, stats])
+    }
 
-  return {
-    increment,
-  };
+    return {
+        createPlayerCharacter,
+    };
 }
