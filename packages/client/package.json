@@ -26,6 +26,7 @@
     "@wagmi/chains": "^0.2.22",
     "async-mutex": "^0.4.0",
     "contracts": "workspace:*",
+    "types": "workspace:*",
     "ethers": "^5.7.2",
     "lodash": "^4.17.21",
     "node-fetch": "^3.3.1",

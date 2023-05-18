@@ -1,5 +1,7 @@
-import {Configuration, OpenAIApi, CreateCompletionRequest} from 'openai';
 import * as dotenv from 'dotenv';
+import {OpenAIApi} from 'openai/dist/api';
+import {Configuration} from 'openai/dist/configuration';
+import {CharacterStats, CharacterStory} from 'types'
 
 dotenv.config();
 
@@ -9,24 +11,32 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 console.log(process.env.OPENAI_API_KEY);
 
-export async function generateGenesis({
-                                          name,
-                                          pet,
-                                          age,
-                                          food,
-                                          universe,
-                                          activity,
-                                          alignment,
-                                      }: {
-    name: string;
-    pet: string;
-    age: string;
-    food: string;
-    universe: string;
-    activity: string;
-    alignment: string;
+export async function generateGenesis({story, stats}: {
+    story: CharacterStory,
+    stats: CharacterStats
 }): Promise<string> {
-    const prompt = `give me the beginning of an epic story about an ${alignment} character named ${name} who is age ${age}, may have a pet ${pet}, whose favorite food is ${food}, likes to do ${activity}. place the story in the '${universe}' storytelling universe. Include a location that is travelled to, and name the pet if there is one. Include and describe mode of transportation`;
+
+    const prompt = `
+    Create an epic story introduction in the ${story.universe} universe.
+    It features a character named ${story.name}.
+    ${story.name} is a ${story.age}.
+     
+    ${story.name} possesses the following stats:
+    Strength: ${stats.strength} 
+    Dexterity: ${stats.dexterity} 
+    Constitution: ${stats.constitution} 
+    Intelligence: ${stats.intelligence} 
+    Charisma: ${stats.charisma} 
+    Wisdom: ${stats.wisdom}
+     
+    Their stats must affect their story in some meaningful way.
+    
+    ${story.name} has a ${story.pet} pet.
+    ${story.name} has a passion for ${story.activity}. 
+    ${story.name} must have a main quest they must accomplish
+    Include a vivid description of the mode of transportation used and name their pet if applicable.
+    `;
+
 
     return await executePrompt(prompt);
 }
