@@ -5,8 +5,6 @@ import PlayerNav from '../shared/PlayerNav'
 export default function MainLayout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
 
-  console.log({ pathname })
-
   return (
     <main className='flex flex-row-reverse flex-1 [&>div]:flex-1'>
       {
