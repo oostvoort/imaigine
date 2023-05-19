@@ -148,7 +148,7 @@ export default function CreatePlayerNew() {
       }
       <Button variant="accent" size="lg" className="min-w-[200px] rounded-full" onClick={() => {
         if (step == '1') setSearchParams({ step: '2' })
-        if (step == '2') alert('Next page')
+        if (step == '2') alert('WIP')
       }}>Next</Button>
     </div>
   )
