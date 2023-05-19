@@ -20,6 +20,12 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        'option-1': "hsl(var(--option-1))",
+        'option-2': "hsl(var(--option-2))",
+        'option-3': "hsl(var(--option-3))",
+        'option-4': "hsl(var(--option-4))",
+        'option-5': "hsl(var(--option-5))",
+        'option-6': "hsl(var(--option-6))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -40,6 +46,14 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        'accent-2': {
+          DEFAULT: "hsl(var(--accent-2))",
+          foreground: "hsl(var(--accent-2-foreground))",
+        },
+        'accent-3': {
+          DEFAULT: "hsl(var(--accent-3))",
+          foreground: "hsl(var(--accent-3-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -56,6 +70,7 @@ export default {
       },
       fontFamily: {
         jost: ['Jost', 'sans-serif'],
+        rancho: ['Rancho', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
