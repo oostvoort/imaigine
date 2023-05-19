@@ -84,3 +84,7 @@
   }
 }
 
+@font-face {
+  src: url("./fonts/Jost-VariableFont_wght.ttf");
+  font-family: Jost;
+}
