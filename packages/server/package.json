@@ -5,21 +5,21 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "ts-node index.ts",
+    "dev": "wait-port 8545 && tsx index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "ISC",
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
-    "@latticexyz/common": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/dev-tools": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/network": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/react": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/recs": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/schema-type": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/std-client": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/utils": "2.0.0-alpha.1.149+024f6037",
-    "@latticexyz/world": "2.0.0-alpha.1.149+024f6037",
+    "@latticexyz/common": "link:../../../latticexyz/mud/packages/common",
+    "@latticexyz/dev-tools": "link:../../../latticexyz/mud/packages/dev-tools",
+    "@latticexyz/network": "link:../../../latticexyz/mud/packages/network",
+    "@latticexyz/react": "link:../../../latticexyz/mud/packages/react",
+    "@latticexyz/recs": "link:../../../latticexyz/mud/packages/recs",
+    "@latticexyz/schema-type": "link:../../../latticexyz/mud/packages/schema-type",
+    "@latticexyz/std-client": "link:../../../latticexyz/mud/packages/std-client",
+    "@latticexyz/utils": "link:../../../latticexyz/mud/packages/utils",
+    "@latticexyz/world": "link:../../../latticexyz/mud/packages/world",
     "@wagmi/chains": "^0.2.22",
     "contracts": "workspace:*",
     "cors": "^2.8.5",
@@ -37,6 +37,8 @@
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
-    "typescript": "^5.0.4"
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.4",
+    "wait-port": "^1.0.4"
   }
 }
