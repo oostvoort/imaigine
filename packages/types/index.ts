@@ -18,3 +18,16 @@ export interface CharacterStats {
     charisma: number;
     wisdom: number;
 }
+
+export interface CurrentStoryStats {
+    mapHex: 'not-sure-about-the-type-of-this-yet',
+    gameStats: Record<string, Array<{
+        label: string,
+        img: string
+    }>>,
+    narration: string,
+    actions: Array<{
+        description: string,
+        action: () => void
+    }>
+}
