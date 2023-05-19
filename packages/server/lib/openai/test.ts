@@ -1,12 +1,12 @@
 import {extractJsonFromResponse} from "./extractJsonFromResponse";
-import {generateLocation, Location} from "./generate/generateLocation";
-import {generateWorld, World} from "./generate/generateWorld";
-import {Character, generateCharacter} from "./generate/generateCharacter";
+import {generateLocation, AILocation} from "./generate/generateLocation";
+import {generateWorld, AIWorld} from "./generate/generateWorld";
+import {AICharacter, generateCharacter} from "./generate/generateCharacter";
 
 describe('World Generation', function () {
     this.timeout(0)
 
-    const world: World = {
+    const world: AIWorld = {
         theme: "fantasy",
         races: ['elves', 'orcs', 'humans'],
         currency: "gold",
@@ -31,7 +31,7 @@ describe('World Generation', function () {
     });
 
     it('should generate a desert location within the world', async function () {
-        const location: Location = {
+        const location: AILocation = {
             name: "",
             characters: [],
             description: "",
@@ -53,7 +53,7 @@ describe('World Generation', function () {
     });
 
     it('should generate a character in that location within the world', async function () {
-        const character: Character = {
+        const character: AICharacter = {
             name: "Lyra",
             description: "",
             stats: {
@@ -88,7 +88,6 @@ describe('World Generation', function () {
         // character.name = json.name
 
         _location.characters.push(character)
-        console.log(world)
     });
 
 

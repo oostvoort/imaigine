@@ -1,9 +1,9 @@
 import {executePrompt} from "../executePrompt";
 import {CharacterStats, CharacterStory} from 'types'
-import {Location} from "./generateLocation";
+import {AILocation} from "./generateLocation";
 
 
-export interface Character {
+export interface AICharacter {
     name: string,
     description: string,
     story: CharacterStory,
@@ -15,7 +15,7 @@ export interface GenerateCharacterProps {
     name: string
     stats: CharacterStats,
     story: CharacterStory,
-    location: Location
+    location: AILocation
 }
 
 

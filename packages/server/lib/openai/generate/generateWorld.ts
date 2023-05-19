@@ -1,13 +1,13 @@
 import {executePrompt} from "../executePrompt";
-import {Location} from "./generateLocation";
+import {AILocation} from "./generateLocation";
 
-export interface World {
+export interface AIWorld {
     theme: string,
     races: Array<string>,
     currency: string,
     description: string,
     name: string,
-    locations: Array<Location>
+    locations: Array<AILocation>
 }
 
 export interface GenerateWorldProps {
