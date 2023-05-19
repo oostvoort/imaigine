@@ -1,10 +1,22 @@
-import {extractJsonFromResponse} from "./extractJsonFromResponse";
-import {generateLocation, AILocation} from "./generate/generateLocation";
-import {generateWorld, AIWorld} from "./generate/generateWorld";
-import {AICharacter, generateCharacter} from "./generate/generateCharacter";
+import {AIWorld, generateWorld} from "./lib/openai/generate/generateWorld";
+import {extractJsonFromResponse} from "./lib/openai/extractJsonFromResponse";
+import {AILocation, generateLocation} from "./lib/openai/generate/generateLocation";
+import {AICharacter, generateCharacter} from "./lib/openai/generate/generateCharacter";
+import {setup} from "./lib/mud/setup";
 
 describe('World Generation', function () {
     this.timeout(0)
+
+    let network
+    let components
+    let systemCalls: any
+
+    before(async function () {
+        const mud = await setup()
+        network = mud.network
+        components = mud.components
+        systemCalls = mud.systemCalls
+    });
 
     const world: AIWorld = {
         theme: "fantasy",
@@ -30,7 +42,11 @@ describe('World Generation', function () {
         console.log(world)
     });
 
-    it('should generate a desert location within the world', async function () {
+    it('should create world in mud', function () {
+        systemCalls.createPlanet(world.theme)
+    });
+
+    it('should generate a Mountainous location within the world', async function () {
         const location: AILocation = {
             name: "",
             characters: [],
