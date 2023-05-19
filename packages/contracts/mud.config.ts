@@ -2,27 +2,30 @@ import {mudConfig} from "@latticexyz/world/register";
 
 export default mudConfig({
     tables: {
-        CharacterStatsComponent: {
+        PlanetComponent: {
+            keySchema: {},
             schema: {
-                dexterity: 'int32',
-                strength: 'int32',
-                constitution: 'int32',
-                intelligence: 'int32',
-                charisma: 'int32',
-                wisdom: 'int32'
+                theme: "string",
             },
         },
-        CharacterStoryComponent: {
+        NameComponent: "string",
+        DescriptionComponent: "string",
+        PriceComponent: "uint256",
+        RaceComponent: "string",
+        CharacterComponent: "bytes32",
+        TangibleComponent: "bool",
+        CountComponent: "uint256",
+        LocationComponent: {
             schema: {
-                name: "string",
-                pet: "string",
-                age: "string",
-                food: "string",
-                universe: "string",
-                activity: "string",
-                alignment: "string"
-            }
+                at: "string",
+            },
         },
-        Player: "bool"
     },
+    modules: [
+        {
+            name: "UniqueEntityModule",
+            root: true,
+            args: [],
+        },
+    ],
 });
