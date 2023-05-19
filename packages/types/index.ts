@@ -1,9 +1,7 @@
 export interface CharacterStory {
-    name: string;
     age: string;
     pet: string;
     food: string;
-    universe: string;
     activity: string;
     alignment: string;
 }
