@@ -12,7 +12,7 @@ function IconItem({ icon, label, ...others }: IconItemProps) {
     <div className='flex flex-col gap-3 justify-center' {...others}>
       {
         icon ? <img className='w-[104px] rounded-full origin-top-right scale-150' src={icon} alt={JSON.stringify(icon)} />
-          : <div className='w-auto w-[60px] h-[60px] aspect-square rounded-full border border-gray-400 bg-black mx-auto'></div>
+          : <div className='w-auto w-[60px] h-[60px] aspect-square rounded-full border border-gray-400 bg-night mx-auto'></div>
       }
       <p className='text-white text-sm text-center'>{ label }</p>
     </div>

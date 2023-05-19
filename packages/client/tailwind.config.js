@@ -26,6 +26,7 @@ export default {
         'option-4': "hsl(var(--option-4))",
         'option-5': "hsl(var(--option-5))",
         'option-6': "hsl(var(--option-6))",
+        night: "hsl(var(--night))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
