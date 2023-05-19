@@ -6,8 +6,16 @@ export async function extractJsonFromResponse(response: string, fields: Array<st
     
     ${response}
     
-    Extract the ${fields.join(" and ")} and put it into a JSON object
+    Extract the following fields: 
+    ${fields.join(", ")} 
+    and put it into a JSON object
+    
+    This is the format of the JSON object
+    
+    { ${fields.join(",")} }
     `;
+
+    console.log(prompt)
 
     const res = await openai.createCompletion({
         model: 'text-davinci-003',
