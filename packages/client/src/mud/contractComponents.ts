@@ -10,6 +10,7 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
+          name: RecsType.String,
           theme: RecsType.String,
         },
         {
@@ -131,6 +132,36 @@ export function defineContractComponents(world: World) {
         world,
         {
           at: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AttributeUintComponent: (() => {
+      const tableId = new TableId("", "AttributeUintCom");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AttributeStringComponent: (() => {
+      const tableId = new TableId("", "AttributeStringC");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
         },
         {
           metadata: {

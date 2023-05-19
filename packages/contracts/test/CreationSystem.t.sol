@@ -7,6 +7,7 @@ import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
 import {
   PlanetComponent,
+  PlanetComponentData,
   NameComponent,
   RaceComponent
 } from "../src/codegen/Tables.sol";
@@ -31,20 +32,26 @@ contract CreationSystemTest is MudV2Test {
   }
 
   function testFuzz_CreatePlanet(
+    string memory name,
     string memory theme
   ) public {
+    vm.assume(keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH);
     vm.assume(keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH);
 
-    world.createPlanet(theme);
+    world.createPlanet(name, theme);
 
-    string memory planetTheme = PlanetComponent.get(world);
+    PlanetComponentData memory planet = PlanetComponent.get(world);
 
-    assertEq(theme, planetTheme);
+    assertEq(name, planet.name);
+    assertEq(theme, planet.theme);
   }
 
   function test_revert_CreatePlanet() public {
+    vm.expectRevert(abi.encodePacked("invalid name"));
+    world.createPlanet("", "theme");
+
     vm.expectRevert(abi.encodePacked("invalid theme"));
-    world.createPlanet("");
+    world.createPlanet("name", "");
   }
 
   function testFuzz_CreatePlayer(

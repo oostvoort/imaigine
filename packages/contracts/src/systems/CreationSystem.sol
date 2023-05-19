@@ -16,17 +16,22 @@ import { Constants } from "../lib/Constants.sol";
 
 contract CreationSystem is System {
   function createPlanet(
+    string memory name,
     string memory theme
   )
   public
   {
     // validate input
     require(
+      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
+      "invalid name"
+    );
+    require(
       keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH,
       "invalid theme"
     );
 
-    PlanetComponent.set(theme);
+    PlanetComponent.set(name, theme);
   }
 
   function createPlayer(

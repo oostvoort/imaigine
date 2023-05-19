@@ -5,6 +5,7 @@ export default mudConfig({
         PlanetComponent: {
             keySchema: {},
             schema: {
+                name: "string",
                 theme: "string",
             },
         },
@@ -18,6 +19,24 @@ export default mudConfig({
         LocationComponent: {
             schema: {
                 at: "string",
+            },
+        },
+        AttributeUintComponent: {
+            keySchema: {
+                entityID: "bytes32",
+                attributeID: "bytes32",
+            },
+            schema: {
+                value: "uint256",
+            },
+        },
+        AttributeStringComponent: {
+            keySchema: {
+                entityID: "bytes32",
+                attributeID: "bytes32",
+            },
+            schema: {
+                value: "string",
             },
         },
     },
