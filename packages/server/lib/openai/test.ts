@@ -1,59 +1,63 @@
 import {extractJsonFromResponse} from "./extractJsonFromResponse";
-import {generateLocation, Location} from "./generate/generateLocation";
-import {generateWorld, World} from "./generate/generateWorld";
-import {Character, generateCharacter} from "./generate/generateCharacter";
+import {AILocation, generateLocation} from "./generate/generateLocation";
+import {AIWorld, generateWorld} from "./generate/generateWorld";
+import {AICharacter, generateCharacter} from "./generate/generateCharacter";
 
 describe('World Generation', function () {
     this.timeout(0)
 
-    const world: World = {
+    const world: AIWorld = {
         theme: "fantasy",
         races: ['elves', 'orcs', 'humans'],
-        currency: "gold",
         description: "",
         name: "",
-        locations: []
+        locations: [],
     }
 
     it('should generate a world', async function () {
-        const description = await generateWorld({
-            currency: world.currency,
+        const jsonResponse = await generateWorld({
+            currency: 'gold',
             races: world.races,
-            theme: world.theme
+            theme: world.theme,
+            extraDescriptions: [
+                'has 2 moons',
+                'has primitive to aetherpunk technology',
+                'has an ongoing war between demon king and the church',
+                'has 7 continents'
+            ]
         })
-        world.description = description
-
-        const json = await extractJsonFromResponse(description, ['name'])
-        if (!json.name) throw new Error("Was not able to extract name")
-        world.name = json.name
-
+        world.name = jsonResponse.name
+        world.description = jsonResponse.description
         console.log(world)
     });
 
-    it('should generate a desert location within the world', async function () {
-        const location: Location = {
+    it('should generate a location within the world', async function () {
+        const location: AILocation = {
             name: "",
             characters: [],
             description: "",
-            items: []
+            items: [],
         }
 
-        const description = await generateLocation({
+        const jsonResponse = await generateLocation({
             biome: 'Mountainous',
-            world: world
+            world: {name: world.name, description: world.description},
+            wealthLevel: "Very Rich",
+            safetyLevel: "Somewhat dangerous",
+            populationSize: "Medium",
+            naturalResources: "rare minerals"
         })
-        location.description = description
 
-        const json = await extractJsonFromResponse(description, ['name'])
-        if (!json.name) throw new Error("Was not able to extract name")
-        location.name = json.name
+        location.name = jsonResponse.name
+        location.description = jsonResponse.description
 
         world.locations.push(location)
+
         console.log(world)
     });
 
     it('should generate a character in that location within the world', async function () {
-        const character: Character = {
+        const character: AICharacter = {
             name: "Lyra",
             description: "",
             stats: {
@@ -65,29 +69,41 @@ describe('World Generation', function () {
                 wisdom: 1,
             },
             story: {
-                age: 'Adult',
                 pet: 'Dragon',
-                food: 'Taco',
                 activity: 'Climbing Mountains',
-                alignment: 'Good',
+                history: ''
+            },
+            physicalFeatures: {
+                ageGroup: 'Adult',
+                body:"Muscular",
+                eyes:"Green",
+                hair:"Red mohawk",
+                height: "Medium",
+                race: "Elf"
             },
             items: []
         }
         const _location = world.locations[0];
 
-        const description = await generateCharacter({
-            name: character.name,
+        const jsonResponse = await generateCharacter({
             stats: character.stats,
             story: character.story,
-            location: _location
+            world: {description: world.description, name:world.name},
+            location: {description: _location.description, name: _location.name},
+            physicalFeatures: {
+                ageGroup: 'Adult',
+                body:"Muscular",
+                eyes:"Green",
+                hair:"Red mohawk",
+                height: "Medium",
+                race: "Elf"
+            }
         })
-        character.description = description
 
-        // const json = await extractJsonFromResponse(description, ['name'])
-        // if (!json.name) throw new Error("Was not able to extract name")
-        // character.name = json.name
-
+        character.name = jsonResponse.name
+        character.description = jsonResponse.description
         _location.characters.push(character)
+        console.log(world)
         console.log(world)
     });
 
