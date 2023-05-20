@@ -9,8 +9,7 @@ import {
   PlanetComponent,
   NameComponent,
   RaceComponent,
-  AttributeUintComponent,
-  LocationComponent
+  AttributeUintComponent
 } from "../../src/codegen/Tables.sol";
 
 contract PlayerTest is MudV2Test {
@@ -89,11 +88,5 @@ contract PlayerTest is MudV2Test {
 
       assertEq(attrValue, attrValues[i]);
     }
-
-    string memory location = vm.parseJsonString(json, ".locations.[0].name");
-    world.setLocation(playerID, location);
-
-    string memory newLocation = LocationComponent.get(world, playerID);
-    assertEq(location, newLocation);
   }
 }

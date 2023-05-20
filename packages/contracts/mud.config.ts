@@ -1,6 +1,13 @@
 import {mudConfig} from "@latticexyz/world/register";
 
 export default mudConfig({
+    systems: {
+        LocationSystem: {
+            name: "LocationSystem",
+            openAccess: false, // it's a subsystem
+            accessList: [] // TODO: the oracle
+        }
+    },
     tables: {
         PlanetComponent: {
             keySchema: {},
@@ -37,6 +44,15 @@ export default mudConfig({
             },
             schema: {
                 value: "string",
+            },
+        },
+        StoryActionComponent: {
+            keySchema: {
+                entityID: "bytes32",
+                actionID: "bytes32",
+            },
+            schema: {
+                value: "bytes",
             },
         },
     },

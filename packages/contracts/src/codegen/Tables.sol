@@ -14,3 +14,4 @@ import { CountComponent, CountComponentTableId } from "./tables/CountComponent.s
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
 import { AttributeUintComponent, AttributeUintComponentTableId } from "./tables/AttributeUintComponent.sol";
 import { AttributeStringComponent, AttributeStringComponentTableId } from "./tables/AttributeStringComponent.sol";
+import { StoryActionComponent, StoryActionComponentTableId } from "./tables/StoryActionComponent.sol";
