@@ -43,7 +43,6 @@ export default function Game() {
 
   return (
     <GridStoryLayout>
-
       {/* Map / Visuals */}
       <section className="flex flex-col">
         <img className="h-auto max-h-[600px] aspect-video inset-0 m-auto"

@@ -6,6 +6,9 @@ export default {
     './src/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
+    backgroundImage: {
+      'welcome-image': "url('./assets/RPG_40_square_masterpiece_best_quality_ultradetailed_illustrat_0.jpg')"
+    },
     container: {
       center: true,
       padding: "2rem",

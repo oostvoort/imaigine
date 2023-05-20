@@ -87,7 +87,7 @@
 
 @layer base {
   * {
-    @apply border-border p-0 m-0;
+    @apply border-border p-0 m-0 border border-red-300;
   }
   body, #react-root {
     @apply bg-background text-foreground min-h-[100vh];

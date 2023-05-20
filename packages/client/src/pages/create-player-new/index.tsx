@@ -4,8 +4,9 @@ import { Button } from '../../components/base/button'
 import { Input } from '../../components/base/input'
 import { Card, CardContent } from '../../components/base/card'
 import imaigineIcon from '../../assets/img_imaigine_logo.svg'
-import { useSearchParams } from 'react-router-dom'
 import useSessionState from '../../hooks/useSessionState'
+import { useSetAtom } from 'jotai'
+import { activePage_atom } from '../../atoms/globalAtoms'
 
 type UserInputType = {
   name: string
@@ -24,17 +25,19 @@ type UserInputType = {
 }
 
 const colorPick = [
-  'option-1',
-  'option-2',
-  'option-3',
-  'option-4',
-  'option-5',
-  'option-6',
+  'bg-option-1',
+  'bg-option-2',
+  'bg-option-3',
+  'bg-option-4',
+  'bg-option-5',
+  'bg-option-6',
 ]
 
 export default function CreatePlayerNew() {
   // indicator on what window / screen the user is on the setup wizard
-  const [ searchParams, setSearchParams ] = useSearchParams()
+  const [step, setStep] = React.useState(1)
+
+  const setActivePage = useSetAtom(activePage_atom)
 
   const [ userInputs, setUserInputs ] = useSessionState('creation-values', JSON.stringify({
     name: '',
@@ -59,15 +62,6 @@ export default function CreatePlayerNew() {
   // this is only a temporary selector for the color
   const [ selectedColor, setSeletedColor ] = React.useState(0)
 
-
-  const step = React.useMemo(() => {
-    return searchParams.get('step')
-  }, [ searchParams ])
-
-  React.useEffect(() => {
-    if (!searchParams.get('step')) setSearchParams({ step: '1' })
-  }, [])
-
   return (
     <div className={clsx([
       'mx-auto max-w-7xl my-[3rem]',
@@ -78,7 +72,7 @@ export default function CreatePlayerNew() {
         <p className="font-rancho tracking-wider text-center">Imagination Engine</p>
       </section>
       {
-        step == '1' && (
+        step == 1 && (
           <section className="flex flex-col gap-3">
             <p className="text-4xl font-jost font-bold text-white text-center">Let&apos;s create your character</p>
             <Card className="min-w-[500px]">
@@ -113,9 +107,9 @@ export default function CreatePlayerNew() {
                 <div className="flex items-center justify-between">
                   {
                     colorPick.map((option, index) => (
-                      <Button key={JSON.stringify({ option, index })} onClick={() => setSeletedColor(index)}
+                      <Button key={option} onClick={() => setSeletedColor(index)}
                               variant="ghost" className={clsx([
-                        `w-7 h-9 rounded-full bg-${option} hover:bg-${option}/80`,
+                        `w-7 h-9 rounded-full ${option} hover:${option}/80`,
                         'border-2 border-transparent',
                         {
                           'w-7 h-9 border-2 border-black': index == selectedColor,
@@ -130,7 +124,7 @@ export default function CreatePlayerNew() {
         )
       }
       {
-        step == '2' && (
+        step == 2 && (
           <section className="flex flex-col gap-3">
             <p className="text-4xl font-jost font-bold text-white text-center">Your favorites?</p>
             <Card className="min-w-[500px]">
@@ -147,8 +141,8 @@ export default function CreatePlayerNew() {
         )
       }
       <Button variant="accent" size="lg" className="min-w-[200px] rounded-full" onClick={() => {
-        if (step == '1') setSearchParams({ step: '2' })
-        if (step == '2') alert('WIP')
+        if (step == 1) setStep(2)
+        if (step == 2) setActivePage('game')
       }}>Next</Button>
     </div>
   )

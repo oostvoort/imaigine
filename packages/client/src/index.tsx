@@ -4,6 +4,7 @@ import {App} from './App'
 import {setup} from './mud/setup'
 import {MUDProvider} from './MUDContext'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider as JotaiProvider } from 'jotai'
 import './index.css'
 
 const rootElement = document.getElementById('react-root')
@@ -13,8 +14,12 @@ const root = ReactDOM.createRoot(rootElement)
 setup().then((result) => {
     root.render(
         <MUDProvider value={result}>
+            {/* Handle client routing if needed */}
             <BrowserRouter>
-                <App/>
+                {/* Manage application states */}
+                <JotaiProvider>
+                  <App/>
+                </JotaiProvider>
             </BrowserRouter>
         </MUDProvider>
     )
