@@ -9,7 +9,7 @@ type IconItemProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement
 function IconItem({ icon, label, ...others }: IconItemProps) {
 
   return (
-    <div className='flex flex-col gap-3 justify-center' {...others}>
+    <div className='flex flex-col gap-3 justify-center cursor-pointer' {...others}>
       {
         icon ? <img className='w-[104px] rounded-full origin-top-right scale-150' src={icon} alt={JSON.stringify(icon)} />
           : <div className='w-auto w-[60px] h-[60px] aspect-square rounded-full border border-gray-400 bg-night mx-auto'></div>
@@ -22,7 +22,7 @@ function IconItem({ icon, label, ...others }: IconItemProps) {
 export default function PlayerNav() {
 
   return (
-    <nav className='w-[107px] bg-black flex flex-col p-3 gap-5 overflow-visible'>
+    <nav className='w-[107px] bg-black flex flex-col p-3 gap-5 overflow-visible z-10'>
       <IconItem icon={avatarImage} className='mb-12' />
       <IconItem label='Stats' />
       <IconItem label='Inventory' />
