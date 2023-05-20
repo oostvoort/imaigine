@@ -31,7 +31,7 @@ export default mudConfig({
         PlayerComponent: "bool",
         LocationComponent: {
             schema: {
-                at: "bytes32",
+                at: "string",
             },
         },
         AttributeUintComponent: {
