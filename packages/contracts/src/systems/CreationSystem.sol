@@ -6,10 +6,12 @@ import { getUniqueEntity } from "@latticexyz/world/src/modules/uniqueentity/getU
 
 import {
   PlanetComponent,
+  PlanetComponentTableId,
   NameComponent,
   RaceComponent,
   DescriptionComponent,
-  TangibleComponent
+  TangibleComponent,
+  PlayerComponent
 } from "../codegen/Tables.sol";
 
 import { Constants } from "../lib/Constants.sol";
@@ -17,7 +19,8 @@ import { Constants } from "../lib/Constants.sol";
 contract CreationSystem is System {
   function createPlanet(
     string memory name,
-    string memory theme
+    string memory theme,
+    string memory description
   )
   public
   {
@@ -30,13 +33,18 @@ contract CreationSystem is System {
       keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH,
       "invalid theme"
     );
+    require(
+      keccak256(abi.encodePacked(description)) != Constants.EMPTY_HASH,
+      "invalid description"
+    );
 
     PlanetComponent.set(name, theme);
+    DescriptionComponent.set(PlanetComponentTableId, description);
   }
 
   function createPlayer(
     string memory name,
-    string memory race
+    string memory description
   )
   public
   returns (bytes32)
@@ -48,21 +56,46 @@ contract CreationSystem is System {
       keccak256(abi.encodePacked(NameComponent.get(playerID))) == Constants.EMPTY_HASH,
       "name already exist"
     );
-    // validate input
+
+    // validate name
     require(
       keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
       "invalid name"
     );
-    // validate input
-    require(
-      keccak256(abi.encodePacked(race)) != Constants.EMPTY_HASH,
-      "invalid race"
-    );
 
     NameComponent.set(playerID, name);
-    RaceComponent.set(playerID, race);
+    DescriptionComponent.set(playerID, description);
+    PlayerComponent.set(playerID, true);
 
     return playerID;
+  }
+
+
+  function createCharacter(
+    string memory name,
+    string memory description
+  )
+  public
+  returns (bytes32)
+  {
+    bytes32 characterID = getUniqueEntity();
+
+    // does playerID already exist
+    require(
+      keccak256(abi.encodePacked(NameComponent.get(characterID))) == Constants.EMPTY_HASH,
+      "name already exist"
+    );
+
+    // validate name
+    require(
+      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
+      "invalid name"
+    );
+
+    NameComponent.set(characterID, name);
+    DescriptionComponent.set(characterID, description);
+
+    return characterID;
   }
 
   function createItem(
@@ -76,5 +109,17 @@ contract CreationSystem is System {
     NameComponent.set(itemID, name);
     DescriptionComponent.set(itemID, description);
     TangibleComponent.set(itemID, true);
+  }
+
+  function createLocation(
+    string memory name,
+    string memory description
+  )
+  public
+  {
+    bytes32 locationID = getUniqueEntity();
+
+    NameComponent.set(locationID, name);
+    DescriptionComponent.set(locationID, description);
   }
 }
