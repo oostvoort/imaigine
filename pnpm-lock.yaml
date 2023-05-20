@@ -187,6 +187,15 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1(typescript@5.0.4)
 
+  packages/oracle:
+    devDependencies:
+      ds-test:
+        specifier: https://github.com/dapphub/ds-test.git#c9ce3f25bde29fc5eb9901842bf02850dfd2d084
+        version: github.com/dapphub/ds-test/c9ce3f25bde29fc5eb9901842bf02850dfd2d084
+      forge-std:
+        specifier: https://github.com/foundry-rs/forge-std.git#b4f121555729b3afb3c5ffccb62ff4b6e2818fd3
+        version: github.com/foundry-rs/forge-std/b4f121555729b3afb3c5ffccb62ff4b6e2818fd3
+
   packages/server:
     dependencies:
       cors:
