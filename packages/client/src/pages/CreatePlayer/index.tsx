@@ -8,9 +8,9 @@ import {CharacterStory} from "types";
 
 export function CreatePlayer() {
     const {
-        components: {CharacterStatsComponent, CharacterStoryComponent, Player},
-        systemCalls: {createPlayerCharacter},
-        network: {singletonEntity},
+        components,
+        systemCalls,
+        network,
     } = useMUD();
 
     const generateStory = useMutation(['generate-story'], async () => {
