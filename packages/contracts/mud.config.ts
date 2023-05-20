@@ -6,7 +6,12 @@ export default mudConfig({
             name: "LocationSystem",
             openAccess: false, // it's a subsystem
             accessList: [] // TODO: the oracle
-        }
+        },
+        StorySystem: {
+            name: "StorySystem",
+            openAccess: false, // a private system
+            accessList: [] // TODO: the oracle
+        },
     },
     tables: {
         PlanetComponent: {
@@ -23,9 +28,10 @@ export default mudConfig({
         CharacterComponent: "bytes32",
         TangibleComponent: "bool",
         CountComponent: "uint256",
+        PlayerComponent: "bool",
         LocationComponent: {
             schema: {
-                at: "string",
+                at: "bytes32",
             },
         },
         AttributeUintComponent: {

@@ -17,8 +17,12 @@
     "types": "workspace:*"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.5",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
     "typescript": "^5.0.4"
   }
 }
