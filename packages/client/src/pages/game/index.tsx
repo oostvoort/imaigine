@@ -1,10 +1,10 @@
+import React from 'react'
 import GridStoryLayout from '../../components/templates/grid_story_layout'
 import { clsx } from 'clsx'
 import { Button } from '../../components/base/button'
-import React from 'react'
 
 type Props = {
-  mapHex: 'not-sure-about-the-type-of-this-yet',
+  mapHexImage: 'not-sure-about-the-type-of-this-yet',
   gameStats: Record<string, Array<{
     label: string,
     img: string
@@ -25,6 +25,14 @@ const statsMockup: Props['gameStats'] = {
       img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (2).jpg',
       label: 'Land of Oz',
     },
+    {
+      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0.jpg',
+      label: 'Land of Oz',
+    },
+    {
+      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (2).jpg',
+      label: 'Land of Oz',
+    },
   ],
   'Nearby NPC\'s': [
     {
@@ -32,7 +40,7 @@ const statsMockup: Props['gameStats'] = {
       label: 'Doom Girl on the trailer',
     },
     {
-      img: 'src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0.jpg',
+      img: 'src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg',
       label: 'Doom Girl on the trailer',
     },
   ],
@@ -60,9 +68,9 @@ export default function Game() {
                     items.map((item, index) => (
                       <img key={JSON.stringify({ item, index })} src={item.img} alt={JSON.stringify(item.img)}
                            className={clsx([
-                             'w-20 rounded-full shadow-2xl cursor-pointer',
+                             'w-[100px] rounded-full shadow-2xl cursor-pointer',
                              {
-                               "rounded-lg": idx == 0
+                               "rounded-2xl w-[150px]": idx == 0
                              }
                            ])} />
                     ))
