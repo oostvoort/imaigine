@@ -24,7 +24,7 @@ type UserInputType = {
   otherFeatures: string
 }
 
-const colorPick = [
+const colorPicks = [
   'bg-option-1',
   'bg-option-2',
   'bg-option-3',
@@ -60,7 +60,17 @@ export default function CreatePlayerNew() {
   }, [ userInputs ])
 
   // this is only a temporary selector for the color
-  const [ selectedColor, setSeletedColor ] = React.useState(0)
+  const [ selectedColor, setSeletedColor ] = React.useState<typeof colorPicks[number]>(userInputsJsonParsed.color ?? colorPicks[0])
+
+  // temporary effect for changing color pick
+  React.useEffect(() => {
+    setUserInputs(prev => {
+      return JSON.stringify({
+        ...JSON.parse(prev),
+        color: selectedColor,
+      } as UserInputType)
+    })
+  }, [selectedColor])
 
   return (
     <div className={clsx([
@@ -106,13 +116,13 @@ export default function CreatePlayerNew() {
                 <p className="text-accent-3 text-sm tracking-wide mb-2">Choose a color:</p>
                 <div className="flex items-center justify-between">
                   {
-                    colorPick.map((option, index) => (
-                      <Button key={option} onClick={() => setSeletedColor(index)}
+                    colorPicks.map((option, index) => (
+                      <Button key={option} onClick={() => setSeletedColor(option)}
                               variant="ghost" className={clsx([
                         `w-7 h-9 rounded-full ${option} hover:${option}/80`,
                         'border-2 border-transparent',
                         {
-                          'w-7 h-9 border-2 border-black': index == selectedColor,
+                          'w-7 h-9 border-2 border-black': option == userInputsJsonParsed.color,
                         },
                       ])} />
                     ))
@@ -130,11 +140,29 @@ export default function CreatePlayerNew() {
             <Card className="min-w-[500px]">
               <CardContent>
                 <p className="text-accent-3 text-sm tracking-wide mb-1">Favorite Color:</p>
-                <Input placeholder="ex. Blue, Red, Green, Rainbow" className="mb-5 py-6" />
+                <Input placeholder="ex. Blue, Red, Green, Rainbow" className="mb-5 py-6" value={userInputsJsonParsed.favColor} onChange={e => setUserInputs(prev => {
+                  return JSON.stringify({
+                      ...JSON.parse(prev),
+                      favColor: e.target.value
+                    } as UserInputType
+                  )
+                })} />
                 <p className="text-accent-3 text-sm tracking-wide mb-1">Favorite Food:</p>
-                <Input placeholder="ex. Pizza, Pasta, " className="mb-5 py-6" />
+                <Input placeholder="ex. Pizza, Pasta, " className="mb-5 py-6" value={userInputsJsonParsed.favFood} onChange={e => setUserInputs(prev => {
+                  return JSON.stringify({
+                      ...JSON.parse(prev),
+                      favFood: e.target.value
+                    } as UserInputType
+                  )
+                })} />
                 <p className="text-accent-3 text-sm tracking-wide mb-1">Favorite Animal:</p>
-                <Input placeholder="ex. Dogs, Cats, Dragons, Unicorn" className="mb-5 py-6" />
+                <Input placeholder="ex. Dogs, Cats, Dragons, Unicorn" className="mb-5 py-6" value={userInputsJsonParsed.favAnimal} onChange={e => setUserInputs(prev => {
+                  return JSON.stringify({
+                      ...JSON.parse(prev),
+                      favAnimal: e.target.value
+                    } as UserInputType
+                  )
+                })} />
               </CardContent>
             </Card>
           </section>
