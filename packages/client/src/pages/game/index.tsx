@@ -3,6 +3,11 @@ import GridStoryLayout from '../../components/templates/grid_story_layout'
 import { clsx } from 'clsx'
 import { Button } from '../../components/base/button'
 import { motion } from 'framer-motion'
+import { useMUD } from '../../MUDContext'
+import { useComponentValue, useEntityQuery } from '@latticexyz/react'
+import { Has } from '@latticexyz/recs'
+import { ethers } from 'ethers'
+
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -66,6 +71,19 @@ const statsMockup: Props['gameStats'] = {
 export default function Game() {
   const constrainsRef = React.useRef<HTMLDivElement>(null)
 
+  const {
+    components: { StoryActionComponent },
+    systemCalls: { selectPlayerLocation }
+  } = useMUD()
+
+  // const entity = useEntityQuery([Has(StoryActionComponent)])
+  //
+  // React.useEffect(() => {
+  //   console.log({ entity })
+  // }, [entity])
+
+  // locationOptionID = ethers.abi.encode("options.locations.${array_index}")
+
   return (
     <GridStoryLayout>
       {/* Map / Visuals */}
@@ -89,12 +107,13 @@ export default function Game() {
                 <motion.div className="flex items-center gap-8 w-max" drag="x" dragConstraints={constrainsRef}>
                   {
                     items.map((item, index) => (
-                      <img key={JSON.stringify({ item, index })} src={item.img} alt={JSON.stringify(item.img)}
+                      <img onClick={() => {
+                        if (idx == 0) selectPlayerLocation("0x860c0bc42877e4be14ccf6099ac139f3ccda212f736fdde471ee52695d5462fb"/*ethers.utils.formatBytes32String(ethers.utils.id("options.locations.0"))*/)
+                      }} key={JSON.stringify({ item, index })} src={item.img} alt={JSON.stringify(item.img)}
                            className={clsx([
                              'w-[100px] rounded-full shadow-2xl cursor-pointer',
                              {
                                'rounded-xl w-[150px]': idx == 0,
-
                              },
                            ])}
                            draggable={false}
