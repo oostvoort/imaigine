@@ -99,19 +99,20 @@ export default function Game() {
                     <motion.div className="flex items-center gap-8 w-max" drag="x" dragConstraints={constrainsRef}>
                       {
                         items.map((item, index) => (
-                          <img onClick={() => {
-                            // if (idx == 0) selectPlayerLocation('0x860c0bc42877e4be14ccf6099ac139f3ccda212f736fdde471ee52695d5462fb'/*ethers.utils.formatBytes32String(ethers.utils.id("options.locations.0"))*/)
-                            if (idx == 0) setMapDialogOpen(true)
-                            // hard coded to show the character interaction dialog
-                            if (idx == 1) setCharacterDialogOpen(true)
-                          }} key={JSON.stringify({ item, index })} src={item.img} alt={JSON.stringify(item.img)}
-                               className={clsx([
-                                 'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
-                                 {
-                                   'rounded-xl w-[150px] h-[120px]': idx == 0,
-                                 },
-                               ])}
-                               draggable={false}
+                          <img
+                            className={clsx([
+                              'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
+                              {
+                                'rounded-xl w-[150px] h-[120px]': idx == 0,
+                              },
+                            ])}
+                            key={JSON.stringify({ item, index })}
+                            onClick={() => {
+                              if (idx == 0) setMapDialogOpen(true)
+                              if (idx == 1) setCharacterDialogOpen(true)
+                            }}
+                            src={item.img} alt={JSON.stringify(item.img)}
+                            draggable={false}
                           />
                         ))
                       }
@@ -174,7 +175,6 @@ export default function Game() {
           </section>
         </div>
       </GridStoryLayout>
-      {/*  */}
       <CharacterConversationDialog isOpen={isCharacterDialogOpen} setOpen={setCharacterDialogOpen} />
       <LocationInfoDialog isOpen={isMapDialogOpen} setOpen={(value) => setMapDialogOpen(value)}
                           img={'src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg'}

@@ -18,13 +18,17 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "underline-offset-4 hover:underline text-primary",
-        accent: "bg-white text-accent-3 hover:bg-white/80"
+        accent: "bg-white text-accent-3 hover:bg-white/80",
+        selective: "bg-primary text-primary-foreground font-normal tracking-wide font-sans hover:bg-primary/80"
       },
       size: {
         sm: "h-9 px-3 rounded-md text-sm",
         default: "h-10 py-2 px-4 text-md",
         lg: "h-12 px-8 rounded-lg text-lg",
         xl: "h-16 px-12 rounded-lg text-lg",
+      },
+      isHighlighed: {
+        true: 'border border-accent',
       },
     },
     defaultVariants: {
@@ -41,11 +45,11 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, isHighlighed, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, isHighlighed, className }))}
         ref={ref}
         {...props}
       />
