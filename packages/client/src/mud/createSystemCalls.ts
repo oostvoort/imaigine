@@ -1,19 +1,20 @@
-import {SetupNetworkResult} from "./setupNetwork";
-import {
-    CharacterStatsComponentDataStruct,
-    CharacterStoryComponentDataStruct
-} from "contracts/types/ethers-contracts/IWorld";
+import { SetupNetworkResult } from './setupNetwork'
+import {} from 'contracts/types/ethers-contracts/IWorld'
+import { ClientComponents } from './createClientComponents'
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
-    {worldSend, txReduced$, singletonEntity}: SetupNetworkResult,
+  { worldSend, txReduced$, singletonEntity }: SetupNetworkResult,
+  components: ClientComponents
 ) {
-    const createPlayerCharacter = async (story: CharacterStoryComponentDataStruct, stats: CharacterStatsComponentDataStruct) => {
-        await worldSend("createPlayerCharacter", [story, stats])
-    }
 
-    return {
-        createPlayerCharacter,
-    };
+  const selectPlayerLocation = async (optionLocationID: string) => {
+    console.info({ optionLocationID })
+    await worldSend("selectPlayerLocation", [optionLocationID])
+  }
+
+  return {
+    selectPlayerLocation
+  }
 }

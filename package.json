@@ -3,10 +3,11 @@
   "private": true,
   "scripts": {
     "build": "pnpm recursive run build",
-    "dev": "concurrently -n contracts,client,server -c cyan,magenta,yellow \"cd packages/contracts && pnpm run dev\" \"cd packages/client && pnpm run dev\" \"cd packages/server && pnpm run dev\"",
+    "dev": "concurrently -n contracts,client,server,oracle -c cyan,magenta,yellow,blue \"cd packages/contracts && pnpm run dev\" \"cd packages/client && pnpm run dev\" \"cd packages/server && pnpm run dev\" \"cd packages/oracle && pnpm run dev\"",
     "dev:client": "pnpm --filter 'client' run dev",
     "dev:contracts": "pnpm --filter 'contracts' dev",
     "dev:server": "pnpm --filter 'server' dev",
+    "dev:oracle": "pnpm --filter 'oracle' dev",
     "foundry:up": "curl -L https://foundry.paradigm.xyz | bash && bash $HOME/.foundry/bin/foundryup",
     "initialize": "pnpm recursive run initialize",
     "mud:up": "pnpm recursive exec mud set-version -v canary && pnpm install",
