@@ -7,11 +7,18 @@ import { getUniqueEntity } from "@latticexyz/world/src/modules/uniqueentity/getU
 import {
   PlanetComponent,
   PlanetComponentTableId,
+  StoryComponent,
   NameComponent,
+  SummaryComponent,
+  ImageComponent,
+  LocationComponent,
+  PathComponent,
+  PathLocationComponent,
   RaceComponent,
   DescriptionComponent,
   TangibleComponent,
-  PlayerComponent
+  PlayerComponent,
+  CharacterComponent
 } from "../codegen/Tables.sol";
 
 import { Constants } from "../lib/Constants.sol";
@@ -25,75 +32,100 @@ contract CreationSystem is System {
   public
   {
     // validate input
-    require(
-      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
-      "invalid name"
-    );
-    require(
-      keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH,
-      "invalid theme"
-    );
-    require(
-      keccak256(abi.encodePacked(description)) != Constants.EMPTY_HASH,
-      "invalid description"
-    );
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(theme).length > 0, "invalid theme length");
+    require(bytes(description).length > 0, "invalid description length");
 
     PlanetComponent.set(name, theme);
     DescriptionComponent.set(PlanetComponentTableId, description);
   }
 
-  function createPlayer(
+  function createStory(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory theme,
+    string[] memory races,
+    string memory currency
   )
   public
   returns (bytes32)
   {
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(theme).length > 0, "invalid theme length");
+    require(races.length > 0, "invalid races length");
+    require(bytes(currency).length > 0, "invalid currency length");
+
+    bytes32 storyID = getUniqueEntity();
+    bytes32 themeID = getUniqueEntity();
+    bytes32 racesID = getUniqueEntity();
+    bytes32 currencyID = getUniqueEntity();
+
+    StoryComponent.set(storyID, themeID, racesID, currencyID);
+
+    NameComponent.set(storyID, name);
+    SummaryComponent.set(storyID, summary);
+    NameComponent.set(themeID, theme);
+    NameComponent.set(currencyID, currency);
+
+    for(uint256 i=0; i<races.length; i++) {
+      require(bytes(races[i]).length > 0, string(abi.encodePacked("invalid races[", i, "] length")));
+      NameComponent.set(racesID, races[i]);
+    }
+
+    return storyID;
+  }
+
+  function createPlayer(
+    string memory name,
+    string memory summary,
+    string memory imgHash,
+    bytes32 locationID
+  )
+  public
+  returns (bytes32)
+  {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
+    require(bytes(NameComponent.get(locationID)).length > 0, "location does not exist");
+
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
     // does playerID already exist
-    require(
-      keccak256(abi.encodePacked(NameComponent.get(playerID))) == Constants.EMPTY_HASH,
-      "name already exist"
-    );
+    require(PlayerComponent.get(playerID) == false, "player already exist");
 
-    // validate name
-    require(
-      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
-      "invalid name"
-    );
-
-    NameComponent.set(playerID, name);
-    DescriptionComponent.set(playerID, description);
     PlayerComponent.set(playerID, true);
+    NameComponent.set(playerID, name);
+    SummaryComponent.set(playerID, summary);
+    ImageComponent.set(playerID, imgHash);
+    LocationComponent.set(playerID, locationID);
 
     return playerID;
   }
 
-
   function createCharacter(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash,
+    bytes32 locationID
   )
   public
   returns (bytes32)
   {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
+    require(bytes(NameComponent.get(locationID)).length > 0, "location does not exist");
+
     bytes32 characterID = getUniqueEntity();
 
-    // does playerID already exist
-    require(
-      keccak256(abi.encodePacked(NameComponent.get(characterID))) == Constants.EMPTY_HASH,
-      "name already exist"
-    );
-
-    // validate name
-    require(
-      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
-      "invalid name"
-    );
-
     NameComponent.set(characterID, name);
-    DescriptionComponent.set(characterID, description);
+    SummaryComponent.set(characterID, summary);
+    ImageComponent.set(characterID, imgHash);
+    LocationComponent.set(characterID, locationID);
 
     return characterID;
   }
@@ -113,13 +145,49 @@ contract CreationSystem is System {
 
   function createLocation(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash
   )
   public
+  returns (bytes32)
   {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
+
     bytes32 locationID = getUniqueEntity();
 
     NameComponent.set(locationID, name);
-    DescriptionComponent.set(locationID, description);
+    SummaryComponent.set(locationID, summary);
+    ImageComponent.set(locationID, imgHash);
+
+    return locationID;
+  }
+
+  function createPath(
+    bytes32 fromLocation,
+    bytes32 toLocation,
+    string memory name,
+    string memory summary
+  )
+  public
+  returns (bytes32)
+  {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(NameComponent.get(fromLocation)).length > 0, "fromLocation does not exist");
+    require(bytes(NameComponent.get(toLocation)).length > 0, "toLocation does not exist");
+
+    bytes32 pathID = getUniqueEntity();
+
+    PathComponent.set(fromLocation, toLocation, true);
+
+    PathLocationComponent.set(pathID, fromLocation, toLocation);
+    NameComponent.set(pathID, name);
+    SummaryComponent.set(pathID, summary);
+
+    return pathID;
   }
 }
