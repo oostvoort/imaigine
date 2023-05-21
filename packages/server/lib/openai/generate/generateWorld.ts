@@ -7,6 +7,7 @@ import {AIPath} from "./generatePath";
 export interface AIWorld {
     theme: string,
     races: Array<string>,
+    currency: string
     summary: string,
     name: string,
     locations: Array<AILocation>,

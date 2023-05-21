@@ -6,7 +6,6 @@ import {
     GenerateNonPlayerCharacterProps,
     GeneratePlayerCharacterProps
 } from 'types'
-import {JsonResponse} from "../types";
 import {getRandomValue} from "../utils";
 
 export interface AICharacter {
@@ -17,7 +16,8 @@ export interface AICharacter {
     physicalFeatures: CharacterPhysicalFeatures,
     items: Array<string>,
     initialMessage: string
-    closingMessage: string
+    closingMessage: string,
+    imgHash: string
 }
 
 export interface GeneratePlayerCharacterResponse {

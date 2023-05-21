@@ -21,6 +21,7 @@ describe('World Generation', function () {
     const world: AIWorld = {
         theme: "fantasy",
         races: ['elves', 'orcs', 'humans'],
+        currency: "gold",
         summary: "",
         name: "",
         locations: [],
@@ -50,6 +51,7 @@ describe('World Generation', function () {
             characters: [],
             summary: "",
             items: [],
+            imgHash: "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
 
         const jsonResponse = await generateLocation({
@@ -70,6 +72,7 @@ describe('World Generation', function () {
             characters: [],
             summary: "",
             items: [],
+            imgHash: "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
 
         const jsonResponse = await generateLocation({
@@ -110,8 +113,6 @@ describe('World Generation', function () {
     });
 
 
-
-
     it('should generate a player character in that location within the world', async function () {
         const character: AICharacter = {
             name: "Lyra",
@@ -142,6 +143,7 @@ describe('World Generation', function () {
             items: [],
             initialMessage: "",
             closingMessage: "",
+            imgHash: "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
         const _location = world.locations[0];
 
@@ -163,7 +165,8 @@ describe('World Generation', function () {
             summary: character.summary,
             stats: character.stats,
             initialMessage: character.initialMessage,
-            closingMessage: character.closingMessage
+            closingMessage: character.closingMessage,
+            imgHash: character.imgHash
         })
     });
 
@@ -196,7 +199,8 @@ describe('World Generation', function () {
             },
             items: [],
             closingMessage: "",
-            initialMessage: ""
+            initialMessage: "",
+            imgHash: "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
 
         const _location = world.locations[0];
@@ -217,7 +221,8 @@ describe('World Generation', function () {
             summary: character.summary,
             stats: character.stats,
             initialMessage: character.initialMessage,
-            closingMessage: character.closingMessage
+            closingMessage: character.closingMessage,
+            imgHash: character.imgHash
         })
     });
 

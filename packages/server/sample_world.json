@@ -5,15 +5,16 @@
     "orcs",
     "humans"
   ],
-  "summary": "Eldicashyn is an ancient world, filled with elves, orcs, and humans. Within the world lies 7 continents, each with its own culture and wonders. Technology varies; some areas retain only primitive customs, while some practice an aetherpunk approach. The main form of currency in the world is gold, making the flow of goods and services much easier. Two moons backlight the night sky, and an ancient war has been waged for eons between the Demon King and the Church. It is a world of beauty and secrets, constantly changing and curling in on itself. Eldicashyn is a world of boundless possibility and endless adventure.",
-  "name": "Eldicashyn",
+  "currency": "gold",
+  "summary": "Welcome to Baglith, a world of co-existence, where elves, orcs and humans traverse seven continents to enact wars and trade goods. This land holds primitive to aetherpunk technology, showcasing feats no one could ever imagine. The currency, a widely distributed gold, circulates throughout the population. All during the night, spectators gaze in awe as two moons light up the dark skies, a familiar sight known to any native. Although a land of peace on the surface, there is an ongoing war between the demon king and the church. Baglith is a world where adventure awaits anyone brave enough to explore it!",
+  "name": "Baglith",
   "locations": [
     {
-      "name": "Glassport",
+      "name": "Station Aurora",
       "characters": [
         {
-          "name": "Borick Runsul",
-          "summary": "Borick is a burly human male living in the city of Glassport. At a statuesque height, with bald, wavy red hair and upturned red eyes, he espouses a courageous and imposing presence. Despite his Herculean strength, Borick is clumsy and awkward with a foolish and ignorant demeanor. His favorite color is red, idealistic in his desires to explore a world of boundless possibility and endless adventure.",
+          "name": "Rurik Redstone",
+          "summary": "Rurik Redstone is an adult human male hailing from Station Aurora. His burly body type combined with his statuesque figure makes his presence known as soon as he enters a room. With bright red wavy hair, upturned red eyes, and a fondness for the color red, Rurik adds a splash of vibrancy to any space. Though not gifted with an Herculean strength, a Clumsy dexterity, a Frail constitution, an Ignorant intelligence, a Foolish charisma, or an Awkward wisdom, his friendly demeanor makes him a pleasant companion.",
           "stats": {
             "strength": "Herculean",
             "dexterity": "Clumsy",
@@ -22,79 +23,44 @@
             "charisma": "Foolish",
             "wisdom": "Awkward"
           },
-          "initialMessage": "Pleased to make your acquaintance!",
-          "closingMessage": "Farewell, friend!"
+          "initialMessage": "Greetings friend! It's a pleasure to meet you.",
+          "closingMessage": "Fare thee well! May our paths cross again.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         },
         {
-          "name": "Joramy",
-          "summary": "Joramy is a nonbinary orc from the ancient world of Eldicashyn. They have long, curly green hair, almond-shaped brown eyes, and a medium stature. Despite their awkward charisma, Joramy is incredibly intelligent and possesses righteous strength and indomitable constitution. Joramy grew up in Glassport, a Metropolis-level city known for its aetherpunk-style technology, and is known for their adventurous spirit and love of the vibrant Eldicashyn night sky.Their favorite color is yellow.",
+          "name": "Ezekiel White",
+          "summary": "Ezekiel White is a short Adult male human with Herculean strength, Clumsy dexterity, Healthy constitution, Brilliant intelligence, Charismatic charisma and a Foolish wisdom. He has Medium Curly Black hair, Red monolid eyes and his favorite color is White. Ezekiel is a native of Baglith and has adapted to the dangerous area of Station Aurora in search of adventure and an experience unlike any other in the world.",
           "stats": {
-            "strength": "Powerful",
-            "dexterity": "Nimble",
-            "constitution": "Indomitable",
-            "intelligence": "Genius",
-            "charisma": "Awkward",
-            "wisdom": "Discerning"
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Healthy",
+            "intelligence": "Brilliant",
+            "charisma": "Charismatic",
+            "wisdom": "Foolish"
           },
-          "initialMessage": "Hello, my name is Joramy. It's nice to meet you!",
-          "closingMessage": "It was wonderful talking with you. Goodbye!"
+          "initialMessage": "Greetings! What can I do for you today?",
+          "closingMessage": "Farewell! It was a pleasure speaking to you.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
       ],
-      "summary": "Nestled atop a tropical coral reef in Eldicashyn, Glassport is a Metropolis-level city with an unsave safety rating. It is known to be one of the oldest cities in the world, with its history dating back to the days of the Demon War, and is made up of a diverse population of humans, elves, and orcs. Despite its dangerous reputation, Glassport has its fair share of lower-middle-class citizens, and the city is often regarded for its aetherpunk-style technology. A vibrant night sky is illuminated by the two moons, and a crystal-clear sea can be seen all around the cityscape, providing an endless backdrop of beauty, mystery, and adventure.",
-      "items": []
+      "summary": "Station Aurora is a large, wealthy and highly secure location set in the arctic reaches of the world of Baglith. This region has long been an area of contention between the denizens of Baglith, with struggles ranging from wars between elves and orcs to battles against the demon king and the Church. Though once a place of danger, Station Aurora is now seen as a safe haven for adventurers, merchants and travelers alike. Here, modern technology sits side-by-side with traditional aetherpunk contraptions, along with the best that both civilizations have to offer. Those brave enough to venture here will find an experience unlike any other in the world, as two moons grace the far-north sky and the region is bathed in a natural, yet breathtaking aurora.",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
     },
     {
-      "name": "The Ash Woods",
+      "name": "Gardens of Ashen",
       "characters": [],
-      "summary": "The Ash Woods are a temperate forest settlement located far to the north of Eldicashyn, spread out amongst a vast expanse of forests and plains. This area is home to a large population, with a combination of Elves, Humans, and Orcs living together peacefully. It is well known for its very safe atmosphere, with a wealth level that sits in the upper-middle class of other settlements. The Ash Woods are steeped in a long history that stretches far back into the dawn of time, where it was once a thriving cultural and trading hub that held a deep reverence and connection with nature and the idea of natural power and growth. Pray to the gods in the windy woods, and they will answer in the form of riches beyond your wildest dreams. The Ash Woods are a place of boundless possibility and endless adventure.",
-      "items": []
+      "summary": "Nestled in the prairies of Baglith is the ancient and mysterious site known as the Gardens of Ashen. It is known to be a place where people from different species, including elves, orcs and humans, have come together for centuries in a mission to bring peace and prosperity to the world. It is a large metropolis with a lower-middle class population. It is a little unsafe to wonder around late at night, since there are rumors of a demon king and the Church repeating wars within the area. Despite all of this, the Gardens of Ashen still remains a central hub for locals who come to buy goods and partake in the lively nightlife. During the night, the land is filled with the light of two moons as locals and visitors alike gaze in awe at the beautiful sight. It is a place where adventure awaits any brave enough to explore it!",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
     }
   ],
   "paths": [
     {
-      "name": "Lucky Path",
-      "summary": "The Lucky Path is an ideal way to connect the bustling city of Glassport with the tranquil expanse of The Ash Woods. Taking an estimated 3 days to travel, the Lucky Path is perfect for explorers longing for a bit of adventure. Starting at the top of the tropical coral reef, travelers will make their way along an uncertain and ever-changing route. The night skies will be brilliant as the two moons light up the way, while exotic wildlife and unexpected obstacles may present their own surprises. Winding through the jungle, mountain passes, and vast plains, the Lucky Path is sure to provide an unpredictable journey that builds to a grand finale. As day 3 comes to a close, travelers will find themselves at the edge of the majestic Ash Woods, ready to explore and uncover all of the secrets and treasures that lie within. Start your journey today with the Lucky Path!",
-      "fromLocation": {
-        "name": "Glassport",
-        "characters": [
-          {
-            "name": "Borick Runsul",
-            "summary": "Borick is a burly human male living in the city of Glassport. At a statuesque height, with bald, wavy red hair and upturned red eyes, he espouses a courageous and imposing presence. Despite his Herculean strength, Borick is clumsy and awkward with a foolish and ignorant demeanor. His favorite color is red, idealistic in his desires to explore a world of boundless possibility and endless adventure.",
-            "stats": {
-              "strength": "Herculean",
-              "dexterity": "Clumsy",
-              "constitution": "Frail",
-              "intelligence": "Ignorant",
-              "charisma": "Foolish",
-              "wisdom": "Awkward"
-            },
-            "initialMessage": "Pleased to make your acquaintance!",
-            "closingMessage": "Farewell, friend!"
-          },
-          {
-            "name": "Joramy",
-            "summary": "Joramy is a nonbinary orc from the ancient world of Eldicashyn. They have long, curly green hair, almond-shaped brown eyes, and a medium stature. Despite their awkward charisma, Joramy is incredibly intelligent and possesses righteous strength and indomitable constitution. Joramy grew up in Glassport, a Metropolis-level city known for its aetherpunk-style technology, and is known for their adventurous spirit and love of the vibrant Eldicashyn night sky.Their favorite color is yellow.",
-            "stats": {
-              "strength": "Powerful",
-              "dexterity": "Nimble",
-              "constitution": "Indomitable",
-              "intelligence": "Genius",
-              "charisma": "Awkward",
-              "wisdom": "Discerning"
-            },
-            "initialMessage": "Hello, my name is Joramy. It's nice to meet you!",
-            "closingMessage": "It was wonderful talking with you. Goodbye!"
-          }
-        ],
-        "summary": "Nestled atop a tropical coral reef in Eldicashyn, Glassport is a Metropolis-level city with an unsave safety rating. It is known to be one of the oldest cities in the world, with its history dating back to the days of the Demon War, and is made up of a diverse population of humans, elves, and orcs. Despite its dangerous reputation, Glassport has its fair share of lower-middle-class citizens, and the city is often regarded for its aetherpunk-style technology. A vibrant night sky is illuminated by the two moons, and a crystal-clear sea can be seen all around the cityscape, providing an endless backdrop of beauty, mystery, and adventure.",
-        "items": []
-      },
-      "toLocation": {
-        "name": "The Ash Woods",
-        "characters": [],
-        "summary": "The Ash Woods are a temperate forest settlement located far to the north of Eldicashyn, spread out amongst a vast expanse of forests and plains. This area is home to a large population, with a combination of Elves, Humans, and Orcs living together peacefully. It is well known for its very safe atmosphere, with a wealth level that sits in the upper-middle class of other settlements. The Ash Woods are steeped in a long history that stretches far back into the dawn of time, where it was once a thriving cultural and trading hub that held a deep reverence and connection with nature and the idea of natural power and growth. Pray to the gods in the windy woods, and they will answer in the form of riches beyond your wildest dreams. The Ash Woods are a place of boundless possibility and endless adventure.",
-        "items": []
-      }
+      "name": "Path of Stalwart Travelers",
+      "summary": "Begin your journey at Station Aurora, a wealthy and highly secure location set in the arctic reaches of Baglith. Here, you can experience a wonderland of modern technology and aetherpunk contraptions. Take in the spectacular sight of two moons gracing the far-north landscape and soaking the region with a natural, yet breathtaking aurora. Then embark on the Path of Stalwart Travelers, a well-trodden and logical connection between Station Aurora and the tranquil Gardens of Ashen. With each passing step, witness the change in natural scenery as it slowly shifts from a frigid arctic region to a colorful prairie. End your journey in the Gardens of Ashen, a bustling metropolis bathed in the light of two moons. This is a truly unforgettable experience that awaits any adventurer brave enough to explore it!",
+      "fromLocation": "Station Aurora",
+      "toLocation": "Gardens of Ashen"
     }
   ]
 }

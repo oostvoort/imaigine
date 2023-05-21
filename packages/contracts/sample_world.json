@@ -1,5 +1,4 @@
 {
-  "name": "Feneton",
   "theme": "fantasy",
   "races": [
     "elves",
@@ -7,37 +6,91 @@
     "humans"
   ],
   "currency": "gold",
-  "summary": "Feneton is an expansive fantasy world split into seven continents and home to all kinds of sentient beings, such as elves, orcs, and humans. It constantly binds together a unique mix of primitive and aetherpunk technology, with advanced technology modernized fundamentally from centuries-old tools. The distinctive currency of Feneton is gold, which is used and accepted by many people, merchants, and governments. Along with its human population, the world of Feneton also has two moons and an ongoing war between a ruthless demon king and the forces of the Church. Whatever the outcome of this conflict, the world of Feneton resides always in the balance, and continues forward.",
+  "summary": "Xelva is an ancient and mysterious fantasy world, populated by elves, orcs, and humans. It has two moons, one of which is often shrouded in mist and bathed in a kaleidoscope of soft and colorful light. Xelva’s technology varies from primitive magic to aetherpunk – a mix of modern and arcane technology. Its currency circulates around gold, and it has seven beautiful continents, each with its own culture and stories.But Xelva is a world at war; between the Demon King and The Church, battles rage daily. It is said that the church is blessed by a powerful angel, and that the Demon King is partnered with a powerful force of darkness. Whatever the truth may be, Xelva is a place full of adventure and mystery, ready to be explored. Visitors to Xelva can expect to discover ancient caves, enchanted jungles, and hidden tombs filled with treasure. They will see magnificent monuments soaring high into the sky, and perhaps even witness one of the legendary battles between the Demon King and The Church. Magical creatures dwell within dense forests, untold secrets await to be unraveled, and riches exist for those brave enough to seek them. Xelva awaits adventurers, ready to explore and discover its wonders. ",
+  "name": "Xelva",
   "locations": [
     {
-      "name": "Vexford",
-      "summary": "Vexford is a populous city nestled amidst a vast stretch of rugged tundra in the northernmost reaches of Feneton. It is known for its thriving mercantile industry and excellent trade routes, making it a magnet for travelers, traders, and intrepid adventurers. Established centuries ago, Vexford has grown to become the largest community in the area thanks to the hard work and determination of its people. Despite having many ancient buildings, most of the city has been modernized, with aether- powered machines working in cooperation with traditional tools. Even more impressive is the fact that Vexford is far safer than many cities its size would suggest, despite its lower-middle class wealth level. Gold is the preferred currency here, making it easy for travelers to find the goods and services they need without having to worry about the current war between the forces of the Church and the demon king. Vexford offers a colorful culture, a wide variety of inhabitants, and plenty of opportunities to explore, giving it the perfect balance of culture, adventure, and safety.",
+      "name": "The Wetland of Letharan",
       "characters": [
         {
-          "name": "Saina",
-          "summary": "Saina is an adult human female with an athletic frame and short wavy brown hair that she usually wears in a pixie cut. Her bright, almond-shaped green eyes are full of life and intelligence, and show a wisdom and charisma that belie her feeble physical strength. She now calls the bustling city of Vexford home, finding the trade routes and mercantile industry to be full of opportunity and promise. Despite her fragile frame, she maneuvers her way through the city with the nimbleness of an acrobat, frequently spotted amongst the throngs of people haggling and bartering for goods. Her favorite color is green, and is known to frequent areas with lively music and energetic celebrations. She's a brave soul, always ready for the next adventure, and curious to explore what each day brings in Feneton.",
+          "name": "Brix Tredrigon",
+          "summary": "Brix comes from The Wetland of Letharan, standing statuesque with a burly body and bold red hair. His upturned shaped red eyes give him an unmistakable air of intrigue, adding to his Herculean strength and awkward wisdom. However, his clumsy dexterity and foolish charm often land him in difficult situations. But with his ignorant intelligence, Brix finds ambitious ways to get out of tangles of trouble. His favorite color is red.",
           "stats": {
-            "strength": "Feeble",
-            "dexterity": "Nimble",
-            "constitution": "Sturdy",
-            "intelligence": "Brilliant",
-            "charisma": "Enlightened",
-            "wisdom": "Charismatic"
-          }
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Frail",
+            "intelligence": "Ignorant",
+            "charisma": "Foolish",
+            "wisdom": "Awkward"
+          },
+          "initialMessage": "Greetings and welcome! My name is Brix. How can I be of service?",
+          "closingMessage": "Farewell for now. Until we meet again!",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         },
         {
-          "name": "Fenien",
-          "summary": "Fenien is an adventurous young girl from Vexford, a bustling city in Northern Feneton. She is of average height, with a plump body type, long wavy yellow hair, and grey monolid eyes. She is strong, acrobatic, and resilient, but also a little clumsy and socially awkward. Despite her personal foibles, she has built a successful career as an intrepid trader and explorer who travels the area and makes a living through crafting and trading. Though she may not always make the best decisions, she is motivated by a deep sense of curiosity and a passionate connection to the spirit of Feneton. As a Child, she is driven to put of sense of danger and stability together in whatever she pursues, and sees the world of Feneton as a fantastical place full of possibility. And in everything she does, she celebrates her love for the color green.",
+          "name": "Athena Redimayer",
+          "summary": "Athena Redimayer is a young, resilient female human, residing in the city of Letharan. She is of the Lower Middle Class citizenship, in search of a prosperous life. Athena is Burly in build and has Long Wavy Red hair and Monolid shaped Blue eyes. Her favorite color is Grey. Powerful yet clumsy and rather awkward, Athena is nevertheless gifted with great intelligence and wisdom.",
           "stats": {
-            "strength": "Mighty",
-            "dexterity": "Acrobatic",
+            "strength": "Powerful",
+            "dexterity": "Clumsy",
             "constitution": "Resilient",
-            "intelligence": "Intelligent",
+            "intelligence": "Brilliant",
             "charisma": "Awkward",
+            "wisdom": "Wise"
+          },
+          "initialMessage": "Hello, it's a pleasure to meet you!",
+          "closingMessage": "Farewell for now!",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+        },
+        {
+          "name": "Rurik Redstone",
+          "summary": "Rurik Redstone is an adult human male hailing from Station Aurora. His burly body type combined with his statuesque figure makes his presence known as soon as he enters a room. With bright red wavy hair, upturned red eyes, and a fondness for the color red, Rurik adds a splash of vibrancy to any space. Though not gifted with an Herculean strength, a Clumsy dexterity, a Frail constitution, an Ignorant intelligence, a Foolish charisma, or an Awkward wisdom, his friendly demeanor makes him a pleasant companion.",
+          "stats": {
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Frail",
+            "intelligence": "Ignorant",
+            "charisma": "Foolish",
+            "wisdom": "Awkward"
+          },
+          "initialMessage": "Greetings friend! It's a pleasure to meet you.",
+          "closingMessage": "Fare thee well! May our paths cross again.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+        },
+        {
+          "name": "Ezekiel White",
+          "summary": "Ezekiel White is a short Adult male human with Herculean strength, Clumsy dexterity, Healthy constitution, Brilliant intelligence, Charismatic charisma and a Foolish wisdom. He has Medium Curly Black hair, Red monolid eyes and his favorite color is White. Ezekiel is a native of Baglith and has adapted to the dangerous area of Station Aurora in search of adventure and an experience unlike any other in the world.",
+          "stats": {
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Healthy",
+            "intelligence": "Brilliant",
+            "charisma": "Charismatic",
             "wisdom": "Foolish"
-          }
+          },
+          "initialMessage": "Greetings! What can I do for you today?",
+          "closingMessage": "Farewell! It was a pleasure speaking to you.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
-      ]
+      ],
+      "summary": "Nestled within the vast wetland biome of Xelva, the city of Letharan stands proud and unrivaled in its grandeur. Built according to ancient elvish designs and once the kingdom of the ethereal elves, Letharan was lost to the Demon King and his wicked followers during his rise to power. Today, the city is protected and maintained by The Church and its powerful angelic guardian. Its population numbers in the tens of thousands, and its safety is unparalleled in all of Xelva, allowing it to be a bustling hub of secret deals, magical wealth, and peaceful adventures. The Lower Middle Class citizenship have found solace in the fabled walls of Letharan, hoping to build a prosperous life with few rivals. Despite the cloud of war that looms over Xelva, Letharan remains a beacon of safety and a testament to Xelva's ancient secrets.",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    },
+    {
+      "name": "Winding Peaks",
+      "characters": [],
+      "summary": "Winding Peaks is an ancient mountain city located in the heart of Xelva's seven continents. Its origins remain unknown, but it is rumored to be a forgotten paradise of wealth and culture amidst the turmoil of the war between The Demon King and The Church. Today, this city is known for its immense security, safeguarding its population of medium size from harm's way. Although most of the inhabitants are humans, others, such as elves and orcs, are scattered throughout. What it truly is known for, though, are its pristine mountain peaks, often blanketed in mist and bathed in vibrant light. Many believe that there is a hidden force protecting the city, which is why its wealth is proverbial throughout the whole of Xelva. It's often said that those brave enough to undertake a journey to Winding Peaks will be presented with an abundance of sights, stories, and treasures. Unique and exotic wildlife also reside in the mountains, waiting to be discovered. For many, Winding Peaks remains a mysterious and wondrous testament to Xelva's many secrets.",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    }
+  ],
+  "paths": [
+    {
+      "name": "The Journey of the Sandpiper",
+      "summary": "The Journey of the Sandpiper connects two of Xelva's holiest locations: Letharan in the Wetland of Letharan, and Winding Peaks in the heart of Xelva's seven continents. This path was first taken by the mysterious and heroic sandpiper, an small-winged elven that sought to make peace between The Church and The Demon King during their ancient war. The journey, which starts in the beautiful wetlands of Letharan, takes the traveler through historic trails, beautiful meadows, and blooming orchards, with the promise of wealth and prosperity in the distance. Those brave enough to tackle this path will be able to witness the hidden beauty of Xelva, with its ever-tall trees, lush mountains, and majestic riverbanks. The clear, blue sky overhead will provide a sense of freedom and contentment as the journey leads to Winding Peaks, an ancient city with a rich cultural heritage and countless secrets to be discovered. This path, while long and arduous, offers a unique and profound experience for the traveler. Embark on The Journey of the Sandpiper, and experience the beauty of Xelva's wilderness and its many wonders in full force.",
+      "fromLocation": "The Wetland of Letharan",
+      "toLocation": "Winding Peaks"
     }
   ]
 }

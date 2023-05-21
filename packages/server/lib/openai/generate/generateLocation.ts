@@ -11,9 +11,11 @@ export interface AILocation {
         summary: string
         stats: CharacterStats,
         initialMessage: string
-        closingMessage: string
+        closingMessage: string,
+        imgHash: string
     }>,
     items: Array<string>,
+    imgHash: string
 }
 
 export interface GenerateLocationProps {
