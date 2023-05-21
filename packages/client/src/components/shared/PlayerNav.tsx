@@ -22,7 +22,7 @@ function IconItem({ icon, label, ...others }: IconItemProps) {
 export default function PlayerNav() {
 
   return (
-    <nav className='w-[107px] bg-black flex flex-col p-3 gap-5 overflow-visible z-10'>
+    <nav className='w-[107px] bg-player-nav flex flex-col p-3 gap-5 overflow-visible z-10'>
       <IconItem icon={avatarImage} className='mb-12' />
       <IconItem label='Stats' />
       <IconItem label='Inventory' />

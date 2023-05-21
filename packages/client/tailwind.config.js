@@ -7,7 +7,9 @@ export default {
   ],
   theme: {
     backgroundImage: {
-      'welcome-image': "url('./assets/RPG_40_square_masterpiece_best_quality_ultradetailed_illustrat_0.jpg')"
+      'welcome-image': "url('./assets/RPG_40_square_masterpiece_best_quality_ultradetailed_illustrat_0.jpg')",
+      'action-section': "url('./assets/bg_actions.png')",
+      'player-nav': "url('./assets/bg_nav.png')",
     },
     container: {
       center: true,
@@ -30,6 +32,14 @@ export default {
         'option-5': "hsl(var(--option-5))",
         'option-6': "hsl(var(--option-6))",
         night: "hsl(var(--night))",
+        'conversation-receiver': {
+          DEFAULT: "hsl(var(--conversation-receiver))",
+          foreground: "hsl(var(--conversation-receiver-foreground))"
+        },
+        'conversation-sender': {
+          DEFAULT: "hsl(var(--conversation-sender))",
+          foreground: "hsl(var(--conversation-sender-foreground))"
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
