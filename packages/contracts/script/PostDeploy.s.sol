@@ -59,7 +59,7 @@ contract PostDeploy is Script {
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].imgHash"))),
-      locationID
+      locationID_0
     );
 
     // NPC's
@@ -68,14 +68,14 @@ contract PostDeploy is Script {
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash"))),
-      locationID
+      locationID_0
     );
 
     world.createCharacter(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash"))),
-      locationID
+      locationID_0
     );
 
     vm.stopBroadcast();
