@@ -68,7 +68,6 @@ export async function generatePlayerCharacter({
     Give the character a unique name based on all the information.
     
     Respond only in JSON with the following format:
-    
     {
         "name": "the name of the character",
         "summary": "the generated description",

@@ -13,6 +13,7 @@ import {AILocation, generateLocation} from "./generate/generateLocation";
 import {AIWorld, generateWorld} from "./generate/generateWorld";
 import fs from 'fs-extra'
 import {getRandomValue} from "./utils";
+import {AIPath, generatePath} from "./generate/generatePath";
 
 describe('World Generation', function () {
     this.timeout(0)
@@ -23,6 +24,7 @@ describe('World Generation', function () {
         summary: "",
         name: "",
         locations: [],
+        paths: []
     }
 
     it('should generate a world', async function () {
@@ -62,32 +64,80 @@ describe('World Generation', function () {
         console.log(world)
     });
 
+    it('should generate another location within the world', async function () {
+        const location: AILocation = {
+            name: "",
+            characters: [],
+            summary: "",
+            items: [],
+        }
+
+        const jsonResponse = await generateLocation({
+            world: {name: world.name, summary: world.summary},
+        })
+
+        location.name = jsonResponse.name
+        location.summary = jsonResponse.summary
+
+        world.locations.push(location)
+
+        console.log(world)
+    });
+
+
+    it('it should create a path between those two locations', async function () {
+        const _location0 = world.locations[0]
+        const _location1 = world.locations[1]
+
+        const path: AIPath = {
+            name: "",
+            summary: ""
+        }
+
+        const jsonResponse = await generatePath({
+            fromLocation: _location0,
+            toLocation: _location1
+        })
+
+        path.name = jsonResponse.name
+        path.summary = jsonResponse.summary
+        path.fromLocation = _location0.name
+        path.toLocation = _location1.name
+
+        world.paths.push(path)
+
+        console.log(world)
+    });
+
+
+
+
     it('should generate a player character in that location within the world', async function () {
         const character: AICharacter = {
             name: "Lyra",
             summary: "",
             stats: {
-                strength: "Feeble",
-                dexterity: "Nimble",
-                constitution: "Sturdy",
-                intelligence: "Brilliant",
-                charisma: "Enlightened",
-                wisdom: "Charismatic",
+                strength: "Herculean",
+                dexterity: "Clumsy",
+                constitution: "Frail",
+                intelligence: "Ignorant",
+                charisma: "Foolish",
+                wisdom: "Awkward",
             },
             story: {
-                favColor: "Green"
+                favColor: "Red"
             },
             physicalFeatures: {
                 ageGroup: "Adult",
-                genderIdentity: "Female",
+                genderIdentity: "Male",
                 race: "Human",
-                bodyType: "Athletic",
-                height: "Short",
-                hairLength: "PixieCut",
+                bodyType: "Burly",
+                height: "Statuesque",
+                hairLength: "Bald",
                 hairType: "Wavy",
-                hairColor: "Brown",
-                eyeShape: "Almond",
-                eyeColor: "Green",
+                hairColor: "Red",
+                eyeShape: "Upturned",
+                eyeColor: "Red",
             },
             items: [],
             initialMessage: "",

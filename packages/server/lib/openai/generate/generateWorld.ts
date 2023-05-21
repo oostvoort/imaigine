@@ -2,6 +2,7 @@ import {executePrompt} from "../executePrompt";
 import {AILocation} from "./generateLocation";
 import {JsonResponse} from "../types";
 import { GenerateWorldProps } from "types";
+import {AIPath} from "./generatePath";
 
 export interface AIWorld {
     theme: string,
@@ -9,6 +10,7 @@ export interface AIWorld {
     summary: string,
     name: string,
     locations: Array<AILocation>,
+    paths: Array<AIPath>
 }
 
 export async function generateWorld({currency, races, theme, extraDescriptions}: GenerateWorldProps): Promise<JsonResponse> {

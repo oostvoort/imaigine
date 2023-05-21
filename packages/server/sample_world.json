@@ -5,43 +5,96 @@
     "orcs",
     "humans"
   ],
-  "summary": "Rudem is a fantastical world populated by Elves, Orcs, and Humans. It has two moons in its night sky, adding to its enchanting nature. In terms of technology, Rudem is quite advanced. It has a combination of primitive and aetherpunk technology, allowing for some stunning feats. There have been whispers of a looming war between the Demon King and the Church, and the citizens of this peaceful planet are weary. Rudem’s seven continents form an exquisite landscape, which is deeply rooted in the identities of the races. Gold is the currency used within the realm, often used as a sign of wealth and power.",
-  "name": "Rudem",
+  "summary": "Eldicashyn is an ancient world, filled with elves, orcs, and humans. Within the world lies 7 continents, each with its own culture and wonders. Technology varies; some areas retain only primitive customs, while some practice an aetherpunk approach. The main form of currency in the world is gold, making the flow of goods and services much easier. Two moons backlight the night sky, and an ancient war has been waged for eons between the Demon King and the Church. It is a world of beauty and secrets, constantly changing and curling in on itself. Eldicashyn is a world of boundless possibility and endless adventure.",
+  "name": "Eldicashyn",
   "locations": [
     {
-      "name": "Whitepeak",
+      "name": "Glassport",
       "characters": [
         {
-          "name": "Brielle",
-          "summary": "Brielle is a female human living in the beautiful city of Whitepeak within the realm of Rudem. Despite her small stature and feeble strength, she is nimble in body and brilliant in mind. Her charismatic and enlightened nature brings a warmth to the city and earns her respect among the citizens, and her almond-shaped green eyes complimented by her pixie-cut wavy brown hair makes her stand out in the crowd. Brielle relishes the mysticism of the two moons in the night sky, amidst the wealth of technology and intrigue of the potential war brewing. She loves the green landscape of the seven continents with a passion, and does her best to make sure people around her are content and safe.",
+          "name": "Borick Runsul",
+          "summary": "Borick is a burly human male living in the city of Glassport. At a statuesque height, with bald, wavy red hair and upturned red eyes, he espouses a courageous and imposing presence. Despite his Herculean strength, Borick is clumsy and awkward with a foolish and ignorant demeanor. His favorite color is red, idealistic in his desires to explore a world of boundless possibility and endless adventure.",
           "stats": {
-            "strength": "Feeble",
-            "dexterity": "Nimble",
-            "constitution": "Sturdy",
-            "intelligence": "Brilliant",
-            "charisma": "Enlightened",
-            "wisdom": "Charismatic"
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Frail",
+            "intelligence": "Ignorant",
+            "charisma": "Foolish",
+            "wisdom": "Awkward"
           },
-          "initialMessage": "Greetings! It's a pleasure to meet you.",
-          "closingMessage": "It's been a pleasure meeting you, take care and stay safe!"
+          "initialMessage": "Pleased to make your acquaintance!",
+          "closingMessage": "Farewell, friend!"
         },
         {
-          "name": "Lygreen Tencchi",
-          "summary": "Lygreen is an adult male human with an atlethic body type. He has bald wavy brown hair, hooded shaped green eyes, and his favorite color is green. Possessing powerful strength, nimble dexterity, indomitable constitution, genius intelligence, average charisma and insightful wisdom, he is a force to be reckoned with. He hails from Whitepeak, a majestic city located in the winding mountains of Rudem, that combines the wealth of the Orcs, Humans, and Elves. The two moons in the night sky have blessed the city with an enchanting atmosphere that captivates all who come to visit.",
+          "name": "Joramy",
+          "summary": "Joramy is a nonbinary orc from the ancient world of Eldicashyn. They have long, curly green hair, almond-shaped brown eyes, and a medium stature. Despite their awkward charisma, Joramy is incredibly intelligent and possesses righteous strength and indomitable constitution. Joramy grew up in Glassport, a Metropolis-level city known for its aetherpunk-style technology, and is known for their adventurous spirit and love of the vibrant Eldicashyn night sky.Their favorite color is yellow.",
           "stats": {
             "strength": "Powerful",
             "dexterity": "Nimble",
             "constitution": "Indomitable",
             "intelligence": "Genius",
-            "charisma": "Average",
-            "wisdom": "Insightful"
+            "charisma": "Awkward",
+            "wisdom": "Discerning"
           },
-          "initialMessage": "Greetings, I am Lygreen, it's a pleasure to meet you!",
-          "closingMessage": "Farewell, may our paths cross again!"
+          "initialMessage": "Hello, my name is Joramy. It's nice to meet you!",
+          "closingMessage": "It was wonderful talking with you. Goodbye!"
         }
       ],
-      "summary": "High in the winding mountains of Rudem lies the majestic city of Whitepeak. Situated among the peaks of the mountain range, this civilization has been standing strong ever since the dawn of Rudem's history. Within its walls, the people of Whitepeak are safe from the oncoming war that ravages other parts of the world. The metropolis contains the combined wealth of the Orcs, Humans, and Elves, and enjoys the love and reverence of its people. Within its walls, citizens can find the ever-advancing technology that has boomed in Rudem. Combining aetherpunk with more primitive solutions, the city is a hub of research and development. Gold is a common currency and symbol of wealth and power throughout Whitepeak, but the citizens are still some of the most content on the planet. Whitepeak is an enchanting location that stands out among the seven continents, and the two moons in the night sky only add to its mysticism.",
+      "summary": "Nestled atop a tropical coral reef in Eldicashyn, Glassport is a Metropolis-level city with an unsave safety rating. It is known to be one of the oldest cities in the world, with its history dating back to the days of the Demon War, and is made up of a diverse population of humans, elves, and orcs. Despite its dangerous reputation, Glassport has its fair share of lower-middle-class citizens, and the city is often regarded for its aetherpunk-style technology. A vibrant night sky is illuminated by the two moons, and a crystal-clear sea can be seen all around the cityscape, providing an endless backdrop of beauty, mystery, and adventure.",
       "items": []
+    },
+    {
+      "name": "The Ash Woods",
+      "characters": [],
+      "summary": "The Ash Woods are a temperate forest settlement located far to the north of Eldicashyn, spread out amongst a vast expanse of forests and plains. This area is home to a large population, with a combination of Elves, Humans, and Orcs living together peacefully. It is well known for its very safe atmosphere, with a wealth level that sits in the upper-middle class of other settlements. The Ash Woods are steeped in a long history that stretches far back into the dawn of time, where it was once a thriving cultural and trading hub that held a deep reverence and connection with nature and the idea of natural power and growth. Pray to the gods in the windy woods, and they will answer in the form of riches beyond your wildest dreams. The Ash Woods are a place of boundless possibility and endless adventure.",
+      "items": []
+    }
+  ],
+  "paths": [
+    {
+      "name": "Lucky Path",
+      "summary": "The Lucky Path is an ideal way to connect the bustling city of Glassport with the tranquil expanse of The Ash Woods. Taking an estimated 3 days to travel, the Lucky Path is perfect for explorers longing for a bit of adventure. Starting at the top of the tropical coral reef, travelers will make their way along an uncertain and ever-changing route. The night skies will be brilliant as the two moons light up the way, while exotic wildlife and unexpected obstacles may present their own surprises. Winding through the jungle, mountain passes, and vast plains, the Lucky Path is sure to provide an unpredictable journey that builds to a grand finale. As day 3 comes to a close, travelers will find themselves at the edge of the majestic Ash Woods, ready to explore and uncover all of the secrets and treasures that lie within. Start your journey today with the Lucky Path!",
+      "fromLocation": {
+        "name": "Glassport",
+        "characters": [
+          {
+            "name": "Borick Runsul",
+            "summary": "Borick is a burly human male living in the city of Glassport. At a statuesque height, with bald, wavy red hair and upturned red eyes, he espouses a courageous and imposing presence. Despite his Herculean strength, Borick is clumsy and awkward with a foolish and ignorant demeanor. His favorite color is red, idealistic in his desires to explore a world of boundless possibility and endless adventure.",
+            "stats": {
+              "strength": "Herculean",
+              "dexterity": "Clumsy",
+              "constitution": "Frail",
+              "intelligence": "Ignorant",
+              "charisma": "Foolish",
+              "wisdom": "Awkward"
+            },
+            "initialMessage": "Pleased to make your acquaintance!",
+            "closingMessage": "Farewell, friend!"
+          },
+          {
+            "name": "Joramy",
+            "summary": "Joramy is a nonbinary orc from the ancient world of Eldicashyn. They have long, curly green hair, almond-shaped brown eyes, and a medium stature. Despite their awkward charisma, Joramy is incredibly intelligent and possesses righteous strength and indomitable constitution. Joramy grew up in Glassport, a Metropolis-level city known for its aetherpunk-style technology, and is known for their adventurous spirit and love of the vibrant Eldicashyn night sky.Their favorite color is yellow.",
+            "stats": {
+              "strength": "Powerful",
+              "dexterity": "Nimble",
+              "constitution": "Indomitable",
+              "intelligence": "Genius",
+              "charisma": "Awkward",
+              "wisdom": "Discerning"
+            },
+            "initialMessage": "Hello, my name is Joramy. It's nice to meet you!",
+            "closingMessage": "It was wonderful talking with you. Goodbye!"
+          }
+        ],
+        "summary": "Nestled atop a tropical coral reef in Eldicashyn, Glassport is a Metropolis-level city with an unsave safety rating. It is known to be one of the oldest cities in the world, with its history dating back to the days of the Demon War, and is made up of a diverse population of humans, elves, and orcs. Despite its dangerous reputation, Glassport has its fair share of lower-middle-class citizens, and the city is often regarded for its aetherpunk-style technology. A vibrant night sky is illuminated by the two moons, and a crystal-clear sea can be seen all around the cityscape, providing an endless backdrop of beauty, mystery, and adventure.",
+        "items": []
+      },
+      "toLocation": {
+        "name": "The Ash Woods",
+        "characters": [],
+        "summary": "The Ash Woods are a temperate forest settlement located far to the north of Eldicashyn, spread out amongst a vast expanse of forests and plains. This area is home to a large population, with a combination of Elves, Humans, and Orcs living together peacefully. It is well known for its very safe atmosphere, with a wealth level that sits in the upper-middle class of other settlements. The Ash Woods are steeped in a long history that stretches far back into the dawn of time, where it was once a thriving cultural and trading hub that held a deep reverence and connection with nature and the idea of natural power and growth. Pray to the gods in the windy woods, and they will answer in the form of riches beyond your wildest dreams. The Ash Woods are a place of boundless possibility and endless adventure.",
+        "items": []
+      }
     }
   ]
 }
