@@ -26,19 +26,23 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
           {/* Conversation box */}
           <div className="flex-1">
             <ConversationLayout>
-              <ConversationLayout.SenderBubble
-                text="Hello, are you Silverio? I&apos;m in need of your services."
-              />
+              {/* NOTE: when inserting a new chat from anyone, new ones should be on top of position */}
               <ConversationLayout.ReceiverBubble
-                author="Silverio of Khazad-dûm"
-                text="I&apos;m Silverio, and I&apos;m the best blacksmith in this village. What can I do for you?"
+                text="I see. This sword has a history, then. I can fix it, but it won't be cheap. I'll need some rare materials and a few days to do it right."
+              />
+              <ConversationLayout.Notification
+                text="Milena channels her dark magic, casting a curse that drains 20 HP from Alicia."
               />
               <ConversationLayout.SenderBubble
                 text="My sword needs repairing. It&apos;s taken a beating in a recent battle, and I need it to be sharp and
                 strong again."
               />
               <ConversationLayout.ReceiverBubble
-                text="I see. This sword has a history, then. I can fix it, but it won't be cheap. I'll need some rare materials and a few days to do it right."
+                author="Silverio of Khazad-dûm"
+                text="I&apos;m Silverio, and I&apos;m the best blacksmith in this village. What can I do for you?"
+              />
+              <ConversationLayout.SenderBubble
+                text="Hello, are you Silverio? I&apos;m in need of your services."
               />
             </ConversationLayout>
           </div>
