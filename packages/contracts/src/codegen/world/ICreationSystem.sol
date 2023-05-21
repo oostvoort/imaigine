@@ -31,4 +31,11 @@ interface ICreationSystem {
   function createItem(string memory name, string memory description) external;
 
   function createLocation(string memory name, string memory summary, string memory imgHash) external returns (bytes32);
+
+  function createPath(
+    bytes32 fromLocation,
+    bytes32 toLocation,
+    string memory name,
+    string memory summary
+  ) external returns (bytes32);
 }

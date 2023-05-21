@@ -12,6 +12,8 @@ import {
   SummaryComponent,
   ImageComponent,
   LocationComponent,
+  PathComponent,
+  PathLocationComponent,
   RaceComponent,
   DescriptionComponent,
   TangibleComponent,
@@ -161,5 +163,31 @@ contract CreationSystem is System {
     ImageComponent.set(locationID, imgHash);
 
     return locationID;
+  }
+
+  function createPath(
+    bytes32 fromLocation,
+    bytes32 toLocation,
+    string memory name,
+    string memory summary
+  )
+  public
+  returns (bytes32)
+  {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(NameComponent.get(fromLocation)).length > 0, "fromLocation does not exist");
+    require(bytes(NameComponent.get(toLocation)).length > 0, "toLocation does not exist");
+
+    bytes32 pathID = getUniqueEntity();
+
+    PathComponent.set(fromLocation, toLocation, true);
+
+    PathLocationComponent.set(pathID, fromLocation, toLocation);
+    NameComponent.set(pathID, name);
+    SummaryComponent.set(pathID, summary);
+
+    return pathID;
   }
 }

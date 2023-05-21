@@ -39,6 +39,21 @@ export default mudConfig({
         CountComponent: "uint256",
         PlayerComponent: "bool",
         LocationComponent: "bytes32",
+        PathComponent: {
+            keySchema: {
+                location0: "bytes32",
+                location1: "bytes32",
+            },
+            schema: {
+                value: "bool"
+            }
+        },
+        PathLocationComponent: {
+            schema: {
+                location0: "bytes32",
+                location1: "bytes32",
+            }
+        },
         AttributeUintComponent: {
             keySchema: {
                 entityID: "bytes32",
