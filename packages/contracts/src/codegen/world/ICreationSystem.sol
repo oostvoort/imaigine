@@ -6,11 +6,36 @@ pragma solidity >=0.8.0;
 interface ICreationSystem {
   function createPlanet(string memory name, string memory theme, string memory description) external;
 
-  function createPlayer(string memory name, string memory description) external returns (bytes32);
+  function createStory(
+    string memory name,
+    string memory summary,
+    string memory theme,
+    string[] memory races,
+    string memory currency
+  ) external returns (bytes32);
 
-  function createCharacter(string memory name, string memory description) external returns (bytes32);
+  function createPlayer(
+    string memory name,
+    string memory summary,
+    string memory imgHash,
+    bytes32 locationID
+  ) external returns (bytes32);
+
+  function createCharacter(
+    string memory name,
+    string memory summary,
+    string memory imgHash,
+    bytes32 locationID
+  ) external returns (bytes32);
 
   function createItem(string memory name, string memory description) external;
 
-  function createLocation(string memory name, string memory description) external;
+  function createLocation(string memory name, string memory summary, string memory imgHash) external returns (bytes32);
+
+  function createPath(
+    bytes32 fromLocation,
+    bytes32 toLocation,
+    string memory name,
+    string memory summary
+  ) external returns (bytes32);
 }

@@ -5,8 +5,11 @@ pragma solidity >=0.8.0;
 
 import { ControllerComponent, ControllerComponentTableId } from "./tables/ControllerComponent.sol";
 import { PlanetComponent, PlanetComponentData, PlanetComponentTableId } from "./tables/PlanetComponent.sol";
+import { StoryComponent, StoryComponentData, StoryComponentTableId } from "./tables/StoryComponent.sol";
 import { NameComponent, NameComponentTableId } from "./tables/NameComponent.sol";
+import { SummaryComponent, SummaryComponentTableId } from "./tables/SummaryComponent.sol";
 import { DescriptionComponent, DescriptionComponentTableId } from "./tables/DescriptionComponent.sol";
+import { ImageComponent, ImageComponentTableId } from "./tables/ImageComponent.sol";
 import { PriceComponent, PriceComponentTableId } from "./tables/PriceComponent.sol";
 import { RaceComponent, RaceComponentTableId } from "./tables/RaceComponent.sol";
 import { CharacterComponent, CharacterComponentTableId } from "./tables/CharacterComponent.sol";
@@ -14,6 +17,8 @@ import { TangibleComponent, TangibleComponentTableId } from "./tables/TangibleCo
 import { CountComponent, CountComponentTableId } from "./tables/CountComponent.sol";
 import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponent.sol";
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
+import { PathComponent, PathComponentTableId } from "./tables/PathComponent.sol";
+import { PathLocationComponent, PathLocationComponentData, PathLocationComponentTableId } from "./tables/PathLocationComponent.sol";
 import { AttributeUintComponent, AttributeUintComponentTableId } from "./tables/AttributeUintComponent.sol";
 import { AttributeStringComponent, AttributeStringComponentTableId } from "./tables/AttributeStringComponent.sol";
 import { StoryActionComponent, StoryActionComponentTableId } from "./tables/StoryActionComponent.sol";

@@ -5,4 +5,6 @@ pragma solidity >=0.8.0;
 
 interface ITravelSystem {
   function selectPlayerLocation(bytes32 locationActionID) external;
+
+  function playerTravelPath(bytes32 pathID) external returns (bytes32);
 }

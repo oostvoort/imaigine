@@ -36,6 +36,23 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    StoryComponent: (() => {
+      const tableId = new TableId("", "StoryComponent");
+      return defineComponent(
+        world,
+        {
+          themeID: RecsType.String,
+          racesID: RecsType.String,
+          currencyID: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     NameComponent: (() => {
       const tableId = new TableId("", "NameComponent");
       return defineComponent(
@@ -51,8 +68,38 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    SummaryComponent: (() => {
+      const tableId = new TableId("", "SummaryComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     DescriptionComponent: (() => {
       const tableId = new TableId("", "DescriptionCompo");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    ImageComponent: (() => {
+      const tableId = new TableId("", "ImageComponent");
       return defineComponent(
         world,
         {
@@ -161,7 +208,38 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          at: RecsType.String,
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PathComponent: (() => {
+      const tableId = new TableId("", "PathComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PathLocationComponent: (() => {
+      const tableId = new TableId("", "PathLocationComp");
+      return defineComponent(
+        world,
+        {
+          location0: RecsType.String,
+          location1: RecsType.String,
         },
         {
           metadata: {
