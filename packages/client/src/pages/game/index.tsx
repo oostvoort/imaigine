@@ -79,13 +79,11 @@ export default function Game() {
     <>
       <GridStoryLayout>
         {/* Map / Visuals */}
-        <section className="flex flex-col z-10">
-          <img className="h-auto max-h-[600px] aspect-video inset-0 m-auto"
-               src="src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg"
-               alt="Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0"
-               draggable={false}
-          />
-        </section>
+        <section className={clsx([
+          "flex flex-col z-10",
+          "bg-[url('src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg')]",
+          "bg-cover bg-center bg-no-repeat aspect-auto"
+        ])} />
         {/* Game status */}
         <section className="flex flex-col p-10 gap-5">
           {
@@ -122,8 +120,30 @@ export default function Game() {
         {/* Narrative */}
         <section className="flex flex-col gap-3 p-10">
           <p className="font-bold tracking-wide font-jost text-accent">Narrative</p>
-          <div className=" h-[200px] overflow-y-scroll">
+          <div className=" h-min max-h-[200px] overflow-y-auto">
             <p className="leading-loose">Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
+              the
+              enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
+              locals
+              wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding streets,
+              inviting her to explore further. The tranquil river flowed gracefully, reflecting the golden rays of the
+              setting sun. Intrigued, Alice embraced the warmth of Lindwurm&apos;s welcoming atmosphere, her eyes
+              sparkling
+              with
+              anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a sense
+              of
+              belonging she had long yearned for. Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
+              the
+              enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
+              locals
+              wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding streets,
+              inviting her to explore further. The tranquil river flowed gracefully, reflecting the golden rays of the
+              setting sun. Intrigued, Alice embraced the warmth of Lindwurm&apos;s welcoming atmosphere, her eyes
+              sparkling
+              with
+              anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a sense
+              of
+              belonging she had long yearned for. Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
               the
               enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
               locals
