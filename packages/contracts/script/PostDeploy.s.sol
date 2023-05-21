@@ -30,10 +30,34 @@ contract PostDeploy is Script {
     string memory storyCurrency = vm.parseJsonString(json, ".currency");
     world.createStory(storyName, storySummary, storyTheme, storyRaces, storyCurrency);
 
+    // Locations
+
     world.createLocation(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].imgHash")))
+    );
+
+    // Player's
+
+    world.createPlayer(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].imgHash")))
+    );
+
+    // NPC's
+
+    world.createCharacter(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash")))
+    );
+
+    world.createCharacter(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash")))
     );
 
     vm.stopBroadcast();

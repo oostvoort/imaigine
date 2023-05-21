@@ -75,7 +75,8 @@ contract CreationSystem is System {
 
   function createPlayer(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash
   )
   public
   returns (bytes32)
@@ -87,37 +88,35 @@ contract CreationSystem is System {
 
     // validate input
     require(bytes(name).length > 0, "invalid name length");
-    require(bytes(description).length > 0, "invalid description length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
 
-    NameComponent.set(playerID, name);
-    DescriptionComponent.set(playerID, description);
     PlayerComponent.set(playerID, true);
+    NameComponent.set(playerID, name);
+    SummaryComponent.set(playerID, summary);
+    ImageComponent.set(playerID, imgHash);
 
     return playerID;
   }
 
-
   function createCharacter(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash
   )
   public
   returns (bytes32)
   {
-    bytes32 characterID = getUniqueEntity();
-
-    // does playerID already exist
-    require(
-      keccak256(abi.encodePacked(NameComponent.get(characterID))) == Constants.EMPTY_HASH,
-      "name already exist"
-    );
-
     // validate input
     require(bytes(name).length > 0, "invalid name length");
-    require(bytes(description).length > 0, "invalid description length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
+
+    bytes32 characterID = getUniqueEntity();
 
     NameComponent.set(characterID, name);
-    DescriptionComponent.set(characterID, description);
+    SummaryComponent.set(characterID, summary);
+    ImageComponent.set(characterID, imgHash);
 
     return characterID;
   }

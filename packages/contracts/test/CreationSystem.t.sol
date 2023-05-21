@@ -102,33 +102,40 @@ contract CreationSystemTest is MudV2Test {
 
   function testFuzz_CreatePlayer(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash
   ) public {
     vm.assume(bytes(name).length > 0);
-    vm.assume(bytes(description).length > 0);
+    vm.assume(bytes(summary).length > 0);
+    vm.assume(bytes(imgHash).length > 0);
 
-    bytes32 playerID = world.createPlayer(name, description);
+    bytes32 playerID = world.createPlayer(name, summary, imgHash);
 
     string memory playerName = NameComponent.get(world, playerID);
-    string memory playerDescription = DescriptionComponent.get(world, playerID);
+    string memory playerSummary = SummaryComponent.get(world, playerID);
+    string memory playerImgHash = ImageComponent.get(world, playerID);
 
     assertEq(name, playerName);
-    assertEq(description, playerDescription);
+    assertEq(summary, playerSummary);
+    assertEq(imgHash, playerImgHash);
   }
 
   function test_revert_CreatePlayerAlreadyExist() public {
-    bytes32 playerID = world.createPlayer("name", "race");
+    bytes32 playerID = world.createPlayer("name", "race", "0xabc");
 
     vm.expectRevert(abi.encodePacked("player already exist"));
-    world.createPlayer("name", "race");
+    world.createPlayer("name", "race", "0xabc");
   }
 
   function test_revert_CreatePlayer() public {
     vm.expectRevert(abi.encodePacked("invalid name length"));
-    world.createPlayer("", "race");
+    world.createPlayer("", "race", "0xabc");
 
-    vm.expectRevert(abi.encodePacked("invalid description length"));
-    world.createPlayer("name", "");
+    vm.expectRevert(abi.encodePacked("invalid summary length"));
+    world.createPlayer("name", "", "0xabc");
+
+    vm.expectRevert(abi.encodePacked("invalid imgHash length"));
+    world.createPlayer("name", "race", "");
   }
 
   function testFuzz_CreateLocation(

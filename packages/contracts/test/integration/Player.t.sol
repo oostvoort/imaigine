@@ -8,6 +8,8 @@ import { IWorld } from "../../src/codegen/world/IWorld.sol";
 import {
   PlanetComponent,
   NameComponent,
+  SummaryComponent,
+  ImageComponent,
   DescriptionComponent,
   RaceComponent,
   AttributeUintComponent
@@ -54,14 +56,17 @@ contract PlayerTest is MudV2Test {
 
     // Player name, description
     string memory name = vm.parseJsonString(json, ".locations.[0].characters.[0].name");
-    string memory description = vm.parseJsonString(json, ".locations.[0].characters.[0].description");
+    string memory summary = vm.parseJsonString(json, ".locations.[0].characters.[0].summary");
+    string memory imgHash = vm.parseJsonString(json, ".locations.[0].characters.[0].imgHash");
 
-    bytes32 playerID = world.createPlayer(name, description);
+    bytes32 playerID = world.createPlayer(name, summary, imgHash);
 
     string memory playerName = NameComponent.get(world, playerID);
-    string memory playerDescription = DescriptionComponent.get(world, playerID);
+    string memory playerSummary = SummaryComponent.get(world, playerID);
+    string memory playerImgHash = ImageComponent.get(world, playerID);
 
     assertEq(name, playerName);
-    assertEq(description, playerDescription);
+    assertEq(summary, playerSummary);
+    assertEq(imgHash, playerImgHash);
   }
 }

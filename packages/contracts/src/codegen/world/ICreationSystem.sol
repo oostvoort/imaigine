@@ -14,9 +14,9 @@ interface ICreationSystem {
     string memory currency
   ) external returns (bytes32);
 
-  function createPlayer(string memory name, string memory description) external returns (bytes32);
+  function createPlayer(string memory name, string memory summary, string memory imgHash) external returns (bytes32);
 
-  function createCharacter(string memory name, string memory description) external returns (bytes32);
+  function createCharacter(string memory name, string memory summary, string memory imgHash) external returns (bytes32);
 
   function createItem(string memory name, string memory description) external;
 

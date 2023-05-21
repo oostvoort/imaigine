@@ -6,7 +6,9 @@ import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
 
 import { IWorld } from "../src/codegen/world/IWorld.sol";
 import {
-  LocationComponent
+  LocationComponent,
+  SummaryComponent,
+  ImageComponent
 } from "../src/codegen/Tables.sol";
 
 import { Constants } from "../src/lib/Constants.sol";
@@ -25,7 +27,7 @@ contract StoryComponentTest is MudV2Test {
     vm.prank(DEPLOYER, DEPLOYER);
     world.grantAccess(0, 0, address(this));
 
-    playerID = world.createPlayer("Lyra", "human");
+    playerID = world.createPlayer("Lyra", "human", "0xabc");
   }
 
   function testWorldExists() public {
