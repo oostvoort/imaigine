@@ -1,5 +1,3 @@
-
-
 export interface GenerateStoryProps {
     theme: string,
     races: Array<string>,
@@ -7,7 +5,7 @@ export interface GenerateStoryProps {
     extraDescriptions?: Array<string>,
 }
 
-export interface  GenerateLocationProps{
+export interface GenerateLocationProps {
     story: { name: string, summary: string },
 }
 
@@ -62,7 +60,9 @@ export interface GeneratePlayerCharacterResponse {
     name: string,
     summary: string,
     initialMessage: string,
-    closingMessage: string
+    closingMessage: string,
+    visualSummary: string,
+    imageHash: string
 }
 
 export interface JsonResponse {
