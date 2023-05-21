@@ -106,9 +106,9 @@ export default function Game() {
                             if (idx == 1) setCharacterDialogOpen(true)
                           }} key={JSON.stringify({ item, index })} src={item.img} alt={JSON.stringify(item.img)}
                                className={clsx([
-                                 'w-[100px] rounded-full shadow-2xl cursor-pointer',
+                                 'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
                                  {
-                                   'rounded-xl w-[150px]': idx == 0,
+                                   'rounded-xl w-[150px] h-[120px]': idx == 0,
                                  },
                                ])}
                                draggable={false}
