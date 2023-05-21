@@ -23,45 +23,45 @@ contract PostDeploy is Script {
 
     string memory json = vm.readFile("sample_world.json");
 
-    // Player name, race
-    string memory name = vm.parseJsonString(json, ".locations.[0].characters.[0].name");
-    //    string memory race = vm.parseJsonString(json, ".locations.[0].characters.[0].race");
-    string memory race = "human";
+    string memory storyName = vm.parseJsonString(json, ".name");
+    string memory storySummary = vm.parseJsonString(json, ".summary");
+    string memory storyTheme = vm.parseJsonString(json, ".theme");
+    string[] memory storyRaces = vm.parseJsonStringArray(json, ".races");
+    string memory storyCurrency = vm.parseJsonString(json, ".currency");
+    world.createStory(storyName, storySummary, storyTheme, storyRaces, storyCurrency);
 
-    bytes32 playerID = world.createPlayer(name, race);
+    // Locations
 
-    // Attributes
-    string[] memory attrNames = new string[](6);
-    attrNames[0] = "strength";
-    attrNames[1] = "dexterity";
-    attrNames[2] = "constitution";
-    attrNames[3] = "intelligence";
-    attrNames[4] = "charisma";
-    attrNames[5] = "wisdom";
+    bytes32 locationID = world.createLocation(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].imgHash")))
+    );
 
-    uint256[] memory attrValues = new uint256[](6);
-    attrValues[0] = vm.parseJsonUint(json, ".locations.[0].characters.[0].stats.strength");
-    attrValues[1] = vm.parseJsonUint(json, ".locations.[0].characters.[0].stats.dexterity");
-    attrValues[2] = vm.parseJsonUint(json, ".locations.[0].characters.[0].stats.constitution");
-    attrValues[3] = vm.parseJsonUint(json, ".locations.[0].characters.[0].stats.intelligence");
-    attrValues[4] = vm.parseJsonUint(json, ".locations.[0].characters.[0].stats.charisma");
-    attrValues[5] = vm.parseJsonUint(json, ".locations.[0].characters.[0].stats.wisdom");
+    // Player's
 
-    world.setAttributesUint(playerID, attrNames, attrValues);
+    world.createPlayer(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].imgHash"))),
+      locationID
+    );
 
-    string memory location = vm.parseJsonString(json, ".locations.[0].name");
-    world.setLocation(playerID, location);
+    // NPC's
 
-    bytes32[] memory actionIDs = new bytes32[](2);
-    bytes[] memory actions = new bytes[](2);
+    world.createCharacter(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash"))),
+      locationID
+    );
 
-    actionIDs[0] = keccak256(abi.encode("options.locations.0"));
-    actions[0] = "Valley of Iron";
-
-    actionIDs[1] = keccak256(abi.encode("options.locations.1"));
-    actions[1] = "Central Town";
-
-    world.setPlayerStory(playerID, actionIDs, actions);
+    world.createCharacter(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash"))),
+      locationID
+    );
 
     vm.stopBroadcast();
   }

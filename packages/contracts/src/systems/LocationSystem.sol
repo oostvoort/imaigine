@@ -18,8 +18,8 @@ contract LocationSystem is System {
   )
   public
   {
-    string memory from = LocationComponent.get(entityID);
-    LocationComponent.set(entityID, location);
-    emit UpdatedLocation(entityID, from, location);
+    bytes32 from = LocationComponent.get(entityID);
+//    LocationComponent.set(entityID, location);
+//    emit UpdatedLocation(entityID, from, location);
   }
 }
