@@ -28,7 +28,7 @@ const buttonVariants = cva(
         xl: "h-16 px-12 rounded-lg text-lg",
       },
       isHighlighed: {
-        true: 'border border-accent',
+        true: 'outline outline-accent',
       },
     },
     defaultVariants: {

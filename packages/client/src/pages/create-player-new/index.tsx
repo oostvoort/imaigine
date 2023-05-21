@@ -1,7 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
 import { Button } from '../../components/base/button'
-import { Input } from '../../components/base/input'
 import { Card, CardContent } from '../../components/base/card'
 import imaigineIcon from '../../assets/img_imaigine_logo.svg'
 import useSessionState from '../../hooks/useSessionStorageState'
@@ -10,67 +9,81 @@ import { activePage_atom } from '../../atoms/globalAtoms'
 import { camelCaseToTitle } from '../../lib/utils'
 
 type UserInputType = {
-  name: string
-  ageGroup: string
-  genderIdentity: string
-  color: string
-  favColor: string
-  favFood: string
-  favAnimal: string
+  ageGroup: string,
+  genderIdentity: string,
+  color: string,
+  race: string,
   skinColor: string,
-  eyeShapeAndColor: string,
-  noseType: string,
-  hairTypeAndColor: string,
-  facialExpression: string,
-  otherFeatures: string
+  bodyType: string,
+  height: string,
+  hairLength: string,
+  hairType: string,
+  hairColor: string,
+  eyeShape: string,
+  eyeColor: string,
 }
 
-const setupOptions1 = [
+type SetupOptionType = Array<{
+  label: string,
+  store: keyof UserInputType,
+  options: Array<string>
+}>
+
+const setupOptions1: SetupOptionType = [
   {
     label: 'Select your Age Group',
-    options: ['child', 'adolescent', 'youngAdult', 'adult', 'elderly']
+    store: 'ageGroup',
+    options: [ 'child', 'adolescent', 'youngAdult', 'adult', 'elderly' ],
   },
   {
     label: 'Select your Gender Identity',
-    options: ['male', 'female', 'nonbinary', 'others']
+    store: 'genderIdentity',
+    options: [ 'male', 'female', 'nonbinary', 'others' ],
   },
 ]
 
-const setupOptions2 = [
+const setupOptions2: SetupOptionType = [
   {
     label: 'Select your Race',
-    options: ['human', 'elf', 'dwarf', 'orc', 'gnome', 'halfling']
+    store: 'race',
+    options: [ 'human', 'elf', 'dwarf', 'orc', 'gnome', 'halfling' ],
   },
   {
     label: 'Skin Color',
-    options: ['light', 'tan', 'medium', 'dark', 'ebony']
+    store: 'skinColor',
+    options: [ 'light', 'tan', 'medium', 'dark', 'ebony' ],
   },
   {
     label: 'Select your Body Type',
-    options: ['slim', 'average', 'athletic', 'burly', 'plump']
+    store: 'bodyType',
+    options: [ 'slim', 'average', 'athletic', 'burly', 'plump' ],
   },
   {
     label: 'Select your Height',
-    options: ['petite', 'short', 'average', 'tall', 'statesque']
-  }
+    store: 'height',
+    options: [ 'petite', 'short', 'average', 'tall', 'statesque' ],
+  },
 ]
 
-const setupOptions3 = [
+const setupOptions3: SetupOptionType = [
   {
     label: 'Select your Hair Length',
-    options: ['long', 'meduim', 'short', 'pixieCut', 'bald']
+    store: 'hairLength',
+    options: [ 'long', 'meduim', 'short', 'pixieCut', 'bald' ],
   },
   {
     label: 'Select your Hair Type',
-    options: ['straight', 'wavy', 'curly']
-  }
+    store: 'hairType',
+    options: [ 'straight', 'wavy', 'curly' ],
+  },
 ]
 
-const setupOptions4 = [
+const setupOptions4: SetupOptionType = [
   {
     label: 'Select your Eye Shape',
-    options: ['almond', 'round', 'hooded', 'upturned', 'monolid']
-  }
+    store: 'eyeShape',
+    options: [ 'almond', 'round', 'hooded', 'upturned', 'monolid' ],
+  },
 ]
 
 const colorPicks = [
@@ -90,19 +103,18 @@ export default function CreatePlayerNew() {
   const setActivePage = useSetAtom(activePage_atom)
 
   const [ userInputs, setUserInputs ] = useSessionState('creation-values', JSON.stringify({
-    name: '',
     ageGroup: '',
     genderIdentity: '',
     color: '',
-    favColor: '',
-    favFood: '',
-    favAnimal: '',
+    race: '',
     skinColor: '',
-    eyeShapeAndColor: '',
-    noseType: '',
-    hairTypeAndColor: '',
-    facialExpression: '',
-    otherFeatures: '',
+    bodyType: '',
+    height: '',
+    hairLength: '',
+    hairType: '',
+    hairColor: '',
+    eyeShape: '',
+    eyeColor: '',
   } as UserInputType))
 
   const userInputsJsonParsed: UserInputType = React.useMemo(() => {
@@ -143,7 +155,23 @@ export default function CreatePlayerNew() {
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
-                          item.options.map(option => <Button key={String(option)} variant="selective" size="lg">{ camelCaseToTitle(option) }</Button>)
+                          item.options.map(option => (
+                            <Button isHighlighed={userInputsJsonParsed[item.store] == option}
+                              key={String(option)}
+                              variant="selective"
+                              size="lg"
+                              onClick={() => {
+                                setUserInputs(prev => {
+                                  return JSON.stringify({
+                                    ...JSON.parse(prev),
+                                    [item.store]: option,
+                                  } as UserInputType)
+                                })
+                              }}
+                            >
+                              {camelCaseToTitle(option)}
+                            </Button>
+                          ))
                         }
                       </div>
                     </div>
@@ -183,7 +211,23 @@ export default function CreatePlayerNew() {
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
-                          item.options.map(option => <Button key={String(option)} variant="selective" size="lg">{ camelCaseToTitle(option) }</Button>)
+                          item.options.map(option => (
+                            <Button isHighlighed={userInputsJsonParsed[item.store] == option}
+                              key={String(option)}
+                              variant="selective"
+                              size="lg"
+                              onClick={() => {
+                              setUserInputs(prev => {
+                                return JSON.stringify({
+                                  ...JSON.parse(prev),
+                                  [item.store]: option,
+                                } as UserInputType)
+                              })
+                            }}
+                            >
+                              {camelCaseToTitle(option)}
+                            </Button>
+                          ))
                         }
                       </div>
                     </div>
@@ -206,7 +250,24 @@ export default function CreatePlayerNew() {
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
-                          item.options.map(option => <Button key={String(option)} variant="selective" size="lg">{ camelCaseToTitle(option) }</Button>)
+                          item.options.map(option => (
+                            <Button
+                              isHighlighed={userInputsJsonParsed[item.store] == option}
+                              key={String(option)}
+                              variant="selective"
+                              size="lg"
+                              onClick={() => {
+                                setUserInputs(prev => {
+                                  return JSON.stringify({
+                                    ...JSON.parse(prev),
+                                    [item.store]: option,
+                                  } as UserInputType)
+                                })
+                              }}
+                            >
+                              {camelCaseToTitle(option)}
+                            </Button>
+                          ))
                         }
                       </div>
                     </div>
@@ -246,7 +307,24 @@ export default function CreatePlayerNew() {
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
-                          item.options.map(option => <Button key={String(option)} variant="selective" size="lg">{ camelCaseToTitle(option) }</Button>)
+                          item.options.map(option => (
+                            <Button
+                              isHighlighed={userInputsJsonParsed[item.store] == option}
+                              key={String(option)}
+                              variant="selective"
+                              size="lg"
+                              onClick={() => {
+                                setUserInputs(prev => {
+                                  return JSON.stringify({
+                                    ...JSON.parse(prev),
+                                    [item.store]: option,
+                                  } as UserInputType)
+                                })
+                              }}
+                            >
+                              {camelCaseToTitle(option)}
+                            </Button>
+                          ))
                         }
                       </div>
                     </div>
@@ -279,7 +357,7 @@ export default function CreatePlayerNew() {
         if (step == 2) setStep(3)
         if (step == 3) setStep(4)
         if (step == 4) setActivePage('game')
-      }}>{ step == 4 ? 'Play' : 'Next'}</Button>
+      }}>{step == 4 ? 'Play' : 'Next'}</Button>
     </div>
   )
 }
