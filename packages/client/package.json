@@ -23,6 +23,7 @@
     "@latticexyz/utils": "2.0.0-alpha.1.149+024f6037",
     "@latticexyz/world": "2.0.0-alpha.1.149+024f6037",
     "@radix-ui/react-dialog": "^1.0.3",
+    "@radix-ui/react-progress": "^1.0.2",
     "@radix-ui/react-slot": "^1.0.1",
     "@tanstack/react-query": "^4.29.5",
     "@wagmi/chains": "^0.2.22",

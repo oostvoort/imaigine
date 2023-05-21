@@ -1,11 +1,10 @@
 import React from 'react'
 import GridStoryLayout from '../../components/templates/grid_story_layout'
 import { clsx } from 'clsx'
-import { Button } from '../../components/base/button'
+import { Button, Progress } from '../../components/base'
 import { motion } from 'framer-motion'
 import { useMUD } from '../../MUDContext'
 import CharacterConversationDialog from '../../components/shared/CharacterConversationDialog'
-
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -79,7 +78,7 @@ export default function Game() {
     <>
       <GridStoryLayout>
         {/* Map / Visuals */}
-        <div className='flex-[200px] flex justify-between'>
+        <div className="flex-[200px] flex justify-between">
           <section className={clsx([
             "basis-6/12 flex flex-col z-10",
             "bg-[url('src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg')]",
@@ -120,56 +119,54 @@ export default function Game() {
           </section>
         </div>
         {/* Narrative */}
-        <div className='flex-1 flex justify-between'>
+        <div className="flex-1 flex justify-between">
           <section className="basis-6/12 flex flex-col gap-3 p-10">
             <p className="font-bold tracking-wide font-jost text-accent">Narrative</p>
-            <div className=" h-min max-h-[200px] overflow-y-auto">
+            <div className="h-min max-h-[300px] overflow-y-auto">
               <p className="leading-loose">Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
                 the
                 enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
                 locals
-                wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding streets,
+                wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding
+                streets,
                 inviting her to explore further. The tranquil river flowed gracefully, reflecting the golden rays of the
                 setting sun. Intrigued, Alice embraced the warmth of Lindwurm&apos;s welcoming atmosphere, her eyes
                 sparkling
                 with
-                anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a sense
+                anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a
+                sense
                 of
-                belonging she had long yearned for. Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
-                the
-                enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
-                locals
-                wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding streets,
-                inviting her to explore further. The tranquil river flowed gracefully, reflecting the golden rays of the
-                setting sun. Intrigued, Alice embraced the warmth of Lindwurm&apos;s welcoming atmosphere, her eyes
-                sparkling
-                with
-                anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a sense
-                of
-                belonging she had long yearned for. Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
-                the
-                enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
-                locals
-                wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding streets,
-                inviting her to explore further. The tranquil river flowed gracefully, reflecting the golden rays of the
-                setting sun. Intrigued, Alice embraced the warmth of Lindwurm&apos;s welcoming atmosphere, her eyes
-                sparkling
-                with
-                anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a sense
-                of
-                belonging she had long yearned for.</p>
+                belonging she had long yearned for. </p>
             </div>
           </section>
           {/* Action container */}
           <section className={clsx([
-            "basis-6/12 flex flex-col justify-between gap-3",
-            "bg-action-section bg-cover bg-no-repeat",
-            "p-10"
+            'basis-6/12 flex flex-col justify-start gap-5',
+            'bg-action-section bg-cover bg-no-repeat',
+            'p-10 relative',
           ])}>
-            <p className="font-bold tracking-wide font-jost text-accent">Actions</p>
-            <Button size="xl" className="uppercase tracking-wider">Action A</Button>
-            <Button size="xl" className="uppercase tracking-wider">Action B</Button>
-            <Button size="xl" className="uppercase tracking-wider">Action C</Button>
+            <div className="flex flex-col justify-start gap-5 mx-auto" style={{ width: 'min(70ch, 100% - 3rem)' }}>
+              <Progress
+                value={10}
+                barColor="bg-red-700"
+                className={clsx([
+                  "bg-night border-2 border-red-700",
+                  "absolute -rotate-180 h-[90%] w-3 inset-0 ml-3 my-auto"
+                ])}
+              />
+              <Progress
+                value={30}
+                barColor="bg-blue-700"
+                className={clsx([
+                  "bg-night border-2 border-blue-700",
+                  "absolute right-2 -rotate-180 h-[90%] w-3 inset-0 my-auto ml-auto mr-3"
+                ])}
+              />
+              <p className="font-bold tracking-wide font-jost text-accent">Actions</p>
+              <Button size="xl" className="uppercase tracking-wider">Action A</Button>
+              <Button size="xl" className="uppercase tracking-wider">Action B</Button>
+              <Button size="xl" className="uppercase tracking-wider">Action C</Button>
+            </div>
           </section>
         </div>
       </GridStoryLayout>
