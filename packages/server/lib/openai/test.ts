@@ -10,7 +10,7 @@ import {
     wisdomLevels
 } from "./generate/generateCharacter";
 import {AILocation, generateLocation} from "./generate/generateLocation";
-import {AIWorld, generateWorld} from "./generate/generateWorld";
+import {AIStory, generateStory} from "./generate/generateStory";
 import fs from 'fs-extra'
 import {getRandomValue} from "./utils";
 import {AIPath, generatePath} from "./generate/generatePath";
@@ -18,7 +18,7 @@ import {AIPath, generatePath} from "./generate/generatePath";
 describe('World Generation', function () {
     this.timeout(0)
 
-    const world: AIWorld = {
+    const story: AIStory = {
         theme: "fantasy",
         races: ['elves', 'orcs', 'humans'],
         currency: "gold",
@@ -28,11 +28,11 @@ describe('World Generation', function () {
         paths: []
     }
 
-    it('should generate a world', async function () {
-        const jsonResponse = await generateWorld({
+    it('should generate a story', async function () {
+        const jsonResponse = await generateStory({
             currency: 'gold',
-            races: world.races,
-            theme: world.theme,
+            races: story.races,
+            theme: story.theme,
             extraDescriptions: [
                 'has 2 moons',
                 'has primitive to aetherpunk technology',
@@ -40,12 +40,12 @@ describe('World Generation', function () {
                 'has 7 continents'
             ]
         })
-        world.name = jsonResponse.name
-        world.summary = jsonResponse.summary
-        console.log(world)
+        story.name = jsonResponse.name
+        story.summary = jsonResponse.summary
+        console.log(story)
     });
 
-    it('should generate a location within the world', async function () {
+    it('should generate a location within the story', async function () {
         const location: AILocation = {
             name: "",
             characters: [],
@@ -55,18 +55,18 @@ describe('World Generation', function () {
         }
 
         const jsonResponse = await generateLocation({
-            world: {name: world.name, summary: world.summary},
+            story: {name: story.name, summary: story.summary},
         })
 
         location.name = jsonResponse.name
         location.summary = jsonResponse.summary
 
-        world.locations.push(location)
+        story.locations.push(location)
 
-        console.log(world)
+        console.log(story)
     });
 
-    it('should generate another location within the world', async function () {
+    it('should generate another location within the story', async function () {
         const location: AILocation = {
             name: "",
             characters: [],
@@ -76,21 +76,21 @@ describe('World Generation', function () {
         }
 
         const jsonResponse = await generateLocation({
-            world: {name: world.name, summary: world.summary},
+            story: {name: story.name, summary: story.summary},
         })
 
         location.name = jsonResponse.name
         location.summary = jsonResponse.summary
 
-        world.locations.push(location)
+        story.locations.push(location)
 
-        console.log(world)
+        console.log(story)
     });
 
 
     it('it should create a path between those two locations', async function () {
-        const _location0 = world.locations[0]
-        const _location1 = world.locations[1]
+        const _location0 = story.locations[0]
+        const _location1 = story.locations[1]
 
         const path: AIPath = {
             name: "",
@@ -107,13 +107,13 @@ describe('World Generation', function () {
         path.fromLocation = _location0.name
         path.toLocation = _location1.name
 
-        world.paths.push(path)
+        story.paths.push(path)
 
-        console.log(world)
+        console.log(story)
     });
 
 
-    it('should generate a player character in that location within the world', async function () {
+    it('should generate a player character in that location within the story', async function () {
         const character: AICharacter = {
             name: "Lyra",
             summary: "",
@@ -145,13 +145,13 @@ describe('World Generation', function () {
             closingMessage: "",
             imgHash: "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
-        const _location = world.locations[0];
+        const _location = story.locations[0];
 
         const jsonResponse = await generatePlayerCharacter({
-            stats: character.stats,
-            story: character.story,
+            characterStats: character.stats,
+            characterStory: character.story,
             physicalFeatures: character.physicalFeatures,
-            world: world,
+            story: story,
             location: _location
         })
 
@@ -170,7 +170,7 @@ describe('World Generation', function () {
         })
     });
 
-    it('should generate a non player character in that location within the world', async function () {
+    it('should generate a non player character in that location within the story', async function () {
         const character: AICharacter = {
             name: "Lyra",
             summary: "",
@@ -203,10 +203,10 @@ describe('World Generation', function () {
             imgHash: "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
 
-        const _location = world.locations[0];
+        const _location = story.locations[0];
 
         const jsonResponse = await generateNonPlayerCharacter({
-            world: world,
+            story: story,
             location: _location,
             stats: character.stats
         })
@@ -227,7 +227,7 @@ describe('World Generation', function () {
     });
 
     after(function () {
-        writeJsonObjectToFile(world)
+        writeJsonObjectToFile(story)
     });
 });
 

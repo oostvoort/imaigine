@@ -1,6 +1,5 @@
 import {executePrompt} from "../executePrompt";
-import {JsonResponse} from "../types";
-import {CharacterStats} from "types";
+import {CharacterStats, JsonResponse, GenerateLocationProps} from "types";
 import {getRandomValue} from "../utils";
 
 export interface AILocation {
@@ -18,20 +17,17 @@ export interface AILocation {
     imgHash: string
 }
 
-export interface GenerateLocationProps {
-    world: { name: string, summary: string },
-}
 
 const wealthLevels = ["Poor", "Lower Middle Class", "Middle Class", "Upper Middle Class", "Wealthy"];
 const populationSizes = ["Small", "Medium", "Large", "Very Large", "Metropolis"];
 const safetyLevels = ["Unsafe", "Moderately Safe", "Safe", "Very Safe", "Highly Secure"];
 const biomes = ["Tropical Rainforest", "Temperate Forest", "Taiga", "Desert", "Savanna", "Grassland", "Tundra", "Mediterranean", "Chaparral", "Wetland", "Coral Reef", "Mountain", "Prairie", "Arctic", "Mangrove", "Steppe", "Boreal Forest", "Shrubland", "Swamp", "Estuary", "Salt Marsh", "Cave", "Volcano", "Oasis", "Canyon", "Plateau"];
 
-export async function generateLocation({world,}: GenerateLocationProps): Promise<JsonResponse> {
+export async function generateLocation({story}: GenerateLocationProps): Promise<JsonResponse> {
     const prompt = `    
     Given the following world description:
-    "${world.summary}"
-    Generate a 3 paragraph description of a location in ${world.name}.
+    "${story.summary}"
+    Generate a 3 paragraph description of a location in ${story.name}.
     Describe it's history within the world.
 
     Give it a name.

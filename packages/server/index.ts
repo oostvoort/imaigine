@@ -1,10 +1,17 @@
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import express, {Request, Response} from 'express';
-import {CharacterStats, CharacterStory, GeneratePlayerCharacterProps, GenerateLocationProps, GenerateWorldProps} from 'types'
-import {generateWorld} from "./lib/openai/generate/generateWorld";
+import {
+    CharacterStats,
+    CharacterStory,
+    GeneratePlayerCharacterProps,
+    GenerateLocationProps,
+    GenerateStoryProps,
+    GenerateNonPlayerCharacterProps
+} from 'types'
+import {generateStory} from "./lib/openai/generate/generateStory";
 import {generateLocation} from "./lib/openai/generate/generateLocation";
-import {generatePlayerCharacter} from "./lib/openai/generate/generatePlayerCharacter";
+import {generateNonPlayerCharacter, generatePlayerCharacter} from "./lib/openai/generate/generateCharacter";
 
 dotenv.config();
 const app = express();
@@ -20,12 +27,12 @@ app.use(
 );
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!');
+    res.send('OK 👌');
 });
 
-app.post('/generateWorld', async (req: Request, res: Response) => {
-    const props: GenerateWorldProps = req.body
-    res.send(await generateWorld(props));
+app.post('/generateStory', async (req: Request, res: Response) => {
+    const props: GenerateStoryProps = req.body
+    res.send(await generateStory(props));
 });
 
 app.post('/generateLocation', async (req: Request, res: Response) => {
@@ -33,10 +40,16 @@ app.post('/generateLocation', async (req: Request, res: Response) => {
     res.send(await generateLocation(props));
 });
 
-app.post('/generateCharacter', async (req: Request, res: Response) => {
+app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {
     const props: GeneratePlayerCharacterProps = req.body
     res.send(await generatePlayerCharacter(props));
 });
+
+app.post('/generateNonPlayerCharacter', async (req: Request, res: Response) => {
+    const props: GenerateNonPlayerCharacterProps = req.body
+    res.send(await generateNonPlayerCharacter(props));
+});
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

@@ -4,7 +4,7 @@ import {
     CharacterStats,
     CharacterStory,
     GenerateNonPlayerCharacterProps,
-    GeneratePlayerCharacterProps
+    GeneratePlayerCharacterProps, GeneratePlayerCharacterResponse
 } from 'types'
 import {getRandomValue} from "../utils";
 
@@ -20,24 +20,17 @@ export interface AICharacter {
     imgHash: string
 }
 
-export interface GeneratePlayerCharacterResponse {
-    name: string,
-    summary: string,
-    initialMessage: string,
-    closingMessage: string
-}
-
 export async function generatePlayerCharacter({
                                                   location,
                                                   physicalFeatures,
-                                                  stats,
-                                                  story,
-                                                  world
+                                                  characterStats,
+                                                  characterStory,
+                                                  story
                                               }: GeneratePlayerCharacterProps): Promise<GeneratePlayerCharacterResponse> {
     const prompt = `
     Generate a character description based on the following:
     
-    The character lives in ${world.name} with the description "${world.summary}" 
+    The character lives in ${story.name} with the description "${story.summary}" 
     Don't include the world description in the character description.
     
     They start in a location named "${location.name}" with the description "${location.summary}"
@@ -45,12 +38,12 @@ export async function generatePlayerCharacter({
     Describe how the character is related to the location, like how they lived or came to that place.
     
     The character possesses the following stats:
-    Strength: ${stats.strength} 
-    Dexterity: ${stats.dexterity} 
-    Constitution: ${stats.constitution} 
-    Intelligence: ${stats.intelligence} 
-    Charisma: ${stats.charisma} 
-    Wisdom: ${stats.wisdom}
+    Strength: ${characterStats.strength} 
+    Dexterity: ${characterStats.dexterity} 
+    Constitution: ${characterStats.constitution} 
+    Intelligence: ${characterStats.intelligence} 
+    Charisma: ${characterStats.charisma} 
+    Wisdom: ${characterStats.wisdom}
     
     The character is a ${physicalFeatures.ageGroup}
     The character identifies as ${physicalFeatures.genderIdentity}
@@ -60,7 +53,7 @@ export async function generatePlayerCharacter({
     The character has ${physicalFeatures.hairLength} ${physicalFeatures.hairType} ${physicalFeatures.hairColor} hair
     The character has ${physicalFeatures.eyeShape} shaped ${physicalFeatures.eyeColor} eyes
     
-    The character's favorite color is ${story.favColor}
+    The character's favorite color is ${characterStory.favColor}
     
     Create an appropriate standard greeting message they will use when talking to others.
     Create an appropriate standard goodbye message they will use when talking to others.
@@ -100,13 +93,13 @@ export const intelligenceLevels = ["Ignorant", "Average", "Intelligent", "Brilli
 export const wisdomLevels = ["Foolish", "Discerning", "Wise", "Insightful", "Enlightened"];
 export const charismaLevels = ["Awkward", "Average", "Charismatic", "Charming", "Persuasive"];
 
-export async function generateNonPlayerCharacter({location, world, stats}: GenerateNonPlayerCharacterProps) {
+export async function generateNonPlayerCharacter({location, story, stats}: GenerateNonPlayerCharacterProps) {
     return await generatePlayerCharacter({
         location,
         physicalFeatures: {
             ageGroup: getRandomValue(ageGroup),
             genderIdentity: getRandomValue(genderIdentity),
-            race: getRandomValue(world.races),
+            race: getRandomValue(story.races),
             bodyType: getRandomValue(bodyType),
             height: getRandomValue(height),
             hairLength: getRandomValue(hairLength),
@@ -115,7 +108,7 @@ export async function generateNonPlayerCharacter({location, world, stats}: Gener
             eyeShape: getRandomValue(eyeShape),
             eyeColor: getRandomValue(eyeColor),
         },
-        stats:{
+        characterStats:{
             strength: stats.strength,
             dexterity: stats.dexterity,
             constitution: stats.constitution,
@@ -123,8 +116,8 @@ export async function generateNonPlayerCharacter({location, world, stats}: Gener
             charisma: stats.charisma,
             wisdom: stats.wisdom
         },
-        world,
-        story: {
+        story: story,
+        characterStory: {
             favColor: getRandomValue(favColor)
         }
     })
