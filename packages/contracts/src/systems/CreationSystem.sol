@@ -11,7 +11,8 @@ import {
   RaceComponent,
   DescriptionComponent,
   TangibleComponent,
-  PlayerComponent
+  PlayerComponent,
+  CharacterComponent
 } from "../codegen/Tables.sol";
 
 import { Constants } from "../lib/Constants.sol";
@@ -25,18 +26,9 @@ contract CreationSystem is System {
   public
   {
     // validate input
-    require(
-      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
-      "invalid name"
-    );
-    require(
-      keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH,
-      "invalid theme"
-    );
-    require(
-      keccak256(abi.encodePacked(description)) != Constants.EMPTY_HASH,
-      "invalid description"
-    );
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(theme).length > 0, "invalid theme length");
+    require(bytes(description).length > 0, "invalid description length");
 
     PlanetComponent.set(name, theme);
     DescriptionComponent.set(PlanetComponentTableId, description);
@@ -52,16 +44,11 @@ contract CreationSystem is System {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
     // does playerID already exist
-    require(
-      keccak256(abi.encodePacked(NameComponent.get(playerID))) == Constants.EMPTY_HASH,
-      "name already exist"
-    );
+    require(PlayerComponent.get(playerID) == false, "player already exist");
 
-    // validate name
-    require(
-      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
-      "invalid name"
-    );
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(description).length > 0, "invalid description length");
 
     NameComponent.set(playerID, name);
     DescriptionComponent.set(playerID, description);
@@ -86,11 +73,9 @@ contract CreationSystem is System {
       "name already exist"
     );
 
-    // validate name
-    require(
-      keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH,
-      "invalid name"
-    );
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(description).length > 0, "invalid description length");
 
     NameComponent.set(characterID, name);
     DescriptionComponent.set(characterID, description);
