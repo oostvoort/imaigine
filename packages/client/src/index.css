@@ -1,3 +1,110 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 206 24% 17%;
+    --foreground: 226 39% 81%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --card: 207 23% 23%;
+    --card-foreground: 226 39% 81%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 46 100% 39%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --accent-2: 209 28% 15%;
+    --accent-2-foreground: 0 0% 100%;
+
+    --accent-3: 108 100% 41%;
+    --accent-3-foreground: 0 0% 100%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --night: 200 11% 11%;
+
+    --option-1: 100 100% 37%;
+    --option-2: 38 100% 31%;
+    --option-3: 214 86% 52%;
+    --option-4: 0 0% 100%;
+    --option-5: 54 92% 41%;
+    --option-6: 227 22% 64%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border p-0 m-0;
+  }
+  body, #react-root {
+    @apply bg-background text-foreground min-h-[100vh];
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  #react-root {
+    @apply flex flex-col;
+  }
+}
+
+@font-face {
+  src: url("./fonts/Jost-VariableFont_wght.ttf");
+  font-family: Jost;
+}
+
+@font-face {
+  src: url("./fonts/Rancho-Regular.ttf");
+  font-family: Rancho;
+}

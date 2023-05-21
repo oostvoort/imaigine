@@ -35,8 +35,9 @@ contract PlayerTest is MudV2Test {
     string memory json = vm.readFile("sample_world.json");
     string memory name = vm.parseJsonString(json, ".name");
     string memory theme = vm.parseJsonString(json, ".theme");
+    string memory description = vm.parseJsonString(json, ".description");
 
-    world.createPlanet(name, theme);
+    world.createPlanet(name, theme, description);
   }
 
 //  function test_NewLocations() public {

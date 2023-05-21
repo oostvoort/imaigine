@@ -33,12 +33,13 @@ contract CreationSystemTest is MudV2Test {
 
   function testFuzz_CreatePlanet(
     string memory name,
-    string memory theme
+    string memory theme,
+    string memory description
   ) public {
     vm.assume(keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH);
     vm.assume(keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH);
 
-    world.createPlanet(name, theme);
+    world.createPlanet(name, theme, description);
 
     PlanetComponentData memory planet = PlanetComponent.get(world);
 
@@ -48,10 +49,13 @@ contract CreationSystemTest is MudV2Test {
 
   function test_revert_CreatePlanet() public {
     vm.expectRevert(abi.encodePacked("invalid name"));
-    world.createPlanet("", "theme");
+    world.createPlanet("", "theme", "description");
 
     vm.expectRevert(abi.encodePacked("invalid theme"));
-    world.createPlanet("name", "");
+    world.createPlanet("name", "", "description");
+
+    vm.expectRevert(abi.encodePacked("invalid description"));
+    world.createPlanet("name", "theme", "");
   }
 
   function testFuzz_CreatePlayer(
