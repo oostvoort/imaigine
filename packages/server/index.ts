@@ -46,7 +46,7 @@ app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {
 
     const player = await generatePlayerCharacter(props);
 
-    player.imageHash = await generatePlayerImage(player.visualSummary)
+    // player.imageHash = await generatePlayerImage(player.visualSummary)
 
     res.send(player);
 });

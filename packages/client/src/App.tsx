@@ -6,6 +6,7 @@ import { activePage_atom } from './atoms/globalAtoms'
 import CreatePlayerNew from './pages/create-player-new'
 import Game from './pages/game'
 import useGame from './hooks/useGame'
+import DEV from './pages/DEV'
 
 const queryClient = new QueryClient()
 
@@ -28,6 +29,9 @@ export const App = () => {
             }
             {
               activePage == 'game' && <Game />
+            }
+            {
+              activePage == 'dev' && <DEV />
             }
           </MainLayout>
         </QueryClientProvider>

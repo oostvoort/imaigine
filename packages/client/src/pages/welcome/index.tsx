@@ -17,21 +17,6 @@ export default function Welcome() {
   const setActivePage = useSetAtom(activePage_atom)
   const [ mudBurnerWallet, setMudBurnerWallet ] = useLocalStorageState('mud:burnerWallet', window?.localStorage?.getItem('mud:burnerWallet'))
 
-  const {
-    players,
-    characters,
-    locations,
-    story,
-  } = useGame()
-
-  const {
-    systemCalls: { createPlayer, createStory },
-  } = useMUD()
-
-  useEffect(() => {
-    console.log({ players, characters, locations, story })
-  }, [ players, characters, locations, story ])
-
   return (
     <div
       className={clsx([
