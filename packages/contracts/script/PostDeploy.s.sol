@@ -30,6 +30,12 @@ contract PostDeploy is Script {
     string memory storyCurrency = vm.parseJsonString(json, ".currency");
     world.createStory(storyName, storySummary, storyTheme, storyRaces, storyCurrency);
 
+    world.createLocation(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].imgHash")))
+    );
+
     vm.stopBroadcast();
   }
 }

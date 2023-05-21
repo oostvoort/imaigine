@@ -12,6 +12,7 @@ import {
   StoryComponentData,
   NameComponent,
   SummaryComponent,
+  ImageComponent,
   DescriptionComponent
 } from "../src/codegen/Tables.sol";
 
@@ -128,5 +129,34 @@ contract CreationSystemTest is MudV2Test {
 
     vm.expectRevert(abi.encodePacked("invalid description length"));
     world.createPlayer("name", "");
+  }
+
+  function testFuzz_CreateLocation(
+    string memory name,
+    string memory summary,
+    string memory imgHash
+  ) public {
+    vm.assume(bytes(name).length > 0);
+    vm.assume(bytes(summary).length > 0);
+    vm.assume(bytes(imgHash).length > 0);
+
+    bytes32 locationID = world.createLocation(name, summary, imgHash);
+
+    assertEq(NameComponent.get(world, locationID), name);
+    assertEq(SummaryComponent.get(world, locationID), summary);
+    assertEq(ImageComponent.get(world, locationID), imgHash);
+  }
+
+  function test_CreateLocation() public {
+    string memory name = "name";
+    string memory summary = "summary";
+    string memory imgHash = "imgHash";
+
+    vm.expectRevert(abi.encodePacked("invalid name length"));
+    world.createLocation("", summary, imgHash);
+    vm.expectRevert(abi.encodePacked("invalid summary length"));
+    world.createLocation(name, "", imgHash);
+    vm.expectRevert(abi.encodePacked("invalid imgHash length"));
+    world.createLocation(name, summary, "");
   }
 }

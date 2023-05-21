@@ -10,6 +10,7 @@ import {
   StoryComponent,
   NameComponent,
   SummaryComponent,
+  ImageComponent,
   RaceComponent,
   DescriptionComponent,
   TangibleComponent,
@@ -136,13 +137,23 @@ contract CreationSystem is System {
 
   function createLocation(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash
   )
   public
+  returns (bytes32)
   {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
+
     bytes32 locationID = getUniqueEntity();
 
     NameComponent.set(locationID, name);
-    DescriptionComponent.set(locationID, description);
+    SummaryComponent.set(locationID, summary);
+    ImageComponent.set(locationID, imgHash);
+
+    return locationID;
   }
 }

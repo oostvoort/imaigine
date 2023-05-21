@@ -31,6 +31,7 @@ export default mudConfig({
         NameComponent: "string",
         SummaryComponent: "string",
         DescriptionComponent: "string",
+        ImageComponent: "string",
         PriceComponent: "uint256",
         RaceComponent: "string",
         CharacterComponent: "bytes32",

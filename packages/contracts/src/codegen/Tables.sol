@@ -8,6 +8,7 @@ import { StoryComponent, StoryComponentData, StoryComponentTableId } from "./tab
 import { NameComponent, NameComponentTableId } from "./tables/NameComponent.sol";
 import { SummaryComponent, SummaryComponentTableId } from "./tables/SummaryComponent.sol";
 import { DescriptionComponent, DescriptionComponentTableId } from "./tables/DescriptionComponent.sol";
+import { ImageComponent, ImageComponentTableId } from "./tables/ImageComponent.sol";
 import { PriceComponent, PriceComponentTableId } from "./tables/PriceComponent.sol";
 import { RaceComponent, RaceComponentTableId } from "./tables/RaceComponent.sol";
 import { CharacterComponent, CharacterComponentTableId } from "./tables/CharacterComponent.sol";
