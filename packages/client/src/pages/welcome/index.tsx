@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import imaigineIcon from '../../assets/img_imaigine_logo.svg'
 import { Button } from '../../components/base/button'
 import { Dialog, DialogContent, DialogTrigger } from '../../components/base/dialog'
@@ -7,11 +7,30 @@ import { useSetAtom } from 'jotai'
 import { activePage_atom } from '../../atoms/globalAtoms'
 import { clsx } from 'clsx'
 import useLocalStorageState from '../../hooks/useLocalStorageState'
+import useGame from '../../hooks/useGame'
+import { Simulate } from 'react-dom/test-utils'
+import play = Simulate.play
+import { useMUD } from '../../MUDContext'
 
 export default function Welcome() {
-  const [isOpen, setIsOpen] = React.useState<boolean>(false)
+  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
   const setActivePage = useSetAtom(activePage_atom)
-  const [mudBurnerWallet, setMudBurnerWallet] = useLocalStorageState('mud:burnerWallet', window?.localStorage?.getItem('mud:burnerWallet'))
+  const [ mudBurnerWallet, setMudBurnerWallet ] = useLocalStorageState('mud:burnerWallet', window?.localStorage?.getItem('mud:burnerWallet'))
+
+  const {
+    players,
+    characters,
+    locations,
+    story,
+  } = useGame()
+
+  const {
+    systemCalls: { createPlayer, createStory },
+  } = useMUD()
+
+  useEffect(() => {
+    console.log({ players, characters, locations, story })
+  }, [ players, characters, locations, story ])
 
   return (
     <div

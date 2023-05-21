@@ -6,15 +6,15 @@
     "humans"
   ],
   "currency": "gold",
-  "summary": "Welcome to Baglith, a world of co-existence, where elves, orcs and humans traverse seven continents to enact wars and trade goods. This land holds primitive to aetherpunk technology, showcasing feats no one could ever imagine. The currency, a widely distributed gold, circulates throughout the population. All during the night, spectators gaze in awe as two moons light up the dark skies, a familiar sight known to any native. Although a land of peace on the surface, there is an ongoing war between the demon king and the church. Baglith is a world where adventure awaits anyone brave enough to explore it!",
-  "name": "Baglith",
+  "summary": "Crosswinds is a world filled with elves, orcs, and humans. It has two moons that cast pale silver light across the terrain, illuminating the seven continents and the many creatures that dwell there. Inhabitants of the world use gold as their currency and are exposed to technology ranging from primitive to aetherpunk. The ongoing war between the demon king and the church ravages the land of Crosswinds, creating a world of conflict and struggle. Whether it's an elf, an orc, or a human, all inhabitants of Crosswinds must work together in the hope of ensuring a brighter future for the world. ",
+  "name": "Crosswinds",
   "locations": [
     {
-      "name": "Station Aurora",
+      "name": "Frostreach",
       "characters": [
         {
-          "name": "Rurik Redstone",
-          "summary": "Rurik Redstone is an adult human male hailing from Station Aurora. His burly body type combined with his statuesque figure makes his presence known as soon as he enters a room. With bright red wavy hair, upturned red eyes, and a fondness for the color red, Rurik adds a splash of vibrancy to any space. Though not gifted with an Herculean strength, a Clumsy dexterity, a Frail constitution, an Ignorant intelligence, a Foolish charisma, or an Awkward wisdom, his friendly demeanor makes him a pleasant companion.",
+          "name": "Merthek Red-Eyes",
+          "summary": "Merthek Red-Eyes is an adult male human with a burly body type and a statuesque stature. He has bald wavy red hair and upturned orange eyes. His favorite color is red. He is strong yet clumsy, frail yet ignorant, foolish yet awkward. He hails from Frostreach, a sprawling metropolis nestled deep in the Arctic regions of Crosswinds. ",
           "stats": {
             "strength": "Herculean",
             "dexterity": "Clumsy",
@@ -23,44 +23,44 @@
             "charisma": "Foolish",
             "wisdom": "Awkward"
           },
-          "initialMessage": "Greetings friend! It's a pleasure to meet you.",
-          "closingMessage": "Fare thee well! May our paths cross again.",
+          "initialMessage": "Greetings, I'm Merthek Red-Eyes of Frostreach. What can I do for you?",
+          "closingMessage": "Farewell, I hope to see you again soon.",
           "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         },
         {
-          "name": "Ezekiel White",
-          "summary": "Ezekiel White is a short Adult male human with Herculean strength, Clumsy dexterity, Healthy constitution, Brilliant intelligence, Charismatic charisma and a Foolish wisdom. He has Medium Curly Black hair, Red monolid eyes and his favorite color is White. Ezekiel is a native of Baglith and has adapted to the dangerous area of Station Aurora in search of adventure and an experience unlike any other in the world.",
+          "name": "Grayonor",
+          "summary": "Grayonor is a female orc of average height with a herculean strength, agile dexterity, and a healthy constitution. With a round face, bald curly brown hair, and yellow eyes, Grayonor's alluring, charming personality is sure to leave an impression on anyone she meets. Her quick-witted, discerning mind ensures that Grayonor is able to quickly evaluate any situation in order to act accordingly. Born in Frostreach, a bustling metropolis located in the icy tundra of Crosswinds, Grayonor ultimately desires to create a brighter future for the world.",
           "stats": {
             "strength": "Herculean",
-            "dexterity": "Clumsy",
+            "dexterity": "Agile",
             "constitution": "Healthy",
-            "intelligence": "Brilliant",
-            "charisma": "Charismatic",
-            "wisdom": "Foolish"
+            "intelligence": "Average",
+            "charisma": "Charming",
+            "wisdom": "Discerning"
           },
-          "initialMessage": "Greetings! What can I do for you today?",
-          "closingMessage": "Farewell! It was a pleasure speaking to you.",
+          "initialMessage": "Greetings! I'm Grayonor, and it's a pleasure to meet you.",
+          "closingMessage": "Farewell for now! I will call upon you again soon.",
           "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
         }
       ],
-      "summary": "Station Aurora is a large, wealthy and highly secure location set in the arctic reaches of the world of Baglith. This region has long been an area of contention between the denizens of Baglith, with struggles ranging from wars between elves and orcs to battles against the demon king and the Church. Though once a place of danger, Station Aurora is now seen as a safe haven for adventurers, merchants and travelers alike. Here, modern technology sits side-by-side with traditional aetherpunk contraptions, along with the best that both civilizations have to offer. Those brave enough to venture here will find an experience unlike any other in the world, as two moons grace the far-north sky and the region is bathed in a natural, yet breathtaking aurora.",
+      "summary": "Frostreach is a sprawling metropolis located in the icy tundra of the north Arctic regions of Crosswinds. This grand city was founded centuries ago and has seen countless battles and upheavals over the years, as its borders shifted between the demon king and the church. Its people have since developed a prosperous economy, based on gold as currency and new advances in technology, and the city has become one of the wealthiest and safest places on the continent. Visitors are often astounded by the architecture of Frostreach, which features towers and spires of silver, white, and blue that often shimmer in the moonlight. Although the city has been heavily damaged and rebuilt over the years, it remains a testament to the power of human resilience and the desire for a better future.",
       "items": [],
       "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
     },
     {
-      "name": "Gardens of Ashen",
+      "name": "The Golden Bokoblin Oasis",
       "characters": [],
-      "summary": "Nestled in the prairies of Baglith is the ancient and mysterious site known as the Gardens of Ashen. It is known to be a place where people from different species, including elves, orcs and humans, have come together for centuries in a mission to bring peace and prosperity to the world. It is a large metropolis with a lower-middle class population. It is a little unsafe to wonder around late at night, since there are rumors of a demon king and the Church repeating wars within the area. Despite all of this, the Gardens of Ashen still remains a central hub for locals who come to buy goods and partake in the lively nightlife. During the night, the land is filled with the light of two moons as locals and visitors alike gaze in awe at the beautiful sight. It is a place where adventure awaits any brave enough to explore it!",
+      "summary": "The Golden Bokoblin Oasis, is located in the savanna biome of Crosswinds. This small oasis is home to a mix of elves, orcs, and humans who have been living in harmony for generations. Though the ongoing war between the demon king and the church ravages the lands, the inhabitants of the oasis have kept it moderately safe and protected from any external threat.The oasis is a highly sought-after destination for its plentiful resources and beautiful vistas. The village resides around the large lake which reflects the two silver moons in its placid waters. Here the inhabitants strive for peace, prosperity and the pursuit of interesting inventions and aetherpunk technology. Despite its middle class wealth, the oasis has seen a surge in population size as more and more individuals seek refuge from the war-torn lands.The Golden Bokoblin Oasis is a place for all races to come together in harmony, striving for a brighter future for Crosswinds.",
       "items": [],
       "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
     }
   ],
   "paths": [
     {
-      "name": "Path of Stalwart Travelers",
-      "summary": "Begin your journey at Station Aurora, a wealthy and highly secure location set in the arctic reaches of Baglith. Here, you can experience a wonderland of modern technology and aetherpunk contraptions. Take in the spectacular sight of two moons gracing the far-north landscape and soaking the region with a natural, yet breathtaking aurora. Then embark on the Path of Stalwart Travelers, a well-trodden and logical connection between Station Aurora and the tranquil Gardens of Ashen. With each passing step, witness the change in natural scenery as it slowly shifts from a frigid arctic region to a colorful prairie. End your journey in the Gardens of Ashen, a bustling metropolis bathed in the light of two moons. This is a truly unforgettable experience that awaits any adventurer brave enough to explore it!",
-      "fromLocation": "Station Aurora",
-      "toLocation": "Gardens of Ashen"
+      "name": "Path of Icy Winds and Burning Savanna",
+      "summary": "For those willing to embark on an adventure of a lifetime, the Path of Icy Winds and Burning Savanna allows travelers to journey between two of the most captivating regions of Crosswinds—Frostreach and the Golden Bokoblin Oasis. From Frostreach, travelers begin their journey through the icy tundra and the freezing winds that blow across the lands, taking them ever-closer to their destination. Soon, they reach the edges of the savanna biome, and encounter a drastic change in landscape from the rolling hills of snow to the arid warmth of the endless plains. The path slowly winds through the villages and outposts of the savanna until it eventually reaches the oasis. When travelers finally set foot in the oasis, with its placid lake, diverse populace, and impressive aetherpunk inventions, they’ll know that their courage and determination have brought them to a world unlike any other, and that their journey has come to an end.",
+      "fromLocation": "Frostreach",
+      "toLocation": "The Golden Bokoblin Oasis"
     }
   ]
 }

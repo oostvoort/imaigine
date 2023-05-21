@@ -9,50 +9,61 @@ export default function useGame() {
       PlayerComponent,
       LocationComponent,
       NameComponent,
-      DescriptionComponent,
+      SummaryComponent,
+      PathComponent,
+      PathLocationComponent,
+      StoryComponent
     },
-    network: { playerEntity },
+    network: { playerEntity, singletonEntity },
     systemCalls,
   } = useMUD()
 
-
-  // TODO: queries should be limited to player's current location
-
-  const locations = useEntityQuery([ Has(LocationComponent) ]).map((entity) => {
+  const story = useEntityQuery([Has(StoryComponent)]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
-    const description = getComponentValueStrict(DescriptionComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
     return {
       entity,
       name,
-      description,
+      summary,
+    }
+  })[0]
+
+  const locations = useEntityQuery([ Has(PathLocationComponent)]).map((entity) => {
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    return {
+      entity,
+      name,
+      summary,
     }
   })
 
   const characters = useEntityQuery([ Has(CharacterComponent) ]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
-    const description = getComponentValueStrict(DescriptionComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
     return {
       entity,
       name,
-      description,
+      summary,
     }
   })
 
-  const players = useEntityQuery([ Has(PlayerComponent), Has(CharacterComponent) ]).map((entity) => {
+  const players = useEntityQuery([ Has(PlayerComponent) ]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
-    const description = getComponentValueStrict(DescriptionComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
     return {
       entity,
       name,
-      description,
+      summary,
     }
   })
 
 
   return {
+    story,
     locations,
     characters,
-    players
+    players,
   }
 }
 

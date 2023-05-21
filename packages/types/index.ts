@@ -1,22 +1,19 @@
 
 
-export interface GenerateWorldProps {
+export interface GenerateStoryProps {
     theme: string,
     races: Array<string>,
     currency: string,
-    extraDescriptions: Array<string>,
+    extraDescriptions?: Array<string>,
 }
 
 export interface  GenerateLocationProps{
-    world: { name: string, summary: string },
-    biome: string,
-    naturalResources: string,
-    wealthLevel: string,
-    populationSize: string,
-    safetyLevel: string,
+    story: { name: string, summary: string },
 }
 
-
+export interface GenerateLocationProps {
+    story: { name: string, summary: string },
+}
 
 export interface CharacterStory {
     favColor: "Green" | "Brown" | "Blue" | "White" | "Yellow" | "Grey" | "Red" | string
@@ -48,15 +45,32 @@ export interface CharacterStats {
 
 
 export interface GeneratePlayerCharacterProps {
-    stats: CharacterStats,
-    story: CharacterStory,
+    characterStats: CharacterStats,
+    characterStory: CharacterStory,
     location: { name: string, summary: string },
-    world: { name: string, summary: string },
+    story: { name: string, summary: string },
     physicalFeatures: CharacterPhysicalFeatures,
 }
 
 export interface GenerateNonPlayerCharacterProps {
     stats: CharacterStats,
     location: { name: string, summary: string },
-    world: { name: string, summary: string, races: Array<string> },
+    story: { name: string, summary: string, races: Array<string> },
+}
+
+export interface GeneratePlayerCharacterResponse {
+    name: string,
+    summary: string,
+    initialMessage: string,
+    closingMessage: string
+}
+
+export interface JsonResponse {
+    name: string,
+    summary: string
+}
+
+export interface GeneratePathProps {
+    toLocation: { name: string, summary: string },
+    fromLocation: { name: string, summary: string },
 }

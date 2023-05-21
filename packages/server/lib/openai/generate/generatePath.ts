@@ -1,8 +1,5 @@
 import {executePrompt} from "../executePrompt";
-import {JsonResponse} from "../types";
-import {CharacterStats} from "types";
-import {getRandomValue} from "../utils";
-import {AILocation} from "./generateLocation";
+import {GeneratePathProps, JsonResponse} from "types";
 
 export interface AIPath {
     toLocation?: string,
@@ -11,11 +8,6 @@ export interface AIPath {
     summary: string
 }
 
-
-export interface GeneratePathProps {
-    toLocation: { name: string, summary: string },
-    fromLocation: { name: string, summary: string },
-}
 
 export async function generatePath({toLocation, fromLocation}: GeneratePathProps): Promise<JsonResponse> {
     const prompt = `    
