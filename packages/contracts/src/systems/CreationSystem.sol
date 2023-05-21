@@ -7,7 +7,9 @@ import { getUniqueEntity } from "@latticexyz/world/src/modules/uniqueentity/getU
 import {
   PlanetComponent,
   PlanetComponentTableId,
+  StoryComponent,
   NameComponent,
+  SummaryComponent,
   RaceComponent,
   DescriptionComponent,
   TangibleComponent,
@@ -32,6 +34,42 @@ contract CreationSystem is System {
 
     PlanetComponent.set(name, theme);
     DescriptionComponent.set(PlanetComponentTableId, description);
+  }
+
+  function createStory(
+    string memory name,
+    string memory summary,
+    string memory theme,
+    string[] memory races,
+    string memory currency
+  )
+  public
+  returns (bytes32)
+  {
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(theme).length > 0, "invalid theme length");
+    require(races.length > 0, "invalid races length");
+    require(bytes(currency).length > 0, "invalid currency length");
+
+    bytes32 storyID = getUniqueEntity();
+    bytes32 themeID = getUniqueEntity();
+    bytes32 racesID = getUniqueEntity();
+    bytes32 currencyID = getUniqueEntity();
+
+    StoryComponent.set(storyID, themeID, racesID, currencyID);
+
+    NameComponent.set(storyID, name);
+    SummaryComponent.set(storyID, summary);
+    NameComponent.set(themeID, theme);
+    NameComponent.set(currencyID, currency);
+
+    for(uint256 i=0; i<races.length; i++) {
+      require(bytes(races[i]).length > 0, string(abi.encodePacked("invalid races[", i, "] length")));
+      NameComponent.set(racesID, races[i]);
+    }
+
+    return storyID;
   }
 
   function createPlayer(

@@ -21,7 +21,15 @@ export default mudConfig({
                 theme: "string",
             },
         },
+        StoryComponent: {
+            schema: {
+                themeID: "bytes32", // keccak256(theme)
+                racesID: "bytes32", // Store available races to occur on story
+                currencyID: "bytes32", // The currency
+            },
+        },
         NameComponent: "string",
+        SummaryComponent: "string",
         DescriptionComponent: "string",
         PriceComponent: "uint256",
         RaceComponent: "string",

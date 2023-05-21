@@ -21,8 +21,40 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    StoryComponent: (() => {
+      const tableId = new TableId("", "StoryComponent");
+      return defineComponent(
+        world,
+        {
+          themeID: RecsType.String,
+          racesID: RecsType.String,
+          currencyID: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     NameComponent: (() => {
       const tableId = new TableId("", "NameComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    SummaryComponent: (() => {
+      const tableId = new TableId("", "SummaryComponent");
       return defineComponent(
         world,
         {

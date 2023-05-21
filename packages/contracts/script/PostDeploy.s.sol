@@ -19,6 +19,17 @@ contract PostDeploy is Script {
 //    uint32 newValue = IWorld(worldAddress).increment();
 //    console.log("Increment via IWorld:", newValue);
 
+    IWorld world = IWorld(worldAddress);
+
+    string memory json = vm.readFile("sample_world.json");
+
+    string memory storyName = vm.parseJsonString(json, ".name");
+    string memory storySummary = vm.parseJsonString(json, ".summary");
+    string memory storyTheme = vm.parseJsonString(json, ".theme");
+    string[] memory storyRaces = vm.parseJsonStringArray(json, ".races");
+    string memory storyCurrency = vm.parseJsonString(json, ".currency");
+    world.createStory(storyName, storySummary, storyTheme, storyRaces, storyCurrency);
+
     vm.stopBroadcast();
   }
 }
