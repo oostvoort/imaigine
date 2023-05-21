@@ -9,7 +9,7 @@ import {
   PlanetComponent,
   PlanetComponentData,
   NameComponent,
-  RaceComponent
+  DescriptionComponent
 } from "../src/codegen/Tables.sol";
 
 import { Constants } from "../src/lib/Constants.sol";
@@ -36,8 +36,9 @@ contract CreationSystemTest is MudV2Test {
     string memory theme,
     string memory description
   ) public {
-    vm.assume(keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH);
-    vm.assume(keccak256(abi.encodePacked(theme)) != Constants.EMPTY_HASH);
+    vm.assume(bytes(name).length > 0);
+    vm.assume(bytes(theme).length > 0);
+    vm.assume(bytes(description).length > 0);
 
     world.createPlanet(name, theme, description);
 
@@ -48,37 +49,44 @@ contract CreationSystemTest is MudV2Test {
   }
 
   function test_revert_CreatePlanet() public {
-    vm.expectRevert(abi.encodePacked("invalid name"));
+    vm.expectRevert(abi.encodePacked("invalid name length"));
     world.createPlanet("", "theme", "description");
 
-    vm.expectRevert(abi.encodePacked("invalid theme"));
+    vm.expectRevert(abi.encodePacked("invalid theme length"));
     world.createPlanet("name", "", "description");
 
-    vm.expectRevert(abi.encodePacked("invalid description"));
+    vm.expectRevert(abi.encodePacked("invalid description length"));
     world.createPlanet("name", "theme", "");
   }
 
   function testFuzz_CreatePlayer(
     string memory name,
-    string memory race
+    string memory description
   ) public {
-    vm.assume(keccak256(abi.encodePacked(name)) != Constants.EMPTY_HASH);
-    vm.assume(keccak256(abi.encodePacked(race)) != Constants.EMPTY_HASH);
+    vm.assume(bytes(name).length > 0);
+    vm.assume(bytes(description).length > 0);
 
-    bytes32 playerID = world.createPlayer(name, race);
+    bytes32 playerID = world.createPlayer(name, description);
 
     string memory playerName = NameComponent.get(world, playerID);
-    string memory playerRace = RaceComponent.get(world, playerID);
+    string memory playerDescription = DescriptionComponent.get(world, playerID);
 
     assertEq(name, playerName);
-    assertEq(race, playerRace);
+    assertEq(description, playerDescription);
+  }
+
+  function test_revert_CreatePlayerAlreadyExist() public {
+    bytes32 playerID = world.createPlayer("name", "race");
+
+    vm.expectRevert(abi.encodePacked("player already exist"));
+    world.createPlayer("name", "race");
   }
 
   function test_revert_CreatePlayer() public {
-    vm.expectRevert(abi.encodePacked("invalid name"));
+    vm.expectRevert(abi.encodePacked("invalid name length"));
     world.createPlayer("", "race");
 
-    vm.expectRevert(abi.encodePacked("invalid race"));
+    vm.expectRevert(abi.encodePacked("invalid description length"));
     world.createPlayer("name", "");
   }
 }
