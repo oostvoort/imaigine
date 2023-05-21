@@ -225,6 +225,9 @@ importers:
 
   packages/server:
     dependencies:
+      '@types/fs-extra':
+        specifier: ^11.0.1
+        version: 11.0.1
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -234,6 +237,9 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.18.2
+      fs-extra:
+        specifier: ^11.1.1
+        version: 11.1.1
       openai:
         specifier: ^3.2.1
         version: 3.2.1
@@ -2077,9 +2083,22 @@ packages:
       '@types/serve-static': 1.15.1
     dev: true
 
+  /@types/fs-extra@11.0.1:
+    resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
+    dependencies:
+      '@types/jsonfile': 6.1.1
+      '@types/node': 18.15.11
+    dev: false
+
   /@types/json-schema@7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
+
+  /@types/jsonfile@6.1.1:
+    resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
+    dependencies:
+      '@types/node': 18.15.11
+    dev: false
 
   /@types/lodash@4.14.194:
     resolution: {integrity: sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g==}

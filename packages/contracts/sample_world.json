@@ -1,28 +1,41 @@
 {
+  "name": "Feneton",
   "theme": "fantasy",
   "races": [
     "elves",
     "orcs",
     "humans"
   ],
-  "description": "Velvetria is a vast fantasy world with seven continents and two moons. It is populated by elves, orcs, and humans. In this world, the technology ranges from primitive to aetherpunk. Money is circulated in the form of a distinctive currency known as gold. There is a constant struggle between the Demon King and the Church. It is a world of possibility and peril, not quite like any other.",
-  "name": "Velvetria",
+  "currency": "gold",
+  "summary": "Feneton is an expansive fantasy world split into seven continents and home to all kinds of sentient beings, such as elves, orcs, and humans. It constantly binds together a unique mix of primitive and aetherpunk technology, with advanced technology modernized fundamentally from centuries-old tools. The distinctive currency of Feneton is gold, which is used and accepted by many people, merchants, and governments. Along with its human population, the world of Feneton also has two moons and an ongoing war between a ruthless demon king and the forces of the Church. Whatever the outcome of this conflict, the world of Feneton resides always in the balance, and continues forward.",
   "locations": [
     {
-      "name": "The Outskirts of Therun",
-      "description": "The Outskirts of Therun is a settlement located in the north-western continent of Velvetria, situated in a sprawling forest biome. The outpost serves as a refuge for weary travelers, offering shelter and goods from all over the realm. Therun has been around for centuries, though its population size has fluctuated from time to time. In its current incarnation, the settlement is relatively small but well defended, with a strong militia of local elves and humans going ever vigilant on its borders. The wealthy merchant families who inhabit the settlement have a fairly high standard of living, particularly compared to the rest of Velvetria, and are known for their generous hospitality and abundant resources. Though the safety of the area is relatively high, bold adventurers are still warned to be wary of the Demon King's forces that lurk in the shadows. Overall, the Outskirts of Therun is a vibrant place with a deep history and a promising future.",
+      "name": "Vexford",
+      "summary": "Vexford is a populous city nestled amidst a vast stretch of rugged tundra in the northernmost reaches of Feneton. It is known for its thriving mercantile industry and excellent trade routes, making it a magnet for travelers, traders, and intrepid adventurers. Established centuries ago, Vexford has grown to become the largest community in the area thanks to the hard work and determination of its people. Despite having many ancient buildings, most of the city has been modernized, with aether- powered machines working in cooperation with traditional tools. Even more impressive is the fact that Vexford is far safer than many cities its size would suggest, despite its lower-middle class wealth level. Gold is the preferred currency here, making it easy for travelers to find the goods and services they need without having to worry about the current war between the forces of the Church and the demon king. Vexford offers a colorful culture, a wide variety of inhabitants, and plenty of opportunities to explore, giving it the perfect balance of culture, adventure, and safety.",
       "characters": [
         {
-          "name": "Maldrena",
-          "description": "Maldrena is a small but daring individual living in the Outskirts of Therun. With a slender frame and strong yet lithe body, Maldrena’s near-constant energy and dexterity makes it clear why they happen to be as agile as they are. With wispy brown hair and startling green eyes to match, Maldrena’s appearance is nothing to scoff at. Despite being relatively young, Maldrena is skilled in physical activities and loves to show off their agility by running, jumping, and climbing. Alongside them is their faithful pup, a scruffy little companion that they love dearly. Maldrena is a wanderer and a brave adventurer, always ready to tackle the unknown and explore what lies beneath the surface of Velvetria."
+          "name": "Saina",
+          "summary": "Saina is an adult human female with an athletic frame and short wavy brown hair that she usually wears in a pixie cut. Her bright, almond-shaped green eyes are full of life and intelligence, and show a wisdom and charisma that belie her feeble physical strength. She now calls the bustling city of Vexford home, finding the trade routes and mercantile industry to be full of opportunity and promise. Despite her fragile frame, she maneuvers her way through the city with the nimbleness of an acrobat, frequently spotted amongst the throngs of people haggling and bartering for goods. Her favorite color is green, and is known to frequent areas with lively music and energetic celebrations. She's a brave soul, always ready for the next adventure, and curious to explore what each day brings in Feneton.",
+          "stats": {
+            "strength": "Feeble",
+            "dexterity": "Nimble",
+            "constitution": "Sturdy",
+            "intelligence": "Brilliant",
+            "charisma": "Enlightened",
+            "wisdom": "Charismatic"
+          }
         },
         {
-          "name": "Teddy",
-          "description": "Teddy is a small, scrawny figure with short, spiky hair and dark eyes. Despite their physiology and strength that is not up to par, they have remarkable agility and dexterity. They have a passion for physical sports and often spends time playing catch with their beloved pet dog. Though Teddy may look young, they are nevertheless sharp and wise beyond their years."
-        },
-        {
-          "name": "Rand",
-          "description": "Rand is a random adventurer who hails from the Outskirts of Therun. Despite their low strength and constitution, Rand is still an agile individual capable of weaving between obstacles and enemies with ease due to their sharp dexterity. They may be small in stature, but their heart is larger than life. Rand sports a wild mane of random hair atop their head, coupled with random eyes that are constantly scanning their surroundings. When not venturing from town to town, they can be found with their faithful canine companion, undertaking random physical activities that bring them joy and keep their body nimble."
+          "name": "Fenien",
+          "summary": "Fenien is an adventurous young girl from Vexford, a bustling city in Northern Feneton. She is of average height, with a plump body type, long wavy yellow hair, and grey monolid eyes. She is strong, acrobatic, and resilient, but also a little clumsy and socially awkward. Despite her personal foibles, she has built a successful career as an intrepid trader and explorer who travels the area and makes a living through crafting and trading. Though she may not always make the best decisions, she is motivated by a deep sense of curiosity and a passionate connection to the spirit of Feneton. As a Child, she is driven to put of sense of danger and stability together in whatever she pursues, and sees the world of Feneton as a fantastical place full of possibility. And in everything she does, she celebrates her love for the color green.",
+          "stats": {
+            "strength": "Mighty",
+            "dexterity": "Acrobatic",
+            "constitution": "Resilient",
+            "intelligence": "Intelligent",
+            "charisma": "Awkward",
+            "wisdom": "Foolish"
+          }
         }
       ]
     }

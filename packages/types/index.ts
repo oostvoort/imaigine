@@ -1,29 +1,4 @@
 
-export interface CharacterStory {
-    pet: string;
-    activity: string;
-    history: string;
-}
-
-export interface CharacterPhysicalFeatures {
-    ageGroup: string;
-    race: string;
-    height: string;
-    body: string;
-    hair: string;
-    eyes: string;
-}
-
-export type CharacterStat = keyof CharacterStats;
-
-export interface CharacterStats {
-    strength: number;
-    dexterity: number;
-    constitution: number;
-    intelligence: number;
-    charisma: number;
-    wisdom: number;
-}
 
 export interface GenerateWorldProps {
     theme: string,
@@ -33,7 +8,7 @@ export interface GenerateWorldProps {
 }
 
 export interface  GenerateLocationProps{
-    world: { name: string, description: string },
+    world: { name: string, summary: string },
     biome: string,
     naturalResources: string,
     wealthLevel: string,
@@ -42,10 +17,46 @@ export interface  GenerateLocationProps{
 }
 
 
-export interface GenerateCharacterProps {
+
+export interface CharacterStory {
+    favColor: "Green" | "Brown" | "Blue" | "White" | "Yellow" | "Grey" | "Red" | string
+}
+
+export interface CharacterPhysicalFeatures {
+    ageGroup: string
+    genderIdentity: string
+    race: string
+    bodyType: string
+    height: string
+    hairLength: string
+    hairType: string
+    hairColor: string
+    eyeShape: string
+    eyeColor: string
+}
+
+export type CharacterStat = keyof CharacterStats;
+
+export interface CharacterStats {
+    strength: string;
+    dexterity: string;
+    constitution: string;
+    intelligence: string;
+    charisma: string;
+    wisdom: string;
+}
+
+
+export interface GeneratePlayerCharacterProps {
     stats: CharacterStats,
     story: CharacterStory,
-    location: { name: string, description: string },
-    world: { name: string, description: string },
+    location: { name: string, summary: string },
+    world: { name: string, summary: string },
     physicalFeatures: CharacterPhysicalFeatures,
+}
+
+export interface GenerateNonPlayerCharacterProps {
+    stats: CharacterStats,
+    location: { name: string, summary: string },
+    world: { name: string, summary: string, races: Array<string> },
 }
