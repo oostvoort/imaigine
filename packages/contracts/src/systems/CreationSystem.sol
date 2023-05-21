@@ -97,6 +97,7 @@ contract CreationSystem is System {
     require(PlayerComponent.get(playerID) == false, "player already exist");
 
     PlayerComponent.set(playerID, true);
+    CharacterComponent.set(playerID, true);
     NameComponent.set(playerID, name);
     SummaryComponent.set(playerID, summary);
     ImageComponent.set(playerID, imgHash);
@@ -122,6 +123,7 @@ contract CreationSystem is System {
 
     bytes32 characterID = getUniqueEntity();
 
+    CharacterComponent.set(characterID, true);
     NameComponent.set(characterID, name);
     SummaryComponent.set(characterID, summary);
     ImageComponent.set(characterID, imgHash);
