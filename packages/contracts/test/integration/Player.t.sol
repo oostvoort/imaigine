@@ -20,9 +20,13 @@ contract PlayerTest is MudV2Test {
 
   IWorld public world;
 
+  bytes32 mockLocationID;
+
   function setUp() public override {
     super.setUp();
     world = IWorld(worldAddress);
+
+    mockLocationID = world.createLocation("A", "B", "C");
   }
 
   function testWorldExists() public {
@@ -59,7 +63,7 @@ contract PlayerTest is MudV2Test {
     string memory summary = vm.parseJsonString(json, ".locations.[0].characters.[0].summary");
     string memory imgHash = vm.parseJsonString(json, ".locations.[0].characters.[0].imgHash");
 
-    bytes32 playerID = world.createPlayer(name, summary, imgHash);
+    bytes32 playerID = world.createPlayer(name, summary, imgHash, mockLocationID);
 
     string memory playerName = NameComponent.get(world, playerID);
     string memory playerSummary = SummaryComponent.get(world, playerID);

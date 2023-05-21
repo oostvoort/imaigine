@@ -38,11 +38,7 @@ export default mudConfig({
         TangibleComponent: "bool",
         CountComponent: "uint256",
         PlayerComponent: "bool",
-        LocationComponent: {
-            schema: {
-                at: "string",
-            },
-        },
+        LocationComponent: "bytes32",
         AttributeUintComponent: {
             keySchema: {
                 entityID: "bytes32",

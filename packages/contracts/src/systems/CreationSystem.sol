@@ -11,6 +11,7 @@ import {
   NameComponent,
   SummaryComponent,
   ImageComponent,
+  LocationComponent,
   RaceComponent,
   DescriptionComponent,
   TangibleComponent,
@@ -76,25 +77,28 @@ contract CreationSystem is System {
   function createPlayer(
     string memory name,
     string memory summary,
-    string memory imgHash
+    string memory imgHash,
+    bytes32 locationID
   )
   public
   returns (bytes32)
   {
+    // validate input
+    require(bytes(name).length > 0, "invalid name length");
+    require(bytes(summary).length > 0, "invalid summary length");
+    require(bytes(imgHash).length > 0, "invalid imgHash length");
+    require(bytes(NameComponent.get(locationID)).length > 0, "location does not exist");
+
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
     // does playerID already exist
     require(PlayerComponent.get(playerID) == false, "player already exist");
 
-    // validate input
-    require(bytes(name).length > 0, "invalid name length");
-    require(bytes(summary).length > 0, "invalid summary length");
-    require(bytes(imgHash).length > 0, "invalid imgHash length");
-
     PlayerComponent.set(playerID, true);
     NameComponent.set(playerID, name);
     SummaryComponent.set(playerID, summary);
     ImageComponent.set(playerID, imgHash);
+    LocationComponent.set(playerID, locationID);
 
     return playerID;
   }
@@ -102,7 +106,8 @@ contract CreationSystem is System {
   function createCharacter(
     string memory name,
     string memory summary,
-    string memory imgHash
+    string memory imgHash,
+    bytes32 locationID
   )
   public
   returns (bytes32)
@@ -111,12 +116,14 @@ contract CreationSystem is System {
     require(bytes(name).length > 0, "invalid name length");
     require(bytes(summary).length > 0, "invalid summary length");
     require(bytes(imgHash).length > 0, "invalid imgHash length");
+    require(bytes(NameComponent.get(locationID)).length > 0, "location does not exist");
 
     bytes32 characterID = getUniqueEntity();
 
     NameComponent.set(characterID, name);
     SummaryComponent.set(characterID, summary);
     ImageComponent.set(characterID, imgHash);
+    LocationComponent.set(characterID, locationID);
 
     return characterID;
   }

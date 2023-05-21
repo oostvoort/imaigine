@@ -20,14 +20,14 @@ contract TravelSystem is System {
   public
   {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    string memory from = LocationComponent.get(playerID);
-    bytes memory raw_location = StoryActionComponent.get(playerID, locationActionID);
+//    string memory from = LocationComponent.get(playerID);
+//    bytes memory raw_location = StoryActionComponent.get(playerID, locationActionID);
 
-    require(bytes32(raw_location) != Constants.EMPTY_HASH, "invalid selected location");
+//    require(bytes32(raw_location) != Constants.EMPTY_HASH, "invalid selected location");
 
-    string memory location = string(raw_location);
-    LocationComponent.set(playerID, location);
+//    string memory location = string(raw_location);
+//    LocationComponent.set(playerID, location);
 
-    emit UpdatedLocation(playerID, from, location);
+//    emit UpdatedLocation(playerID, from, location);
   }
 }

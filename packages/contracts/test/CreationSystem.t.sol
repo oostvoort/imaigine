@@ -13,6 +13,7 @@ import {
   NameComponent,
   SummaryComponent,
   ImageComponent,
+  LocationComponent,
   DescriptionComponent
 } from "../src/codegen/Tables.sol";
 
@@ -21,9 +22,13 @@ import { Constants } from "../src/lib/Constants.sol";
 contract CreationSystemTest is MudV2Test {
   IWorld public world;
 
+  bytes32 mockLocationID;
+
   function setUp() public override {
     super.setUp();
     world = IWorld(worldAddress);
+
+    mockLocationID = world.createLocation("A", "B", "C");
   }
 
   function testWorldExists() public {
@@ -109,33 +114,38 @@ contract CreationSystemTest is MudV2Test {
     vm.assume(bytes(summary).length > 0);
     vm.assume(bytes(imgHash).length > 0);
 
-    bytes32 playerID = world.createPlayer(name, summary, imgHash);
+    bytes32 playerID = world.createPlayer(name, summary, imgHash, mockLocationID);
 
     string memory playerName = NameComponent.get(world, playerID);
     string memory playerSummary = SummaryComponent.get(world, playerID);
     string memory playerImgHash = ImageComponent.get(world, playerID);
+    bytes32 playerLocation = LocationComponent.get(world, playerID);
 
     assertEq(name, playerName);
     assertEq(summary, playerSummary);
     assertEq(imgHash, playerImgHash);
+    assertEq(mockLocationID, playerLocation);
   }
 
   function test_revert_CreatePlayerAlreadyExist() public {
-    bytes32 playerID = world.createPlayer("name", "race", "0xabc");
+    bytes32 playerID = world.createPlayer("name", "race", "0xabc", mockLocationID);
 
     vm.expectRevert(abi.encodePacked("player already exist"));
-    world.createPlayer("name", "race", "0xabc");
+    world.createPlayer("name", "race", "0xabc", mockLocationID);
   }
 
   function test_revert_CreatePlayer() public {
     vm.expectRevert(abi.encodePacked("invalid name length"));
-    world.createPlayer("", "race", "0xabc");
+    world.createPlayer("", "race", "0xabc", mockLocationID);
 
     vm.expectRevert(abi.encodePacked("invalid summary length"));
-    world.createPlayer("name", "", "0xabc");
+    world.createPlayer("name", "", "0xabc", mockLocationID);
 
     vm.expectRevert(abi.encodePacked("invalid imgHash length"));
-    world.createPlayer("name", "race", "");
+    world.createPlayer("name", "race", "", mockLocationID);
+
+    vm.expectRevert(abi.encodePacked("location does not exist"));
+    world.createPlayer("name", "race", "0xabc", bytes32(uint256(100)));
   }
 
   function testFuzz_CreateLocation(

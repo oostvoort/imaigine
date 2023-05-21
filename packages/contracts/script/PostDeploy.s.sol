@@ -32,7 +32,7 @@ contract PostDeploy is Script {
 
     // Locations
 
-    world.createLocation(
+    bytes32 locationID = world.createLocation(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].imgHash")))
@@ -43,7 +43,8 @@ contract PostDeploy is Script {
     world.createPlayer(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].imgHash")))
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].imgHash"))),
+      locationID
     );
 
     // NPC's
@@ -51,13 +52,15 @@ contract PostDeploy is Script {
     world.createCharacter(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash")))
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash"))),
+      locationID
     );
 
     world.createCharacter(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash")))
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash"))),
+      locationID
     );
 
     vm.stopBroadcast();
