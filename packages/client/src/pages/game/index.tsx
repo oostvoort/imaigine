@@ -5,6 +5,7 @@ import { Button, Progress } from '../../components/base'
 import { motion } from 'framer-motion'
 import { useMUD } from '../../MUDContext'
 import CharacterConversationDialog from '../../components/shared/CharacterConversationDialog'
+import LocationInfoDialog from '../../components/shared/LocationInfoDialog'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -66,11 +67,12 @@ const statsMockup: Props['gameStats'] = {
 }
 
 export default function Game() {
+  const [ isMapDialogOpen, setMapDialogOpen ] = React.useState<boolean>(false)
   const [ isCharacterDialogOpen, setCharacterDialogOpen ] = React.useState<boolean>(false)
   const constrainsRef = React.useRef<HTMLDivElement>(null)
 
   const {
-    components: { StoryActionComponent },
+    components,
     systemCalls: { selectPlayerLocation },
   } = useMUD()
 
@@ -97,17 +99,20 @@ export default function Game() {
                     <motion.div className="flex items-center gap-8 w-max" drag="x" dragConstraints={constrainsRef}>
                       {
                         items.map((item, index) => (
-                          <img onClick={() => {
-                            if (idx == 0) selectPlayerLocation('0x860c0bc42877e4be14ccf6099ac139f3ccda212f736fdde471ee52695d5462fb'/*ethers.utils.formatBytes32String(ethers.utils.id("options.locations.0"))*/)
-                            if (idx == 1) setCharacterDialogOpen(true)
-                          }} key={JSON.stringify({ item, index })} src={item.img} alt={JSON.stringify(item.img)}
-                               className={clsx([
-                                 'w-[100px] rounded-full shadow-2xl cursor-pointer',
-                                 {
-                                   'rounded-xl w-[150px]': idx == 0,
-                                 },
-                               ])}
-                               draggable={false}
+                          <img
+                            className={clsx([
+                              'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
+                              {
+                                'rounded-xl w-[150px] h-[120px]': idx == 0,
+                              },
+                            ])}
+                            key={JSON.stringify({ item, index })}
+                            onClick={() => {
+                              if (idx == 0) setMapDialogOpen(true)
+                              if (idx == 1) setCharacterDialogOpen(true)
+                            }}
+                            src={item.img} alt={JSON.stringify(item.img)}
+                            draggable={false}
                           />
                         ))
                       }
@@ -150,27 +155,32 @@ export default function Game() {
                 value={10}
                 barColor="bg-red-700"
                 className={clsx([
-                  "bg-night border-2 border-red-700",
-                  "absolute -rotate-180 h-[90%] w-3 inset-0 ml-3 my-auto"
+                  'bg-night border-2 border-red-700',
+                  'absolute -rotate-180 h-[90%] w-3 inset-0 ml-3 my-auto',
                 ])}
               />
               <Progress
                 value={30}
                 barColor="bg-blue-700"
                 className={clsx([
-                  "bg-night border-2 border-blue-700",
-                  "absolute right-2 -rotate-180 h-[90%] w-3 inset-0 my-auto ml-auto mr-3"
+                  'bg-night border-2 border-blue-700',
+                  'absolute right-2 -rotate-180 h-[90%] w-3 inset-0 my-auto ml-auto mr-3',
                 ])}
               />
               <p className="font-bold tracking-wide font-jost text-accent">Actions</p>
-              <Button size="xl" className="uppercase tracking-wider">Action A</Button>
-              <Button size="xl" className="uppercase tracking-wider">Action B</Button>
-              <Button size="xl" className="uppercase tracking-wider">Action C</Button>
+              <Button size="xl" className="tracking-wider">Find a vacant seat at the bar</Button>
+              <Button size="xl" className="tracking-wider">Approach the musicians</Button>
+              <Button size="xl" className="tracking-wider">Order a pint of ale from the barmaid</Button>
             </div>
           </section>
         </div>
       </GridStoryLayout>
       <CharacterConversationDialog isOpen={isCharacterDialogOpen} setOpen={setCharacterDialogOpen} />
+      <LocationInfoDialog isOpen={isMapDialogOpen} setOpen={(value) => setMapDialogOpen(value)}
+                          img={'src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg'}
+                          locationTitle={'Lindwurm Town'}
+                          locationDescription={'Enchanting Lindwurm: Idyllic cottages, winding streets, and a vibrant market square create a picturesque haven. Friendly locals gather in cozy taverns, their laughter echoing amidst the sweet scent of freshly baked treats. A serene river adds to the town\'s charm, reflecting the beauty of this inviting place.'}
+                          action={() => console.log('travel!')} />
     </>
   )
 }

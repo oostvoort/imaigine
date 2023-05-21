@@ -53,6 +53,7 @@
     --option-4: 0 0% 100%;
     --option-5: 54 92% 41%;
     --option-6: 227 22% 64%;
+    --option-7: 0 100% 50%;
 
     --radius: 0.5rem;
   }
@@ -105,6 +106,10 @@
   }
 }
 
+.glowing-animation {
+  box-shadow: rgba(255, 255, 255, 0.25) 0px 54px 55px, rgba(255, 255, 255, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
 @font-face {
   src: url("./fonts/Jost-VariableFont_wght.ttf");
   font-family: Jost;
@@ -113,4 +118,14 @@
 @font-face {
   src: url("./fonts/Rancho-Regular.ttf");
   font-family: Rancho;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #4F4F63;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #191919;
 }
