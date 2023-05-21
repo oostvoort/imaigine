@@ -12,6 +12,7 @@ import {
 import {generateStory} from "./lib/openai/generate/generateStory";
 import {generateLocation} from "./lib/openai/generate/generateLocation";
 import {generateNonPlayerCharacter, generatePlayerCharacter} from "./lib/openai/generate/generateCharacter";
+import {generatePlayerImage} from "./lib/leonardo";
 
 dotenv.config();
 const app = express();
@@ -42,7 +43,12 @@ app.post('/generateLocation', async (req: Request, res: Response) => {
 
 app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {
     const props: GeneratePlayerCharacterProps = req.body
-    res.send(await generatePlayerCharacter(props));
+
+    const player = await generatePlayerCharacter(props);
+
+    player.imageHash = await generatePlayerImage(player.visualSummary)
+
+    res.send(player);
 });
 
 app.post('/generateNonPlayerCharacter', async (req: Request, res: Response) => {
