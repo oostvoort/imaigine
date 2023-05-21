@@ -208,7 +208,38 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          at: RecsType.String,
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PathComponent: (() => {
+      const tableId = new TableId("", "PathComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PathLocationComponent: (() => {
+      const tableId = new TableId("", "PathLocationComp");
+      return defineComponent(
+        world,
+        {
+          location0: RecsType.String,
+          location1: RecsType.String,
         },
         {
           metadata: {

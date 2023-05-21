@@ -4,7 +4,7 @@ import { Button } from '../../components/base/button'
 import { Input } from '../../components/base/input'
 import { Card, CardContent } from '../../components/base/card'
 import imaigineIcon from '../../assets/img_imaigine_logo.svg'
-import useSessionState from '../../hooks/useSessionState'
+import useSessionState from '../../hooks/useSessionStorageState'
 import { useSetAtom } from 'jotai'
 import { activePage_atom } from '../../atoms/globalAtoms'
 
