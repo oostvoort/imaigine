@@ -32,10 +32,25 @@ contract PostDeploy is Script {
 
     // Locations
 
-    bytes32 locationID = world.createLocation(
+    bytes32 locationID_0 = world.createLocation(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].imgHash")))
+    );
+
+    bytes32 locationID_1 = world.createLocation(
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[1].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[1].summary"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".locations.[1].imgHash")))
+    );
+
+    // Path's
+
+    world.createPath(
+      locationID_0,
+      locationID_1,
+      vm.parseJsonString(json, string(abi.encodePacked(".paths.[0].name"))),
+      vm.parseJsonString(json, string(abi.encodePacked(".paths.[0].summary")))
     );
 
     // Player's
