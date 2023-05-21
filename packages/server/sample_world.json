@@ -1,0 +1,66 @@
+{
+  "theme": "fantasy",
+  "races": [
+    "elves",
+    "orcs",
+    "humans"
+  ],
+  "currency": "gold",
+  "summary": "Welcome to Baglith, a world of co-existence, where elves, orcs and humans traverse seven continents to enact wars and trade goods. This land holds primitive to aetherpunk technology, showcasing feats no one could ever imagine. The currency, a widely distributed gold, circulates throughout the population. All during the night, spectators gaze in awe as two moons light up the dark skies, a familiar sight known to any native. Although a land of peace on the surface, there is an ongoing war between the demon king and the church. Baglith is a world where adventure awaits anyone brave enough to explore it!",
+  "name": "Baglith",
+  "locations": [
+    {
+      "name": "Station Aurora",
+      "characters": [
+        {
+          "name": "Rurik Redstone",
+          "summary": "Rurik Redstone is an adult human male hailing from Station Aurora. His burly body type combined with his statuesque figure makes his presence known as soon as he enters a room. With bright red wavy hair, upturned red eyes, and a fondness for the color red, Rurik adds a splash of vibrancy to any space. Though not gifted with an Herculean strength, a Clumsy dexterity, a Frail constitution, an Ignorant intelligence, a Foolish charisma, or an Awkward wisdom, his friendly demeanor makes him a pleasant companion.",
+          "stats": {
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Frail",
+            "intelligence": "Ignorant",
+            "charisma": "Foolish",
+            "wisdom": "Awkward"
+          },
+          "initialMessage": "Greetings friend! It's a pleasure to meet you.",
+          "closingMessage": "Fare thee well! May our paths cross again.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+        },
+        {
+          "name": "Ezekiel White",
+          "summary": "Ezekiel White is a short Adult male human with Herculean strength, Clumsy dexterity, Healthy constitution, Brilliant intelligence, Charismatic charisma and a Foolish wisdom. He has Medium Curly Black hair, Red monolid eyes and his favorite color is White. Ezekiel is a native of Baglith and has adapted to the dangerous area of Station Aurora in search of adventure and an experience unlike any other in the world.",
+          "stats": {
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Healthy",
+            "intelligence": "Brilliant",
+            "charisma": "Charismatic",
+            "wisdom": "Foolish"
+          },
+          "initialMessage": "Greetings! What can I do for you today?",
+          "closingMessage": "Farewell! It was a pleasure speaking to you.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+        }
+      ],
+      "summary": "Station Aurora is a large, wealthy and highly secure location set in the arctic reaches of the world of Baglith. This region has long been an area of contention between the denizens of Baglith, with struggles ranging from wars between elves and orcs to battles against the demon king and the Church. Though once a place of danger, Station Aurora is now seen as a safe haven for adventurers, merchants and travelers alike. Here, modern technology sits side-by-side with traditional aetherpunk contraptions, along with the best that both civilizations have to offer. Those brave enough to venture here will find an experience unlike any other in the world, as two moons grace the far-north sky and the region is bathed in a natural, yet breathtaking aurora.",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    },
+    {
+      "name": "Gardens of Ashen",
+      "characters": [],
+      "summary": "Nestled in the prairies of Baglith is the ancient and mysterious site known as the Gardens of Ashen. It is known to be a place where people from different species, including elves, orcs and humans, have come together for centuries in a mission to bring peace and prosperity to the world. It is a large metropolis with a lower-middle class population. It is a little unsafe to wonder around late at night, since there are rumors of a demon king and the Church repeating wars within the area. Despite all of this, the Gardens of Ashen still remains a central hub for locals who come to buy goods and partake in the lively nightlife. During the night, the land is filled with the light of two moons as locals and visitors alike gaze in awe at the beautiful sight. It is a place where adventure awaits any brave enough to explore it!",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    }
+  ],
+  "paths": [
+    {
+      "name": "Path of Stalwart Travelers",
+      "summary": "Begin your journey at Station Aurora, a wealthy and highly secure location set in the arctic reaches of Baglith. Here, you can experience a wonderland of modern technology and aetherpunk contraptions. Take in the spectacular sight of two moons gracing the far-north landscape and soaking the region with a natural, yet breathtaking aurora. Then embark on the Path of Stalwart Travelers, a well-trodden and logical connection between Station Aurora and the tranquil Gardens of Ashen. With each passing step, witness the change in natural scenery as it slowly shifts from a frigid arctic region to a colorful prairie. End your journey in the Gardens of Ashen, a bustling metropolis bathed in the light of two moons. This is a truly unforgettable experience that awaits any adventurer brave enough to explore it!",
+      "fromLocation": "Station Aurora",
+      "toLocation": "Gardens of Ashen"
+    }
+  ]
+}

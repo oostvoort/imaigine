@@ -2,13 +2,16 @@ import {executePrompt} from "../executePrompt";
 import {AILocation} from "./generateLocation";
 import {JsonResponse} from "../types";
 import { GenerateWorldProps } from "types";
+import {AIPath} from "./generatePath";
 
 export interface AIWorld {
     theme: string,
     races: Array<string>,
-    description: string,
+    currency: string
+    summary: string,
     name: string,
     locations: Array<AILocation>,
+    paths: Array<AIPath>
 }
 
 export async function generateWorld({currency, races, theme, extraDescriptions}: GenerateWorldProps): Promise<JsonResponse> {
@@ -20,13 +23,14 @@ export async function generateWorld({currency, races, theme, extraDescriptions}:
     Add these extra descriptions, flesh them out and integrate into the description:
     ${extraDescriptions.join(', ')}
     
-    Output as a JSON object in this format:
+    Respond only in JSON with the following format:
+
     {
         "name": "the name of the world",
-        "description": "the generated description"
+        "summary": "the generated description"
     }
     `;
 
-    let text = await executePrompt(prompt);
+    const text = await executePrompt(prompt);
     return JSON.parse(text) as JsonResponse;
 }

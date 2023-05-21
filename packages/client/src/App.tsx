@@ -5,11 +5,13 @@ import { useAtomValue } from 'jotai'
 import { activePage_atom } from './atoms/globalAtoms'
 import CreatePlayerNew from './pages/create-player-new'
 import Game from './pages/game'
+import useGame from './hooks/useGame'
 
 const queryClient = new QueryClient()
 
 export const App = () => {
   const activePage = useAtomValue(activePage_atom)
+  const {locations, characters, players} = useGame()
 
     return (
         <QueryClientProvider client={queryClient}>

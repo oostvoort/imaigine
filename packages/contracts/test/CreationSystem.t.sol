@@ -8,6 +8,8 @@ import { IWorld } from "../src/codegen/world/IWorld.sol";
 import {
   PlanetComponent,
   PlanetComponentData,
+  PlayerComponent,
+  CharacterComponent,
   StoryComponent,
   StoryComponentData,
   NameComponent,
@@ -121,10 +123,36 @@ contract CreationSystemTest is MudV2Test {
     string memory playerImgHash = ImageComponent.get(world, playerID);
     bytes32 playerLocation = LocationComponent.get(world, playerID);
 
+    assertTrue(PlayerComponent.get(world, playerID));
+    assertTrue(CharacterComponent.get(world, playerID));
     assertEq(name, playerName);
     assertEq(summary, playerSummary);
     assertEq(imgHash, playerImgHash);
     assertEq(mockLocationID, playerLocation);
+  }
+
+  function testFuzz_CreateNpc(
+    string memory name,
+    string memory summary,
+    string memory imgHash
+  ) public {
+    vm.assume(bytes(name).length > 0);
+    vm.assume(bytes(summary).length > 0);
+    vm.assume(bytes(imgHash).length > 0);
+
+    bytes32 npcID = world.createCharacter(name, summary, imgHash, mockLocationID);
+
+    string memory npcName = NameComponent.get(world, npcID);
+    string memory npcSummary = SummaryComponent.get(world, npcID);
+    string memory npcImgHash = ImageComponent.get(world, npcID);
+    bytes32 npcLocation = LocationComponent.get(world, npcID);
+
+    assertFalse(PlayerComponent.get(world, npcID));
+    assertTrue(CharacterComponent.get(world, npcID));
+    assertEq(name, npcName);
+    assertEq(summary, npcSummary);
+    assertEq(imgHash, npcImgHash);
+    assertEq(mockLocationID, npcLocation);
   }
 
   function test_revert_CreatePlayerAlreadyExist() public {

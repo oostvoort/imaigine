@@ -45,7 +45,7 @@ export default mudConfig({
         ImageComponent: "string",
         PriceComponent: "uint256",
         RaceComponent: "string",
-        CharacterComponent: "bytes32",
+        CharacterComponent: "bool",
         TangibleComponent: "bool",
         CountComponent: "uint256",
         PlayerComponent: "bool",

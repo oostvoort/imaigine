@@ -1,10 +1,10 @@
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import express, {Request, Response} from 'express';
-import {CharacterStats, CharacterStory, GenerateCharacterProps, GenerateLocationProps, GenerateWorldProps} from 'types'
+import {CharacterStats, CharacterStory, GeneratePlayerCharacterProps, GenerateLocationProps, GenerateWorldProps} from 'types'
 import {generateWorld} from "./lib/openai/generate/generateWorld";
 import {generateLocation} from "./lib/openai/generate/generateLocation";
-import {generateCharacter} from "./lib/openai/generate/generateCharacter";
+import {generatePlayerCharacter} from "./lib/openai/generate/generatePlayerCharacter";
 
 dotenv.config();
 const app = express();
@@ -34,8 +34,8 @@ app.post('/generateLocation', async (req: Request, res: Response) => {
 });
 
 app.post('/generateCharacter', async (req: Request, res: Response) => {
-    const props: GenerateCharacterProps = req.body
-    res.send(await generateCharacter(props));
+    const props: GeneratePlayerCharacterProps = req.body
+    res.send(await generatePlayerCharacter(props));
 });
 
 app.listen(port, () => {
