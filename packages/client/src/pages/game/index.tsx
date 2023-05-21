@@ -167,9 +167,9 @@ export default function Game() {
                 ])}
               />
               <p className="font-bold tracking-wide font-jost text-accent">Actions</p>
-              <Button size="xl" className="uppercase tracking-wider">Action A</Button>
-              <Button size="xl" className="uppercase tracking-wider">Action B</Button>
-              <Button size="xl" className="uppercase tracking-wider">Action C</Button>
+              <Button size="xl" className="tracking-wider">Find a vacant seat at the bar</Button>
+              <Button size="xl" className="tracking-wider">Approach the musicians</Button>
+              <Button size="xl" className="tracking-wider">Order a pint of ale from the barmaid</Button>
             </div>
           </section>
         </div>
