@@ -10,6 +10,7 @@ export default {
       'welcome-image': "url('./assets/RPG_40_square_masterpiece_best_quality_ultradetailed_illustrat_0.jpg')",
       'action-section': "url('./assets/bg_actions.png')",
       'player-nav': "url('./assets/bg_nav.png')",
+      'avatar-frame': "url('./assets/bg_avatarFrame.png')",
     },
     container: {
       center: true,
