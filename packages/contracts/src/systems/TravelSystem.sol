@@ -28,8 +28,6 @@ contract TravelSystem is System {
     string memory location = string(raw_location);
     LocationComponent.set(playerID, location);
 
-    // FIXME: fire oracle job here
-
     emit UpdatedLocation(playerID, from, location);
   }
 }

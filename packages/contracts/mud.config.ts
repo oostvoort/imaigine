@@ -12,8 +12,19 @@ export default mudConfig({
             openAccess: false, // a private system
             accessList: [] // TODO: the oracle
         },
+        ControllerSystem: {
+            name: "ControllerSystem",
+            openAccess: false, // a private system
+            accessList: [] // should only be available to deployer
+        }
     },
     tables: {
+        ControllerComponent: {
+            keySchema: {},
+            schema: {
+                oracle: "address"
+            },
+        },
         PlanetComponent: {
             keySchema: {},
             schema: {

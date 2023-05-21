@@ -5,36 +5,26 @@
     "orcs",
     "humans"
   ],
-  "currency": "gold",
-  "description": "Welcome to Akiran, a world of adventure and wonder. This world is populated by a magical blend of elves, orcs and humans living peacefully side by side. The vibrant forests of Akiran have been home to the elves for centuries, and are full of secrets and ancient magicks. The orcs live in the mountains and have become particularly adept at metalworking, forging powerful weapons and armor for sale to the other races. The human cities are full of opportunity and bustling activity, with sailors from all over the world plying the waters of the sea. \n\nIn Akiran, the distinctive currency known as gold dominates the economy. Merchants from around the world flock to Akiran to buy and sell goods with their gilded coins. Wealth abounds in Akiran, allowing adventurers to outfit themselves with the latest armor, weapons, and other magical items.  In Akiran, you can find adventure around every corner, explore the unknown, and make your fortune!",
-  "name": "Akiran",
+  "description": "Velvetria is a vast fantasy world with seven continents and two moons. It is populated by elves, orcs, and humans. In this world, the technology ranges from primitive to aetherpunk. Money is circulated in the form of a distinctive currency known as gold. There is a constant struggle between the Demon King and the Church. It is a world of possibility and peril, not quite like any other.",
+  "name": "Velvetria",
   "locations": [
     {
-      "name": "Valley of Iron",
+      "name": "The Outskirts of Therun",
+      "description": "The Outskirts of Therun is a settlement located in the north-western continent of Velvetria, situated in a sprawling forest biome. The outpost serves as a refuge for weary travelers, offering shelter and goods from all over the realm. Therun has been around for centuries, though its population size has fluctuated from time to time. In its current incarnation, the settlement is relatively small but well defended, with a strong militia of local elves and humans going ever vigilant on its borders. The wealthy merchant families who inhabit the settlement have a fairly high standard of living, particularly compared to the rest of Velvetria, and are known for their generous hospitality and abundant resources. Though the safety of the area is relatively high, bold adventurers are still warned to be wary of the Demon King's forces that lurk in the shadows. Overall, the Outskirts of Therun is a vibrant place with a deep history and a promising future.",
       "characters": [
         {
-          "name": "Lyra",
-          "description": "Lyra is a wild and adventurous spirit, always looking for the next challenge. Growing up as a part of the orc tribe living in the Valley of Iron, they had a knack for climbing and exploring the dangerous terrain of their home. This passion and drive led them to seek out their own personal goal: to find and wield the legendary orcish sword hidden in the mountains. Even though the odds are stacked against them, Lyra will stop at nothing to fulfill their dream and make their mark on the world. With their dragon pet by their side, nothing can deter them from their ultimate goal.",
-          "stats": {
-            "strength": 1,
-            "dexterity": 5,
-            "constitution": 1,
-            "intelligence": 1,
-            "charisma": 1,
-            "wisdom": 1
-          },
-          "story": {
-            "age": "Adult",
-            "pet": "Dragon",
-            "food": "Taco",
-            "activity": "Climbing Mountains",
-            "alignment": "Good"
-          },
-          "items": []
+          "name": "Maldrena",
+          "description": "Maldrena is a small but daring individual living in the Outskirts of Therun. With a slender frame and strong yet lithe body, Maldrena’s near-constant energy and dexterity makes it clear why they happen to be as agile as they are. With wispy brown hair and startling green eyes to match, Maldrena’s appearance is nothing to scoff at. Despite being relatively young, Maldrena is skilled in physical activities and loves to show off their agility by running, jumping, and climbing. Alongside them is their faithful pup, a scruffy little companion that they love dearly. Maldrena is a wanderer and a brave adventurer, always ready to tackle the unknown and explore what lies beneath the surface of Velvetria."
+        },
+        {
+          "name": "Teddy",
+          "description": "Teddy is a small, scrawny figure with short, spiky hair and dark eyes. Despite their physiology and strength that is not up to par, they have remarkable agility and dexterity. They have a passion for physical sports and often spends time playing catch with their beloved pet dog. Though Teddy may look young, they are nevertheless sharp and wise beyond their years."
+        },
+        {
+          "name": "Rand",
+          "description": "Rand is a random adventurer who hails from the Outskirts of Therun. Despite their low strength and constitution, Rand is still an agile individual capable of weaving between obstacles and enemies with ease due to their sharp dexterity. They may be small in stature, but their heart is larger than life. Rand sports a wild mane of random hair atop their head, coupled with random eyes that are constantly scanning their surroundings. When not venturing from town to town, they can be found with their faithful canine companion, undertaking random physical activities that bring them joy and keep their body nimble."
         }
-      ],
-      "description": "The Valley of Iron is a mysterious and treacherous area in Akiran's mountain range. It has long been the home of the orcs, and their skill in metalworking is renowned around the world. The steep cliffs and deep crevasses are filled with hidden caves, tunnels and workshops that have been used for centuries by the orcs to craft their powerful weapons and armor. Legends say that in the Valley of Iron lies one of the greatest pieces of orcish craftsmanship of all time, a powerful sword that has never been wielded by anyone before. Its secrets remain hidden, and adventurers brave enough to venture into the Valley will certainly find danger and treasure alike.",
-      "items": []
+      ]
     }
   ]
 }

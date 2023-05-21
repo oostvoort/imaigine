@@ -5,6 +5,21 @@ import { defineComponent, Type as RecsType, World } from "@latticexyz/recs";
 
 export function defineContractComponents(world: World) {
   return {
+    ControllerComponent: (() => {
+      const tableId = new TableId("", "ControllerCompon");
+      return defineComponent(
+        world,
+        {
+          oracle: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     PlanetComponent: (() => {
       const tableId = new TableId("", "PlanetComponent");
       return defineComponent(
