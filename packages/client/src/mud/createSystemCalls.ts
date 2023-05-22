@@ -135,14 +135,14 @@ export function createSystemCalls(
     console.log('createPlayer done!')
   }
 
-  const selectPlayerLocation = async (optionLocationID: string) => {
+  const playerTravelPath = async (optionLocationID: string) => {
     console.info({ optionLocationID })
-    await worldSend('selectPlayerLocation', [ optionLocationID ])
+    await worldSend('playerTravelPath', [ optionLocationID ])
   }
 
   return {
     createStartingLocation,
-    selectPlayerLocation,
+    playerTravelPath,
     createPlayer,
     createStory,
   }
