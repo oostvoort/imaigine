@@ -1,5 +1,6 @@
 import { executePrompt } from '../executePrompt'
 import { GenerateTravelProps, GenerateTravelResponse } from 'types'
+import { PROMPT_OUTPUT_JSON } from '../utils'
 
 
 export async function generateTravel(
@@ -12,7 +13,7 @@ export async function generateTravel(
 
     Tell a story about the character traveling the path in an exciting way, reaching the final destination
     Don't introduce the character in the story.
-    Encode the story as a single JSON with the following format:
+    ${PROMPT_OUTPUT_JSON}
 
     {
         "name": "the name of the journey","summary": "the story",

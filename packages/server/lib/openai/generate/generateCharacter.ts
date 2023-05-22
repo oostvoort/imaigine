@@ -7,7 +7,7 @@ import {
   GeneratePlayerCharacterProps,
   GeneratePlayerCharacterResponse,
 } from 'types'
-import { getRandomValue } from '../utils'
+import { getRandomValue, PROMPT_OUTPUT_JSON } from '../utils'
 
 export interface AICharacter {
   name: string,
@@ -63,7 +63,7 @@ export async function generatePlayerCharacter({
 
     Describe the character visually
 
-    Respond only in JSON with the following format:
+    ${PROMPT_OUTPUT_JSON}
     {
         "name": "the name of the character",
         "summary": "the generated description",

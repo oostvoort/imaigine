@@ -1,5 +1,6 @@
 import { executePrompt } from '../executePrompt'
 import { GenerateItemProps, GenerateItemResponse } from 'types'
+import { PROMPT_OUTPUT_JSON } from '../utils'
 
 
 export async function generateItem(
@@ -13,7 +14,7 @@ export async function generateItem(
 
     Describe the location visually
 
-    Respond only in JSON with the following format:
+    ${PROMPT_OUTPUT_JSON}
 
     {
         "name": "the name of the location",

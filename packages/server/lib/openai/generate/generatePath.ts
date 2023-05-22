@@ -1,5 +1,6 @@
 import { executePrompt } from '../executePrompt'
 import { GeneratePathProps, GeneratePathResponse } from 'types'
+import { PROMPT_OUTPUT_JSON } from '../utils'
 
 
 export async function generatePath(
@@ -19,7 +20,7 @@ export async function generatePath(
     Name of the second location: "${toLocation.name}"
     Description of the second location: "${toLocation.summary}"
 
-    Respond only in JSON with the following format:
+    ${PROMPT_OUTPUT_JSON}
 
     {
         "name": "the name of the location",

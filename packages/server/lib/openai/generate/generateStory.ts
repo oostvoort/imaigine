@@ -1,6 +1,7 @@
 import { executePrompt } from '../executePrompt'
 import { AILocation } from './generateLocation'
-import { GenerateLocationResponse, GenerateStoryProps, GenerateStoryResponse, JsonResponse } from 'types'
+import { GenerateStoryProps, GenerateStoryResponse } from 'types'
+import { PROMPT_OUTPUT_JSON } from '../utils'
 
 export interface AIStory {
   theme: string,
@@ -27,7 +28,7 @@ export async function generateStory({
   }
     Summarize the story's world visually
 
-    Respond only in JSON with the following format:
+    ${PROMPT_OUTPUT_JSON}
 
     {
         "name": "the name of the world",

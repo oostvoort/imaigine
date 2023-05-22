@@ -11,3 +11,5 @@ export function cleanAiJsonAnswer(str: string): string {
   str = str.replace(/^\s+|\n/g, '').trimStart()
   return str
 }
+
+export const PROMPT_OUTPUT_JSON = 'Respond to me in valid JSON with the following format:'

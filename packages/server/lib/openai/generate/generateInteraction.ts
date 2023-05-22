@@ -1,6 +1,7 @@
 import { executePrompt } from '../executePrompt'
 import { GenerateInteractionProps, GenerateInteractionResponse } from 'types'
 import { loadJson, storeJson } from '../../ipfs'
+import { PROMPT_OUTPUT_JSON } from '../utils'
 
 
 export async function generateInteraction({
@@ -13,8 +14,8 @@ export async function generateInteraction({
 
   const outputTemplate = {
     'name': 'the name of whoever reacts',
-    'summary': `summary of the interaction between ${activeEntity.name} and ${otherEntities[0].summary} `,
-    'dialog': `what ${otherEntities[0].summary} says`,
+    'summary': `summary of the interaction between ${activeEntity.name} and ${otherEntities[0].name} `,
+    'dialog': `what ${otherEntities[0].name} says`,
     'inventoryChange': {
       'itemAdded': '(if applicable) item that was acquired in the action',
       'itemRemoved': '(if applicable) item that was removed in the action ',
@@ -66,9 +67,8 @@ export async function generateInteraction({
   const prompt = ` ${process.env.GLOBAL_AI_PROMPT_PREFIX}
     ${p}
 
-    Respond to me in pure JSON with the following format:
-
-    ${JSON.stringify(outputTemplate)}
+    ${PROMPT_OUTPUT_JSON}
+${JSON.stringify(outputTemplate)}
     `
 
   const output = await executePrompt(prompt)

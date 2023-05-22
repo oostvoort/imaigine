@@ -1,6 +1,6 @@
 import { executePrompt } from '../executePrompt'
 import { CharacterStats, GenerateLocationProps, GenerateLocationResponse } from 'types'
-import { getRandomValue } from '../utils'
+import { getRandomValue, PROMPT_OUTPUT_JSON } from '../utils'
 
 export interface AILocation {
   name: string,
@@ -40,7 +40,7 @@ export async function generateLocation({ story }: GenerateLocationProps): Promis
 
     Summarize the location visually
 
-    Respond only in JSON with the following format:
+    ${PROMPT_OUTPUT_JSON}
 
     {
         "name": "the name of the location",
