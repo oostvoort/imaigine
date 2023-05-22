@@ -18,7 +18,8 @@ import {
   LocationComponent,
   DescriptionComponent,
   InteractComponent,
-  InteractComponentData
+  InteractComponentData,
+  AliveComponent
 } from "../src/codegen/Tables.sol";
 
 import { Constants } from "../src/lib/Constants.sol";
@@ -127,6 +128,7 @@ contract CreationSystemTest is MudV2Test {
 
     assertTrue(PlayerComponent.get(world, playerID));
     assertTrue(CharacterComponent.get(world, playerID));
+    assertTrue(AliveComponent.get(world, playerID));
     assertEq(name, playerName);
     assertEq(summary, playerSummary);
     assertEq(imgHash, playerImgHash);
@@ -156,6 +158,7 @@ contract CreationSystemTest is MudV2Test {
 
     assertFalse(PlayerComponent.get(world, npcID));
     assertTrue(CharacterComponent.get(world, npcID));
+    assertTrue(AliveComponent.get(world, npcID));
     assertEq(name, npcName);
     assertEq(summary, npcSummary);
     assertEq(imgHash, npcImgHash);

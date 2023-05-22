@@ -21,7 +21,8 @@ import {
   CharacterComponent,
   InteractComponent,
   InteractComponentData,
-  ActionsComponent
+  ActionsComponent,
+  AliveComponent
 } from "../codegen/Tables.sol";
 
 import { Constants } from "../lib/Constants.sol";
@@ -101,6 +102,7 @@ contract CreationSystem is System {
 
     PlayerComponent.set(playerID, true);
     CharacterComponent.set(playerID, true);
+    AliveComponent.set(playerID, true);
     NameComponent.set(playerID, name);
     SummaryComponent.set(playerID, summary);
     ImageComponent.set(playerID, imgHash);
@@ -129,6 +131,7 @@ contract CreationSystem is System {
     bytes32 characterID = getUniqueEntity();
 
     CharacterComponent.set(characterID, true);
+    AliveComponent.set(characterID, true);
     NameComponent.set(characterID, name);
     SummaryComponent.set(characterID, summary);
     ImageComponent.set(characterID, imgHash);

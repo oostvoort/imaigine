@@ -39,6 +39,7 @@ export default mudConfig({
                 currencyID: "bytes32", // The currency
             },
         },
+        AliveComponent: "bool",
         NameComponent: "string",
         SummaryComponent: "string",
         DescriptionComponent: "string",

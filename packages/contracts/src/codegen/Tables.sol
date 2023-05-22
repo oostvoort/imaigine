@@ -6,6 +6,7 @@ pragma solidity >=0.8.0;
 import { ControllerComponent, ControllerComponentTableId } from "./tables/ControllerComponent.sol";
 import { PlanetComponent, PlanetComponentData, PlanetComponentTableId } from "./tables/PlanetComponent.sol";
 import { StoryComponent, StoryComponentData, StoryComponentTableId } from "./tables/StoryComponent.sol";
+import { AliveComponent, AliveComponentTableId } from "./tables/AliveComponent.sol";
 import { NameComponent, NameComponentTableId } from "./tables/NameComponent.sol";
 import { SummaryComponent, SummaryComponentTableId } from "./tables/SummaryComponent.sol";
 import { DescriptionComponent, DescriptionComponentTableId } from "./tables/DescriptionComponent.sol";
