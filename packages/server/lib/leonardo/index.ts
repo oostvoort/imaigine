@@ -36,8 +36,8 @@ export const promptTemplates: { [index: string]: any } = {
   location: {
     ...sharedSettings,
     modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61',    // Rpg4.0
-    width: 768,
-    height: 768,
+    width: 1088,
+    height: 608,
     presetStyle: 'LEONARDO',
     negative_prompt: 'watermark, text',
     prompt: 'detailed illustration of %, a place, fantasy, rpg, medieval. concept art, trending on artstation, lush illumination, high contrast, vibrant, Greg Rutkowski, Artgerm, WLOP, line-art illustration',
