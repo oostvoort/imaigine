@@ -4,6 +4,7 @@ import {
   CharacterStory,
   GenerateInteractionProps,
   GenerateItemProps,
+  GenerateItemResponse,
   GeneratePathResponse,
   GeneratePlayerCharacterResponse,
   GenerateStoryProps,
@@ -43,6 +44,16 @@ export const npc: GeneratePlayerCharacterResponse = {
   visualSummary: 'petite, slim, athletic female elf, medium wavy yellow hair, almond shaped red eyes',
   isAlive: true,
   imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
+}
+
+export const item_warhammer: GenerateItemResponse = {
+  name: 'Elven War Hammer',
+  summary: 'Radiating with a bluish glow, this Elven War Hammer is made of a mysterious metal that seems to be a mix of iron and imbued with magical energy. The handle is wrapped with leather and encased with intricate shell decorations. At the head of the hammer, it features two separate protrusions in the rear and a sharp pointy front to help puncture and break through any defense. ',
+  value: 250,
+  visualSummary: 'Elven War Hammer : bluish, mysterious metal, leather wrapped, shell decorations, protrusions rear, sharp, pointy front',
+  imageHash: '',
+  isAlive: false,
+  owner: player.name,
 }
 
 export const path: GeneratePathResponse = {

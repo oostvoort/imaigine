@@ -102,7 +102,7 @@ export async function generateNonPlayerCharacter({
   story,
   characterStats: stats,
 }: GenerateNonPlayerCharacterProps) {
-  return await generatePlayerCharacter(true, {
+  return await generatePlayerCharacter({
     location,
     physicalFeatures: {
       ageGroup: getRandomValue(ageGroup),

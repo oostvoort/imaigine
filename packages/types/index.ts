@@ -22,6 +22,8 @@ export interface GenerateItemResponse extends Summarized {
   value: number,
   imageHash: string
   visualSummary: string
+  isAlive: boolean
+  owner: string
 }
 
 export interface GenerateLocationResponse extends Summarized {
@@ -102,6 +104,7 @@ export interface GeneratePathProps {
 
 export interface Entity extends Summarized {
   isAlive: boolean
+  owner: string
 }
 
 export interface GenerateInteractionProps {
