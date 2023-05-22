@@ -1,6 +1,6 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
-import { getComponentValueStrict, Has } from '@latticexyz/recs'
+import { getComponentValue, Has, Not } from '@latticexyz/recs'
 
 export default function useGame() {
   const {
@@ -21,8 +21,8 @@ export default function useGame() {
   } = useMUD()
 
   const story = useEntityQuery([Has(StoryComponent)]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const name = getComponentValue(NameComponent, entity) ?? ''
+    const summary = getComponentValue(SummaryComponent, entity) ?? ''
     return {
       entity,
       name,
@@ -30,10 +30,10 @@ export default function useGame() {
     }
   })[0]
 
-  const startingLocation = useEntityQuery([ Has(SceneComponent)]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
+  const startingLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent)]).map((entity) => {
+    const name = getComponentValue(NameComponent, entity) ?? ''
+    const summary = getComponentValue(SummaryComponent, entity) ?? ''
+    const image = getComponentValue(ImageComponent, entity) ?? ''
     return {
       entity,
       name,
@@ -44,9 +44,9 @@ export default function useGame() {
 
 
   const locations = useEntityQuery([ Has(SceneComponent)]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
+    const name = getComponentValue(NameComponent, entity) ?? ''
+    const summary = getComponentValue(SummaryComponent, entity) ?? ''
+    const image = getComponentValue(ImageComponent, entity) ?? ''
     return {
       entity,
       name,
@@ -55,10 +55,10 @@ export default function useGame() {
     }
   })
 
-  const characters = useEntityQuery([ Has(CharacterComponent) ]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
+  const characters = useEntityQuery([ Has(CharacterComponent), Not(PlayerComponent) ]).map((entity) => {
+    const name = getComponentValue(NameComponent, entity) ?? ''
+    const summary = getComponentValue(SummaryComponent, entity) ?? ''
+    const image = getComponentValue(ImageComponent, entity) ?? ''
     return {
       entity,
       name,
@@ -68,9 +68,9 @@ export default function useGame() {
   })
 
   const players = useEntityQuery([ Has(PlayerComponent) ]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
+    const name = getComponentValue(NameComponent, entity) ?? ''
+    const summary = getComponentValue(SummaryComponent, entity) ?? ''
+    const image = getComponentValue(ImageComponent, entity) ?? ''
     return {
       entity,
       name,

@@ -3,9 +3,9 @@ import GridStoryLayout from '../../components/templates/GridStoryLayout'
 import { clsx } from 'clsx'
 import { Button, Progress } from '../../components/base'
 import { motion } from 'framer-motion'
-import { useMUD } from '../../MUDContext'
 import CharacterConversationDialog from '../../components/CharacterConversationDialog'
 import LocationInfoDialog from '../../components/LocationInfoDialog'
+import useGame from '../../hooks/useGame'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -67,14 +67,12 @@ const statsMockup: Props['gameStats'] = {
 }
 
 export default function Game() {
+  const { story, players, startingLocation } = useGame()
+
+
   const [ isMapDialogOpen, setMapDialogOpen ] = React.useState<boolean>(false)
   const [ isCharacterDialogOpen, setCharacterDialogOpen ] = React.useState<boolean>(false)
   const constrainsRef = React.useRef<HTMLDivElement>(null)
-
-  const {
-    components,
-    systemCalls: { selectPlayerLocation },
-  } = useMUD()
 
   return (
     <>
@@ -181,6 +179,7 @@ export default function Game() {
                           locationTitle={'Lindwurm Town'}
                           locationDescription={'Enchanting Lindwurm: Idyllic cottages, winding streets, and a vibrant market square create a picturesque haven. Friendly locals gather in cozy taverns, their laughter echoing amidst the sweet scent of freshly baked treats. A serene river adds to the town\'s charm, reflecting the beauty of this inviting place.'}
                           action={() => console.log('travel!')} />
+      {/*<LoadingScreen message={'Generating avatars..'} />*/}
     </>
   )
 }

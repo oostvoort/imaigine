@@ -63,8 +63,6 @@ function IconItem({ icon, label, isAvatar, ...others }: IconItemProps) {
   )
 }
 
-2
-
 export default function PlayerNav() {
   // transform this into atom once other components need to change this state
   const [ openAvatarDialog, setOpenAvatarDialog ] = React.useState<boolean>(false)

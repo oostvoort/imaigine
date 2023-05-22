@@ -21,7 +21,7 @@ export default function Welcome() {
     <div
       className={clsx([
         'flex flex-col justify-center items-center bg-gray-400 gap-10',
-        'bg-cover bg-center bg-opacity-10 bg-no-repeat relative1',
+        'bg-cover bg-center bg-opacity-10 bg-no-repeat relative',
       ])}>
       <section className="flex flex-col gap-2 z-10">
         <img src={imaigineIcon} alt={String(imaigineIcon)} className="aspect-auto w-[300px] mx-auto" />
