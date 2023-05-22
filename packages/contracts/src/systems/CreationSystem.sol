@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
+import { console } from "forge-std/console.sol";
+
 import { System } from "@latticexyz/world/src/System.sol";
 import { getUniqueEntity } from "@latticexyz/world/src/modules/uniqueentity/getUniqueEntity.sol";
 
@@ -23,12 +25,17 @@ import {
   InteractComponentData,
   ActionsComponent,
   AliveComponent,
-  SceneComponent
+  SceneComponent,
+  ItemComponent,
+  OwnerComponent
 } from "../codegen/Tables.sol";
 
+import { ArrayLib } from "../lib/ArrayLib.sol";
 import { Constants } from "../lib/Constants.sol";
 
 contract CreationSystem is System {
+  using ArrayLib for string[];
+
 
 //  event CreatedStory(bytes32 indexed storyID, string indexed name, string indexed theme, string summary);
 //  event CreatedPlayer(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
@@ -166,15 +173,34 @@ contract CreationSystem is System {
 
   function createItem(
     string memory name,
-    string memory description
+    string memory summary,
+    string memory imgHash,
+    bytes32 locationID,
+    string memory initialMsg,
+    string[] memory initialActions,
+    bytes32 ownerID
   )
   public
+  returns (bytes32)
   {
     bytes32 itemID = getUniqueEntity();
 
+    ItemComponent.set(itemID, true);
     NameComponent.set(itemID, name);
-    DescriptionComponent.set(itemID, description);
-    TangibleComponent.set(itemID, true);
+    SummaryComponent.set(itemID, summary);
+    ImageComponent.set(itemID, imgHash);
+    LocationComponent.set(itemID, locationID);
+
+    InteractComponent.set(
+      itemID,
+      initialMsg,
+      initialActions.encode(),
+      abi.encode(new bytes32[](0))
+    );
+
+    OwnerComponent.set(itemID, ownerID);
+
+    return itemID;
   }
 
   function createLocation(
