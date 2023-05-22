@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useGame from '../../hooks/useGame'
 import { useMUD } from '../../MUDContext'
 import { Button } from '../../components/base'
+import CharacterConversationDialog from '../../components/CharacterConversationDialog'
 
 function DEV() {
   const {
@@ -12,13 +13,12 @@ function DEV() {
     story,
     startingLocation,
     paths,
-    currentLocation
+    currentLocation,
   } = useGame()
 
   const {
-    systemCalls: { createPlayer, createStory, createStartingLocation, createCharacter },
+    systemCalls: { createPlayer, createStory, createStartingLocation, createCharacter, enterInteraction },
   } = useMUD()
-
 
   async function onClickCreateStoryTest() {
     await createStory({
@@ -97,6 +97,9 @@ function DEV() {
   }
 
 
+  async function onClickNPCInteractionTest(entityID: string) {
+    await enterInteraction(entityID)
+  }
 
   return (
     <div className={'grid grid-cols-4 gap-4'}>
@@ -115,9 +118,22 @@ function DEV() {
 
       <JSONCard title={'Story'} data={story} />
       <JSONCard title={'Player'} data={player} />
+      <Card title={'NPCs'}>
+        {characters.map(character => {
+
+          return (
+            <div key={character.entity} className={'flex flex-row gap-x-2'}>
+              <Button size="xl" className={'w-64'} onClick={() => onClickNPCInteractionTest(character.entity)}>
+                {character.name.value}
+              </Button>
+              <Button size={"xl"} onClick={() => window.open("https://gateway.pinata.cloud/ipfs/" + character.image.value, "_blank")}>👀</Button>
+            </div>
+          )
+        })}
+
+      </Card>
       <JSONCard title={'Current Location'} data={currentLocation} />
       <JSONCard title={'Other Players'} data={otherPlayers} />
-      <JSONCard title={'NPCs'} data={characters} />
       <JSONCard title={'Starting Location'} data={startingLocation} />
       <JSONCard title={'Locations'} data={locations} />
       <JSONCard title={'Paths'} data={paths} />

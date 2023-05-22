@@ -130,7 +130,7 @@ export function createSystemCalls(
       res.name,
       res.summary,
       res.imageHash,
-      hexZeroPad(startingLocation.toString(), 32)
+      hexZeroPad(startingLocation.toString(), 32),
     ])
     console.log('createPlayer done!')
   }
@@ -144,9 +144,15 @@ export function createSystemCalls(
       res.imageHash,
       hexZeroPad(startingLocation.toString(), 32),
       res.initialMessage,
-      []
+      [],
     ])
     console.log('createCharacter done!')
+  }
+
+  const enterInteraction = async (entityID: string) => {
+    console.log('enterInteraction', hexZeroPad(entityID, 32))
+    await worldSend('enterInteraction', [ hexZeroPad(entityID, 32), ])
+    console.log('enterInteraction done!')
   }
 
 
@@ -156,6 +162,7 @@ export function createSystemCalls(
   }
 
   return {
+    enterInteraction,
     createCharacter,
     createStartingLocation,
     playerTravelPath,
