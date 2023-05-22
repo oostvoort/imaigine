@@ -1,7 +1,7 @@
 import React from 'react'
-import { Dialog, Button } from '../../components/base'
-import ConversationLayout from '../templates/conversation_layout'
-import blacksmithIcon from '../../assets/blacksmith.jpeg'
+import { Dialog, Button } from './base'
+import ConversationLayout from './templates/ConversationLayout'
+import blacksmithIcon from '../assets/blacksmith.jpeg'
 
 type Props = {
   isOpen: boolean,

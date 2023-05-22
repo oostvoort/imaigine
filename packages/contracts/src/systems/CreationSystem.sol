@@ -24,6 +24,13 @@ import {
 import { Constants } from "../lib/Constants.sol";
 
 contract CreationSystem is System {
+
+  event CreatedStory(bytes32 indexed storyID, string indexed name, string indexed theme, string summary);
+  event CreatedPlayer(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
+  event CreatedCharacter(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
+  event CreatedLocation(bytes32 indexed locationID, string indexed name, string summary, string imgHash);
+  event CreatedPath(bytes32 indexed from, bytes32 indexed to, string indexed name, string summary);
+
   function createPlanet(
     string memory name,
     string memory theme,
@@ -73,6 +80,8 @@ contract CreationSystem is System {
       NameComponent.set(racesID, races[i]);
     }
 
+    emit CreatedStory(storyID, name, theme, summary);
+
     return storyID;
   }
 
@@ -103,6 +112,8 @@ contract CreationSystem is System {
     ImageComponent.set(playerID, imgHash);
     LocationComponent.set(playerID, locationID);
 
+    emit CreatedPlayer(playerID, locationID, name, summary, imgHash);
+
     return playerID;
   }
 
@@ -128,6 +139,8 @@ contract CreationSystem is System {
     SummaryComponent.set(characterID, summary);
     ImageComponent.set(characterID, imgHash);
     LocationComponent.set(characterID, locationID);
+
+    emit CreatedCharacter(characterID, locationID, name, summary, imgHash);
 
     return characterID;
   }
@@ -164,6 +177,8 @@ contract CreationSystem is System {
     SummaryComponent.set(locationID, summary);
     ImageComponent.set(locationID, imgHash);
 
+    emit CreatedLocation(locationID, name, summary, imgHash);
+
     return locationID;
   }
 
@@ -189,6 +204,8 @@ contract CreationSystem is System {
     PathLocationComponent.set(pathID, fromLocation, toLocation);
     NameComponent.set(pathID, name);
     SummaryComponent.set(pathID, summary);
+
+    emit CreatedPath(fromLocation, toLocation, name, summary);
 
     return pathID;
   }
