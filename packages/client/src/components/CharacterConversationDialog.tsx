@@ -27,8 +27,9 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
           <div className="flex-1">
             <ConversationLayout>
               {/* NOTE: when inserting a new chat from anyone, new ones should be on top of position */}
+              <ConversationLayout.TypingBubble authorIcon={generateIpfsImageLink(character.image.value)} />
               <ConversationLayout.ReceiverBubble
-                authorIcon={blacksmithIcon}
+                authorIcon={generateIpfsImageLink(character.image.value)}
                 text="I see. This sword has a history, then. I can fix it, but it won't be cheap. I'll need some rare materials and a few days to do it right."
               />
               <ConversationLayout.Notification
@@ -39,7 +40,7 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
                 strong again."
               />
               <ConversationLayout.ReceiverBubble
-                authorIcon={blacksmithIcon}
+                authorIcon={generateIpfsImageLink(character.image.value)}
                 authorName="Silverio of Khazad-dûm"
                 text="I&apos;m Silverio, and I&apos;m the best blacksmith in this village. What can I do for you?"
               />
