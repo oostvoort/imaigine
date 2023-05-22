@@ -18,7 +18,7 @@ export async function generateItem(
     {
         "name": "the name of the location",
         "summary": "the generated description",
-        "value": "value in currency units",
+        "value": "value in currency units, as signed integer",
         "visualSummary": "a string of comma separated keywords describing the item"
     }
     `
