@@ -21,9 +21,9 @@ export default function useGame() {
     systemCalls,
   } = useMUD()
 
-  const story = useEntityQuery([ Has(StoryComponent) ]).map((entity) => {
-    const name = getComponentValue(NameComponent, entity) ?? ''
-    const summary = getComponentValue(SummaryComponent, entity) ?? ''
+  const story = useEntityQuery([ Has(StoryComponent), Has(SummaryComponent) ]).map((entity) => {
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
     return {
       entity,
       name,
@@ -46,11 +46,11 @@ export default function useGame() {
       }
     })[0]
 
-  const currentLocation = useEntityQuery([ Has(SceneComponent) ])
+  const currentLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(ImageComponent) ])
     .filter((entity) => {
       if (!playerEntity) return false
       console.log(playerEntity)
-      const currentLocation = getComponentValue(LocationComponent, playerEntity)
+      const currentLocation = getComponentValueStrict(LocationComponent, playerEntity)
       if (!currentLocation) return false
       return (hexValue(currentLocation.value) == hexValue(entity))
     })
@@ -68,9 +68,9 @@ export default function useGame() {
     })[0]
 
   const startingLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map((entity) => {
-    const name = getComponentValue(NameComponent, entity) ?? ''
-    const summary = getComponentValue(SummaryComponent, entity) ?? ''
-    const image = getComponentValue(ImageComponent, entity) ?? ''
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
     return {
       entity,
       name,
@@ -80,10 +80,10 @@ export default function useGame() {
   })[0]
 
 
-  const locations = useEntityQuery([ Has(SceneComponent) ]).map((entity) => {
-    const name = getComponentValue(NameComponent, entity) ?? ''
-    const summary = getComponentValue(SummaryComponent, entity) ?? ''
-    const image = getComponentValue(ImageComponent, entity) ?? ''
+  const locations = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map((entity) => {
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
     return {
       entity,
       name,
@@ -93,14 +93,14 @@ export default function useGame() {
   })
 
 
-  const characters = useEntityQuery([ Has(CharacterComponent), Not(PlayerComponent) ])
+  const characters = useEntityQuery([ Has(CharacterComponent), Not(PlayerComponent), Has(LocationComponent) ])
     .filter((entity) => {
       return inPlayersLocation(entity)
     })
     .map((entity) => {
-      const name = getComponentValue(NameComponent, entity) ?? ''
-      const summary = getComponentValue(SummaryComponent, entity) ?? ''
-      const image = getComponentValue(ImageComponent, entity) ?? ''
+      const name = getComponentValueStrict(NameComponent, entity)
+      const summary = getComponentValueStrict(SummaryComponent, entity)
+      const image = getComponentValueStrict(ImageComponent, entity)
       return {
         entity,
         name,
@@ -110,16 +110,16 @@ export default function useGame() {
     })
 
 
-  const otherPlayers = useEntityQuery([ Has(PlayerComponent) ])
+  const otherPlayers = useEntityQuery([ Has(PlayerComponent), Has(LocationComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ])
     .filter((entity) => {
       if (!playerEntity) return false
       if (entity == playerEntity) return false
       return inPlayersLocation(entity)
     })
     .map((entity) => {
-      const name = getComponentValue(NameComponent, entity) ?? ''
-      const summary = getComponentValue(SummaryComponent, entity) ?? ''
-      const image = getComponentValue(ImageComponent, entity) ?? ''
+      const name = getComponentValueStrict(NameComponent, entity)
+      const summary = getComponentValueStrict(SummaryComponent, entity)
+      const image = getComponentValueStrict(ImageComponent, entity)
       return {
         entity,
         name,
@@ -128,7 +128,7 @@ export default function useGame() {
       }
     })
 
-  const paths = useEntityQuery([ Has(PathComponent), Has(PathLocationComponent) ])
+  const paths = useEntityQuery([ Has(PathComponent), Has(PathLocationComponent), Has(NameComponent), Has(SummaryComponent) ])
     .filter((entity) => {
       if (!playerEntity) return false
 

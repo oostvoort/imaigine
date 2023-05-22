@@ -7,6 +7,10 @@ import { clsx } from 'clsx'
 import AvatarStatsDialog from '../AvatarStatsDialog'
 import sampleAvatarIcon from '../../assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg'
 import SettingsDialog from '../SettingsDialog'
+import useGame from '../../hooks/useGame'
+import useGetIPFSImage from '../../hooks/useGetIPFSImage'
+import LoadingScreen from './LoadingScreen'
+import envs from '../../env'
 
 type IconItemProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   label?: string,
@@ -48,12 +52,12 @@ function IconItem({ icon, label, isAvatar, ...others }: IconItemProps) {
         icon ?
           <div className={clsx([
             'rounded-full origin-top-right',
-            'bg-cover bg-no-repeat',
+            'bg-cover bg-no-repeat overflow-hidden',
             {
-              'bg-avatar-frame scale-[1.3]': isAvatar,
+              'bg-avatar-frame aspect-square w-[105px] [&>img]:h-[105px] translate-x-[-20px] scale-[1.2]': isAvatar,
             },
           ])}>
-            <img className="w-[105px] rounded-full scale-[0.8]" src={icon} alt={JSON.stringify(icon)} />
+            <img className="w-[105px] rounded-full scale-[0.8] object-cover object-top" src={icon} alt={JSON.stringify(icon)} />
           </div>
           : <div
             className="w-auto w-[60px] h-[60px] aspect-square rounded-full border border-gray-400 bg-night mx-auto"></div>
@@ -64,14 +68,20 @@ function IconItem({ icon, label, isAvatar, ...others }: IconItemProps) {
 }
 
 export default function PlayerNav() {
+  const { player } = useGame()
   // transform this into atom once other components need to change this state
   const [ openAvatarDialog, setOpenAvatarDialog ] = React.useState<boolean>(false)
   const [ openSettingsDialog, setOpenSettingsDialog ] = React.useState<boolean>(false)
 
+
+  if (!player) return <LoadingScreen message='Loading player data...' />
+
+  const imageUrl = `${envs.API_IPFS_URL_PREFIX}/${player.image.value}`
+
   return (
     <>
       <nav className="w-[107px] bg-player-nav flex flex-col p-3 gap-8 overflow-visible z-10">
-        <IconItem isAvatar icon={avatarImage} className="mb-8 cursor-pointer"
+        <IconItem isAvatar icon={imageUrl} className="mb-8 cursor-pointer"
                   onClick={() => setOpenAvatarDialog(true)} />
         <IconItem icon={historyIcon} label="History" />
         <IconItem icon={backpackIcon} label="Inventory" />
@@ -80,10 +90,10 @@ export default function PlayerNav() {
       <AvatarStatsDialog
         isOpen={openAvatarDialog}
         setOpen={val => setOpenAvatarDialog(val)}
-        avatarIcon={sampleAvatarIcon}
-        playerName={'Alice'}
+        avatarIcon={imageUrl}
+        playerName={player.name.value}
         lvl="4"
-        description={'Alice is a young woman with a spirited nature and an adventurous spark in her eyes. Her wavy chestnut hair cascades down her shoulders, complementing her warm hazel eyes that shine with determination. Freckles dance across her fair skin, adding to her youthful appearance. She stands at an average height, with a lean and agile frame shaped by her outdoor lifestyle and physical training. Alice\'s attire reflects her connection to nature, adorned with earthy tones and practical garments suitable for her travels. She carries a staff adorned with intricate nature-themed carvings, a symbol of her magical prowess and connection to the natural world.'}
+        description={player.summary.value}
         stats={mockupAvatarInfo.stats} skills={mockupAvatarInfo.skills}
       />
       <SettingsDialog
