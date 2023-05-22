@@ -1,16 +1,7 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
-import {
-  getComponentValueStrict,
-  getComponentValue,
-  Has,
-  runQuery,
-  HasValue,
-  Not,
-  Entity,
-  getEntitiesWithValue,
-} from '@latticexyz/recs'
-import { hexStripZeros, hexValue } from 'ethers/lib/utils'
+import { getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
+import { hexValue } from 'ethers/lib/utils'
 
 export default function useGame() {
   const {
@@ -101,12 +92,10 @@ export default function useGame() {
     }
   })
 
+
   const characters = useEntityQuery([ Has(CharacterComponent), Not(PlayerComponent) ])
     .filter((entity) => {
-      if (!playerEntity) return false
-      const location = getComponentValueStrict(LocationComponent, entity)
-      const currentLocation = getComponentValueStrict(LocationComponent, playerEntity)
-      if (location != currentLocation) return false
+      return inPlayersLocation(entity)
     })
     .map((entity) => {
       const name = getComponentValue(NameComponent, entity) ?? ''
@@ -124,10 +113,8 @@ export default function useGame() {
   const otherPlayers = useEntityQuery([ Has(PlayerComponent) ])
     .filter((entity) => {
       if (!playerEntity) return false
-      if (entity != playerEntity) return false
-      const location = getComponentValueStrict(LocationComponent, entity)
-      const currentLocation = getComponentValueStrict(LocationComponent, playerEntity)
-      if (location != currentLocation) return false
+      if (entity == playerEntity) return false
+      return inPlayersLocation(entity)
     })
     .map((entity) => {
       const name = getComponentValue(NameComponent, entity) ?? ''
@@ -159,6 +146,13 @@ export default function useGame() {
         summary,
       }
     })
+
+  function inPlayersLocation(entity: any) {
+    if (!playerEntity) return false
+    const location = getComponentValueStrict(LocationComponent, entity)
+    const currentLocation = getComponentValueStrict(LocationComponent, playerEntity)
+    return location.value == currentLocation.value
+  }
 
 
   return {

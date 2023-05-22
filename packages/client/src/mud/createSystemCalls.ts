@@ -4,10 +4,10 @@ import { Entity, getComponentValue, HasValue, runQuery } from '@latticexyz/recs'
 
 import {
   GenerateLocationProps,
-  GenerateLocationResponse,
+  GenerateLocationResponse, GenerateNonPlayerCharacterProps,
   GeneratePathProps,
   GeneratePathResponse,
-  GeneratePlayerCharacterProps,
+  GeneratePlayerCharacterProps, GeneratePlayerCharacterResponse,
   GenerateStoryProps,
   JsonResponse,
 } from 'types'
@@ -135,12 +135,28 @@ export function createSystemCalls(
     console.log('createPlayer done!')
   }
 
+  const createCharacter = async (props: GenerateNonPlayerCharacterProps, startingLocation: Entity) => {
+    console.log('createCharacter', props)
+    const res: GeneratePlayerCharacterResponse = await api('/generateNonPlayerCharacter', props)
+    await worldSend('createCharacter', [
+      res.name,
+      res.summary,
+      res.imageHash,
+      hexZeroPad(startingLocation.toString(), 32),
+      res.initialMessage,
+      []
+    ])
+    console.log('createCharacter done!')
+  }
+
+
   const playerTravelPath = async (optionLocationID: string) => {
     console.info({ optionLocationID })
     await worldSend('playerTravelPath', [ optionLocationID ])
   }
 
   return {
+    createCharacter,
     createStartingLocation,
     playerTravelPath,
     createPlayer,

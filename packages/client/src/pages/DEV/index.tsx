@@ -16,7 +16,7 @@ function DEV() {
   } = useGame()
 
   const {
-    systemCalls: { createPlayer, createStory, createStartingLocation },
+    systemCalls: { createPlayer, createStory, createStartingLocation, createCharacter },
   } = useMUD()
 
 
@@ -53,7 +53,7 @@ function DEV() {
         },
         physicalFeatures: {
           ageGroup: 'Adult',
-          genderIdentity: 'Male',
+          genderIdentity: 'Female',
           race: 'Human',
           bodyType: 'Burly',
           height: 'Statuesque',
@@ -74,6 +74,29 @@ function DEV() {
       , startingLocation.entity)
   }
 
+  async function onClickNPCTest() {
+    await createCharacter({
+        characterStats: {
+          strength: 'Feeble',
+          dexterity: 'Graceful',
+          constitution: 'Sturdy',
+          intelligence: 'Average',
+          charisma: 'Foolish',
+          wisdom: 'Charming',
+        },
+        story: {
+          name: story.name.value,
+          summary: story.summary.value,
+        },
+        location: {
+          name: startingLocation.name.value,
+          summary: startingLocation.summary.value,
+        },
+      }
+      , startingLocation.entity)
+  }
+
+
 
   return (
     <div className={'grid grid-cols-4 gap-4'}>
@@ -85,6 +108,8 @@ function DEV() {
                   onClick={() => onClickCreateStartingLocationTest()}>CreateStartingLocationTest</Button>
           <Button size="xl" disabled={!startingLocation} className={'w-64'}
                   onClick={() => onClickPlayerTest()}>CreatePlayerTest</Button>
+          <Button size="xl" disabled={!startingLocation} className={'w-64'}
+                  onClick={() => onClickNPCTest()}>CreateNPCTest</Button>
         </div>
       </Card>
 
@@ -92,7 +117,7 @@ function DEV() {
       <JSONCard title={'Player'} data={player} />
       <JSONCard title={'Current Location'} data={currentLocation} />
       <JSONCard title={'Other Players'} data={otherPlayers} />
-      <JSONCard title={'Characters'} data={characters} />
+      <JSONCard title={'NPCs'} data={characters} />
       <JSONCard title={'Starting Location'} data={startingLocation} />
       <JSONCard title={'Locations'} data={locations} />
       <JSONCard title={'Paths'} data={paths} />
