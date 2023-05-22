@@ -12,7 +12,8 @@ export default function useGame() {
       SummaryComponent,
       PathComponent,
       PathLocationComponent,
-      StoryComponent
+      StoryComponent,
+      SceneComponent
     },
     network: { playerEntity, singletonEntity },
     systemCalls,
@@ -28,7 +29,18 @@ export default function useGame() {
     }
   })[0]
 
-  const locations = useEntityQuery([ Has(PathLocationComponent)]).map((entity) => {
+  const startingLocation = useEntityQuery([ Has(SceneComponent)]).map((entity) => {
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    return {
+      entity,
+      name,
+      summary,
+    }
+  })[0]
+
+
+  const locations = useEntityQuery([ Has(SceneComponent)]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
     const summary = getComponentValueStrict(SummaryComponent, entity)
     return {
@@ -60,6 +72,7 @@ export default function useGame() {
 
 
   return {
+    startingLocation,
     story,
     locations,
     characters,

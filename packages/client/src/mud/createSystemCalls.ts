@@ -36,25 +36,23 @@ export function createSystemCalls(
   }: ClientComponents,
 ) {
 
-  const createPlayer = async (props: GeneratePlayerCharacterProps) => {
-    const res = await api('/generatePlayerCharacter', props)
-    console.log(res)
-    await worldSend('createPlayer', props)
-  }
 
   const createStory = async (props: GenerateStoryProps) => {
+    console.log('createStory', props)
+
     const res: JsonResponse = await api('/generateStory', props)
     await worldSend('createStory', [ res.name, res.summary, props.theme, props.races, props.currency ])
+
+    console.log('createStory done!')
   }
 
-  const createStartingLocation = async (props: GenerateLocationProps, connections = 2) => {
+  const createStartingLocation = async (props: GenerateLocationProps, locations = 2) => {
     console.log('createStartingLocation', props)
 
     let startingLocation: Entity = {} as Entity
     const toLocations: Array<Entity> = []
 
-    // Create locations
-    for (let i = 0; i < connections; i++) {
+    async function createLocation(i: number) {
       const res: GenerateLocationResponse = await api('/generateLocation', props)
       const tx = await worldSend('createLocation', [ res.name, res.summary, res.imageHash ])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
@@ -62,7 +60,7 @@ export function createSystemCalls(
       const locationQuery: Set<Entity> = runQuery([
         HasValue(NameComponent, { value: res.name }),
         HasValue(SummaryComponent, { value: res.summary }),
-        HasValue(ImageComponent, { value: 'QmV9tSDx9UiPeWExXEeH6aoDvmihvx6jD5eLb4jbTaKGps' }),
+        HasValue(ImageComponent, { value: res.imageHash }),
       ])
 
       const location = locationQuery.values().next().value as Entity
@@ -71,18 +69,27 @@ export function createSystemCalls(
       else toLocations.push(location)
     }
 
+    let promises = []
+
+    for (let i = 0; i < locations; i++) {
+      promises.push(await createLocation(i))
+    }
+
+    await Promise.all(promises)
+
+    promises = []
+
     const startingLocationName = getComponentValue(NameComponent, startingLocation)
     const startingLocationSummary = getComponentValue(SummaryComponent, startingLocation)
-    if (!startingLocationName) return Error('Invalid startingLocationName')
-    if (!startingLocationSummary) return Error('Invalid startingLocationSummary')
 
-    // Connect locations
-    for (const toLocation of toLocations) {
+    async function connectLocations(toLocation: Entity) {
       const toLocationName = getComponentValue(NameComponent, toLocation)
       const toLocationSummary = getComponentValue(SummaryComponent, toLocation)
 
       if (!toLocationName) return Error('Invalid startingLocationName')
       if (!toLocationSummary) return Error('Invalid startingLocationSummary')
+      if (!startingLocationName) return Error('Invalid startingLocationName')
+      if (!startingLocationSummary) return Error('Invalid startingLocationSummary')
 
       const generatePathProps: GeneratePathProps = {
         toLocation: {
@@ -105,6 +112,27 @@ export function createSystemCalls(
       ])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
     }
+
+
+    for (const toLocation of toLocations) {
+      promises.push(connectLocations(toLocation))
+    }
+
+    await Promise.all(promises)
+
+    console.log('createStartingLocation done!')
+  }
+
+  const createPlayer = async (props: GeneratePlayerCharacterProps, startingLocation: Entity) => {
+    console.log('createPlayer', props)
+    const res = await api('/generatePlayerCharacter', props)
+    await worldSend('createPlayer', [
+      res.name,
+      res.summary,
+      res.imageHash,
+      hexZeroPad(startingLocation.toString(), 32)
+    ])
+    console.log('createPlayer done!')
   }
 
   const selectPlayerLocation = async (optionLocationID: string) => {
