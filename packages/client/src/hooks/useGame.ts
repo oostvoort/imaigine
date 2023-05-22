@@ -13,7 +13,8 @@ export default function useGame() {
       PathComponent,
       PathLocationComponent,
       StoryComponent,
-      SceneComponent
+      SceneComponent,
+      ImageComponent
     },
     network: { playerEntity, singletonEntity },
     systemCalls,
@@ -32,10 +33,12 @@ export default function useGame() {
   const startingLocation = useEntityQuery([ Has(SceneComponent)]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
     const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
     return {
       entity,
       name,
       summary,
+      image
     }
   })[0]
 
@@ -43,30 +46,36 @@ export default function useGame() {
   const locations = useEntityQuery([ Has(SceneComponent)]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
     const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
     return {
       entity,
       name,
       summary,
+      image
     }
   })
 
   const characters = useEntityQuery([ Has(CharacterComponent) ]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
     const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
     return {
       entity,
       name,
       summary,
+      image
     }
   })
 
   const players = useEntityQuery([ Has(PlayerComponent) ]).map((entity) => {
     const name = getComponentValueStrict(NameComponent, entity)
     const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
     return {
       entity,
       name,
       summary,
+      image
     }
   })
 

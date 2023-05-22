@@ -34,62 +34,90 @@ app.use(
   }),
 )
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
+
 app.get('/', (req: Request, res: Response) => {
   res.send('OK 👌')
 })
 
-app.post('/generateStory', async (req: Request, res: Response) => {
+app.post('/generateStory', async (req: Request, res: Response, next) => {
   const props: GenerateStoryProps = req.body
-  const story = await generateStory(props)
-  res.send(story)
+  try {
+    const story = await generateStory(props)
+    res.send(story)
+  } catch (e) {
+    next(e)
+  }
 })
 
-app.post('/generateLocation', async (req: Request, res: Response) => {
+app.post('/generateLocation', async (req: Request, res: Response, next) => {
   const props: GenerateLocationProps = req.body
-  let response = await generateLocation(props)
-  response.imageHash = await generateLocationImage(response.visualSummary)
-
-  res.send(response)
+  try {
+    let response = await generateLocation(props)
+    response.imageHash = await generateLocationImage(response.visualSummary)
+    res.send(response)
+  } catch (e) {
+    next(e)
+  }
 })
 
-app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {
+app.post('/generatePlayerCharacter', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerCharacterProps = req.body
-
-  const player = await generatePlayerCharacter(props)
-
-  player.imageHash = await generatePlayerImage(player.visualSummary)
-
-  res.send(player)
+  try {
+    const player = await generatePlayerCharacter(props)
+    player.imageHash = await generatePlayerImage(player.visualSummary)
+    res.send(player)
+  } catch (e) {
+    next(e)
+  }
 })
 
-app.post('/generateNonPlayerCharacter', async (req: Request, res: Response) => {
+app.post('/generateNonPlayerCharacter', async (req: Request, res: Response, next) => {
   const props: GenerateNonPlayerCharacterProps = req.body
 
-  const player = await generateNonPlayerCharacter(props)
-
-  player.imageHash = await generatePlayerImage(player.visualSummary)
-
-  res.send(player)
+  try {
+    const player = await generateNonPlayerCharacter(props)
+    player.imageHash = await generatePlayerImage(player.visualSummary)
+    res.send(player)
+  } catch (e) {
+    next(e)
+  }
 })
 
-app.post('/generatePath', async (req: Request, res: Response) => {
+app.post('/generatePath', async (req: Request, res: Response, next) => {
   const props: GeneratePathProps = req.body
-  res.send(await generatePath(props))
+  try {
+    res.send(await generatePath(props))
+  } catch (e) {
+    next(e)
+  }
 })
 
 
-app.post('/generateInteraction', async (req: Request, res: Response) => {
+app.post('/generateInteraction', async (req: Request, res: Response, next) => {
   const props: GenerateInteractionProps = req.body
-  let response: GenerateInteractionResponse = await generateInteraction(props)
-
-  res.send(response)
+  try {
+    let response: GenerateInteractionResponse = await generateInteraction(props)
+    res.send(response)
+  } catch (e) {
+    next(e)
+  }
 })
 
 
-app.post('/generateTravel', async (req: Request, res: Response) => {
+app.post('/generateTravel', async (req: Request, res: Response, next) => {
   const props: GenerateTravelProps = req.body
-  const response: GenerateTravelResponse = await generateTravel(props)
-  res.send(response)
+  try {
+    const response: GenerateTravelResponse = await generateTravel(props)
+    res.send(response)
+  } catch (e) {
+    next(e)
+  }
 })
 
 
