@@ -14,6 +14,7 @@ function DEV() {
     startingLocation,
     paths,
     currentLocation,
+    interactions
   } = useGame()
 
   const {
@@ -116,6 +117,7 @@ function DEV() {
         </div>
       </Card>
 
+      <JSONCard title={'Interactions'} data={interactions} />
       <JSONCard title={'Story'} data={story} />
       <JSONCard title={'Player'} data={player} />
       <Card title={'NPCs'}>
