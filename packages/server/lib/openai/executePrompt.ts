@@ -1,4 +1,5 @@
 import openai from './openai'
+import { cleanAiJsonAnswer } from './utils'
 
 export async function executePrompt(prompt: string): Promise<string> {
   if (process.env.LOG_PROMPTS == 'true') console.log(`Prompt: ${prompt}`)
@@ -11,7 +12,9 @@ export async function executePrompt(prompt: string): Promise<string> {
     frequency_penalty: 0,
     presence_penalty: 0,
   })
-  const responseText = response.data.choices[0].text
+  console.log(response.data.usage)
+  let responseText = response.data.choices[0].text
+  responseText = cleanAiJsonAnswer(responseText)
   return responseText.replace(/^\s+|\n/g, '').trimStart()
 }
 

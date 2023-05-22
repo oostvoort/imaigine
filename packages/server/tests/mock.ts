@@ -33,6 +33,7 @@ export const player: GeneratePlayerCharacterResponse = {
   closingMessage: 'Farewell!',
   visualSummary: 'Goblin, fat body type, very tall, non-bald hair, round shaped blue eyes, blue',
   imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
+  isAlive: true,
 }
 
 export const npc: GeneratePlayerCharacterResponse = {
@@ -41,6 +42,8 @@ export const npc: GeneratePlayerCharacterResponse = {
   initialMessage: 'Hello, friend! How may I help you?',
   closingMessage: 'Farewell, friend! Until we meet again!',
   visualSummary: 'petite, slim, athletic female elf, medium wavy yellow hair, almond shaped red eyes',
+  isAlive: true,
+  imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
 }
 
 export const path: GeneratePathResponse = {
@@ -86,8 +89,8 @@ export const generateTravelProps: GenerateTravelProps = {
 }
 
 export const generateInteractionProps: GenerateInteractionProps = {
-  activeEntitySummary: player.summary,
-  otherEntitySummaries: [ npc.summary ],
+  activeEntity: player,
+  otherEntities: [ npc ],
   logHash: '',
   action: 'buy a hammer',
 }

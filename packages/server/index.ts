@@ -76,7 +76,8 @@ app.post('/generatePath', async (req: Request, res: Response) => {
 
 app.post('/generateInteraction', async (req: Request, res: Response) => {
   const props: GenerateInteractionProps = req.body
-  const response: GenerateInteractionResponse = await generateInteraction(props)
+  let response: GenerateInteractionResponse = await generateInteraction(props)
+
   res.send(response)
 })
 

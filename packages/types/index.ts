@@ -61,9 +61,7 @@ export interface GenerateNonPlayerCharacterProps {
   story: Summarized,
 }
 
-export interface GeneratePlayerCharacterResponse {
-  name: string,
-  summary: string,
+export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
   initialMessage: string,
   closingMessage: string,
   visualSummary: string,
@@ -90,15 +88,34 @@ export interface GeneratePathProps {
   fromLocation: Summarized,
 }
 
+export interface Entity extends Summarized {
+  isAlive: boolean
+}
+
 export interface GenerateInteractionProps {
-  activeEntitySummary: string,
-  otherEntitySummaries: string[],
+  activeEntity: Entity,
+  otherEntities: Entity[],
   logHash: string,
   action: string
 }
 
-export interface GenerateInteractionResponse extends JsonResponse {
-  todo: boolean
+export interface InventoryChange {
+  itemsAdded: string[],
+  itemsRemoved: string[]
+}
+
+export interface GenerateInteractionParams {
+  activeEntitySummary: Entity,
+  otherEntitySummaries: Entity[],
+  log: string[],
+  action: string
+}
+
+export interface GenerateInteractionResponse extends Summarized {
+  logHash: string,
+  dialog: string,
+  currencyChange: number,
+  inventoryChange: InventoryChange
 }
 
 export interface GenerateTravelProps {
