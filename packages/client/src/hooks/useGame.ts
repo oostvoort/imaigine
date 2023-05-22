@@ -3,6 +3,7 @@ import { useEntityQuery } from '@latticexyz/react'
 import { getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
 import { hexValue, Interface } from 'ethers/lib/utils'
 import { IWorld__factory } from 'contracts/types/ethers-contracts'
+import { ethers } from 'ethers'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
@@ -20,7 +21,7 @@ export default function useGame() {
       StoryComponent,
       SceneComponent,
       ImageComponent,
-      InteractComponent
+      InteractComponent,
     },
     network: { playerEntity, singletonEntity },
     systemCalls,
@@ -120,11 +121,12 @@ export default function useGame() {
       return inPlayersLocation(entity)
     })
     .map((entity) => {
-      const participants = getComponentValueStrict(InteractComponent, entity)
-      // worldInterface.decodeFunctionData()
+      const interaction = getComponentValueStrict(InteractComponent, entity)
       return {
         entity,
-        participants
+        initialActions: interaction.initialActions,
+        initialMsg: interaction.initialMsg,
+        participants: ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants),
       }
     })
 

@@ -126,7 +126,7 @@ function DEV() {
           return (
             <div key={character.entity} className={'flex flex-row gap-x-2'}>
               <Button size="xl" className={'w-64'} onClick={() => onClickNPCInteractionTest(character.entity)}>
-                {character.name.value}
+                {character.name.value} {character.entity}
               </Button>
               <Button size={"xl"} onClick={() => window.open("https://gateway.pinata.cloud/ipfs/" + character.image.value, "_blank")}>👀</Button>
             </div>
