@@ -5,11 +5,14 @@ import { Button } from '../../components/base'
 
 function DEV() {
   const {
-    players,
+    player,
+    otherPlayers,
     characters,
     locations,
     story,
     startingLocation,
+    paths,
+    currentLocation
   } = useGame()
 
   const {
@@ -86,10 +89,13 @@ function DEV() {
       </Card>
 
       <JSONCard title={'Story'} data={story} />
-      <JSONCard title={'Players'} data={players} />
+      <JSONCard title={'Player'} data={player} />
+      <JSONCard title={'Current Location'} data={currentLocation} />
+      <JSONCard title={'Other Players'} data={otherPlayers} />
       <JSONCard title={'Characters'} data={characters} />
       <JSONCard title={'Starting Location'} data={startingLocation} />
       <JSONCard title={'Locations'} data={locations} />
+      <JSONCard title={'Paths'} data={paths} />
     </div>
   )
 }
