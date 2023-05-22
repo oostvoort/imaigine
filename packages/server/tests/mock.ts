@@ -3,6 +3,7 @@ import {
   CharacterStats,
   CharacterStory,
   GenerateInteractionProps,
+  GenerateItemProps,
   GeneratePathResponse,
   GeneratePlayerCharacterResponse,
   GenerateStoryProps,
@@ -93,4 +94,9 @@ export const generateInteractionProps: GenerateInteractionProps = {
   otherEntities: [ npc ],
   logHash: '',
   action: 'buy a hammer',
+}
+
+export const generateItemProps: GenerateItemProps = {
+  story: story,
+  name: 'Elven warhammer',
 }

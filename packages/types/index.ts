@@ -13,6 +13,17 @@ export interface GenerateLocationProps {
   story: Summarized,
 }
 
+export interface GenerateItemProps {
+  story: Summarized,
+  name: string,
+}
+
+export interface GenerateItemResponse extends Summarized {
+  value: number,
+  imageHash: string
+  visualSummary: string
+}
+
 export interface GenerateLocationResponse extends Summarized {
   imageHash: string
   visualSummary: string
