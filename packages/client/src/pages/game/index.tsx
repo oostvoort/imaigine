@@ -96,7 +96,7 @@ export default function Game() {
                     ref={constrainsRef}
                   >
                     <p key={title} className="accent-title">{title}</p>
-                    <motion.div className="flex items-center gap-8 w-max" drag="x" dragConstraints={constrainsRef}>
+                    <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>
                       {
                         items.map((item, index) => (
                           <img

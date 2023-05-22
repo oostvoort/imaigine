@@ -37,10 +37,10 @@
     --destructive: 0 100% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --conversation-sender: 200 100% 14%;
+    --conversation-sender: 174 100% 16%;
     --conversation-sender-foreground: 228 66% 84%;
 
-    --conversation-receiver: 174 100% 16%;
+    --conversation-receiver: 200 100% 14%;
     --conversation-receiver-foreground: 228 66% 84%;
 
     --ring: 215 20.2% 65.1%;
