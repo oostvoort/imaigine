@@ -64,18 +64,32 @@ contract PostDeploy is Script {
 
     // NPC's
 
+    string[] memory npc0_actions = new string[](2);
+
+    npc0_actions[0] = "What?";
+    npc0_actions[1] = "**Ignore**";
+
     world.createCharacter(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash"))),
-      locationID_0
+      locationID_0,
+      "Hey!!",
+      npc0_actions
     );
+
+    string[] memory npc1_actions = new string[](2);
+
+    npc1_actions[0] = "Hello!";
+    npc1_actions[1] = "**Ignore**";
 
     world.createCharacter(
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].name"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].summary"))),
       vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash"))),
-      locationID_0
+      locationID_0,
+      "Hello there!",
+      npc1_actions
     );
 
     vm.stopBroadcast();

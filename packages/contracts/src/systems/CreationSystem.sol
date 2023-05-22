@@ -18,7 +18,10 @@ import {
   DescriptionComponent,
   TangibleComponent,
   PlayerComponent,
-  CharacterComponent
+  CharacterComponent,
+  InteractComponent,
+  InteractComponentData,
+  ActionsComponent
 } from "../codegen/Tables.sol";
 
 import { Constants } from "../lib/Constants.sol";
@@ -110,7 +113,9 @@ contract CreationSystem is System {
     string memory name,
     string memory summary,
     string memory imgHash,
-    bytes32 locationID
+    bytes32 locationID,
+    string memory initialMsg,
+    string[] memory initialActions
   )
   public
   returns (bytes32)
@@ -128,6 +133,16 @@ contract CreationSystem is System {
     SummaryComponent.set(characterID, summary);
     ImageComponent.set(characterID, imgHash);
     LocationComponent.set(characterID, locationID);
+
+    InteractComponent.set(
+      characterID,
+      initialMsg,
+      abi.encode(new string[](0)),
+      abi.encode(new bytes32[](0))
+    );
+
+    // anyone interacts without actions will get this initial actions
+    // ActionsComponent.set(bytes32(0), characterID, block.timestamp, abi.encode(initialActions));
 
     return characterID;
   }

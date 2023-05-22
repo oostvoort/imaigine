@@ -16,7 +16,9 @@ import {
   SummaryComponent,
   ImageComponent,
   LocationComponent,
-  DescriptionComponent
+  DescriptionComponent,
+  InteractComponent,
+  InteractComponentData
 } from "../src/codegen/Tables.sol";
 
 import { Constants } from "../src/lib/Constants.sol";
@@ -134,18 +136,23 @@ contract CreationSystemTest is MudV2Test {
   function testFuzz_CreateNpc(
     string memory name,
     string memory summary,
-    string memory imgHash
+    string memory imgHash,
+    string memory initialMsg,
+    string[] memory initialActions
   ) public {
     vm.assume(bytes(name).length > 0);
     vm.assume(bytes(summary).length > 0);
     vm.assume(bytes(imgHash).length > 0);
+    vm.assume(bytes(initialMsg).length > 0);
+    vm.assume(initialActions.length > 0);
 
-    bytes32 npcID = world.createCharacter(name, summary, imgHash, mockLocationID);
+    bytes32 npcID = world.createCharacter(name, summary, imgHash, mockLocationID, initialMsg, initialActions);
 
     string memory npcName = NameComponent.get(world, npcID);
     string memory npcSummary = SummaryComponent.get(world, npcID);
     string memory npcImgHash = ImageComponent.get(world, npcID);
     bytes32 npcLocation = LocationComponent.get(world, npcID);
+    InteractComponentData memory interactData = InteractComponent.get(world, npcID);
 
     assertFalse(PlayerComponent.get(world, npcID));
     assertTrue(CharacterComponent.get(world, npcID));
@@ -153,6 +160,7 @@ contract CreationSystemTest is MudV2Test {
     assertEq(summary, npcSummary);
     assertEq(imgHash, npcImgHash);
     assertEq(mockLocationID, npcLocation);
+    assertEq(initialMsg, interactData.initialMsg);
   }
 
   function test_revert_CreatePlayerAlreadyExist() public {

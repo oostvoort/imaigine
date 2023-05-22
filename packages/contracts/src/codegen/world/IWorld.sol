@@ -8,6 +8,7 @@ import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { IAttributeSystem } from "./IAttributeSystem.sol";
 import { IControllerSystem } from "./IControllerSystem.sol";
 import { ICreationSystem } from "./ICreationSystem.sol";
+import { IInteractionSystem } from "./IInteractionSystem.sol";
 import { ILocationSystem } from "./ILocationSystem.sol";
 import { IStorySystem } from "./IStorySystem.sol";
 import { ITravelSystem } from "./ITravelSystem.sol";
@@ -21,6 +22,7 @@ interface IWorld is
   IAttributeSystem,
   IControllerSystem,
   ICreationSystem,
+  IInteractionSystem,
   ILocationSystem,
   IStorySystem,
   ITravelSystem

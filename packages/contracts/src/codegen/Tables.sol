@@ -19,6 +19,10 @@ import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponen
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
 import { PathComponent, PathComponentTableId } from "./tables/PathComponent.sol";
 import { PathLocationComponent, PathLocationComponentData, PathLocationComponentTableId } from "./tables/PathLocationComponent.sol";
+import { InteractComponent, InteractComponentData, InteractComponentTableId } from "./tables/InteractComponent.sol";
+import { InteractionComponent, InteractionComponentData, InteractionComponentTableId } from "./tables/InteractionComponent.sol";
+import { LogComponent, LogComponentTableId } from "./tables/LogComponent.sol";
+import { ActionsComponent, ActionsComponentData, ActionsComponentTableId } from "./tables/ActionsComponent.sol";
 import { AttributeUintComponent, AttributeUintComponentTableId } from "./tables/AttributeUintComponent.sol";
 import { AttributeStringComponent, AttributeStringComponentTableId } from "./tables/AttributeStringComponent.sol";
 import { StoryActionComponent, StoryActionComponentTableId } from "./tables/StoryActionComponent.sol";

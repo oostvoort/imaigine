@@ -249,6 +249,71 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    InteractComponent: (() => {
+      const tableId = new TableId("", "InteractComponen");
+      return defineComponent(
+        world,
+        {
+          initialMsg: RecsType.String,
+          initialActions: RecsType.String,
+          participants: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    InteractionComponent: (() => {
+      const tableId = new TableId("", "InteractionCompo");
+      return defineComponent(
+        world,
+        {
+          waitingFor: RecsType.String,
+          lastInteraction: RecsType.BigInt,
+          participantsActions: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    LogComponent: (() => {
+      const tableId = new TableId("", "LogComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    ActionsComponent: (() => {
+      const tableId = new TableId("", "ActionsComponent");
+      return defineComponent(
+        world,
+        {
+          createdAt: RecsType.BigInt,
+          actions: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     AttributeUintComponent: (() => {
       const tableId = new TableId("", "AttributeUintCom");
       return defineComponent(

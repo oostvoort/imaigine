@@ -65,6 +65,35 @@ export default mudConfig({
                 location1: "bytes32",
             }
         },
+        InteractComponent: { // interact-able components
+          schema: {
+            initialMsg: "string",
+            initialActions: "bytes",
+            participants: "bytes", // abi encoded `participants[]`
+          },
+        },
+        InteractionComponent: {
+          keySchema: {
+            interactingEntityID: "bytes32",
+            interactedEntityID: "bytes32",
+          },
+          schema: {
+            waitingFor: "bytes32", // participant to interact
+            lastInteraction: "uint256", // block.timestamp
+            participantsActions: "bytes",
+          }
+        },
+        LogComponent: "string",
+        ActionsComponent: { // available actions of the entities to an interact-able component
+            keySchema: {
+              interactingEntityID: "bytes32",
+              interactedEntityID: "bytes32",
+            },
+            schema: {
+              createdAt: "uint256", // block.timestamp
+              actions: "bytes",
+            },
+        },
         AttributeUintComponent: {
             keySchema: {
                 entityID: "bytes32",
