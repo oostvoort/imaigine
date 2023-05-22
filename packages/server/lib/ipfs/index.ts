@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 
 import pinataSDK from '@pinata/sdk'
+import { PinataPinOptions } from '@pinata/sdk/src/commands/pinning/pinFileToIPFS'
 
 dotenv.config()
 
@@ -11,7 +12,15 @@ const pinata = new pinataSDK({
 
 
 export async function storeJson(json: any): Promise<string> {
-  const hash = (await pinata.pinJSONToIPFS(json)).IpfsHash
+  const testOptions = {
+    pinataMetadata: {
+      name: 'test',
+    },
+  }
+
+  const options: PinataPinOptions = process.mainModule.path.indexOf('mocha') >= 0 ? testOptions : {}
+
+  const hash = (await pinata.pinJSONToIPFS(json, options)).IpfsHash
   return hash
 }
 
