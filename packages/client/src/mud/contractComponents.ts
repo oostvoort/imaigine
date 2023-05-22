@@ -5,45 +5,14 @@ import { defineComponent, Type as RecsType, World } from "@latticexyz/recs";
 
 export function defineContractComponents(world: World) {
   return {
-    ControllerComponent: (() => {
-      const tableId = new TableId("", "ControllerCompon");
-      return defineComponent(
-        world,
-        {
-          oracle: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    PlanetComponent: (() => {
-      const tableId = new TableId("", "PlanetComponent");
-      return defineComponent(
-        world,
-        {
-          name: RecsType.String,
-          theme: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
     StoryComponent: (() => {
       const tableId = new TableId("", "StoryComponent");
       return defineComponent(
         world,
         {
           themeID: RecsType.String,
-          racesID: RecsType.String,
           currencyID: RecsType.String,
+          racesID: RecsType.String,
         },
         {
           metadata: {
@@ -128,21 +97,6 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    DescriptionComponent: (() => {
-      const tableId = new TableId("", "DescriptionCompo");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
     ImageComponent: (() => {
       const tableId = new TableId("", "ImageComponent");
       return defineComponent(
@@ -178,7 +132,7 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          value: RecsType.String,
+          value: RecsType.Boolean,
         },
         {
           metadata: {

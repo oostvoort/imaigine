@@ -9,7 +9,7 @@ import { generatePath } from '../lib/openai/generate/generatePath'
 import {
   characterStats,
   characterStory,
-  generateInteractionProps,
+  generateItemProps,
   generateStoryProps,
   generateTravelProps,
   location1,
@@ -18,7 +18,7 @@ import {
   story,
 } from './mock'
 import { generateTravel } from '../lib/openai/generate/generateTravel'
-import { generateInteraction } from '../lib/openai/generate/generateInteraction'
+import { generateItem } from '../lib/openai/generate/generateItem'
 
 
 // Super basic smokechecks
@@ -90,13 +90,13 @@ describe('Test OpenAI', function () {
 
   })
 
-  it('should generate an interaction', async function () {
+  it('should generate an item', async function () {
 
-    let interaction = await generateInteraction(
-      generateInteractionProps,
+    let item = await generateItem(
+      generateItemProps,
     )
 
-    console.log('interaction: ', interaction)
+    console.log('item: ', item)
 
   })
 

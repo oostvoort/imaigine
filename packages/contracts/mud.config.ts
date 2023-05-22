@@ -2,41 +2,13 @@ import {mudConfig} from "@latticexyz/world/register";
 
 export default mudConfig({
     systems: {
-        LocationSystem: {
-            name: "LocationSystem",
-            openAccess: false, // it's a subsystem
-            accessList: [] // TODO: the oracle
-        },
-        StorySystem: {
-            name: "StorySystem",
-            openAccess: false, // a private system
-            accessList: [] // TODO: the oracle
-        },
-        ControllerSystem: {
-            name: "ControllerSystem",
-            openAccess: false, // a private system
-            accessList: [] // should only be available to deployer
-        }
     },
     tables: {
-        ControllerComponent: {
-            keySchema: {},
-            schema: {
-                oracle: "address"
-            },
-        },
-        PlanetComponent: {
-            keySchema: {},
-            schema: {
-                name: "string",
-                theme: "string",
-            },
-        },
         StoryComponent: {
             schema: {
                 themeID: "bytes32", // keccak256(theme)
-                racesID: "bytes32", // Store available races to occur on story
                 currencyID: "bytes32", // The currency
+                racesID: "bytes", // Store available races to occur on story
             },
         },
         ItemComponent: "bool",
@@ -44,25 +16,16 @@ export default mudConfig({
         AliveComponent: "bool",
         NameComponent: "string",
         SummaryComponent: "string",
-        DescriptionComponent: "string",
         ImageComponent: "string",
         PriceComponent: "uint256",
-        RaceComponent: "string",
+        RaceComponent: "bool",
         CharacterComponent: "bool",
         TangibleComponent: "bool",
         CountComponent: "uint256",
         PlayerComponent: "bool",
         LocationComponent: "bytes32",
         SceneComponent: "bool",
-        PathComponent: {
-            keySchema: {
-                location0: "bytes32",
-                location1: "bytes32",
-            },
-            schema: {
-                value: "bool"
-            }
-        },
+        PathComponent: "bool",
         PathLocationComponent: {
             schema: {
                 location0: "bytes32",

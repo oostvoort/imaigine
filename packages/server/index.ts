@@ -4,6 +4,8 @@ import express, { Request, Response } from 'express'
 import {
   GenerateInteractionProps,
   GenerateInteractionResponse,
+  GenerateItemProps,
+  GenerateItemResponse,
   GenerateLocationProps,
   GenerateNonPlayerCharacterProps,
   GeneratePathProps,
@@ -15,11 +17,12 @@ import {
 import { generateStory } from './lib/openai/generate/generateStory'
 import { generateLocation } from './lib/openai/generate/generateLocation'
 import { generateNonPlayerCharacter, generatePlayerCharacter } from './lib/openai/generate/generateCharacter'
-import { generatePlayerImage } from './lib/leonardo'
+import { generateItemImage, generatePlayerImage } from './lib/leonardo'
 import { generatePath } from './lib/openai/generate/generatePath'
 import { generateTravel } from './lib/openai/generate/generateTravel'
 import { generateInteraction } from './lib/openai/generate/generateInteraction'
 import { generateLocationImage } from './lib/leonardo/executePrompt'
+import { generateItem } from './lib/openai/generate/generateItem'
 
 dotenv.config()
 const app = express()
@@ -64,6 +67,14 @@ app.post('/generateLocation', async (req: Request, res: Response, next) => {
   } catch (e) {
     next(e)
   }
+})
+
+app.post('/generateItem', async (req: Request, res: Response) => {
+  const props: GenerateItemProps = req.body
+  const response: GenerateItemResponse = await generateItem(props)
+  response.imageHash = await generateItemImage(response.visualSummary)
+
+  res.send(response)
 })
 
 app.post('/generatePlayerCharacter', async (req: Request, res: Response, next) => {

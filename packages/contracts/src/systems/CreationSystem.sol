@@ -7,8 +7,6 @@ import { System } from "@latticexyz/world/src/System.sol";
 import { getUniqueEntity } from "@latticexyz/world/src/modules/uniqueentity/getUniqueEntity.sol";
 
 import {
-  PlanetComponent,
-  PlanetComponentTableId,
   StoryComponent,
   NameComponent,
   SummaryComponent,
@@ -17,7 +15,6 @@ import {
   PathComponent,
   PathLocationComponent,
   RaceComponent,
-  DescriptionComponent,
   TangibleComponent,
   PlayerComponent,
   CharacterComponent,
@@ -35,29 +32,8 @@ import { Constants } from "../lib/Constants.sol";
 
 contract CreationSystem is System {
   using ArrayLib for string[];
-
-
-//  event CreatedStory(bytes32 indexed storyID, string indexed name, string indexed theme, string summary);
-//  event CreatedPlayer(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
-//  event CreatedCharacter(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
-//  event CreatedLocation(bytes32 indexed locationID, string indexed name, string summary, string imgHash);
-//  event CreatedPath(bytes32 indexed from, bytes32 indexed to, string indexed name, string summary);
-
-  function createPlanet(
-    string memory name,
-    string memory theme,
-    string memory description
-  )
-  public
-  {
-    // validate input
-    require(bytes(name).length > 0, "invalid name length");
-    require(bytes(theme).length > 0, "invalid theme length");
-    require(bytes(description).length > 0, "invalid description length");
-
-    PlanetComponent.set(name, theme);
-    DescriptionComponent.set(PlanetComponentTableId, description);
-  }
+  using ArrayLib for bytes;
+  using ArrayLib for bytes32[];
 
   function createStory(
     string memory name,
@@ -77,22 +53,23 @@ contract CreationSystem is System {
 
     bytes32 storyID = getUniqueEntity();
     bytes32 themeID = getUniqueEntity();
-    bytes32 racesID = getUniqueEntity();
     bytes32 currencyID = getUniqueEntity();
 
-    StoryComponent.set(storyID, themeID, racesID, currencyID);
+    bytes32[] memory racesID = new bytes32[](0);
+
+    for (uint256 i=0; i<races.length; i++) {
+      bytes32 raceID = getUniqueEntity();
+      RaceComponent.set(raceID, true);
+      NameComponent.set(raceID, races[i]);
+      racesID.push(raceID);
+    }
+
+    StoryComponent.set(storyID, themeID, currencyID, racesID.encode());
 
     NameComponent.set(storyID, name);
     SummaryComponent.set(storyID, summary);
     NameComponent.set(themeID, theme);
     NameComponent.set(currencyID, currency);
-
-    for(uint256 i=0; i<races.length; i++) {
-      require(bytes(races[i]).length > 0, string(abi.encodePacked("invalid races[", i, "] length")));
-      NameComponent.set(racesID, races[i]);
-    }
-
-//    emit CreatedStory(storyID, name, theme, summary);
 
     return storyID;
   }
@@ -124,8 +101,6 @@ contract CreationSystem is System {
     SummaryComponent.set(playerID, summary);
     ImageComponent.set(playerID, imgHash);
     LocationComponent.set(playerID, locationID);
-
-//    emit CreatedPlayer(playerID, locationID, name, summary, imgHash);
 
     return playerID;
   }
@@ -162,11 +137,6 @@ contract CreationSystem is System {
       abi.encode(new string[](0)),
       abi.encode(new bytes32[](0))
     );
-
-    // anyone interacts without actions will get this initial actions
-    // ActionsComponent.set(bytes32(0), characterID, block.timestamp, abi.encode(initialActions));
-
-//    emit CreatedCharacter(characterID, locationID, name, summary, imgHash);
 
     return characterID;
   }
@@ -223,8 +193,6 @@ contract CreationSystem is System {
     SummaryComponent.set(locationID, summary);
     ImageComponent.set(locationID, imgHash);
 
-//    emit CreatedLocation(locationID, name, summary, imgHash);
-
     return locationID;
   }
 
@@ -245,13 +213,11 @@ contract CreationSystem is System {
 
     bytes32 pathID = getUniqueEntity();
 
-    PathComponent.set(fromLocation, toLocation, true);
+    PathComponent.set(pathID, true);
 
     PathLocationComponent.set(pathID, fromLocation, toLocation);
     NameComponent.set(pathID, name);
     SummaryComponent.set(pathID, summary);
-
-//    emit CreatedPath(fromLocation, toLocation, name, summary);
 
     return pathID;
   }
