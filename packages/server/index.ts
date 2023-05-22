@@ -18,6 +18,7 @@ import { generateNonPlayerCharacter, generatePlayerCharacter } from './lib/opena
 import { generatePlayerImage } from './lib/leonardo'
 import { generatePath } from './lib/openai/generate/generatePath'
 import { generateTravel } from './lib/openai/generate/generateTravel'
+import { generateInteraction } from './lib/openai/generate/generateInteraction'
 
 dotenv.config()
 const app = express()
@@ -67,10 +68,10 @@ app.post('/generatePath', async (req: Request, res: Response) => {
   res.send(await generatePath(props))
 })
 
-// TODO: implement
-app.post('/generateInteract', async (req: Request, res: Response) => {
+
+app.post('/generateInteraction', async (req: Request, res: Response) => {
   const props: GenerateInteractProps = req.body
-  const response: GenerateInteractResponse = { todo: true }
+  const response: GenerateInteractResponse = await generateInteraction(props)
   res.send(response)
 })
 

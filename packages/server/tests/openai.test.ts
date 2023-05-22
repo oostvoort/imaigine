@@ -1,7 +1,7 @@
 /* globals describe, expect, it */
-import { GeneratePlayerCharacterProps } from '../../types'
+import { GenerateNonPlayerCharacterProps, GeneratePlayerCharacterProps } from '../../types'
 
-import { generatePlayerCharacter } from '../lib/openai/generate/generateCharacter'
+import { generateNonPlayerCharacter, generatePlayerCharacter } from '../lib/openai/generate/generateCharacter'
 import { generateStory } from '../lib/openai/generate/generateStory'
 import { generateLocation } from '../lib/openai/generate/generateLocation'
 import { generatePath } from '../lib/openai/generate/generatePath'
@@ -9,6 +9,7 @@ import { generatePath } from '../lib/openai/generate/generatePath'
 import {
   characterStats,
   characterStory,
+  generateInteractionProps,
   generateStoryProps,
   generateTravelProps,
   location1,
@@ -17,6 +18,7 @@ import {
   story,
 } from './mock'
 import { generateTravel } from '../lib/openai/generate/generateTravel'
+import { generateInteraction } from '../lib/openai/generate/generateInteraction'
 
 
 // Super basic smokechecks
@@ -51,6 +53,21 @@ describe('Test OpenAI', function () {
 
   })
 
+  it('should generate an NPC', async function () {
+
+
+    const input: GenerateNonPlayerCharacterProps = {
+      story,
+      location: location1,
+      characterStats,
+    }
+
+    let npc = await generateNonPlayerCharacter(input)
+
+    console.log('npc: ', npc)
+
+  })
+
   it('should generate a Path', async function () {
 
     let path = await generatePath(
@@ -70,6 +87,16 @@ describe('Test OpenAI', function () {
     )
 
     console.log('path: ', travel)
+
+  })
+
+  it('should generate an interaction', async function () {
+
+    let interaction = await generateInteraction(
+      generateInteractionProps,
+    )
+
+    console.log('interaction: ', interaction)
 
   })
 

@@ -10,7 +10,7 @@ export interface GenerateStoryResponse extends JsonResponse {
 }
 
 export interface GenerateLocationProps {
-  story: { name: string, summary: string },
+  story: Summarized,
 }
 
 export interface CharacterStory {
@@ -45,15 +45,20 @@ export interface CharacterStats {
 export interface GeneratePlayerCharacterProps {
   characterStats: CharacterStats,
   characterStory: CharacterStory,
-  location: { name: string, summary: string },
-  story: { name: string, summary: string },
+  location: Summarized,
+  story: Summarized,
   physicalFeatures: CharacterPhysicalFeatures,
 }
 
+export interface Summarized {
+  name: string,
+  summary: string
+}
+
 export interface GenerateNonPlayerCharacterProps {
-  stats: CharacterStats,
-  location: { name: string, summary: string },
-  story: { name: string, summary: string, races: Array<string> },
+  characterStats: CharacterStats,
+  location: Summarized,
+  story: Summarized,
 }
 
 export interface GeneratePlayerCharacterResponse {
@@ -81,12 +86,15 @@ export interface GeneratePathResponse extends JsonResponse {
 
 export interface GeneratePathProps {
   story: GenerateStoryResponse
-  toLocation: { name: string, summary: string },
-  fromLocation: { name: string, summary: string },
+  toLocation: Summarized,
+  fromLocation: Summarized,
 }
 
 export interface GenerateInteractionProps {
-  todo: boolean
+  activeEntitySummary: string,
+  otherEntitySummaries: string[],
+  logHash: string,
+  action: string
 }
 
 export interface GenerateInteractionResponse extends JsonResponse {
