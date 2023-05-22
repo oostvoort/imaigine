@@ -2,6 +2,9 @@ import React from 'react'
 import { Dialog, Button } from './base'
 import ConversationLayout from './templates/ConversationLayout'
 import blacksmithIcon from '../assets/blacksmith.jpeg'
+import { useAtomValue } from 'jotai'
+import { selectedCharacter_atom } from '../atoms/globalAtoms'
+import { generateIpfsImageLink } from '../lib/utils'
 
 type Props = {
   isOpen: boolean,
@@ -9,18 +12,15 @@ type Props = {
 }
 
 export default function CharacterConversationDialog({ isOpen, setOpen }: Props) {
+  const character = useAtomValue(selectedCharacter_atom)
 
-  // let testing: React.ReactNode | null = null
-  //
-  // React.useEffect(() => {
-  //
-  // }, [])
+  if (character == null) return <></>
 
   return (
     <Dialog.Dialog open={isOpen} onOpenChange={open => setOpen(open)}>
       <Dialog.DialogContent className="flex gap-5 w-full sm:max-w-7xl border border-accent !rounded-2xl">
         <section className="flex-grow-0">
-          <img src={blacksmithIcon} alt={String(blacksmithIcon)} className="w-[500px] rounded-xl" />
+          <img src={generateIpfsImageLink(character.image.value)} alt={String(character.image.value)} className="w-[500px] rounded-xl" />
         </section>
         <section className="flex-1 flex flex-col">
           {/* Conversation box */}

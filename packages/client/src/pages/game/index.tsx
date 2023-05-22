@@ -6,6 +6,11 @@ import { motion } from 'framer-motion'
 import CharacterConversationDialog from '../../components/CharacterConversationDialog'
 import LocationInfoDialog from '../../components/LocationInfoDialog'
 import useGame from '../../hooks/useGame'
+import LoadingScreen from '../../components/shared/LoadingScreen'
+import envs from '../../env'
+import { generateIpfsImageLink } from '../../lib/utils'
+import { useAtom } from 'jotai'
+import { selectedCharacter_atom, selectedLocation_atom } from '../../atoms/globalAtoms'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -67,79 +72,126 @@ const statsMockup: Props['gameStats'] = {
 }
 
 export default function Game() {
-  const { story, players, startingLocation } = useGame()
+  const { currentLocation, locations, characters } = useGame()
 
+  const [selectedLocation, setLocationToSelect] = useAtom(selectedLocation_atom)
+  const [selectedCharacter, setCharacterToSelect] = useAtom(selectedCharacter_atom)
 
-  const [ isMapDialogOpen, setMapDialogOpen ] = React.useState<boolean>(false)
   const [ isCharacterDialogOpen, setCharacterDialogOpen ] = React.useState<boolean>(false)
   const constrainsRef = React.useRef<HTMLDivElement>(null)
+
+  if (!currentLocation || !locations) return <LoadingScreen message='Loading all locations...' />
+  if (!characters) return <LoadingScreen message='Loading all characters...' />
+
 
   return (
     <>
       <GridStoryLayout>
         {/* Map / Visuals */}
-        <div className="flex-[200px] flex justify-between">
+        <div className="flex-[200px] flex justify-between [&>section]:border [&>section]:border-gray-900">
           <section className={clsx([
             "basis-6/12 flex flex-col z-10",
-            "bg-[url('src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg')]",
-            "bg-cover bg-center bg-no-repeat aspect-auto"
-          ])}></section>
+            "bg-cover bg-center bg-no-repeat aspect-auto overflow-hidden border border-primary"
+          ])}>
+            <img
+              src={`${envs.API_IPFS_URL_PREFIX}/${currentLocation.image.value}`}
+              alt={`main-map-${envs.API_IPFS_URL_PREFIX}/${currentLocation.image.value}`}
+              className='object-contain object-cover h-full'
+            />
+          </section>
           {/* Game status */}
           <section className="basis-6/12 flex flex-col p-10 gap-5 w-[50%]">
-            {
-              Object.entries(statsMockup).map(([ title, items ], idx) => (
-                  <motion.div
-                    key={JSON.stringify(title)}
-                    className="flex flex-col gap-2 overflow-hidden"
-                    ref={constrainsRef}
-                  >
-                    <p key={title} className="accent-title">{title}</p>
-                    <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>
-                      {
-                        items.map((item, index) => (
-                          <img
-                            className={clsx([
-                              'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
-                              {
-                                'rounded-xl w-[150px] h-[120px]': idx == 0,
-                              },
-                            ])}
-                            key={JSON.stringify({ item, index })}
-                            onClick={() => {
-                              if (idx == 0) setMapDialogOpen(true)
-                              if (idx == 1) setCharacterDialogOpen(true)
-                            }}
-                            src={item.img} alt={JSON.stringify(item.img)}
-                            draggable={false}
-                          />
-                        ))
-                      }
-                    </motion.div>
-                  </motion.div>
-                ),
-              )
-            }
+            <motion.div
+              className="flex flex-col gap-2 overflow-hidden"
+              ref={constrainsRef}
+            >
+              <p className="accent-title">Point of Interest</p>
+              <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>
+
+                {
+                  locations.map((item, index) => {
+                    console.log(item)
+                    return <img
+                      className={clsx([
+                        'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
+                        'rounded-xl w-[150px] h-[120px]'
+                      ])}
+                      key={JSON.stringify({ item, index })}
+                      src={generateIpfsImageLink(item.image.value)} alt={JSON.stringify(item.image.value)}
+                      draggable={false}
+                      onClick={() => setLocationToSelect(item)}
+                    />
+                  })
+                }
+              </motion.div>
+            </motion.div>
+            <motion.div
+              className="flex flex-col gap-2 overflow-hidden"
+              ref={constrainsRef}
+            >
+              <p className="accent-title">Nearby Entities</p>
+              <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>
+                {
+                  characters.map((item, index) => (
+                    <img
+                      className={clsx([
+                        'w-[100px] h-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover object-top'
+                      ])}
+                      key={JSON.stringify({ item, index })}
+                      src={generateIpfsImageLink(item.image.value)} alt={JSON.stringify(item.image.value)}
+                      draggable={false}
+                      onClick={() => {
+                        setCharacterToSelect(item)
+                      }}
+                    />
+                  ))
+                }
+              </motion.div>
+            </motion.div>
+
+            {/*{*/}
+            {/*  Object.entries(statsMockup).map(([ title, items ], idx) => (*/}
+            {/*      <motion.div*/}
+            {/*        key={JSON.stringify(title)}*/}
+            {/*        className="flex flex-col gap-2 overflow-hidden"*/}
+            {/*        ref={constrainsRef}*/}
+            {/*      >*/}
+            {/*        <p key={title} className="accent-title">{title}</p>*/}
+            {/*        <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>*/}
+            {/*          {*/}
+            {/*            items.map((item, index) => (*/}
+            {/*              <img*/}
+            {/*                className={clsx([*/}
+            {/*                  'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',*/}
+            {/*                  {*/}
+            {/*                    'rounded-xl w-[150px] h-[120px]': idx == 0,*/}
+            {/*                  },*/}
+            {/*                ])}*/}
+            {/*                key={JSON.stringify({ item, index })}*/}
+            {/*                onClick={() => {*/}
+            {/*                  if (idx == 0) setMapDialogOpen(true)*/}
+            {/*                  if (idx == 1) setCharacterDialogOpen(true)*/}
+            {/*                }}*/}
+            {/*                src={item.img} alt={JSON.stringify(item.img)}*/}
+            {/*                draggable={false}*/}
+            {/*              />*/}
+            {/*            ))*/}
+            {/*          }*/}
+            {/*        </motion.div>*/}
+            {/*      </motion.div>*/}
+            {/*    ),*/}
+            {/*  )*/}
+            {/*}*/}
           </section>
         </div>
         {/* Narrative */}
-        <div className="flex-1 flex justify-between">
+        <div className="flex-1 flex justify-between [&>section]:border [&>section]:border-gray-900">
           <section className="basis-6/12 flex flex-col gap-3 p-10">
             <p className="accent-title">Narrative</p>
             <div className="h-min max-h-[300px] overflow-y-auto">
-              <p className="leading-loose">Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
-                the
-                enchanting town of Lindwurm. The scent of blooming flowers filled the air, and the cheerful chatter of
-                locals
-                wafted through the bustling market square. Vibrant cottages with thatched roofs lined the winding
-                streets,
-                inviting her to explore further. The tranquil river flowed gracefully, reflecting the golden rays of the
-                setting sun. Intrigued, Alice embraced the warmth of Lindwurm&apos;s welcoming atmosphere, her eyes
-                sparkling
-                with
-                anticipation. This picturesque haven held the promise of new encounters, captivating stories, and a
-                sense
-                of
-                belonging she had long yearned for. </p>
+              <p className="leading-loose">{
+                currentLocation.summary.value
+              }</p>
             </div>
           </section>
           {/* Action container */}
@@ -173,12 +225,11 @@ export default function Game() {
           </section>
         </div>
       </GridStoryLayout>
-      <CharacterConversationDialog isOpen={isCharacterDialogOpen} setOpen={setCharacterDialogOpen} />
-      <LocationInfoDialog isOpen={isMapDialogOpen} setOpen={(value) => setMapDialogOpen(value)}
-                          img={'src/assets/Leonardo_Creative_beautiful_town_center_fantasy_rpg_gamelike_l_0.jpg'}
-                          locationTitle={'Lindwurm Town'}
-                          locationDescription={'Enchanting Lindwurm: Idyllic cottages, winding streets, and a vibrant market square create a picturesque haven. Friendly locals gather in cozy taverns, their laughter echoing amidst the sweet scent of freshly baked treats. A serene river adds to the town\'s charm, reflecting the beauty of this inviting place.'}
-                          action={() => console.log('travel!')} />
+      <CharacterConversationDialog isOpen={selectedCharacter !== null} setOpen={() => setCharacterToSelect(null)} />
+      <LocationInfoDialog
+        isOpen={selectedLocation !== null}
+        setOpen={() => setLocationToSelect(null)}
+      />
       {/*<LoadingScreen message={'Generating avatars..'} />*/}
     </>
   )
