@@ -14,5 +14,7 @@ interface IInteractionSystem {
     string[][] memory participantsActions
   ) external returns (bytes32);
 
+  function leaveInteraction(bytes32 entityID, bytes32 otherPlayerID) external returns (bytes32);
+
   function setEntityInitialActions(bytes32 entityID, string[] memory initialActions) external returns (bytes32);
 }
