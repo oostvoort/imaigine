@@ -4,8 +4,8 @@ import { clsx } from 'clsx'
 import { Button, Progress } from '../../components/base'
 import { motion } from 'framer-motion'
 import { useMUD } from '../../MUDContext'
-import CharacterConversationDialog from '../../components/shared/CharacterConversationDialog'
-import LocationInfoDialog from '../../components/shared/LocationInfoDialog'
+import CharacterConversationDialog from '../../components/CharacterConversationDialog'
+import LocationInfoDialog from '../../components/LocationInfoDialog'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
