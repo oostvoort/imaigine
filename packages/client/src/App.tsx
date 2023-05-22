@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import MainLayout from './components/templates/main_layout'
+import MainLayout from './components/templates/MainLayout'
 import Welcome from './pages/welcome'
 import { useAtomValue } from 'jotai'
 import { activePage_atom } from './atoms/globalAtoms'

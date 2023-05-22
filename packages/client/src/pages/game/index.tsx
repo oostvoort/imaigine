@@ -1,5 +1,5 @@
 import React from 'react'
-import GridStoryLayout from '../../components/templates/grid_story_layout'
+import GridStoryLayout from '../../components/templates/GridStoryLayout'
 import { clsx } from 'clsx'
 import { Button, Progress } from '../../components/base'
 import { motion } from 'framer-motion'
