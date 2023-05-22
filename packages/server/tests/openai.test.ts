@@ -10,11 +10,10 @@ import {
   characterStats,
   characterStory,
   generateStoryProps,
+  generateTravelProps,
   location1,
   location2,
-  path,
   physicalFeatures,
-  player,
   story,
 } from './mock'
 import { generateTravel } from '../lib/openai/generate/generateTravel'
@@ -67,11 +66,7 @@ describe('Test OpenAI', function () {
   it('should generate a Travel for a player', async function () {
 
     let travel = await generateTravel(
-      {
-        story,
-        path,
-        player,
-      },
+      generateTravelProps,
     )
 
     console.log('path: ', travel)

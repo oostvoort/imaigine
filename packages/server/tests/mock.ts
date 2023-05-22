@@ -6,6 +6,7 @@ import {
   GeneratePlayerCharacterResponse,
   GenerateStoryProps,
   GenerateStoryResponse,
+  GenerateTravelProps,
 } from '../../types'
 
 export const story: GenerateStoryResponse = {
@@ -65,4 +66,10 @@ export const generateStoryProps: GenerateStoryProps = {
   races: [ 'goblin', 'elf' ],
   theme: 'dark fantasy',
   extraDescriptions: [ 'hazy smoky planet' ],
+}
+
+export const generateTravelProps: GenerateTravelProps = {
+  playerSummary: 'Gorog is a young goblin that lives in Golden Reach, a bustling mountain settlement amidst the smoky haze of Daerkoolf. Despite the ever-present struggles between goblins and elves, Gorog remains an enduring bridge to peace and stability in the region. Possessing unusual strength and a very appealing charisma, Gorog is an asset to the local economy who is eager to unlock the secrets of the hidden planet and gain more power and influence in the galaxy. He has a fat body type, is very tall, has non-bald hair and round shaped blue eyes, and his favorite color is blue.',
+  pathSummary: 'The Smokey Gold Pathway is the connection between the mountainous settlement of Golden Reach to the remote meadow of Rockweed. This vast, winding pathway is the best way to experience the world of Daerkoolf. The journey starts high up in the smokey peaks, where the smog and dust swirls around in a dizzying array of hues. As the path slowly descends, the vibrant colors of the mountain range slowly start to appear before the travelers. Soon, the pathway takes the journeyers to the plateau of Rockweed Meadows - The only hint of what lies below the horizon. This is the path of discovery - from the deepest valleys of the mountain to the secret meadows of Rockweed, where the most hidden treasures are waiting to be uncovered.',
+  storySummary: 'Fantasy and folklore mix in this dark and hazy world known as Smokey Gold. It is a world populated by goblin and elf, with a distinct currency known as gold in circulation. The smog that blots out the sky is a constant reminder of the decay and ruin that the inhabitants have to battle with day to day. Fights break out between enemies and allies for control of resources, and a sense of unrest is perpetually in the air. This dangerous, yet beautiful planet is a true testament of the fortitude of thegoblin and elf that inhabit it.',
 }

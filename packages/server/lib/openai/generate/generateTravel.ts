@@ -6,11 +6,11 @@ export async function generateTravel(
   props: GenerateTravelProps,
 ): Promise<GenerateTravelResponse> {
   const prompt = `
-    Considering a world like: ${props.story.summary}
-    Consider a character like ${props.player.summary}
-    Consider a path like ${props.path.summary}
+    Considering a world like: ${props.storySummary}
+    Consider a character like ${props.playerSummary}
+    Consider a path like ${props.pathSummary}
 
-    Tell a story about the character traveling the path in an exciting way
+    Tell a story about the character traveling the path in an exciting way, reaching the final destination
     Don't introduce the character in the story.
     Encode the story as a single JSON with the following format:
 

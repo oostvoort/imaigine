@@ -94,9 +94,9 @@ export interface GenerateInteractionResponse extends JsonResponse {
 }
 
 export interface GenerateTravelProps {
-  story: GenerateStoryResponse,
-  path: GeneratePathResponse,
-  player: GeneratePlayerCharacterResponse
+  storySummary: string,
+  pathSummary: string,
+  playerSummary: string
 }
 
 export interface GenerateTravelResponse extends JsonResponse {
