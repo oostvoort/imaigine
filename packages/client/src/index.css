@@ -101,6 +101,10 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  .accent-title {
+    @apply font-bold text-sm tracking-wider font-jost text-accent uppercase;
+  }
+
   #react-root {
     @apply flex flex-col;
   }

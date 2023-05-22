@@ -95,7 +95,7 @@ export default function Game() {
                     className="flex flex-col gap-2 overflow-hidden"
                     ref={constrainsRef}
                   >
-                    <p key={title} className="font-bold tracking-wide font-jost text-accent">{title}</p>
+                    <p key={title} className="accent-title">{title}</p>
                     <motion.div className="flex items-center gap-8 w-max" drag="x" dragConstraints={constrainsRef}>
                       {
                         items.map((item, index) => (
@@ -126,7 +126,7 @@ export default function Game() {
         {/* Narrative */}
         <div className="flex-1 flex justify-between">
           <section className="basis-6/12 flex flex-col gap-3 p-10">
-            <p className="font-bold tracking-wide font-jost text-accent">Narrative</p>
+            <p className="accent-title">Narrative</p>
             <div className="h-min max-h-[300px] overflow-y-auto">
               <p className="leading-loose">Alice&apos;s weary footsteps echoed on the cobblestone streets as she entered
                 the
@@ -167,7 +167,7 @@ export default function Game() {
                   'absolute right-2 -rotate-180 h-[90%] w-3 inset-0 my-auto ml-auto mr-3',
                 ])}
               />
-              <p className="font-bold tracking-wide font-jost text-accent">Actions</p>
+              <p className="accent-title">Actions</p>
               <Button size="xl" className="tracking-wider">Find a vacant seat at the bar</Button>
               <Button size="xl" className="tracking-wider">Approach the musicians</Button>
               <Button size="xl" className="tracking-wider">Order a pint of ale from the barmaid</Button>
