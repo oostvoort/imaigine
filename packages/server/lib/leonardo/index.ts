@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import pinataSDK from '@pinata/sdk'
 
 dotenv.config()
 
@@ -15,7 +16,7 @@ export const sharedSettings = {
   controlNet: false,
 }
 
-export const promptTemplates = {
+export const promptTemplates: { [index: string]: any } = {
   character: {
     ...sharedSettings,
     modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61',    // Rpg4.0
@@ -52,8 +53,6 @@ export const promptTemplates = {
 }
 
 export { generatePlayerImage } from './executePrompt'
-
-import pinataSDK from '@pinata/sdk'
 
 export const pinata = new pinataSDK({
   pinataApiKey: process.env.PINATA_API_KEY,
