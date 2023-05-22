@@ -1,7 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
-import { Button } from '../../components/base/button'
-import { Card, CardContent } from '../../components/base/card'
+import { Button } from '../../components/base/Button'
+import { Card, CardContent } from '../../components/base/Card'
 import imaigineIcon from '../../assets/img_imaigine_logo.svg'
 import useSessionState from '../../hooks/useSessionStorageState'
 import { useSetAtom } from 'jotai'
@@ -151,13 +151,13 @@ export default function CreatePlayerNew() {
               <CardContent className="flex flex-col gap-8">
                 {
                   setupOptions1.map(item => (
-                    <div key={String(item)} className="flex flex-col gap-2">
+                    <div key={JSON.stringify(item)} className="flex flex-col gap-2">
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
                           item.options.map(option => (
                             <Button isHighlighed={userInputsJsonParsed[item.store] == option}
-                              key={String(option)}
+                              key={JSON.stringify({item, option})}
                               variant="selective"
                               size="lg"
                               onClick={() => {
@@ -182,7 +182,7 @@ export default function CreatePlayerNew() {
                   <div className="flex items-center justify-start gap-8">
                     {
                       colorPicks.map(option => (
-                        <Button key={option} onClick={() => setSeletedColor(option)}
+                        <Button key={`${option}-1`} onClick={() => setSeletedColor(option)}
                                 variant="ghost" className={clsx([
                           `w-7 h-9 rounded-full ${option} hover:${option}/80`,
                           'border-2 border-transparent',
@@ -207,13 +207,13 @@ export default function CreatePlayerNew() {
               <CardContent className="flex flex-col gap-8">
                 {
                   setupOptions2.map(item => (
-                    <div key={String(item)} className="flex flex-col gap-2">
+                    <div key={JSON.stringify(item)} className="flex flex-col gap-2">
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
                           item.options.map(option => (
                             <Button isHighlighed={userInputsJsonParsed[item.store] == option}
-                              key={String(option)}
+                              key={JSON.stringify({item, option})}
                               variant="selective"
                               size="lg"
                               onClick={() => {
@@ -245,15 +245,15 @@ export default function CreatePlayerNew() {
             <Card className="min-w-[500px]">
               <CardContent className="flex flex-col gap-8">
                 {
-                  setupOptions3.map(item => (
-                    <div key={String(item)} className="flex flex-col gap-2">
+                  setupOptions3.map((item, index) => (
+                    <div key={`${item}-2-${index}`} className="flex flex-col gap-2">
                       <p className="text-accent-3 text-sm tracking-wide mb-1">{item.label}</p>
                       <div className="flex items-center gap-3">
                         {
                           item.options.map(option => (
                             <Button
                               isHighlighed={userInputsJsonParsed[item.store] == option}
-                              key={String(option)}
+                              key={JSON.stringify({item, option})}
                               variant="selective"
                               size="lg"
                               onClick={() => {
@@ -352,7 +352,7 @@ export default function CreatePlayerNew() {
           </section>
         )
       }
-      <Button variant="accent" size="lg" className="min-w-[200px] rounded-full" onClick={() => {
+      <Button variant="accent" size="lg" className="mi{}n-w-[200px] rounded-full" onClick={() => {
         if (step == 1) setStep(2)
         if (step == 2) setStep(3)
         if (step == 3) setStep(4)
