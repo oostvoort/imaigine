@@ -6,7 +6,7 @@ export interface GenerateStoryProps {
 }
 
 export interface GenerateStoryResponse extends JsonResponse {
-  visualSummary: string
+  visualSummary?: string
 }
 
 export interface GenerateLocationProps {

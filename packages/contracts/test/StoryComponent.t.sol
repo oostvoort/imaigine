@@ -56,7 +56,6 @@ contract StoryComponentTest is MudV2Test {
     world.setPlayerStory(playerID, actionIDs, actions);
 
     // selected first location
-    world.selectPlayerLocation(actionIDs[0]);
 
 //    string memory newLocation = LocationComponent.get(world, playerID);
 //    assertEq("Valley of Iron", newLocation);

@@ -1,7 +1,6 @@
 import { executePrompt } from '../executePrompt'
 import { AILocation } from './generateLocation'
 import { GenerateLocationResponse, GenerateStoryProps, GenerateStoryResponse, JsonResponse } from 'types'
-import { AIPath } from './generatePath'
 
 export interface AIStory {
   theme: string,
@@ -10,7 +9,7 @@ export interface AIStory {
   summary: string,
   name: string,
   locations: Array<AILocation>,
-  paths: Array<AIPath>
+  paths: Array<any>
 }
 
 export async function generateStory({
