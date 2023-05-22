@@ -233,6 +233,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    SceneComponent: (() => {
+      const tableId = new TableId("", "SceneComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     PathComponent: (() => {
       const tableId = new TableId("", "PathComponent");
       return defineComponent(

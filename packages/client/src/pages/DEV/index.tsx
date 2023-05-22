@@ -12,11 +12,11 @@ function DEV() {
   } = useGame()
 
   const {
-    systemCalls: { createPlayer, createStory, createLocation },
+    systemCalls: { createPlayer, createStory, createStartingLocation },
   } = useMUD()
 
   async function onClickCreateLocationTest() {
-    await createLocation({
+    await createStartingLocation({
       story: {
         name: story.name.value,
         summary: story.summary.value,

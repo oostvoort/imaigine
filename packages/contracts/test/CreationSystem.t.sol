@@ -19,7 +19,8 @@ import {
   DescriptionComponent,
   InteractComponent,
   InteractComponentData,
-  AliveComponent
+  AliveComponent,
+  SceneComponent
 } from "../src/codegen/Tables.sol";
 
 import { Constants } from "../src/lib/Constants.sol";
@@ -198,6 +199,7 @@ contract CreationSystemTest is MudV2Test {
 
     bytes32 locationID = world.createLocation(name, summary, imgHash);
 
+    assertTrue(SceneComponent.get(world, locationID));
     assertEq(NameComponent.get(world, locationID), name);
     assertEq(SummaryComponent.get(world, locationID), summary);
     assertEq(ImageComponent.get(world, locationID), imgHash);

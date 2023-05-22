@@ -1,163 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Imaigine Leonardo prompt toolkit</title>
-    <script>
+  <meta charset="UTF-8">
+  <title>Imaigine Leonardo prompt toolkit</title>
+  <script>
+    const sharedSettings = {
+      sd_version: 'v1_5',
+      num_images: 1,
+      num_inference_steps: 30, // between 30 and 60
+      guidance_scale: 7, // Must be between 1 and 20.
+      scheduler: 'EULER_DISCRETE',
+      tiling: false,
+      public: false,
+      init_strength: 0.5,
+      controlNet: false,
+    }
 
-        let apiKey = localStorage.getItem("apiKey") || ""
+    const promptTemplates = {
+      character: {
+        ...sharedSettings,
+        modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61', // Rpg4.0
+        width: 640,
+        height: 832,
+        presetStyle: 'NONE',
+        negative_prompt: 'two heads, two faces, poorly drawn hands, missing limbs, blurred, floating limbs, disconnected limbs, misshapen hands, blurry, out of focus, two different eyes, strange eyes, unclear eyes, watermarks, text, long neck',
+        prompt: "detailed illustration of %, a portrait, fantasy, rpg, medieval. lush illumination, concept art, Greg Rutkowski, Artgerm, WLOP, Alphonse Mucha, line-art illustration, face on golden ratio",
 
-        if (apiKey.length === 0) {
-            do {
-                apiKey = "" + window.prompt("Please enter your Leonardo API Key. It will be remembered in this browser.")
-            } while (apiKey.length === 0)
+      },
+      location: {
+        ...sharedSettings,
+        modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61', // Rpg4.0
+        width: 768,
+        height: 768,
+        presetStyle: 'LEONARDO',
+        prompt: "detailed illustration of %, a place, fantasy, rpg, medieval. concept art, trending on artstation, lush illumination, high contrast, vibrant, Greg Rutkowski, Artgerm, WLOP, line-art illustration",
 
-            localStorage.setItem("apiKey", apiKey)
+      },
+      item: {
+        ...sharedSettings,
+        modelId: "2d18c0af-374e-4391-9ca2-639f59837c85", // Magic Items
+        width: 512,
+        height: 512,
+        presetStyle: 'LEONARDO',
+        promptMagic: true,
+        negative_prompt: 'overlapping, fading, multiple items, cluttered background, person, animal, alive, eyes',
+        prompt: "ultra-detailed illustration of a %, an item, lush illumination, high contrast, front view, digital painting, game art, game item",
+
+
+      }
+    }
+
+    async function executePrompt() {
+      var modeRadios = document.getElementsByName('prompt_type');
+      var mode;
+      for (var i = 0; i < modeRadios.length; i++) {
+        if (modeRadios[i].checked) {
+          mode = modeRadios[i].value;
+          break;
         }
+      }
+      console.log(mode)
+      document.getElementById("image").src = ""
 
-        const sharedSettings = {
-            sd_version: 'v1_5',
-            num_images: 1,
-            num_inference_steps: 30,    // between 30 and 60
-            guidance_scale: 7,  // Must be between 1 and 20.
-            scheduler: 'EULER_DISCRETE',
-            presetStyle: 'NONE',
-            tiling: false,
-            public: false,
-            promptMagic: false,
-            controlNet: false,
-        }
+      let prompt = document.getElementById("prompt").value
+      prompt = promptTemplates[mode].prompt.replace("%", prompt)
 
-        const promptTemplates = {
-            character: {
-                ...sharedSettings,
-                modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61',    // Rpg4.0
-                width: 640,
-                height: 832,
-                negative_prompt: 'two heads, two faces, floating limbs, disconnected limbs, watermark, text',
-                prompt: "detailed illustration of %. Theme:  fantasy, rpg, medieval. Style: lush illumination, portrait, concept art, Greg Rutkowski, Artgerm, WLOP, Alphonse Mucha, line-art illustration"
-            },
-            npc: {
-                ...sharedSettings,
-                modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61',    // Rpg4.0
-                width: 640,
-                height: 832,
-                negative_prompt: 'two heads, two faces, floating limbs, disconnected limbs, watermark, text',
-                prompt: "detailed illustration of %. Theme:  fantasy, rpg, medieval. Style: lush illumination, portrait, concept art, Greg Rutkowski, Artgerm, WLOP, Alphonse Mucha, line-art illustration"
-            },
-            location: {
-                ...sharedSettings,
-                modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61',    // Rpg4.0
-                width: 768,
-                height: 768,
-                negative_prompt: "watermark, text",
-                prompt: "detailed illustration of %. Style: concept art, Greg Rutkowski, Artgerm, WLOP, Alphonse Mucha, line-art illustration"
-            },
-            item: {
-                ...sharedSettings,
-                modelId: "2d18c0af-374e-4391-9ca2-639f59837c85",    // Magic Items
-                width: 768,
-                height: 768,
-                negative_prompt: 'watermark, text, overlapping, fading, multiple items, cluttered background, person, animal, alive, eyes',
-                prompt: "detailed illustration of single item only: %. Style: concept art, Greg Rutkowski, Artgerm, WLOP, Alphonse Mucha, line-art illustration"
-
-            }
-        }
-
-        async function executePrompt() {
-            var modeRadios = document.getElementsByName('prompt_type');
-            var mode;
-            for (let i = 0; i < modeRadios.length; i++) {
-                if (modeRadios[i].checked) {
-                    mode = modeRadios[i].value;
-                    break;
-                }
-            }
-            console.log(mode)
-            document.getElementById("image").src = ""
-            document.getElementById("apicall").src = "loading..."
-
-            let prompt = document.getElementById("prompt").value
-            prompt = promptTemplates[mode].prompt.replace("%", prompt)
-
-            const params = promptTemplates[mode]
+      const params = promptTemplates[mode]
 
 
-
-            console.log({
-                ...params,
-                prompt,
-            })
-            document.getElementById("apicall").innerText = "Starting.."
-
-
-            const generationId = (await (await fetch("https://cloud.leonardo.ai/api/rest/v1/generations", {
-                method: 'POST',
-                headers: {
-                    accept: 'application/json',
-                    'content-type': 'application/json',
-                    authorization: `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    ...params,
-                    prompt,
-                })
-            })).json()).sdGenerationJob.generationId
+      console.log({
+        ...params,
+        prompt,
+      })
+      const generationId = (await (await fetch("https://cloud.leonardo.ai/api/rest/v1/generations", {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          authorization: 'Bearer a50655aa-f0be-4146-9d91-cc21b662ff80'
+        },
+        body: JSON.stringify({
+          ...params,
+          prompt,
+        })
+      })).json()).sdGenerationJob.generationId
 
 
-            let images = []
-            let result
-            let i = 0
-            while (images.length === 0) {
+      let images = []
+      let result
+      while (images.length === 0) {
 
-                result = (await (await fetch(`https://cloud.leonardo.ai/api/rest/v1/generations/${generationId}`, {
-                    method: 'GET',
-                    headers: {
-                        accept: 'application/json',
-                        'content-type': 'application/json',
-                        authorization: `Bearer ${apiKey}`
-                    }
+        result = (await (await fetch(`https://cloud.leonardo.ai/api/rest/v1/generations/${generationId}`, {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            authorization: 'Bearer a50655aa-f0be-4146-9d91-cc21b662ff80'
+          }
 
-                })).json()).generations_by_pk
+        })).json()).generations_by_pk
 
-                images = result.generated_images
-
-
-                document.getElementById("apicall").innerText = `Waiting.. ${i++}`
+        images = result.generated_images
 
 
-                await new Promise(r => setTimeout(r, 1000));
-            }
+        await new Promise(r => setTimeout(r, 2000));
+      }
 
-            document.getElementById("image").src = images[0].url
-            document.getElementById("apicall").innerText = JSON.stringify(result, null, "\t")
-        }
-
-    </script>
+      document.getElementById("image").src = images[0].url
+      document.getElementById("apicall").innerText = JSON.stringify(result, null, "\t")
+    }
+  </script>
 </head>
-<body>
 
-<input type="radio" id="character" name="prompt_type" value="character" checked>
+<body>
+<style>
+  body {
+    font-size: 16px;
+  }
+
+  label {
+    margin-right: 20px;
+  }
+
+  input {
+    padding: 15px 40px;
+  }
+
+  body {
+    background-color: #333333;
+    color: aliceblue;
+    font-family: 'Segoe UI', Arial;
+  }
+</style>
+<input checked id="character" name="prompt_type" type="radio" value="character">
 <label for="character">Character</label>
 
-<input type="radio" id="npc" name="prompt_type" value="npc" checked>
-<label for="npc">NPC</label>
-
-<input type="radio" id="location" name="prompt_type" value="location">
+<input id="location" name="prompt_type" type="radio" value="location">
 <label for="location">Location</label>
 
-<input type="radio" id="item" name="prompt_type" value="item">
+<input id="item" name="prompt_type" type="radio" value="item">
 <label for="item">Item</label>
 
-<br/>
+<br />
+<br>
+<label for="prompt">Prompt</label>
+<br /><input id="prompt" placeholder="great elf with blue eyes and sharp teeth" type="text" />
+<input onclick="executePrompt()" type="button" value="execute" />
 
-<label for="prompt">Prompt</label><input type="text" id="prompt"
-                                         value="great elf with blue eyes and sharp teeth"/><br/>
-<input type="button" onclick="executePrompt()" value="execute"/>
 
-
-<hr/>
-<img id="image" src=""/>
+<hr />
+<img id="image" src="" />
 <div id="apicall"></div>
 </body>
+
 </html>

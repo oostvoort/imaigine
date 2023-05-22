@@ -1,7 +1,7 @@
 import React from 'react'
-import { Dialog, Button } from '../../components/base'
-import ConversationLayout from '../templates/conversation_layout'
-import blacksmithIcon from '../../assets/blacksmith.jpeg'
+import { Dialog, Button } from './base'
+import ConversationLayout from './templates/ConversationLayout'
+import blacksmithIcon from '../assets/blacksmith.jpeg'
 
 type Props = {
   isOpen: boolean,
@@ -28,6 +28,7 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
             <ConversationLayout>
               {/* NOTE: when inserting a new chat from anyone, new ones should be on top of position */}
               <ConversationLayout.ReceiverBubble
+                authorIcon={blacksmithIcon}
                 text="I see. This sword has a history, then. I can fix it, but it won't be cheap. I'll need some rare materials and a few days to do it right."
               />
               <ConversationLayout.Notification
@@ -38,7 +39,8 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
                 strong again."
               />
               <ConversationLayout.ReceiverBubble
-                author="Silverio of Khazad-dûm"
+                authorIcon={blacksmithIcon}
+                authorName="Silverio of Khazad-dûm"
                 text="I&apos;m Silverio, and I&apos;m the best blacksmith in this village. What can I do for you?"
               />
               <ConversationLayout.SenderBubble

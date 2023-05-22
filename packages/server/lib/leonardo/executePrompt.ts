@@ -1,20 +1,22 @@
-import { promptTemplates, pinata } from './index'
-import * as fs from 'fs'
-import { ReadStream } from 'fs'
+import { pinata, promptTemplates } from './index'
 import { Readable } from 'stream'
-import { finished } from 'stream/promises'
-import * as path from 'path'
+import { ReadableStream } from 'node:stream/web'
 
 
 export async function generateNpc(prompt: string): Promise<string> {
-
+  // TODO
+  return ''
 }
 
 export async function generateLocation(prompt: string): Promise<string> {
+  // TODO
+  return ''
 
 }
 
 export async function generateItem(prompt: string): Promise<string> {
+  // TODO
+  return ''
 
 }
 
@@ -72,7 +74,7 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
 
 
   const pinResponse = await pinata.pinFileToIPFS(
-    Readable.fromWeb(readableStream.body),
+    Readable.fromWeb(<ReadableStream>readableStream.body),
     {
       pinataMetadata: {
         name: 'test',

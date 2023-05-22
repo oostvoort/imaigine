@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog as DialogCore, Button } from '../../components/base'
+import { Dialog as DialogCore, Button } from './base'
 const { Dialog, DialogContent } = DialogCore
 
 type Props = {

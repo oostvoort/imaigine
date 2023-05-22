@@ -1,9 +1,9 @@
-import * as Dialog from './dialog'
-import { Button } from './button'
-import { Input } from './input'
-import * as Card from './card'
-import { Progress } from './progress'
-import * as Tooltip from './tooltip'
+import * as Dialog from './Dialog'
+import { Button } from './Button'
+import { Input } from './Input'
+import * as Card from './Card'
+import { Progress } from './Progress'
+import * as Tooltip from './Tooltip'
 
 export {
   Dialog,

@@ -4,7 +4,8 @@ import {
   CharacterStats,
   CharacterStory,
   GenerateNonPlayerCharacterProps,
-  GeneratePlayerCharacterProps, GeneratePlayerCharacterResponse,
+  GeneratePlayerCharacterProps,
+  GeneratePlayerCharacterResponse,
 } from 'types'
 import { getRandomValue } from '../utils'
 
@@ -72,7 +73,9 @@ export async function generatePlayerCharacter({
     }
     `
 
-  return JSON.parse(await executePrompt(prompt)) as GeneratePlayerCharacterResponse
+  const output = await executePrompt(prompt)
+  const json: GeneratePlayerCharacterResponse = JSON.parse(output)
+  return json
 }
 
 
@@ -87,6 +90,7 @@ const eyeShape = [ 'Almond', 'Round', 'Hooded', 'Upturned', 'Monolid' ]
 const eyeColor = [ 'Black', 'Brown', 'Yellow', 'Grey', 'Red', 'Green', 'Blue' ]
 
 const favColor = [ 'Green', 'Brown', 'Blue', 'White', 'Yellow', 'Grey', 'Red' ]
+const races = [ 'elf', 'goblin', 'human', 'nymph', 'dwarf', 'troll' ]
 
 export const strengthLevels = [ 'Feeble', 'Average', 'Mighty', 'Powerful', 'Herculean' ]
 export const dexterityLevels = [ 'Clumsy', 'Nimble', 'Agile', 'Graceful', 'Acrobatic' ]
@@ -95,13 +99,17 @@ export const intelligenceLevels = [ 'Ignorant', 'Average', 'Intelligent', 'Brill
 export const wisdomLevels = [ 'Foolish', 'Discerning', 'Wise', 'Insightful', 'Enlightened' ]
 export const charismaLevels = [ 'Awkward', 'Average', 'Charismatic', 'Charming', 'Persuasive' ]
 
-export async function generateNonPlayerCharacter({ location, story, stats }: GenerateNonPlayerCharacterProps) {
+export async function generateNonPlayerCharacter({
+  location,
+  story,
+  characterStats: stats,
+}: GenerateNonPlayerCharacterProps) {
   return await generatePlayerCharacter({
     location,
     physicalFeatures: {
       ageGroup: getRandomValue(ageGroup),
       genderIdentity: getRandomValue(genderIdentity),
-      race: getRandomValue(story.races),
+      race: getRandomValue(races),
       bodyType: getRandomValue(bodyType),
       height: getRandomValue(height),
       hairLength: getRandomValue(hairLength),
