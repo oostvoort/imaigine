@@ -18,7 +18,8 @@ import {
   DescriptionComponent,
   TangibleComponent,
   PlayerComponent,
-  CharacterComponent
+  CharacterComponent,
+  SceneComponent
 } from "../codegen/Tables.sol";
 
 import { Constants } from "../lib/Constants.sol";
@@ -173,6 +174,7 @@ contract CreationSystem is System {
 
     bytes32 locationID = getUniqueEntity();
 
+    SceneComponent.set(locationID, true);
     NameComponent.set(locationID, name);
     SummaryComponent.set(locationID, summary);
     ImageComponent.set(locationID, imgHash);

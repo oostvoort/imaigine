@@ -50,6 +50,7 @@ export default mudConfig({
         CountComponent: "uint256",
         PlayerComponent: "bool",
         LocationComponent: "bytes32",
+        SceneComponent: "bool",
         PathComponent: {
             keySchema: {
                 location0: "bytes32",

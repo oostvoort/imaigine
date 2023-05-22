@@ -17,6 +17,7 @@ import { TangibleComponent, TangibleComponentTableId } from "./tables/TangibleCo
 import { CountComponent, CountComponentTableId } from "./tables/CountComponent.sol";
 import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponent.sol";
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
+import { SceneComponent, SceneComponentTableId } from "./tables/SceneComponent.sol";
 import { PathComponent, PathComponentTableId } from "./tables/PathComponent.sol";
 import { PathLocationComponent, PathLocationComponentData, PathLocationComponentTableId } from "./tables/PathLocationComponent.sol";
 import { AttributeUintComponent, AttributeUintComponentTableId } from "./tables/AttributeUintComponent.sol";
