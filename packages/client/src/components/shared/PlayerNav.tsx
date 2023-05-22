@@ -1,5 +1,8 @@
 import React from 'react'
 import avatarImage from '../../assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg'
+import backpackIcon from '../../assets/backpack.png'
+import historyIcon from '../../assets/history.png'
+import settingsIcon from '../../assets/settings.png'
 import { clsx } from 'clsx'
 import AvatarStatsDialog from '../AvatarStatsDialog'
 import sampleAvatarIcon from '../../assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg'
@@ -7,6 +10,7 @@ import sampleAvatarIcon from '../../assets/Leonardo_Creative_Adult_Female_Bluish
 type IconItemProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   label?: string,
   icon?: string
+  isAvatar?: boolean
 }
 
 const mockupAvatarInfo = {
@@ -35,16 +39,18 @@ const mockupAvatarInfo = {
   skills: [ 'fireball', 'swordStrike', 'thunderbolt', 'poisonCreation' ],
 }
 
-function IconItem({ icon, label, ...others }: IconItemProps) {
+function IconItem({ icon, label, isAvatar, ...others }: IconItemProps) {
 
   return (
-    <div className="flex flex-col gap-3 justify-center cursor-pointer" {...others}>
+    <div className="flex flex-col justify-center cursor-pointer" {...others}>
       {
         icon ?
           <div className={clsx([
             'rounded-full origin-top-right',
-            'bg-avatar-frame bg-cover bg-no-repeat',
-            'scale-[1.3]',
+            'bg-cover bg-no-repeat',
+            {
+              'bg-avatar-frame scale-[1.3]': isAvatar
+            },
           ])}>
             <img className="w-[105px] rounded-full scale-[0.8]" src={icon} alt={JSON.stringify(icon)} />
           </div>
@@ -62,11 +68,11 @@ export default function PlayerNav() {
 
   return (
     <>
-      <nav className="w-[107px] bg-player-nav flex flex-col p-3 gap-5 overflow-visible z-10">
-        <IconItem icon={avatarImage} className="mb-12 cursor-pointer" onClick={() => setOpenAvatarDialog(true)} />
-        <IconItem label="History" />
-        <IconItem label="Inventory" />
-        <IconItem label="Settings" />
+      <nav className="w-[107px] bg-player-nav flex flex-col p-3 gap-8 overflow-visible z-10">
+        <IconItem isAvatar icon={avatarImage} className="mb-8 cursor-pointer" onClick={() => setOpenAvatarDialog(true)} />
+        <IconItem icon={historyIcon} label="History" />
+        <IconItem icon={backpackIcon} label="Inventory" />
+        <IconItem icon={settingsIcon} label="Settings" />
       </nav>
       <AvatarStatsDialog
         isOpen={openAvatarDialog}
