@@ -110,7 +110,6 @@ export default function Game() {
 
                 {
                   locations.map((item, index) => {
-                    console.log(item)
                     return <img
                       className={clsx([
                         'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
