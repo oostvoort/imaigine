@@ -102,7 +102,7 @@
   }
 
   .accent-title {
-    @apply font-bold text-sm tracking-wider font-jost text-accent uppercase;
+    @apply font-bold text-sm tracking-widest font-jost text-accent uppercase;
   }
 
   #react-root {

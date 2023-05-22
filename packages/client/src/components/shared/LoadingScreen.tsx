@@ -18,8 +18,8 @@ export default function LoadingScreen({ message }: Props) {
           <p className="font-rancho text-2xl tracking-wider text-center">Imagination Engine</p>
         </div>
         <p className='font-bold text-4xl text-center'>Please wait...</p>
-        <Card className='mx-auto '>
-          <CardContent className='min-h-[250px] min-w-xl mx-auto flex flex-col justify-center items-center p-10 gap-10'>
+        <Card className='mx-auto'>
+          <CardContent className='min-h-[100px] min-w-xl mx-auto flex flex-col justify-center items-center p-10 gap-10'>
             <p className='font-bold tracking-wide text-xl'>{ message }</p>
           </CardContent>
         </Card>
