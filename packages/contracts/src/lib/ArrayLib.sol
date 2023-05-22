@@ -47,4 +47,15 @@ library ArrayLib {
     new_array[new_array.length - 1] = data;
     return new_array;
   }
+
+  function remove(bytes32[] memory array, uint256 index) internal pure returns (bytes32[] memory){
+    bytes32[] memory new_array = new bytes32[](array.length - 1);
+    for(uint256 i=0; i<index; i++) {
+      new_array[i] = array[i];
+    }
+    for(uint256 i=index+1; i<array.length; i++) {
+      new_array[i - 1] = array[i];
+    }
+    return new_array;
+  }
 }

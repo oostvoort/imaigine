@@ -117,6 +117,36 @@ contract InteractionSystemTest is MudV2Test {
     assertEq(cached_actions.length, 0, "test_SaveInteraction::7");
   }
 
+  function test_LeaveInteraction() public {
+    world.enterInteraction(mockNpcID_0);
+
+    // DEV begin Interaction
+    bytes32[] memory participants = new bytes32[](1);
+    string[][] memory participantsActions = new string[][](participants.length);
+    string[] memory actions = new string[](3);
+
+    participants[0] = mockPlayerID_DEV;
+
+    actions[0] = "DEV_Option_0";
+    actions[1] = "DEV_Option_1";
+    actions[2] = "DEV_Option_2";
+    participantsActions[0] = actions;
+
+    world.saveInteraction(mockNpcID_0, mockNpcID_0, "log", participants, participantsActions);
+
+    // ALICE Begin Interaction
+    vm.prank(ALICE, ALICE);
+    world.enterInteraction(mockNpcID_0);
+
+    world.leaveInteraction(mockNpcID_0, mockPlayerID_DEV);
+
+    ActionsComponentData memory dev_actionData = ActionsComponent.get(world, mockPlayerID_DEV, mockNpcID_0);
+    assertEq(dev_actionData.createdAt, 0, "test_LeaveInteraction::1");
+
+    string[] memory cached_actions = dev_actionData.actions.decodeStringArray();
+    assertEq(cached_actions.length, 0, "test_LeaveInteraction::2");
+  }
+
   function test_UpdateNpcInitialAction() public {
     string[] memory actions = new string[](3);
 

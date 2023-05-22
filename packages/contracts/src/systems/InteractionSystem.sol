@@ -96,6 +96,27 @@ contract InteractionSystem is System {
     return entityID;
   }
 
+  function leaveInteraction(
+    bytes32 entityID,
+    bytes32 otherPlayerID
+  )
+  public
+  returns (bytes32)
+  {
+    bytes32[] memory participants = InteractComponent.getParticipants(entityID).decodeBytes32Array();
+
+    int256 index = participants.findIndex(otherPlayerID);
+    require(index >=0, "trying to remove a not participant");
+
+    // casting to uint256 should be safe
+    participants = participants.remove(uint256(index));
+
+    InteractComponent.setParticipants(entityID, abi.encode(participants));
+    ActionsComponent.deleteRecord(otherPlayerID, entityID);
+
+    return entityID;
+  }
+
   function setEntityInitialActions(
     bytes32 entityID,
     string[] memory initialActions
