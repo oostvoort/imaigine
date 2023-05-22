@@ -3,12 +3,15 @@ import { ClientComponents } from './createClientComponents'
 import { Entity, getComponentValue, HasValue, runQuery } from '@latticexyz/recs'
 
 import {
-  GenerateInteractionProps, GenerateInteractionResponse,
+  GenerateInteractionProps,
+  GenerateInteractionResponse,
   GenerateLocationProps,
-  GenerateLocationResponse, GenerateNonPlayerCharacterProps,
+  GenerateLocationResponse,
+  GenerateNonPlayerCharacterProps,
   GeneratePathProps,
   GeneratePathResponse,
-  GeneratePlayerCharacterProps, GeneratePlayerCharacterResponse,
+  GeneratePlayerCharacterProps,
+  GeneratePlayerCharacterResponse,
   GenerateStoryProps,
   JsonResponse,
 } from 'types'
@@ -19,6 +22,7 @@ import { awaitStreamValue } from '@latticexyz/utils'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
+const IPFS_URL_PREFIX = import.meta.env.VITE_IPFS_URL_PREFIX
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
@@ -157,12 +161,13 @@ export function createSystemCalls(
   }
 
   const saveInteraction = async (props: GenerateInteractionProps, entityID: string) => {
-    const res: GenerateInteractionResponse = await api('/generateNonPlayerCharacter', props)
+    const res: GenerateInteractionResponse = await api('/generateInteraction', props)
+
     // await worldSend('saveInteraction', [
     //   hexZeroPad(entityID, 32),
     //   hexZeroPad("0x0", 32),
     //   res.logHash,
-    //   participants,
+    //   [hexZeroPad(entityID, 32)],
     //   participantsActions,
     // ])
   }

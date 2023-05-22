@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import useGame from '../../hooks/useGame'
 import { useMUD } from '../../MUDContext'
 import { Button } from '../../components/base'
-import CharacterConversationDialog from '../../components/CharacterConversationDialog'
+
+const IPFS_URL_PREFIX = import.meta.env.VITE_IPFS_URL_PREFIX
 
 function DEV() {
   const {
@@ -14,11 +15,22 @@ function DEV() {
     startingLocation,
     paths,
     currentLocation,
-    interactions
+    currentInteraction,
+    interactions,
   } = useGame()
 
   const {
-    systemCalls: { createPlayer, createStory, createStartingLocation, createCharacter, enterInteraction },
+    systemCalls: {
+      createPlayer,
+      createStory,
+      createStartingLocation,
+      createCharacter,
+      enterInteraction,
+      saveInteraction,
+    },
+    network: {
+      playerEntity
+    }
   } = useMUD()
 
   async function onClickCreateStoryTest() {
@@ -102,6 +114,25 @@ function DEV() {
     await enterInteraction(entityID)
   }
 
+  // async function onClickSaveInteractionTest() {
+  //   await saveInteraction({
+  //     location: {
+  //       name: currentLocation.name.value,
+  //       summary: currentLocation.summary.value,
+  //     },
+  //     action: "",
+  //     activeEntity: playerEntity,
+  //     logHash: "QmUmTf999j42nnTYh5hjvzLCuYA3AXPk4FK4LdXexjTXXY",
+  //     otherEntities: [
+  //       {
+  //         name: currentInteraction.entity.name,
+  //         summary: currentInteraction.entity.name,
+  //         isAlive: currentInteraction.entity.alive
+  //       }
+  //     ]
+  //   })
+  // }
+
   return (
     <div className={'grid grid-cols-4 gap-4'}>
       <Card title={'DevTools'}>
@@ -114,9 +145,12 @@ function DEV() {
                   onClick={() => onClickPlayerTest()}>CreatePlayerTest</Button>
           <Button size="xl" disabled={!startingLocation} className={'w-64'}
                   onClick={() => onClickNPCTest()}>CreateNPCTest</Button>
+          <Button size="xl" disabled={!startingLocation} className={'w-64'}
+                  onClick={() => onClickSaveInteractionTest()}>SaveInteractionTest</Button>
         </div>
       </Card>
 
+      <JSONCard title={'Current Interactions'} data={currentInteraction} />
       <JSONCard title={'Interactions'} data={interactions} />
       <JSONCard title={'Story'} data={story} />
       <JSONCard title={'Player'} data={player} />
@@ -128,7 +162,8 @@ function DEV() {
               <Button size="xl" className={'w-64'} onClick={() => onClickNPCInteractionTest(character.entity)}>
                 {character.name.value} {character.entity}
               </Button>
-              <Button size={"xl"} onClick={() => window.open("https://gateway.pinata.cloud/ipfs/" + character.image.value, "_blank")}>👀</Button>
+              <Button size={'xl'}
+                      onClick={() => window.open(IPFS_URL_PREFIX + character.image.value, '_blank')}>👀</Button>
             </div>
           )
         })}
