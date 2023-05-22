@@ -5,6 +5,7 @@ import blacksmithIcon from '../assets/blacksmith.jpeg'
 import { useAtomValue } from 'jotai'
 import { selectedCharacter_atom } from '../atoms/globalAtoms'
 import { generateIpfsImageLink } from '../lib/utils'
+import { useMutation } from '@tanstack/react-query'
 
 type Props = {
   isOpen: boolean,
@@ -20,7 +21,7 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
     <Dialog.Dialog open={isOpen} onOpenChange={open => setOpen(open)}>
       <Dialog.DialogContent className="flex gap-5 w-full sm:max-w-7xl border border-accent !rounded-2xl">
         <section className="flex-grow-0">
-          <img src={generateIpfsImageLink(character.image.value)} alt={String(character.image.value)} className="w-[500px] rounded-xl" />
+          <img src={generateIpfsImageLink(character.image.value)} alt={String(character.image.value)} className="w-[500px] rounded-xl" draggable={false} />
         </section>
         <section className="flex-1 flex flex-col">
           {/* Conversation box */}

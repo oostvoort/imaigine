@@ -17,7 +17,7 @@ export default function LoadingScreen({ message }: Props) {
           <img src={imaigineIcon} alt={String(imaigineIcon)} className="aspect-auto w-[300px] mx-auto" />
           <p className="font-rancho text-2xl tracking-wider text-center">Imagination Engine</p>
         </div>
-        <p className='font-bold text-4xl text-center'>Please wait...</p>
+        <p className='font-bold text-4xl text-center mt-10 -mb-6'>Please wait...</p>
         <Card className='mx-auto'>
           <CardContent className='min-h-[100px] min-w-xl mx-auto flex flex-col justify-center items-center p-10 gap-10'>
             <div className="loader-wrapper">
@@ -34,7 +34,7 @@ export default function LoadingScreen({ message }: Props) {
                       transform="translate(-5.016 73.092)" fill="#fff" />
               </svg>
             </div>
-            <p className='font-bold tracking-wide text-xl'>{ message }</p>
+            <p className='font-bold font-jost tracking-wide text-xl'>{ message }</p>
           </CardContent>
         </Card>
       </section>

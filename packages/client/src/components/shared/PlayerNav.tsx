@@ -57,7 +57,7 @@ function IconItem({ icon, label, isAvatar, ...others }: IconItemProps) {
               'bg-avatar-frame aspect-square w-[105px] [&>img]:h-[105px] translate-x-[-20px] scale-[1.2]': isAvatar,
             },
           ])}>
-            <img className="w-[105px] rounded-full scale-[0.8] object-cover object-top" src={icon} alt={JSON.stringify(icon)} />
+            <img draggable={false} className="w-[105px] rounded-full scale-[0.8] object-cover object-top" src={icon} alt={JSON.stringify(icon)} />
           </div>
           : <div
             className="w-auto w-[60px] h-[60px] aspect-square rounded-full border border-gray-400 bg-night mx-auto"></div>

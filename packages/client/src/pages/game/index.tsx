@@ -11,6 +11,7 @@ import envs from '../../env'
 import { generateIpfsImageLink } from '../../lib/utils'
 import { useAtom } from 'jotai'
 import { selectedCharacter_atom, selectedLocation_atom } from '../../atoms/globalAtoms'
+import { ChevronLeft } from 'lucide-react'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -102,24 +103,34 @@ export default function Game() {
           {/* Game status */}
           <section className="basis-6/12 flex flex-col p-10 gap-5 w-[50%]">
             <motion.div
-              className="flex flex-col gap-2 overflow-hidden"
+              className={clsx([
+                "flex flex-col gap-2 overflow-hidden relative",
+                "before:content-[''] before:block before:w-24 before:h-full before:absolute before:right-0 before:z-10 before-gradient"
+              ])}
               ref={constrainsRef}
             >
               <p className="accent-title">Point of Interest</p>
-              <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>
-
+              <motion.div className="flex items-center gap-4 w-max" drag="x" dragConstraints={constrainsRef}>
                 {
                   locations.map((item, index) => {
-                    return <img
-                      className={clsx([
-                        'w-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover',
-                        'rounded-xl w-[150px] h-[120px]'
-                      ])}
+                    return <div
                       key={JSON.stringify({ item, index })}
-                      src={generateIpfsImageLink(item.image.value)} alt={JSON.stringify(item.image.value)}
-                      draggable={false}
-                      onClick={() => setLocationToSelect(item)}
-                    />
+                      className={clsx([
+                        'w-[100px] rounded-full shadow-2xl cursor-pointer overflow-hidden',
+                        'rounded-xl w-[170px] h-[135px] relative',
+                      ])}
+                    >
+                      <img
+                        className='object-cover w-full h-full'
+                        src={generateIpfsImageLink(item.image.value)} alt={JSON.stringify(item.image.value)}
+                        draggable={false}
+                        onClick={() => setLocationToSelect(item)}
+                      />
+                      {
+                        // add condition when user is not at the start location
+                        index == 0 && <div className='absolute bottom-2 left-0 bg-primary/80 px-3 py-2 rounded-r-lg flex items-center tracking-wide'><ChevronLeft className='-ml-3 w-5' /> Return</div>
+                      }
+                    </div>
                   })
                 }
               </motion.div>

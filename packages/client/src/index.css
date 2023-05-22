@@ -203,3 +203,7 @@
   position: absolute;
   margin-left: -12px;
 }
+
+.before-gradient:before {
+  background-image: linear-gradient(to right, hsla(206, 24%, 17%, 0), hsla(206, 24%, 17%, 1));
+}
