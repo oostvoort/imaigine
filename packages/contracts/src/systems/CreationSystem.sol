@@ -29,7 +29,7 @@ contract CreationSystem is System {
   event CreatedPlayer(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
   event CreatedCharacter(bytes32 indexed entityID, bytes32 indexed locationID, string indexed name, string summary, string imgHash);
   event CreatedLocation(bytes32 indexed locationID, string indexed name, string summary, string imgHash);
-  event CreatedPath(bytes32 indexed from, bytes32 indexed to, string name, string summary);
+  event CreatedPath(bytes32 indexed from, bytes32 indexed to, string indexed name, string summary);
 
   function createPlanet(
     string memory name,
