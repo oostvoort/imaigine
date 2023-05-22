@@ -42,8 +42,8 @@ export function defineContractComponents(world: World) {
         world,
         {
           themeID: RecsType.String,
-          racesID: RecsType.String,
           currencyID: RecsType.String,
+          racesID: RecsType.String,
         },
         {
           metadata: {
@@ -178,7 +178,7 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          value: RecsType.String,
+          value: RecsType.Boolean,
         },
         {
           metadata: {

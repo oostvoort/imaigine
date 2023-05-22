@@ -22,12 +22,17 @@ import {
   AliveComponent,
   SceneComponent,
   ItemComponent,
-  OwnerComponent
+  OwnerComponent,
+  RaceComponent
 } from "../src/codegen/Tables.sol";
 
+import { ArrayLib } from "../src/lib/ArrayLib.sol";
 import { Constants } from "../src/lib/Constants.sol";
 
 contract CreationSystemTest is MudV2Test {
+  using ArrayLib for bytes;
+  using ArrayLib for bytes32[];
+
   IWorld public world;
 
   bytes32 mockLocationID;
@@ -82,7 +87,11 @@ contract CreationSystemTest is MudV2Test {
     assertEq(NameComponent.get(world, story.themeID), theme, "testFuzz_CreateStory::4");
     assertEq(NameComponent.get(world, story.currencyID), currency, "testFuzz_CreateStory::5");
 
-    // TODO: verify races
+    bytes32[] memory cached_racesID = story.racesID.decodeBytes32Array();
+    for (uint256 i=0; i<cached_racesID.length; i++) {
+      assertTrue(RaceComponent.get(cached_racesID[i]), "testFuzz_CreateStory::6");
+      assertEq(NameComponent.get(cached_racesID[i]), races[i], "testFuzz_CreateStory::7");
+    }
   }
 
   function testFuzz_CreatePlanet(

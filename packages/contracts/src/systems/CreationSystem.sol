@@ -35,6 +35,8 @@ import { Constants } from "../lib/Constants.sol";
 
 contract CreationSystem is System {
   using ArrayLib for string[];
+  using ArrayLib for bytes;
+  using ArrayLib for bytes32[];
 
 
 //  event CreatedStory(bytes32 indexed storyID, string indexed name, string indexed theme, string summary);
@@ -77,20 +79,23 @@ contract CreationSystem is System {
 
     bytes32 storyID = getUniqueEntity();
     bytes32 themeID = getUniqueEntity();
-    bytes32 racesID = getUniqueEntity();
     bytes32 currencyID = getUniqueEntity();
 
-    StoryComponent.set(storyID, themeID, racesID, currencyID);
+    bytes32[] memory racesID = new bytes32[](0);
+
+    for (uint256 i=0; i<races.length; i++) {
+      bytes32 raceID = getUniqueEntity();
+      RaceComponent.set(raceID, true);
+      NameComponent.set(raceID, races[i]);
+      racesID.push(raceID);
+    }
+
+    StoryComponent.set(storyID, themeID, currencyID, racesID.encode());
 
     NameComponent.set(storyID, name);
     SummaryComponent.set(storyID, summary);
     NameComponent.set(themeID, theme);
     NameComponent.set(currencyID, currency);
-
-    for(uint256 i=0; i<races.length; i++) {
-      require(bytes(races[i]).length > 0, string(abi.encodePacked("invalid races[", i, "] length")));
-      NameComponent.set(racesID, races[i]);
-    }
 
 //    emit CreatedStory(storyID, name, theme, summary);
 
