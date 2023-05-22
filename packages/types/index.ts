@@ -67,8 +67,17 @@ export interface GeneratePlayerCharacterResponse {
 
 export interface JsonResponse {
     name: string,
-    summary: string
+    summary: string,
 }
+
+export interface GenerateLocationResponse extends JsonResponse {
+  imageHash: string
+}
+
+export interface GeneratePathResponse extends JsonResponse {
+  imageHash: string
+}
+
 
 export interface GeneratePathProps {
     toLocation: { name: string, summary: string },

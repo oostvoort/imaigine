@@ -1,6 +1,12 @@
 import { SetupNetworkResult } from './setupNetwork'
 import { ClientComponents } from './createClientComponents'
-import { GenerateLocationProps, GeneratePlayerCharacterProps, GenerateStoryProps, JsonResponse } from 'types'
+import {
+  GenerateLocationProps,
+  GenerateLocationResponse,
+  GeneratePlayerCharacterProps,
+  GenerateStoryProps,
+  JsonResponse,
+} from 'types'
 import api from '../lib/api'
 import { awaitStreamValue } from '@latticexyz/utils'
 
@@ -14,6 +20,7 @@ export function createSystemCalls(
   const createPlayer = async (props: GeneratePlayerCharacterProps) => {
     const res = await api('/generatePlayerCharacter', props)
     console.log(res)
+    await worldSend('createPlayer', props)
   }
 
   const createStory = async (props: GenerateStoryProps) => {
@@ -24,11 +31,11 @@ export function createSystemCalls(
   const createStartingLocation = async (props: GenerateLocationProps) => {
     console.debug('createStartingLocation')
 
-    const res0: JsonResponse = await api('/generateLocation', props)
-    await worldSend('createLocation', [ res0.name, res0.summary, 'QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp' ])
+    const res0: GenerateLocationResponse = await api('/generateLocation', props)
+    await worldSend('createLocation', [ res0.name, res0.summary, res.imageHash ])
 
-    const res1: JsonResponse = await api('/generateLocation', props)
-    let tx = await worldSend('createLocation', [ res1.name, res1.summary, 'QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp' ])
+    const res1: GenerateLocationResponse = await api('/generateLocation', props)
+    let tx = await worldSend('createLocation', [ res1.name, res1.summary, res.imageHash ])
 
     tx = await tx.wait()
 
