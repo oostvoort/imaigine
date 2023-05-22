@@ -56,7 +56,7 @@ export default function useGame() {
     .filter((entity) => {
       if (!playerEntity) return false
       console.log(playerEntity)
-      const currentLocation = getComponentValueStrict(LocationComponent, playerEntity)
+      const currentLocation = getComponentValue(LocationComponent, playerEntity)
       if (!currentLocation) return false
       return (hexValue(currentLocation.value) == hexValue(entity))
     })
