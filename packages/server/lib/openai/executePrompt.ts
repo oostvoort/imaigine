@@ -2,7 +2,7 @@ import openai from './openai'
 import { cleanAiJsonAnswer } from './utils'
 
 export async function executePrompt(prompt: string): Promise<string> {
-  if (process.env.LOG_PROMPTS == 'true') console.log(`Prompt: ${prompt}`)
+  if (process.env.LOG_PROMPTS == 'true') console.log(`OpenAIPrompt: `, prompt)
   const response = await openai.createCompletion({
     model: 'text-davinci-003',
     prompt: prompt,

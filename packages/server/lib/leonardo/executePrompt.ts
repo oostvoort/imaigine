@@ -30,6 +30,8 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
 
   const prompt = promptTemplates[mode].prompt.replace('%', rawPrompt)
 
+  if (process.env.LOG_PROMPTS == 'true') console.log(`Leonardo Prompt: `, prompt)
+  
   const params = promptTemplates[mode]
 
   const response = await fetch('https://cloud.leonardo.ai/api/rest/v1/generations', {
