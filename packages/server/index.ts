@@ -19,6 +19,7 @@ import { generatePlayerImage } from './lib/leonardo'
 import { generatePath } from './lib/openai/generate/generatePath'
 import { generateTravel } from './lib/openai/generate/generateTravel'
 import { generateInteraction } from './lib/openai/generate/generateInteraction'
+import { generateLocationImage } from './lib/leonardo/executePrompt'
 
 dotenv.config()
 const app = express()
@@ -45,7 +46,10 @@ app.post('/generateStory', async (req: Request, res: Response) => {
 
 app.post('/generateLocation', async (req: Request, res: Response) => {
   const props: GenerateLocationProps = req.body
-  res.send(await generateLocation(props))
+  let response = await generateLocation(props)
+  response.imageHash = await generateLocationImage(response.visualSummary)
+
+  res.send(response)
 })
 
 app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {

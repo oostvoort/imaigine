@@ -13,6 +13,11 @@ export interface GenerateLocationProps {
   story: Summarized,
 }
 
+export interface GenerateLocationResponse extends Summarized {
+  imageHash: string
+  visualSummary: string
+}
+
 export interface CharacterStory {
   favColor: 'Green' | 'Brown' | 'Blue' | 'White' | 'Yellow' | 'Grey' | 'Red' | string
 }
@@ -73,9 +78,6 @@ export interface JsonResponse {
   summary: string,
 }
 
-export interface GenerateLocationResponse extends JsonResponse {
-  imageHash: string
-}
 
 export interface GeneratePathResponse extends JsonResponse {
   imageHash?: string

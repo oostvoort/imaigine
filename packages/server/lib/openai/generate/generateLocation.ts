@@ -1,5 +1,5 @@
 import { executePrompt } from '../executePrompt'
-import { CharacterStats, JsonResponse, GenerateLocationProps, GenerateLocationResponse } from 'types'
+import { CharacterStats, GenerateLocationProps, GenerateLocationResponse } from 'types'
 import { getRandomValue } from '../utils'
 
 export interface AILocation {
@@ -23,7 +23,7 @@ const populationSizes = [ 'Small', 'Medium', 'Large', 'Very Large', 'Metropolis'
 const safetyLevels = [ 'Unsafe', 'Moderately Safe', 'Safe', 'Very Safe', 'Highly Secure' ]
 const biomes = [ 'Tropical Rainforest', 'Temperate Forest', 'Taiga', 'Desert', 'Savanna', 'Grassland', 'Tundra', 'Mediterranean', 'Chaparral', 'Wetland', 'Coral Reef', 'Mountain', 'Prairie', 'Arctic', 'Mangrove', 'Steppe', 'Boreal Forest', 'Shrubland', 'Swamp', 'Estuary', 'Salt Marsh', 'Cave', 'Volcano', 'Oasis', 'Canyon', 'Plateau' ]
 
-export async function generateLocation({ story }: GenerateLocationProps): Promise<JsonResponse> {
+export async function generateLocation({ story }: GenerateLocationProps): Promise<GenerateLocationResponse> {
   const prompt = `
     Given the following world description:
     "${story.summary}"

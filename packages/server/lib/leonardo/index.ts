@@ -55,7 +55,7 @@ export const promptTemplates: { [index: string]: any } = {
   },
 }
 
-export { generatePlayerImage } from './executePrompt'
+export { generatePlayerImage, generateLocationImage, generateItemImage, generateNpcImage } from './executePrompt'
 
 export const pinata = new pinataSDK({
   pinataApiKey: process.env.PINATA_API_KEY,

@@ -3,20 +3,20 @@ import { Readable } from 'stream'
 import { ReadableStream } from 'node:stream/web'
 
 
-export async function generateNpc(prompt: string): Promise<string> {
-  // TODO
-  return ''
+export async function generateNpcImage(prompt: string): Promise<string> {
+  const result = await executePrompt('npc', prompt)
+  return result
 }
 
-export async function generateLocation(prompt: string): Promise<string> {
-  // TODO
-  return ''
+export async function generateLocationImage(prompt: string): Promise<string> {
+  const result = await executePrompt('location', prompt)
+  return result
 
 }
 
-export async function generateItem(prompt: string): Promise<string> {
-  // TODO
-  return ''
+export async function generateItemImage(prompt: string): Promise<string> {
+  const result = await executePrompt('item', prompt)
+  return result
 
 }
 
