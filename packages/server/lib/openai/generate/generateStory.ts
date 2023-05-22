@@ -1,6 +1,6 @@
 import { executePrompt } from '../executePrompt'
 import { AILocation } from './generateLocation'
-import { GenerateStoryProps, JsonResponse } from 'types'
+import { GenerateLocationResponse, GenerateStoryProps, GenerateStoryResponse, JsonResponse } from 'types'
 import { AIPath } from './generatePath'
 
 export interface AIStory {
@@ -15,7 +15,7 @@ export interface AIStory {
 
 export async function generateStory({
   currency, races, theme, extraDescriptions,
-}: GenerateStoryProps): Promise<JsonResponse> {
+}: GenerateStoryProps): Promise<GenerateStoryResponse> {
   const prompt = `
     Generate a 3 paragraph description of a ${theme} world.
     The world is populated by ${races.join(' and ')}
@@ -26,16 +26,19 @@ export async function generateStory({
     `Add these extra descriptions, flesh them out and integrate into the description:
     ${extraDescriptions.join(', ')}`
   }
-
+    Summarize the story's world visually
 
     Respond only in JSON with the following format:
 
     {
         "name": "the name of the world",
-        "summary": "the generated description"
+        "summary": "the generated description",
+        "visualSummary": "a list of keywords describing the world"
+
     }
     `
 
-  const text = await executePrompt(prompt)
-  return JSON.parse(text) as JsonResponse
+  const output = await executePrompt(prompt)
+  const json: GenerateStoryResponse = JSON.parse(output)
+  return json
 }

@@ -7,12 +7,13 @@ import {
   GeneratePlayerCharacterProps,
   GenerateLocationProps,
   GenerateStoryProps,
-  GenerateNonPlayerCharacterProps,
+  GenerateNonPlayerCharacterProps, GeneratePathProps, GenerateInteractProps, GenerateInteractResponse,
 } from 'types'
 import { generateStory } from './lib/openai/generate/generateStory'
 import { generateLocation } from './lib/openai/generate/generateLocation'
 import { generateNonPlayerCharacter, generatePlayerCharacter } from './lib/openai/generate/generateCharacter'
 import { generatePlayerImage } from './lib/leonardo'
+import { generatePath } from './lib/openai/generate/generatePath'
 
 dotenv.config()
 const app = express()
@@ -33,7 +34,8 @@ app.get('/', (req: Request, res: Response) => {
 
 app.post('/generateStory', async (req: Request, res: Response) => {
   const props: GenerateStoryProps = req.body
-  res.send(await generateStory(props))
+  const story = await generateStory(props)
+  res.send(story)
 })
 
 app.post('/generateLocation', async (req: Request, res: Response) => {
@@ -54,6 +56,25 @@ app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {
 app.post('/generateNonPlayerCharacter', async (req: Request, res: Response) => {
   const props: GenerateNonPlayerCharacterProps = req.body
   res.send(await generateNonPlayerCharacter(props))
+})
+
+app.post('/generatePath', async (req: Request, res: Response) => {
+  const props: GeneratePathProps = req.body
+  res.send(await generatePath(props))
+})
+
+// TODO: implement
+app.post('/generateInteract', async (req: Request, res: Response) => {
+  const props: GenerateInteractProps = req.body
+  const response: GenerateInteractResponse = { todo: true }
+  res.send(response)
+})
+
+// TODO: implement
+app.post('/generateTravel', async (req: Request, res: Response) => {
+  const props: GenerateInteractProps = req.body
+  const response: GenerateInteractResponse = { todo: true }
+  res.send(response)
 })
 
 

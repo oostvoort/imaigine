@@ -1,5 +1,11 @@
 import { executePrompt } from '../executePrompt'
-import { GeneratePathProps, GeneratePathResponse, GenerateStoryResponse, JsonResponse } from 'types'
+import {
+  GenerateInteractionResponse,
+  GeneratePathProps,
+  GeneratePathResponse,
+  GenerateStoryResponse,
+  JsonResponse,
+} from 'types'
 
 export interface AIPath {
   toLocation?: string,
@@ -32,6 +38,6 @@ export async function generatePath({ toLocation, fromLocation }: GeneratePathPro
     `
 
   const output = await executePrompt(prompt)
-  const json: GeneratePathResponse = JSON.parse(output)
+  const json: GenerateInteractionResponse = JSON.parse(output)
   return json
 }

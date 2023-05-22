@@ -1,8 +1,15 @@
-import { CharacterPhysicalFeatures, CharacterStats, CharacterStory, GenerateStoryProps } from '../../types'
+import {
+  CharacterPhysicalFeatures,
+  CharacterStats,
+  CharacterStory,
+  GenerateStoryProps,
+  GenerateStoryResponse,
+} from '../../types'
 
-export const story = {
+export const story: GenerateStoryResponse = {
   name: 'Smokey Gold',
   summary: 'Fantasy and folklore mix in this dark and hazy world known as Smokey Gold. It is a world populated by goblin and elf, with a distinct currency known as gold in circulation. The smog that blots out the sky is a constant reminder of the decay and ruin that the inhabitants have to battle with day to day. Fights break out between enemies and allies for control of resources, and a sense of unrest is perpetually in the air. This dangerous, yet beautiful planet is a true testament of the fortitude of thegoblin and elf that inhabit it.',
+  visualSummary: 'dark fantasy, goblins, elves, hazy smoky planet, secrets, danger, gold-based currency',
 }
 
 export const location1 = {

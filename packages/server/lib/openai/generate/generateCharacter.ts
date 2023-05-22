@@ -2,7 +2,7 @@ import { executePrompt } from '../executePrompt'
 import {
   CharacterPhysicalFeatures,
   CharacterStats,
-  CharacterStory,
+  CharacterStory, GenerateInteractionResponse,
   GenerateNonPlayerCharacterProps,
   GeneratePlayerCharacterProps, GeneratePlayerCharacterResponse,
 } from 'types'
@@ -71,8 +71,10 @@ export async function generatePlayerCharacter({
         "visualSummary": "a list of keywords describing the character"
     }
     `
-
-  return JSON.parse(await executePrompt(prompt)) as GeneratePlayerCharacterResponse
+  
+  const output = await executePrompt(prompt)
+  const json: GeneratePlayerCharacterResponse = JSON.parse(output)
+  return json
 }
 
 
