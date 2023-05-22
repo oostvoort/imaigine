@@ -25,15 +25,7 @@ export default mudConfig({
         PlayerComponent: "bool",
         LocationComponent: "bytes32",
         SceneComponent: "bool",
-        PathComponent: {
-            keySchema: {
-                location0: "bytes32",
-                location1: "bytes32",
-            },
-            schema: {
-                value: "bool"
-            }
-        },
+        PathComponent: "bool",
         PathLocationComponent: {
             schema: {
                 location0: "bytes32",

@@ -213,7 +213,7 @@ contract CreationSystem is System {
 
     bytes32 pathID = getUniqueEntity();
 
-    PathComponent.set(fromLocation, toLocation, true);
+    PathComponent.set(pathID, true);
 
     PathLocationComponent.set(pathID, fromLocation, toLocation);
     NameComponent.set(pathID, name);
