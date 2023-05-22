@@ -1,16 +1,12 @@
 import { executePrompt } from '../executePrompt'
-import { GeneratePathProps, GeneratePathResponse, GenerateStoryResponse, JsonResponse } from 'types'
-
-export interface AIPath {
-  toLocation?: string,
-  fromLocation?: string,
-  name: string,
-  summary: string
-}
+import { GeneratePathProps, GeneratePathResponse } from 'types'
 
 
-export async function generatePath({ toLocation, fromLocation }: GeneratePathProps): Promise<JsonResponse> {
+export async function generatePath(
+  { story, toLocation, fromLocation }: GeneratePathProps,
+): Promise<GeneratePathResponse> {
   const prompt = `
+    In the context of a world described as ${story.summary}
     Generate a vivid description of a path that will connect two locations
     Explain how the path is logical and makes sense
     Give details on how the transition from moving from the first location to the second
@@ -32,6 +28,13 @@ export async function generatePath({ toLocation, fromLocation }: GeneratePathPro
     `
 
   const output = await executePrompt(prompt)
-  const json: GeneratePathResponse = JSON.parse(output)
-  return json
+
+
+  try {
+    const json: GeneratePathResponse = JSON.parse(output)
+    return json
+  } catch (e) {
+    console.error(output, e)
+    throw 'Error parsing json'
+  }
 }

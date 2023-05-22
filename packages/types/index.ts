@@ -13,10 +13,6 @@ export interface GenerateLocationProps {
   story: { name: string, summary: string },
 }
 
-export interface GenerateLocationProps {
-  story: { name: string, summary: string },
-}
-
 export interface CharacterStory {
   favColor: 'Green' | 'Brown' | 'Blue' | 'White' | 'Yellow' | 'Grey' | 'Red' | string
 }
@@ -79,11 +75,12 @@ export interface GenerateLocationResponse extends JsonResponse {
 }
 
 export interface GeneratePathResponse extends JsonResponse {
-  imageHash: string
+  imageHash?: string
 }
 
 
 export interface GeneratePathProps {
+  story: GenerateStoryResponse
   toLocation: { name: string, summary: string },
   fromLocation: { name: string, summary: string },
 }
@@ -97,9 +94,11 @@ export interface GenerateInteractionResponse extends JsonResponse {
 }
 
 export interface GenerateTravelProps {
-  todo: boolean
+  story: GenerateStoryResponse,
+  path: GeneratePathResponse,
+  player: GeneratePlayerCharacterResponse
 }
 
 export interface GenerateTravelResponse extends JsonResponse {
-  todo: boolean
+  todo?: boolean
 }

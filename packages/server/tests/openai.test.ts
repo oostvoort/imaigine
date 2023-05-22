@@ -1,9 +1,5 @@
 /* globals describe, expect, it */
-import { expect } from 'chai'
-
-import {
-  GeneratePlayerCharacterProps,
-} from '../../types'
+import { GeneratePlayerCharacterProps } from '../../types'
 
 import { generatePlayerCharacter } from '../lib/openai/generate/generateCharacter'
 import { generateStory } from '../lib/openai/generate/generateStory'
@@ -16,9 +12,12 @@ import {
   generateStoryProps,
   location1,
   location2,
+  path,
   physicalFeatures,
+  player,
   story,
 } from './mock'
+import { generateTravel } from '../lib/openai/generate/generateTravel'
 
 
 // Super basic smokechecks
@@ -56,10 +55,26 @@ describe('Test OpenAI', function () {
   it('should generate a Path', async function () {
 
     let path = await generatePath(
-      { toLocation: location1, fromLocation: location2 },
+      {
+        story, toLocation: location1, fromLocation: location2,
+      },
     )
 
     console.log('path: ', path)
+
+  })
+
+  it('should generate a Travel for a player', async function () {
+
+    let travel = await generateTravel(
+      {
+        story,
+        path,
+        player,
+      },
+    )
+
+    console.log('path: ', travel)
 
   })
 

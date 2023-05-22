@@ -2,18 +2,22 @@ import * as dotenv from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import {
-  CharacterStats,
-  CharacterStory,
-  GeneratePlayerCharacterProps,
+  GenerateInteractProps,
+  GenerateInteractResponse,
   GenerateLocationProps,
+  GenerateNonPlayerCharacterProps,
+  GeneratePathProps,
+  GeneratePlayerCharacterProps,
   GenerateStoryProps,
-  GenerateNonPlayerCharacterProps, GeneratePathProps, GenerateInteractProps, GenerateInteractResponse,
+  GenerateTravelProps,
+  GenerateTravelResponse,
 } from 'types'
 import { generateStory } from './lib/openai/generate/generateStory'
 import { generateLocation } from './lib/openai/generate/generateLocation'
 import { generateNonPlayerCharacter, generatePlayerCharacter } from './lib/openai/generate/generateCharacter'
 import { generatePlayerImage } from './lib/leonardo'
 import { generatePath } from './lib/openai/generate/generatePath'
+import { generateTravel } from './lib/openai/generate/generateTravel'
 
 dotenv.config()
 const app = express()
@@ -70,10 +74,10 @@ app.post('/generateInteract', async (req: Request, res: Response) => {
   res.send(response)
 })
 
-// TODO: implement
+
 app.post('/generateTravel', async (req: Request, res: Response) => {
-  const props: GenerateInteractProps = req.body
-  const response: GenerateInteractResponse = { todo: true }
+  const props: GenerateTravelProps = req.body
+  const response: GenerateTravelResponse = await generateTravel(props)
   res.send(response)
 })
 

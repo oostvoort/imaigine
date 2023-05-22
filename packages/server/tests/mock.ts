@@ -2,6 +2,8 @@ import {
   CharacterPhysicalFeatures,
   CharacterStats,
   CharacterStory,
+  GeneratePathResponse,
+  GeneratePlayerCharacterResponse,
   GenerateStoryProps,
   GenerateStoryResponse,
 } from '../../types'
@@ -21,17 +23,19 @@ export const location2 = {
   summary: 'Golden Reach is a mountain settlement set amongst the smoky haze of Daerkoolf. Despite the ever-present struggles between goblins and elves, the two civilizations are bound together by the precious gold that flows through the mountain passes. An important trade hub for the planet, Golden Reach has been part of the economy since the earliest days of Daerkoolf, helping to bring wealth and stability to the region. The settlement has grown over the years, becoming a bustling metropolis with a middle class population and a very safe atmosphere. Both goblins and elves come to trade goods and services, unlocking the secrets of the hidden planet. Despite the unease between the two civilizations, Golden Reach remains an enduring symbol of stability in the darkened skies of Daerkoolf.',
 }
 
-export const player = {
+export const player: GeneratePlayerCharacterResponse = {
   name: 'Gorog',
   summary: 'Gorog is a young goblin that lives in Golden Reach, a bustling mountain settlement amidst the smoky haze of Daerkoolf. Despite the ever-present struggles between goblins and elves, Gorog remains an enduring bridge to peace and stability in the region. Possessing unusual strength and a very appealing charisma, Gorog is an asset to the local economy who is eager to unlock the secrets of the hidden planet and gain more power and influence in the galaxy. He has a fat body type, is very tall, has non-bald hair and round shaped blue eyes, and his favorite color is blue.',
   initialMessage: 'Greetings! My name is Gorog.',
   closingMessage: 'Farewell!',
   visualSummary: 'Goblin, fat body type, very tall, non-bald hair, round shaped blue eyes, blue',
+  imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
 }
 
-export const path = {
-  name: 'Journey Through the Golden Valley',
-  summary: 'Experience the peril and beauty of a journey through the Golden Valley, connecting Golden Reach to Rockweed Meadows! Venture through the edges of the legendary mountain passes and experience the never-ending struggles between goblins and elves. Set off on a thrilling expedition as you make your way through the rocky plains and turbulent rivers. Marvel at the sights of dazzling rivers and lush rolling hills, before entering the shared trade hub of Golden Reach. Meet some of its friendly locals and learn more about its fascinating culture and economy. Continue the journey and enter the mysterious Rockweed Meadows, fraught with danger, yet filled with secrets. Try your luck at escaping the powerful winds and deep crevasses of the meadows. This adventurous journey will test the fortitude of even the bravest adventurers, and promise a never-ending pursuit of glory and discovery. ',
+export const path: GeneratePathResponse = {
+  name: 'Smokey Gold Pathway',
+  summary: 'The Smokey Gold Pathway is the connection between the mountainous settlement of Golden Reach to the remote meadow of Rockweed. This vast, winding pathway is the best way to experience the world of Daerkoolf. The journey starts high up in the smokey peaks, where the smog and dust swirls around in a dizzying array of hues. As the path slowly descends, the vibrant colors of the mountain range slowly start to appear before the travelers. Soon, the pathway takes the journeyers to the plateau of Rockweed Meadows - The only hint of what lies below the horizon. This is the path of discovery - from the deepest valleys of the mountain to the secret meadows of Rockweed, where the most hidden treasures are waiting to be uncovered.',
+
 }
 
 export const physicalFeatures: CharacterPhysicalFeatures = {
