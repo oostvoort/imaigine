@@ -20,7 +20,9 @@ import {
   InteractComponent,
   InteractComponentData,
   AliveComponent,
-  SceneComponent
+  SceneComponent,
+  ItemComponent,
+  OwnerComponent
 } from "../src/codegen/Tables.sol";
 
 import { Constants } from "../src/lib/Constants.sol";
@@ -186,6 +188,40 @@ contract CreationSystemTest is MudV2Test {
 
     vm.expectRevert(abi.encodePacked("location does not exist"));
     world.createPlayer("name", "race", "0xabc", bytes32(uint256(100)));
+  }
+
+  function testFuzz_CreateItem(
+    string memory name,
+    string memory summary,
+    string memory imgHash,
+    string memory initialMsg,
+    string[] memory initialActions,
+    bytes32 ownerID
+  ) public {
+    vm.assume(bytes(name).length > 0);
+    vm.assume(bytes(summary).length > 0);
+    vm.assume(bytes(imgHash).length > 0);
+    vm.assume(bytes(initialMsg).length > 0);
+    vm.assume(initialActions.length > 0);
+    vm.assume(ownerID.length > 0);
+
+    bytes32 itemID = world.createItem(
+      name,
+      summary,
+      imgHash,
+      mockLocationID,
+      initialMsg,
+      initialActions,
+      ownerID
+    );
+
+    assertTrue(ItemComponent.get(world, itemID), "testFuzz_CreateItem::1");
+    assertEq(NameComponent.get(world, itemID), name, "testFuzz_CreateItem::2");
+    assertEq(SummaryComponent.get(world, itemID), summary, "testFuzz_CreateItem::3");
+    assertEq(ImageComponent.get(world, itemID), imgHash, "testFuzz_CreateItem::4");
+    assertEq(InteractComponent.getInitialMsg(world, itemID), initialMsg, "testFuzz_CreateItem::5");
+    assertEq(LocationComponent.get(world, itemID), mockLocationID, "testFuzz_CreateItem::6");
+    assertEq(OwnerComponent.get(world, itemID), ownerID, "testFuzz_CreateItem::6");
   }
 
   function testFuzz_CreateLocation(

@@ -6,6 +6,7 @@ pragma solidity >=0.8.0;
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 
 import { IAttributeSystem } from "./IAttributeSystem.sol";
+import { IBackpackSystem } from "./IBackpackSystem.sol";
 import { IControllerSystem } from "./IControllerSystem.sol";
 import { ICreationSystem } from "./ICreationSystem.sol";
 import { IInteractionSystem } from "./IInteractionSystem.sol";
@@ -20,6 +21,7 @@ import { ITravelSystem } from "./ITravelSystem.sol";
 interface IWorld is
   IBaseWorld,
   IAttributeSystem,
+  IBackpackSystem,
   IControllerSystem,
   ICreationSystem,
   IInteractionSystem,
