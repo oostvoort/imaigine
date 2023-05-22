@@ -5,7 +5,7 @@ export interface GenerateStoryProps {
   extraDescriptions?: Array<string>,
 }
 
-export interface GenerateStoryResponse extends JsonResponse {
+export interface GenerateStoryResponse extends Summarized {
   visualSummary?: string
 }
 
@@ -79,7 +79,6 @@ export interface GenerateNonPlayerCharacterProps {
 
 export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
   initialMessage: string,
-  closingMessage: string,
   visualSummary: string,
   imageHash: string
 }
@@ -106,6 +105,8 @@ export interface Entity extends Summarized {
 }
 
 export interface GenerateInteractionProps {
+  storySummary: string,
+  location: Summarized,
   activeEntity: Entity,
   otherEntities: Entity[],
   logHash: string,
@@ -117,16 +118,15 @@ export interface InventoryChange {
   itemsRemoved: string[]
 }
 
-export interface GenerateInteractionParams {
-  activeEntitySummary: Entity,
-  otherEntitySummaries: Entity[],
-  log: string[],
-  action: string
+
+export interface NextEvent {
+  mode: 'action' | 'dialog',
+  content: string
 }
 
 export interface GenerateInteractionResponse extends Summarized {
   logHash: string,
-  dialog: string,
+  possible: NextEvent[],
   currencyChange: number,
   inventoryChange: InventoryChange
 }

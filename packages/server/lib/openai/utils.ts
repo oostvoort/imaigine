@@ -6,10 +6,11 @@ export function getRandomValue<T>(array: T[]): T {
 export function cleanAiJsonAnswer(str: string): string {
   // Discard everything before the first occurrence of {
   str = str.substring(str.indexOf('{'))
+  str = str.substring(0, str.lastIndexOf('}') + 1)
 
   // Trim any whitespace (not sure if this is needed)
   str = str.replace(/^\s+|\n/g, '').trimStart()
   return str
 }
 
-export const PROMPT_OUTPUT_JSON = 'Respond to me in valid JSON with the following format:'
+export const PROMPT_OUTPUT_JSON = 'Respond to me in only one valid JSON element with the following format: '

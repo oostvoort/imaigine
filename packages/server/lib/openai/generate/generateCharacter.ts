@@ -57,7 +57,6 @@ export async function generatePlayerCharacter({
     The character's favorite color is ${characterStory.favColor}
 
     Create an appropriate standard greeting message they will use when talking to others.
-    Create an appropriate standard goodbye message they will use when talking to others.
 
     Give the character a unique name based on all the information.
 
@@ -68,7 +67,6 @@ export async function generatePlayerCharacter({
         "name": "the name of the character",
         "summary": "the generated description",
         "initialMessage": "the standard greeting message",
-        "closingMessage": "the standard goodbye message",
         "visualSummary": "a list of keywords describing the character"
     }
     `
@@ -104,7 +102,7 @@ export async function generateNonPlayerCharacter({
   story,
   characterStats: stats,
 }: GenerateNonPlayerCharacterProps) {
-  return await generatePlayerCharacter({
+  return await generatePlayerCharacter(true, {
     location,
     physicalFeatures: {
       ageGroup: getRandomValue(ageGroup),

@@ -25,22 +25,23 @@ export async function storeJson(json: any): Promise<string> {
 }
 
 export async function remove(hash: string) {
+  if (hash.length === 0) return
   await pinata.unpin(hash)
 }
 
 export async function loadJson(hash: string, defaultResult: any): Promise<string[]> {
-  let result = defaultResult
 
-  if (hash.length > 0) {
-    try {
-      result = await (await fetch(
-        `${process.env.IPFS_URL_PREFIX}/${hash}`,
-        { method: 'GET' },
-      )).json()
-    } catch (e) {
-      console.error(e)
-    }
+  if (hash.length === 0) return defaultResult
+  
+  try {
+    return await (await fetch(
+      `${process.env.IPFS_URL_PREFIX}/${hash}`,
+      { method: 'GET' },
+    )).json()
+  } catch (e) {
+    console.error(e)
   }
 
-  return result
+
+  return defaultResult
 }

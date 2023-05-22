@@ -16,6 +16,7 @@ export interface AIStory {
 export async function generateStory({
   currency, races, theme, extraDescriptions,
 }: GenerateStoryProps): Promise<GenerateStoryResponse> {
+
   const prompt = `
     Generate a 3 paragraph description of a ${theme} world.
     The world is populated by ${races.join(' and ')}
@@ -28,13 +29,15 @@ export async function generateStory({
   }
     Summarize the story's world visually
 
+    List the names of the locations mentioned.
+
     ${PROMPT_OUTPUT_JSON}
 
     {
         "name": "the name of the world",
         "summary": "the generated description",
-        "visualSummary": "a list of keywords describing the world"
-
+        "visualSummary": "a list of keywords describing the world",
+        "locations": []
     }
     `
 

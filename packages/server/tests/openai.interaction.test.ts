@@ -1,9 +1,10 @@
 /* globals describe, expect, it */
-import { generateInteractionProps, npc, player } from './mock'
+import { generateInteractionProps, location1, npc, player, story } from './mock'
 import { generateInteraction } from '../lib/openai/generate/generateInteraction'
 
 import * as dotenv from 'dotenv'
 import { loadJson, remove, storeJson } from '../lib/ipfs'
+import { GenerateInteractionProps, GenerateInteractionResponse } from '../../types'
 
 dotenv.config()
 
@@ -26,6 +27,27 @@ describe('Test OpenAI', function () {
   })
 
 
+  it('should generate initial actions between player and npc', async function () {
+    const props: GenerateInteractionProps = {
+      storySummary: story.summary,
+      location: location1,
+      activeEntity: player,
+      otherEntities: [ npc ],
+      logHash: '',
+      action: '',
+    }
+
+    const interaction = await generateInteraction(
+      props,
+    )
+
+    await remove(props.logHash)
+    await remove(interaction.logHash)
+
+    console.log('interaction: ', interaction)
+
+  })
+
   it('should generate a complex interaction between player and npc', async function () {
     const props = generateInteractionProps
     let logs: string[] = await loadJson(props.logHash, [])
@@ -42,13 +64,13 @@ describe('Test OpenAI', function () {
 
     props.logHash = await storeJson(logs)
 
-    const interaction = await generateInteraction(
+    const interaction: GenerateInteractionResponse = await generateInteraction(
       generateInteractionProps,
     )
 
     await remove(props.logHash)
     await remove(interaction.logHash)
-    
+
     console.log('interaction: ', interaction)
 
   })

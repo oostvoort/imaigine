@@ -61,7 +61,7 @@ app.post('/generateStory', async (req: Request, res: Response, next) => {
 app.post('/generateLocation', async (req: Request, res: Response, next) => {
   const props: GenerateLocationProps = req.body
   try {
-    let response = await generateLocation(props)
+    const response = await generateLocation(props)
     response.imageHash = await generateLocationImage(response.visualSummary)
     res.send(response)
   } catch (e) {
@@ -113,7 +113,7 @@ app.post('/generatePath', async (req: Request, res: Response, next) => {
 app.post('/generateInteraction', async (req: Request, res: Response, next) => {
   const props: GenerateInteractionProps = req.body
   try {
-    let response: GenerateInteractionResponse = await generateInteraction(props)
+    const response: GenerateInteractionResponse = await generateInteraction(props)
     res.send(response)
   } catch (e) {
     next(e)

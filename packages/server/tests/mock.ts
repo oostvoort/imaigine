@@ -31,7 +31,6 @@ export const player: GeneratePlayerCharacterResponse = {
   name: 'Gorog',
   summary: 'Gorog is a young goblin that lives in Golden Reach, a bustling mountain settlement amidst the smoky haze of Daerkoolf. Despite the ever-present struggles between goblins and elves, Gorog remains an enduring bridge to peace and stability in the region. Possessing unusual strength and a very appealing charisma, Gorog is an asset to the local economy who is eager to unlock the secrets of the hidden planet and gain more power and influence in the galaxy. He has a fat body type, is very tall, has non-bald hair and round shaped blue eyes, and his favorite color is blue.',
   initialMessage: 'Greetings! My name is Gorog.',
-  closingMessage: 'Farewell!',
   visualSummary: 'Goblin, fat body type, very tall, non-bald hair, round shaped blue eyes, blue',
   imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
   isAlive: true,
@@ -41,7 +40,6 @@ export const npc: GeneratePlayerCharacterResponse = {
   name: 'Yellena',
   summary: 'Yellena is a brave, adventurous female elf who lives in Rockweed Meadows. She is petite and has a slim, athletic body type. Her wavy hair is a sunny yellow and her eyes are a ruby red. In spite of her wispy frame, Yellena is brightly determined and practical, her mediocre intelligence, superfast dexterity, weak constitution, and gandalf-like wisdom usually helping her when it comes to difficult or dangerous situations. On top of this, her charming personality is very appealing, which often allows her to make friends in spite of her otherworldly origin.',
   initialMessage: 'Hello, friend! How may I help you?',
-  closingMessage: 'Farewell, friend! Until we meet again!',
   visualSummary: 'petite, slim, athletic female elf, medium wavy yellow hair, almond shaped red eyes',
   isAlive: true,
   imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
@@ -92,6 +90,8 @@ export const generateTravelProps: GenerateTravelProps = {
 export const generateInteractionProps: GenerateInteractionProps = {
   activeEntity: player,
   otherEntities: [ npc ],
+  location: location1,
+  storySummary: story.summary,
   logHash: '',
   action: 'buy a hammer',
 }
