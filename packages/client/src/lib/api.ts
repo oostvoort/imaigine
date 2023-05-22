@@ -7,7 +7,9 @@ export default async function api(endpoint: string, props: any, maxAttempts = 5)
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(props),
       })
-      return await response.json()
+      const json = await response.json()
+      console.debug(json)
+      return json
     } catch (error) {
       attempts++
       console.log(`Attempt ${attempts} failed. Retrying...`)
