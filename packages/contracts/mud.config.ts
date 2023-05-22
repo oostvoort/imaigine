@@ -2,36 +2,8 @@ import {mudConfig} from "@latticexyz/world/register";
 
 export default mudConfig({
     systems: {
-        LocationSystem: {
-            name: "LocationSystem",
-            openAccess: false, // it's a subsystem
-            accessList: [] // TODO: the oracle
-        },
-        StorySystem: {
-            name: "StorySystem",
-            openAccess: false, // a private system
-            accessList: [] // TODO: the oracle
-        },
-        ControllerSystem: {
-            name: "ControllerSystem",
-            openAccess: false, // a private system
-            accessList: [] // should only be available to deployer
-        }
     },
     tables: {
-        ControllerComponent: {
-            keySchema: {},
-            schema: {
-                oracle: "address"
-            },
-        },
-        PlanetComponent: {
-            keySchema: {},
-            schema: {
-                name: "string",
-                theme: "string",
-            },
-        },
         StoryComponent: {
             schema: {
                 themeID: "bytes32", // keccak256(theme)
@@ -44,7 +16,6 @@ export default mudConfig({
         AliveComponent: "bool",
         NameComponent: "string",
         SummaryComponent: "string",
-        DescriptionComponent: "string",
         ImageComponent: "string",
         PriceComponent: "uint256",
         RaceComponent: "bool",
