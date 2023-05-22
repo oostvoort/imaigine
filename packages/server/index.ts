@@ -2,8 +2,8 @@ import * as dotenv from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import {
-  GenerateInteractProps,
-  GenerateInteractResponse,
+  GenerateInteractionProps,
+  GenerateInteractionResponse,
   GenerateLocationProps,
   GenerateNonPlayerCharacterProps,
   GeneratePathProps,
@@ -60,7 +60,12 @@ app.post('/generatePlayerCharacter', async (req: Request, res: Response) => {
 
 app.post('/generateNonPlayerCharacter', async (req: Request, res: Response) => {
   const props: GenerateNonPlayerCharacterProps = req.body
-  res.send(await generateNonPlayerCharacter(props))
+
+  const player = await generateNonPlayerCharacter(props)
+
+  player.imageHash = await generatePlayerImage(player.visualSummary)
+
+  res.send(player)
 })
 
 app.post('/generatePath', async (req: Request, res: Response) => {
@@ -70,8 +75,8 @@ app.post('/generatePath', async (req: Request, res: Response) => {
 
 
 app.post('/generateInteraction', async (req: Request, res: Response) => {
-  const props: GenerateInteractProps = req.body
-  const response: GenerateInteractResponse = await generateInteraction(props)
+  const props: GenerateInteractionProps = req.body
+  const response: GenerateInteractionResponse = await generateInteraction(props)
   res.send(response)
 })
 
