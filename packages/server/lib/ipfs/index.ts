@@ -24,6 +24,10 @@ export async function storeJson(json: any): Promise<string> {
   return hash
 }
 
+export async function remove(hash: string) {
+  await pinata.unpin(hash)
+}
+
 export async function loadJson(hash: string, defaultResult: any): Promise<string[]> {
   let result = defaultResult
 
