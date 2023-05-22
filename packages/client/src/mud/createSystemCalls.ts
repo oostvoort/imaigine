@@ -3,6 +3,7 @@ import { ClientComponents } from './createClientComponents'
 import { Entity, getComponentValue, HasValue, runQuery } from '@latticexyz/recs'
 
 import {
+  GenerateInteractionProps, GenerateInteractionResponse,
   GenerateLocationProps,
   GenerateLocationResponse, GenerateNonPlayerCharacterProps,
   GeneratePathProps,
@@ -155,6 +156,17 @@ export function createSystemCalls(
     console.log('enterInteraction done!')
   }
 
+  const saveInteraction = async (props: GenerateInteractionProps, entityID: string) => {
+    const res: GenerateInteractionResponse = await api('/generateNonPlayerCharacter', props)
+    // await worldSend('saveInteraction', [
+    //   hexZeroPad(entityID, 32),
+    //   hexZeroPad("0x0", 32),
+    //   res.logHash,
+    //   participants,
+    //   participantsActions,
+    // ])
+  }
+
 
   const playerTravelPath = async (optionLocationID: string) => {
     console.info({ optionLocationID })
@@ -162,6 +174,7 @@ export function createSystemCalls(
   }
 
   return {
+    saveInteraction,
     enterInteraction,
     createCharacter,
     createStartingLocation,

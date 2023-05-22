@@ -1,7 +1,11 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
 import { getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
-import { hexValue } from 'ethers/lib/utils'
+import { hexValue, Interface } from 'ethers/lib/utils'
+import { IWorld__factory } from 'contracts/types/ethers-contracts'
+
+const worldAbi = IWorld__factory.abi
+const worldInterface = new Interface(worldAbi)
 
 export default function useGame() {
   const {
@@ -16,6 +20,7 @@ export default function useGame() {
       StoryComponent,
       SceneComponent,
       ImageComponent,
+      InteractComponent
     },
     network: { playerEntity, singletonEntity },
     systemCalls,
@@ -110,6 +115,20 @@ export default function useGame() {
     })
 
 
+  const interactions = useEntityQuery([ Has(InteractComponent) ])
+    .filter((entity) => {
+      return inPlayersLocation(entity)
+    })
+    .map((entity) => {
+      const participants = getComponentValueStrict(InteractComponent, entity)
+      // worldInterface.decodeFunctionData()
+      return {
+        entity,
+        participants
+      }
+    })
+
+
   const otherPlayers = useEntityQuery([ Has(PlayerComponent) ])
     .filter((entity) => {
       if (!playerEntity) return false
@@ -156,6 +175,7 @@ export default function useGame() {
 
 
   return {
+    interactions,
     currentLocation,
     player,
     startingLocation,
