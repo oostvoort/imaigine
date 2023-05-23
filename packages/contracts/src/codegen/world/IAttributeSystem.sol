@@ -6,5 +6,7 @@ pragma solidity >=0.8.0;
 interface IAttributeSystem {
   function setAttributesUint(bytes32 entityID, string[] memory names, uint256[] memory values) external;
 
+  function setAttributesInt(bytes32 entityID, string[] memory names, int256[] memory values) external;
+
   function setAttributesString(bytes32 entityID, string[] memory names, string[] memory values) external;
 }

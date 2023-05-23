@@ -103,7 +103,7 @@ contract InteractionSystem is System {
       if (raw_actions.length > 0) {
         Types.ActionData[] memory action = abi.decode(raw_actions, (Types.ActionData[]));
 
-        bytes32 attrID = bytes32(abi.encode("karma"));
+        bytes32 attrID = bytes32(abi.encodePacked("karma"));
 
         // calculate changes to attr
         int256 currKarma = AttributeIntComponent.get(cached_participants[0], attrID);
