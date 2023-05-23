@@ -17,8 +17,10 @@ import {
 } from 'types'
 import api from '../lib/api'
 import { IWorld__factory } from 'contracts/types/ethers-contracts/factories/IWorld__factory'
-import { defaultAbiCoder, hexZeroPad, Interface } from 'ethers/lib/utils'
+import { hexZeroPad, Interface } from 'ethers/lib/utils'
 import { awaitStreamValue } from '@latticexyz/utils'
+import { ActionData, encodeActionDataArray } from '../lib/utils'
+import { ethers } from 'ethers'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
@@ -167,20 +169,20 @@ export function createSystemCalls(
     console.log('enterInteraction', hexZeroPad(entityID, 32))
     const tx =  await worldSend('enterInteraction', [ hexZeroPad(entityID, 32) ])
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-    await saveInteraction(props, entityID, participants)
+    await saveInteraction(props, ethers.constants.MaxUint256.toString(), entityID, participants)
     console.log('enterInteraction done!')
   }
 
-  const saveInteraction = async (props: GenerateInteractionProps, entityID: string, participants: Array<string>) => {
+  const saveInteraction = async (props: GenerateInteractionProps, actionIndex: string, entityID: string, participants: Array<string>) => {
     console.log('saveInteraction', { props, interactionEntityId: entityID, participants })
     const res: GenerateInteractionResponse = await api('/generateInteraction', props)
-    const participantsActions = [ (res.possible.map(p => p.content)) ]
+    const participantsActions = encodeActionDataArray(res.possible.map(p => [ p.mode, p.content, p.effect.karmaChange ] as ActionData))
     await worldSend('saveInteraction', [
       hexZeroPad(entityID, 32),
-      hexZeroPad('0x0', 32),
+      actionIndex,
       res.logHash,
-      participants.map(p => defaultAbiCoder.encode([ 'bytes32' ], [ hexZeroPad(p, 32) ])),
-      participantsActions,
+      participants.map(p => hexZeroPad(p, 32)),
+      participantsActions
     ])
     console.log('saveInteraction done!')
 

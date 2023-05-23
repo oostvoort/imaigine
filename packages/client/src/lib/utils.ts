@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { ethers, BytesLike } from 'ethers'
 import envs from '../env'
+import { hexDataSlice } from 'ethers/lib/utils'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -16,10 +17,10 @@ export function generateIpfsImageLink(param: string) {
   return `${envs.API_IPFS_URL_PREFIX}/${param}`
 }
 
-type ActionData = [string,string,[number]]
+export type ActionData = [string,string,number]
 
 export function encodeActionData(data: ActionData): BytesLike {
-  return ethers.utils.defaultAbiCoder.encode(["tuple(string,string,tuple(int256))"], [data]) as BytesLike
+  return ethers.utils.defaultAbiCoder.encode(["tuple(string,string,int256)"], [data]) as BytesLike
 }
 
 export function encodeActionDataArray(data: ActionData[]): any {
