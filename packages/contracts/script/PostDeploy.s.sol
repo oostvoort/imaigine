@@ -5,7 +5,41 @@ import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
 
+import { ArrayLib } from "../src/lib/ArrayLib.sol";
+
 contract PostDeploy is Script {
+  using ArrayLib for string[];
+
+  struct Location {
+    string imgHash;
+    string name;
+    string summary;
+  }
+
+  struct Path {
+    string fromLocation;
+    string name;
+    string summary;
+    string toLocation;
+  }
+
+  struct Player {
+    string imgHash;
+    string location;
+    string name;
+    string summary;
+  }
+
+  struct Character {
+    string imgHash;
+    string initialMessage;
+    string location;
+    string name;
+    string summary;
+  }
+
+  mapping(string => bytes32) mapKeys;
+
   function run(address worldAddress) external {
     // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -31,66 +65,74 @@ contract PostDeploy is Script {
     world.createStory(storyName, storySummary, storyTheme, storyRaces, storyCurrency);
 
     // Locations
+    Location[] memory locations = abi.decode(vm.parseJson(json, ".locations2"), (Location[]));
 
-    bytes32 locationID_0 = world.createLocation(
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].name"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].imgHash")))
-    );
+    for (uint256 i=0; i<locations.length; i++) {
+      bytes32 locationID = world.createLocation(
+        locations[i].name,
+        locations[i].summary,
+        locations[i].imgHash
+      );
 
-    bytes32 locationID_1 = world.createLocation(
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[1].name"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[1].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[1].imgHash")))
-    );
+      mapKeys[locations[i].name] = locationID;
+    }
 
     // Path's
+    Path[] memory paths = abi.decode(vm.parseJson(json, ".paths"), (Path[]));
 
-    world.createPath(
-      locationID_0,
-      locationID_1,
-      vm.parseJsonString(json, string(abi.encodePacked(".paths.[0].name"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".paths.[0].summary")))
-    );
+    for (uint256 i=0; i<paths.length; i++) {
+      bytes32 location0 = mapKeys[paths[i].fromLocation];
+      bytes32 location1 = mapKeys[paths[i].toLocation];
+
+      bytes32 pathID = world.createPath(
+        location0,
+        location1,
+        paths[i].name,
+        paths[i].summary
+      );
+
+      mapKeys[paths[i].name] = pathID ;
+    }
 
     // Player's
+    Player[] memory players = abi.decode(vm.parseJson(json, ".players"), (Player[]));
 
-    world.createPlayer(
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].name"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[0].imgHash"))),
-      locationID_0
-    );
+    for (uint256 i=0; i<players.length; i++) {
+      bytes32 location = mapKeys[players[i].location];
+
+      uint256 privateKey = uint256(keccak256(abi.encodePacked(players[i].name)));
+      address playerAddress = vm.addr(privateKey);
+
+      if (i > 0) {
+        vm.prank(playerAddress, playerAddress);
+      }
+      bytes32 playerID = world.createPlayer(
+        players[i].name,
+        players[i].summary,
+        players[i].imgHash,
+        location
+      );
+
+      mapKeys[players[i].name] = playerID;
+    }
 
     // NPC's
+    Character[] memory characters = abi.decode(vm.parseJson(json, ".characters"), (Character[]));
 
-    string[] memory npc0_actions = new string[](2);
+    for (uint256 i=0; i<characters.length; i++) {
+      bytes32 location = mapKeys[characters[i].location];
 
-    npc0_actions[0] = "What?";
-    npc0_actions[1] = "**Ignore**";
+      bytes32 characterID = world.createCharacter(
+        characters[i].name,
+        characters[i].summary,
+        characters[i].imgHash,
+        location,
+        characters[i].initialMessage,
+        new string[](0)
+      );
 
-    world.createCharacter(
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].name"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[1].imgHash"))),
-      locationID_0,
-      "Hey!!",
-      npc0_actions
-    );
-
-    string[] memory npc1_actions = new string[](2);
-
-    npc1_actions[0] = "Hello!";
-    npc1_actions[1] = "**Ignore**";
-
-    world.createCharacter(
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].name"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].summary"))),
-      vm.parseJsonString(json, string(abi.encodePacked(".locations.[0].characters.[2].imgHash"))),
-      locationID_0,
-      "Hello there!",
-      npc1_actions
-    );
+      mapKeys[characters[i].name] = characterID;
+    }
 
     vm.stopBroadcast();
   }

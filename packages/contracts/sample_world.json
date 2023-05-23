@@ -1,4 +1,103 @@
 {
+  "locations2": [
+    {
+      "name": "The Wetland of Letharan",
+      "summary": "Nestled within the vast wetland biome of Xelva, the city of Letharan stands proud and unrivaled in its grandeur. Built according to ancient elvish designs and once the kingdom of the ethereal elves, Letharan was lost to the Demon King and his wicked followers during his rise to power. Today, the city is protected and maintained by The Church and its powerful angelic guardian. Its population numbers in the tens of thousands, and its safety is unparalleled in all of Xelva, allowing it to be a bustling hub of secret deals, magical wealth, and peaceful adventures. The Lower Middle Class citizenship have found solace in the fabled walls of Letharan, hoping to build a prosperous life with few rivals. Despite the cloud of war that looms over Xelva, Letharan remains a beacon of safety and a testament to Xelva's ancient secrets.",
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    },
+    {
+      "name": "Winding Peaks",
+      "summary": "Winding Peaks is an ancient mountain city located in the heart of Xelva's seven continents. Its origins remain unknown, but it is rumored to be a forgotten paradise of wealth and culture amidst the turmoil of the war between The Demon King and The Church. Today, this city is known for its immense security, safeguarding its population of medium size from harm's way. Although most of the inhabitants are humans, others, such as elves and orcs, are scattered throughout. What it truly is known for, though, are its pristine mountain peaks, often blanketed in mist and bathed in vibrant light. Many believe that there is a hidden force protecting the city, which is why its wealth is proverbial throughout the whole of Xelva. It's often said that those brave enough to undertake a journey to Winding Peaks will be presented with an abundance of sights, stories, and treasures. Unique and exotic wildlife also reside in the mountains, waiting to be discovered. For many, Winding Peaks remains a mysterious and wondrous testament to Xelva's many secrets.",
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    },
+    {
+      "name": "Forsune Citadel",
+      "summary": "The Forsune Citadel is a large fortress located in Xelva's boreal forests. Its history goes back hundreds of years to when it was first built by a powerful mage during the war between the Demon King and The Church. It served as a major stronghold and was a constant source of contention and conflict between the two factions. It has been said that mage relics of immense power were kept there for centuries and the walls have protected untold secrets and legends. In modern days, however, it has become a place of relative safety. It is now home to a large number of people and its many walls provide a high level of security. Though the wealth in the citadel is lower-middle class, the people who call it home have a strong sense of community and pride. It is a refuge from the chaos of Xelva's war-torn lands.",
+      "imgHash": "QmUfpCvGbsUpvii5ZDPiVDZS59ZYKW6YueJ5dt3xzobeSR"
+    },
+    {
+      "name": "Steppetown",
+      "summary": "Steppetown is a bustling medium-size city located amdist the vast steppe biomes of Xelva. It has a unique culture and a history that is centuries old. Though the safety level of Steppetown is relatively unsafe, it is considered to be an upper-middle class city. Many of the nearby villages and farmsteads look to Steppetown as a provider of safety and security in these chaotic times. Adventurers who travel to Steppetown can expect to find bustling markets, timeless monuments, and clear night skies which are illuminated by the two mysterious moons of Xelva.  ",
+      "imgHash": "QmVtteVD3KV9LpAoY6vmLxDCkfGwrmcXsf1Kh89KKaGKyk"
+    },
+    {
+      "name": "Kishan Cave",
+      "summary": "Kishan Cave is a hidden metropolis located in Xelva. It is a cave system populated by many humans and creatures, all living under the protection of the Ancient Spirit. The cave is shrouded in mystery, but the locals know that it once served as a hideout during the wars between the Demon King and The Church. It's inhabitants are poor, but they make the best out of what they have. As such, the safety level within the walls of the cave remains Very Safe. Ancient remnants and hidden artifacts can be found throughout the chambers, leading many adventurers from around Xelva to search for riches. ",
+      "imgHash": "QmYUiYn3sc165qKcEL8RPCFhGZuL2rubEQtarLBPabFABv"
+    },
+    {
+      "name": "The Jewel of the Mediterranean",
+      "summary": "The Jewel of the Mediterranean is a small but highly secure town located on the coast of one of Xelva's seven continents. Once a humble fishing village, its fortunes increased dramatically when it become a key battleground in the conflict raging between the Demon King and The Church. Its strategic location grants it protection from the chaos of war, yet it lies close enough to remain in easy touch with the main front lines. Nowadays it is a bustling port town with ample trade opportunities and a strong middle class economy. Though the skies above are often black with smoke and the rumbles of battle, the city itself is surprisingly peaceful, with the fragrant smells of sea salt, home-cooked meals, and incense from its many temples filling the air.",
+      "imgHash": "Qme3wGbCqaqA76JcZADULZRsbmfnoHokCTjyqCSAJH6C5C"
+    },
+    {
+      "name": "The Sunlit Glade",
+      "summary": "The Sunlit Glade is a magical and prosperous city located within the boreal forest of Xelva. It's origins are shrouded in mystery, but legend tells of a powerful angel that blessed these lands many years ago. Yet prosperity and peace have not existed in Xelva for long, and war between the Demon King and the Church often rears it's head. However the Sunlit Glade remains safe and secure within the boundaries of the boreal forest. With a large population, the boundaries of the Glade are teeming with life, and a vibrant middle class is established. Spectacular monuments soar high into the sky, giving the feel of a great city. And while danger may lurk outside it's walls, the Sunlit Glade is an oasis of peace and tranquility deep in the boreal forest.",
+      "imgHash": "QmPhFoxtUJeSxgny2XpvSEVcFVUeicZtaHbnMrsejtVmiL"
+    },
+    {
+      "name": "The City of Lyda",
+      "summary": "The City of Lyda is an ancient Mediterranean city located on Xelva. It is an impressive and important city, one that is known throughout the continent for its rich history and culture. From its beautiful sun-drenched beaches, to its bustling ports, this metropolis is a mecca of opportunity. Centuries ago, the City of Lyda was an epicenter of gladiatorial combat that attracted warriors from across the continent. Now, it is a bustling center of commerce and industry, but its heroic roots remain. The city’s safety is very high, and the populace is generally of middle-class wealth, meaning opportunities here are far more ubiquitous than elsewhere in Xelva. Ancient secrets and architectural wonders, coupled with vibrant festivals and festivals make explore this city a must for any traveler.",
+      "image": "QmYAujhWFQRq645xMAgrpiUzWGaSk4Ldk7FhnRVBSLRgSr"
+    },
+    {
+      "name": "The Elven Halls of Glimmerwood",
+      "summary": "The Elven Halls of Glimmerwood is a sprawling city perched on the edge of a temperate forest in Xelva. Ancient and majestic, it is a symbol of elven might and a steeped in a history of Elven pride. It is home to a large population and is considered quite safe. The Elves of Glimmerwood are known to be quite wealthy, having gained a great deal of prosperity from their craftsmanship. Many of the buildings boast intricate and elaborate designs and are crafted with the finest materials. Adventurers visiting The Elven Halls can expect to find many dreamy palaces and lush gardens hidden away in the mists of the forest. It is a place of great beauty and mystery, with many magical creatures and hidden secrets awaiting exploration.",
+      "image": "QmagEsb5V1bnv3tgBU2su5vjJDg59aUvTWb1zBdcfcRNgD"
+    },
+    {
+      "name": "Ceron",
+      "summary": "The small island of Ceron is something of an enigma. Lying in a shallow coral reef biome, this Upper Middle Class population of Medium size is highly secure - protected by the echelons of a powerful Church military. Ancient and lost traits of Xelva's fantasy technology bubbles to its surface in the form of untapped Aetherpunk, that can rival modern-day inventions. Legends of unimaginable wealth and secrets yet to be uncovered can still be heard whispered amongst its citizens. It is a melting pot of cultures, a stronghold of faith and a secluded beacon of prosperity.",
+      "image": "QmccxteiQD9SauhoZ6VbtXbsCtTiXLhon48aJJzxqUDSjh"
+    },
+    {
+      "name": "The Oasis of Perenone",
+      "summary": "The Oasis of Perenone is a bustling city in the prairie biomes of Xelva. Dating back to the time of the ancients, Perenone has long been a place of refuge and peace for travelers and merchants alike. Originally a humble farming community, over the years it grew into a vibrant metropolis of commerce and community. To this day, the city remains a beacon of middle-class wealth and an oasis of safety. People of all walks of life gather here, with many merchants offering wondrous goods from every corner of Xelva. Although the city is a place of business and success, beneath the hustle and bustle lies a popular destination for adventurers and dreamers alike. People from all parts of the world are drawn to the hidden tombs, beautiful monuments, and the luscious green grasslands abound. The Oasis of Perenone has a charm that is all its own, making it a great place to explore and experience the stories of Xelva.",
+      "image": "QmTxeiM5KK2stTuiwrHd5Epqmj6PNJgXrtxH3EDf94sc8v"
+    },
+    {
+      "name": "Chasm of the Foul Fens",
+      "summary": "Located deep within the swamps of Xelva, Chasm of the Foul Fens is an ancient and mysterious locale that has been an outpost of peril and danger since time immemorial. It is home to a large population of nefarious creatures that lurk in the shadows beyond the mists, and perilous adventurers often seek its secrets. In exchange for shelter, protection, and provisions, they must pay the steep price of safety, as the chasm is an unsafe place. Those brave enough to brave it are often disappointed by the lack of wealth and decadence they may have expected to find. Bathed in the eerie glow of Xelva's two moons, Chasm of the Foul Fens is a place of despair and fear, where the shadows possess more power than the living. ",
+      "image": "QmULwiT2Au4yhwqh87fwABoXPk2nyhYjeVM8r8mWr8W8pd"
+    }
+  ],
+  "player": [
+    {
+      "name": "Tiana",
+      "summary": "Tiana is a adult, female human from the Lower Middle Class of the city of Letharan in the fantasy world of Xelva. She possesses Herculean strength, but is clumsy and awkward in dexterity and wisdom, respectively. Her constitution is frail, her intelligence is ignorant, and her charisma is foolish. She is burly and statuesque with bald, wavy red hair, and upturned red eyes. Her favorite color is green.",
+      "imgHash": "QmQoMjbJ7SSNQo5zApLp9DQgVkrF2sJhfXp1nHuT3rkzdk",
+      "location": "The Wetland of Letharan"
+    },
+    {
+      "name": "Brix Tredrigon",
+      "summary": "Brix comes from The Wetland of Letharan, standing statuesque with a burly body and bold red hair. His upturned shaped red eyes give him an unmistakable air of intrigue, adding to his Herculean strength and awkward wisdom. However, his clumsy dexterity and foolish charm often land him in difficult situations. But with his ignorant intelligence, Brix finds ambitious ways to get out of tangles of trouble. His favorite color is red.",
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
+      "location": "The Wetland of Letharan"
+    }
+  ],
+  "characters": [
+    {
+      "name": "Athena Redimayer",
+      "summary": "Athena Redimayer is a young, resilient female human, residing in the city of Letharan. She is of the Lower Middle Class citizenship, in search of a prosperous life. Athena is Burly in build and has Long Wavy Red hair and Monolid shaped Blue eyes. Her favorite color is Grey. Powerful yet clumsy and rather awkward, Athena is nevertheless gifted with great intelligence and wisdom.",
+      "initialMessage": "Hello, it's a pleasure to meet you!",
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
+      "location": "The Wetland of Letharan"
+    },
+    {
+      "name": "Rurik Redstone",
+      "summary": "Rurik Redstone is an adult human male hailing from Station Aurora. His burly body type combined with his statuesque figure makes his presence known as soon as he enters a room. With bright red wavy hair, upturned red eyes, and a fondness for the color red, Rurik adds a splash of vibrancy to any space. Though not gifted with an Herculean strength, a Clumsy dexterity, a Frail constitution, an Ignorant intelligence, a Foolish charisma, or an Awkward wisdom, his friendly demeanor makes him a pleasant companion.",
+      "initialMessage": "Greetings friend! It's a pleasure to meet you.",
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
+      "location": "The Wetland of Letharan"
+    },
+    {
+      "name": "Ezekiel White",
+      "summary": "Ezekiel White is a short Adult male human with Herculean strength, Clumsy dexterity, Healthy constitution, Brilliant intelligence, Charismatic charisma and a Foolish wisdom. He has Medium Curly Black hair, Red monolid eyes and his favorite color is White. Ezekiel is a native of Baglith and has adapted to the dangerous area of Station Aurora in search of adventure and an experience unlike any other in the world.",
+      "initialMessage": "Greetings! What can I do for you today?",
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
+      "location": "The Wetland of Letharan"
+    }
+  ],
   "theme": "fantasy",
   "races": [
     "elves",

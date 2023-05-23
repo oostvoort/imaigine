@@ -24,6 +24,8 @@ import { InteractComponent, InteractComponentData, InteractComponentTableId } fr
 import { InteractionComponent, InteractionComponentData, InteractionComponentTableId } from "./tables/InteractionComponent.sol";
 import { LogComponent, LogComponentTableId } from "./tables/LogComponent.sol";
 import { ActionsComponent, ActionsComponentData, ActionsComponentTableId } from "./tables/ActionsComponent.sol";
+import { PossibleComponent, PossibleComponentData, PossibleComponentTableId } from "./tables/PossibleComponent.sol";
 import { AttributeUintComponent, AttributeUintComponentTableId } from "./tables/AttributeUintComponent.sol";
+import { AttributeIntComponent, AttributeIntComponentTableId } from "./tables/AttributeIntComponent.sol";
 import { AttributeStringComponent, AttributeStringComponentTableId } from "./tables/AttributeStringComponent.sol";
 import { StoryActionComponent, StoryActionComponentTableId } from "./tables/StoryActionComponent.sol";

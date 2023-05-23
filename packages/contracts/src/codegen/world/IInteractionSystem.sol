@@ -8,10 +8,10 @@ interface IInteractionSystem {
 
   function saveInteraction(
     bytes32 entityID,
-    bytes32 actionID,
+    uint256 actionIndex,
     string memory logHash,
     bytes32[] memory participants,
-    string[][] memory participantsActions
+    bytes[] memory participantsActions
   ) external returns (bytes32);
 
   function leaveInteraction(bytes32 entityID, bytes32 otherPlayerID) external returns (bytes32);

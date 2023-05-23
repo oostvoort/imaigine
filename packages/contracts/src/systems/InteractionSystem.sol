@@ -11,11 +11,14 @@ import {
   InteractComponent,
   InteractComponentData,
   ActionsComponent,
-  LogComponent
+  LogComponent,
+  PossibleComponent,
+  AttributeIntComponent
 } from "../codegen/Tables.sol";
 
 import { StringLib } from "../lib/StringLib.sol";
 import { ArrayLib } from "../lib/ArrayLib.sol";
+import { Types } from "../types.sol";
 
 contract InteractionSystem is System {
   using StringLib for string;
@@ -43,8 +46,11 @@ contract InteractionSystem is System {
     // unwrap participants
     bytes32[] memory participants = interactData.participants.decodeBytes32Array();
 
+    // make sure participant is already in list
     for (uint256 i=0; i<participants.length; i++) {
-      require(participants[i] != playerID, "player already participating");
+      if (participants[i] == playerID) {
+        return entityID;
+      }
     }
 
     // push to last interacting participants
@@ -56,15 +62,18 @@ contract InteractionSystem is System {
     return entityID;
   }
 
-  /*
-   * @dev Interacting
-   */
+  /// @dev Interacting
+  /// @param entityID The character to interact
+  /// @param actionIndex The action index list of action to apply, value max(bytes32) for initial interaction
+  /// @param logHash The hash of log of the interaction
+  /// @param participants The list of participants currently participating on the interaction
+  /// @param participantsActions The list of option of actions for the participants
   function saveInteraction(
     bytes32 entityID,
-    bytes32 actionID,
+    uint256 actionIndex,
     string memory logHash,
-    bytes32[] memory participants, // playerID[]
-    string[][] memory participantsActions //
+    bytes32[] memory participants,
+    bytes[] memory participantsActions
   )
   public
   returns (bytes32)
@@ -77,19 +86,40 @@ contract InteractionSystem is System {
     require(interactData.initialMsg.isEmpty() == false, "entity cannot be interacted");
 
     // unwrap participants
-    bytes32[] memory participants = interactData.participants.decodeBytes32Array();
+    bytes32[] memory cached_participants = interactData.participants.decodeBytes32Array();
 
-    require(participants[0] == playerID, "not player's turn yet or not participating yet");
+    // TODO: verify the deadline of participants
+    // require(participants[0] == playerID, "not player's turn yet or not participating yet");
+
+    // max value is a representation of initial interaction and should have no kind of any effect
+    if (actionIndex < type(uint256).max) {
+      bytes memory raw_actions = PossibleComponent.getActions(cached_participants[0], entityID);
+      Types.ActionData[] memory action = abi.decode(raw_actions, (Types.ActionData[]));
+
+      bytes32 attrID = bytes32(abi.encode("karma"));
+
+      // calculate changes to attr
+      int256 currKarma = AttributeIntComponent.get(cached_participants[0], attrID);
+      int256 nextKarma = currKarma + action[actionIndex].effects.karmaChange;
+
+      // update attr value
+      AttributeIntComponent.set(cached_participants[0], attrID, nextKarma);
+    }
 
     uint256 timestamp = block.timestamp;
     for (uint256 i=0; i< participants.length; i++) {
-      require(participants.findIndex(participants[i]) >= 0, "trying to update player not participating");
+      require(participants.findIndex(cached_participants[i]) >= 0, "trying to update player not participating");
 
-      ActionsComponent.setActions(participants[i], entityID, participantsActions[i].encode());
-      ActionsComponent.setCreatedAt(participants[i], entityID, timestamp);
+      // TODO: multiplayer here, kick not responding participants
+
+      PossibleComponent.set(participants[i], entityID, timestamp, participantsActions[i]);
     }
 
-    if (participants.length > 1) participants.shiftIndexToLast(0);
+    // put the current participant to the last item of the list
+    if (cached_participants.length > 1) {
+      cached_participants = cached_participants.shiftIndexToLast(0);
+      InteractComponent.setParticipants(entityID, abi.encode(cached_participants));
+    }
 
     LogComponent.set(entityID, logHash);
 

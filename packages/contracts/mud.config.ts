@@ -61,6 +61,16 @@ export default mudConfig({
               actions: "bytes",
             },
         },
+        PossibleComponent: {
+            keySchema: {
+              interactingEntityID: "bytes32",
+              interactedEntityID: "bytes32",
+            },
+            schema: {
+              createdAt: "uint256",
+              actions: "bytes",
+            },
+        },
         AttributeUintComponent: {
             keySchema: {
                 entityID: "bytes32",
@@ -68,6 +78,15 @@ export default mudConfig({
             },
             schema: {
                 value: "uint256",
+            },
+        },
+        AttributeIntComponent: {
+            keySchema: {
+                entityID: "bytes32",
+                attributeID: "bytes32",
+            },
+            schema: {
+                value: "int256",
             },
         },
         AttributeStringComponent: {
