@@ -1,5 +1,5 @@
 /* globals describe, expect, it */
-import { generateInteractionProps, location1, npc, player, story } from './mock'
+import { generateInteractionProps, item_warhammer, location1, npc, player, story } from '../../types/mock'
 import { generateInteraction } from '../lib/openai/generate/generateInteraction'
 
 import * as dotenv from 'dotenv'
@@ -27,6 +27,60 @@ describe('Test OpenAI', function () {
   })
 
 
+  it('should generate initial actions between player and item', async function () {
+    const props: GenerateInteractionProps = {
+      storySummary: story.summary,
+      location: location1,
+      activeEntity: player,
+      otherEntities: [ item_warhammer ],
+      logHash: '',
+      action: '',
+    }
+
+    const interaction = await generateInteraction(
+      props,
+    )
+
+    console.log('interaction: ', JSON.stringify(interaction, null, '\t'))
+    await remove(props.logHash)
+    await remove(interaction.logHash)
+
+
+  })
+
+  it('should generate continueing actions between player and item', async function () {
+
+    const props: GenerateInteractionProps = {
+      storySummary: story.summary,
+      location: location1,
+      activeEntity: player,
+      otherEntities: [ item_warhammer ],
+      logHash: '',
+      action: '',
+    }
+
+    let logs: string[] = await loadJson(props.logHash, [])
+
+    logs = logs.concat([ `${player.name} begins dancing uncontrollably`,
+      `${player.name} inspects the blade very closely`,
+      `${npc.name} looks flawless, except for a mysterious inscription`,
+    ])
+
+    props.logHash = await storeJson(logs)
+
+
+    const interaction = await generateInteraction(
+      props,
+    )
+    console.log('interaction: ', JSON.stringify(interaction, null, '\t'))
+
+    await remove(props.logHash)
+    await remove(interaction.logHash)
+
+
+  })
+
+
   it('should generate initial actions between player and npc', async function () {
     const props: GenerateInteractionProps = {
       storySummary: story.summary,
@@ -41,10 +95,10 @@ describe('Test OpenAI', function () {
       props,
     )
 
+    console.log('interaction: ', JSON.stringify(interaction, null, '\t'))
     await remove(props.logHash)
     await remove(interaction.logHash)
 
-    console.log('interaction: ', interaction)
 
   })
 
@@ -68,10 +122,10 @@ describe('Test OpenAI', function () {
       generateInteractionProps,
     )
 
+    console.log('interaction: ', JSON.stringify(interaction, null, '\t'))
     await remove(props.logHash)
     await remove(interaction.logHash)
 
-    console.log('interaction: ', interaction)
 
   })
 
