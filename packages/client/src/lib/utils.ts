@@ -24,11 +24,24 @@ export function encodeActionData(data: ActionData): BytesLike {
 }
 
 export function encodeActionDataArray(data: ActionData[]): any {
-  return data.map(d => encodeActionData(d))
+  // return data.map(d => encodeActionData(d))
+  return ethers.utils.defaultAbiCoder.encode(
+    data.map(() => "tuple(string,string,int256)"),
+    data
+  )
 }
 
-export function decodeActionData(data: BytesLike): ActionData {
-  return ethers.utils.defaultAbiCoder.decode(["tuple(string,string,tuple(int256))"], data) as ActionData
+export function decodeActionData(data: BytesLike, length = 3): ActionData {
+  const types = []
+
+  for (let i=0; i<length; i++) {
+    types.push("tuple(string,string,int256)")
+  }
+
+  return ethers.utils.defaultAbiCoder.decode(
+    types,
+    data
+  ) as ActionData
 }
 
 export function decodeActionDataArray(data: BytesLike[]): ActionData[] {

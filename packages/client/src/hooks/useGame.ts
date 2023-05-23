@@ -183,13 +183,29 @@ export default function useGame() {
     const alive = getComponentValue(AliveComponent, entity)
     const logHash = getComponentValue(LogComponent, entity)
 
-    let entitiesWithPossibleComponent = getComponentEntities(PossibleComponent).next()
-    while (!entitiesWithPossibleComponent.done) {
-      if (entitiesWithPossibleComponent.value.split(':')[0] === hexZeroPad(playerEntity as any, 32)) break
-      entitiesWithPossibleComponent = getComponentEntities(PossibleComponent).next()
+    const entitiesWithPossibleComponentIter = getComponentEntities(PossibleComponent)
+    let considered = null
+
+    for (const value of entitiesWithPossibleComponentIter) {
+      if (
+        value.split(':')[0] == hexZeroPad(playerEntity as any, 32) &&
+        value.split(':')[1] == hexZeroPad(entity as any, 32)
+      ) {
+        considered = value
+        break
+      }
     }
-    const possible = getComponentValue(PossibleComponent, entitiesWithPossibleComponent.value)
-    console.log({ possible: possible ? decodeActionData(possible.actions) : [] })
+
+    const possible = considered ? getComponentValue(PossibleComponent, considered) : null
+
+    const actions = possible ? decodeActionData(possible.actions, Number(possible.actionLength.toString())).map((p: any) => {
+
+      return {
+        mode: p[0],
+        content: p[1],
+        karmaChange: p[2],
+      }
+    }) : []
 
     const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
       .filter(entity => {
@@ -220,13 +236,7 @@ export default function useGame() {
       initialActions: interaction.initialActions,
       initialMsg: interaction.initialMsg,
       otherParticipants,
-      possible: possible ? decodeActionData(possible.actions).map((p: Array<string>) => {
-        return {
-          mode: p[0],
-          content: p[1],
-          karmaChange: p[2][0],
-        }
-      }) : [],
+      possible: actions,
     }
   }
 
