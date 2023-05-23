@@ -44,12 +44,14 @@ export default function useGame() {
       const name = getComponentValueStrict(NameComponent, entity)
       const summary = getComponentValueStrict(SummaryComponent, entity)
       const image = getComponentValueStrict(ImageComponent, entity)
+      const alive = getComponentValue(AliveComponent, entity)
 
       return {
         entity,
         name,
         summary,
         image,
+        alive: alive?.value ?? false
       }
     })[0]
 
@@ -133,7 +135,7 @@ export default function useGame() {
           name: name.value,
           summary: summary.value,
           image: image.value,
-          alive: alive ?? false
+          alive: alive?.value ?? false
         },
         initialActions: interaction.initialActions,
         initialMsg: interaction.initialMsg,
@@ -145,7 +147,9 @@ export default function useGame() {
   const currentInteraction = useEntityQuery([ Has(InteractComponent) ])
     .filter((entity) => {
       const interaction = getComponentValueStrict(InteractComponent, entity)
-      const currentInteraction = defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
+      const result = defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
+      if (result[0].length == 0) return false
+      const currentInteraction = result
         .map(participant => hexDataSlice(participant[0], 12))
         .find(participant => {
           console.log({
@@ -159,22 +163,31 @@ export default function useGame() {
     })
     .map((entity) => {
       const interaction = getComponentValueStrict(InteractComponent, entity)
+      const name = getComponentValueStrict(NameComponent, entity)
+      const summary = getComponentValueStrict(SummaryComponent, entity)
+      const image = getComponentValueStrict(ImageComponent, entity)
+      const alive = getComponentValue(AliveComponent, entity)
       const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
         .filter(entity => hexDataSlice(entity[0], 12) != playerEntity)
         .map(entity => {
           const name = getComponentValueStrict(NameComponent, entity)
           const summary = getComponentValueStrict(SummaryComponent, entity)
-          const image = getComponentValueStrict(ImageComponent, entity)
+          const alive = getComponentValue(AliveComponent, entity)
           return {
             entity,
             name: name.value,
             summary: summary.value,
-            image: image.value,
+            alive: alive?.value ?? false,
           }
         })
-
       return {
-        entity,
+        entity: {
+          entity,
+          name: name.value,
+          summary: summary.value,
+          image: image.value,
+          alive: alive?.value ?? false
+        },
         initialActions: interaction.initialActions,
         initialMsg: interaction.initialMsg,
         otherParticipants: otherParticipants,
@@ -220,8 +233,10 @@ export default function useGame() {
 
   function inPlayersLocation(entity: any) {
     if (!playerEntity) return false
-    const location = getComponentValueStrict(LocationComponent, entity)
-    const currentLocation = getComponentValueStrict(LocationComponent, playerEntity)
+    const location = getComponentValue(LocationComponent, entity)
+    if (!location) return false
+    const currentLocation = getComponentValue(LocationComponent, playerEntity)
+    if (!currentLocation) return false
     return location.value == currentLocation.value
   }
 

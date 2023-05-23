@@ -2,6 +2,8 @@ import React from 'react'
 import useGame from '../../hooks/useGame'
 import { useMUD } from '../../MUDContext'
 import { Button } from '../../components/base'
+import { hexZeroPad } from 'ethers/lib/utils'
+import api from '../../lib/api'
 
 const IPFS_URL_PREFIX = import.meta.env.VITE_IPFS_URL_PREFIX
 
@@ -114,24 +116,37 @@ function DEV() {
     await enterInteraction(entityID)
   }
 
-  // async function onClickSaveInteractionTest() {
-  //   await saveInteraction({
-  //     location: {
-  //       name: currentLocation.name.value,
-  //       summary: currentLocation.summary.value,
-  //     },
-  //     action: "",
-  //     activeEntity: playerEntity,
-  //     logHash: "QmUmTf999j42nnTYh5hjvzLCuYA3AXPk4FK4LdXexjTXXY",
-  //     otherEntities: [
-  //       {
-  //         name: currentInteraction.entity.name,
-  //         summary: currentInteraction.entity.name,
-  //         isAlive: currentInteraction.entity.alive
-  //       }
-  //     ]
-  //   })
-  // }
+  async function onClickSaveInteractionTest() {
+    if (!playerEntity) return
+    await saveInteraction({
+      storySummary: story.summary.value,
+      location: {
+        name: currentLocation.name.value,
+        summary: currentLocation.summary.value,
+      },
+      action: "",
+      activeEntity: {
+        isAlive: player.alive,
+        summary: player.summary.value,
+        name: player.name.value
+      },
+      logHash: "QmUmTf999j42nnTYh5hjvzLCuYA3AXPk4FK4LdXexjTXXY",
+      otherEntities: [
+        {
+          name: currentInteraction.entity.name,
+          summary: currentInteraction.entity.name,
+          isAlive: currentInteraction.entity.alive
+        },
+        ...currentInteraction.otherParticipants.map(participant => {
+          return {
+            name: participant.name,
+            summary: participant.summary,
+            isAlive: participant.alive
+          }
+        })
+      ]
+    }, currentInteraction.entity.entity ,[playerEntity, ...currentInteraction.otherParticipants.map(participant => hexZeroPad(participant.entity, 32))])
+  }
 
   return (
     <div className={'grid grid-cols-4 gap-4'}>

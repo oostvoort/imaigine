@@ -17,7 +17,7 @@ import {
 } from 'types'
 import api from '../lib/api'
 import { IWorld__factory } from 'contracts/types/ethers-contracts/factories/IWorld__factory'
-import { hexZeroPad, Interface } from 'ethers/lib/utils'
+import { defaultAbiCoder, hexZeroPad, Interface } from 'ethers/lib/utils'
 import { awaitStreamValue } from '@latticexyz/utils'
 
 const worldAbi = IWorld__factory.abi
@@ -156,20 +156,32 @@ export function createSystemCalls(
 
   const enterInteraction = async (entityID: string) => {
     console.log('enterInteraction', hexZeroPad(entityID, 32))
-    await worldSend('enterInteraction', [ hexZeroPad(entityID, 32), ])
+    await worldSend('enterInteraction', [ hexZeroPad(entityID, 32) ])
     console.log('enterInteraction done!')
   }
 
-  const saveInteraction = async (props: GenerateInteractionProps, entityID: string) => {
+  const saveInteraction = async (props: GenerateInteractionProps, interactionEntityId: string, participants: Array<string>) => {
+    console.log('saveInteraction', { props, interactionEntityId, participants })
+
     const res: GenerateInteractionResponse = await api('/generateInteraction', props)
 
-    // await worldSend('saveInteraction', [
-    //   hexZeroPad(entityID, 32),
-    //   hexZeroPad("0x0", 32),
-    //   res.logHash,
-    //   [hexZeroPad(entityID, 32)],
-    //   participantsActions,
-    // ])
+    let participantsActions = [ (res.possible.map(p => p.content)) ]
+
+    await worldSend('saveInteraction', [
+      hexZeroPad(interactionEntityId, 32),
+      hexZeroPad('0x0', 32),
+      res.logHash,
+      participants.map(p => defaultAbiCoder.encode([ 'bytes32' ], [ hexZeroPad(p, 32) ])),
+      participantsActions,
+    ])
+    console.log('saveInteraction done!')
+
+  }
+
+  const leaveInteraction = async (entityID: string, playerID: string) => {
+    console.log('leaveInteraction', hexZeroPad(entityID, 32))
+    await worldSend('leaveInteraction', [ hexZeroPad(entityID, 32), hexZeroPad(playerID, 32) ])
+    console.log('leaveInteraction done!')
   }
 
 
@@ -181,6 +193,7 @@ export function createSystemCalls(
   return {
     saveInteraction,
     enterInteraction,
+    leaveInteraction,
     createCharacter,
     createStartingLocation,
     playerTravelPath,

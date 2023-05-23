@@ -1,36 +1,38 @@
 import React from 'react'
 import { Dialog, Button } from './base'
 import ConversationLayout from './templates/ConversationLayout'
-import blacksmithIcon from '../assets/blacksmith.jpeg'
-import { useAtomValue } from 'jotai'
-import { selectedCharacter_atom } from '../atoms/globalAtoms'
 import { generateIpfsImageLink } from '../lib/utils'
 import { useMutation } from '@tanstack/react-query'
+import useGame from '../hooks/useGame'
 
 type Props = {
-  isOpen: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isOpen?: boolean,
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function CharacterConversationDialog({ isOpen, setOpen }: Props) {
-  const character = useAtomValue(selectedCharacter_atom)
+  const {
+    currentInteraction
+  } = useGame()
+
+  const character = currentInteraction?.entity
 
   if (character == null) return <></>
 
   return (
-    <Dialog.Dialog open={isOpen} onOpenChange={open => setOpen(open)}>
+    <Dialog.Dialog open={Boolean(character)} onOpenChange={open => setOpen?.(open)}>
       <Dialog.DialogContent className="flex gap-5 w-full sm:max-w-7xl border border-accent !rounded-2xl">
         <section className="flex-grow-0">
-          <img src={generateIpfsImageLink(character.image.value)} alt={String(character.image.value)} className="w-[500px] rounded-xl" draggable={false} />
+          <img src={generateIpfsImageLink(character.image)} alt={String(character.image)} className="w-[500px] rounded-xl" draggable={false} />
         </section>
         <section className="flex-1 flex flex-col">
           {/* Conversation box */}
           <div className="flex-1">
             <ConversationLayout>
               {/* NOTE: when inserting a new chat from anyone, new ones should be on top of position */}
-              <ConversationLayout.TypingBubble authorIcon={generateIpfsImageLink(character.image.value)} />
+              <ConversationLayout.TypingBubble authorIcon={generateIpfsImageLink(character.image)} />
               <ConversationLayout.ReceiverBubble
-                authorIcon={generateIpfsImageLink(character.image.value)}
+                authorIcon={generateIpfsImageLink(character.image)}
                 text="I see. This sword has a history, then. I can fix it, but it won't be cheap. I'll need some rare materials and a few days to do it right."
               />
               <ConversationLayout.Notification
@@ -41,7 +43,7 @@ export default function CharacterConversationDialog({ isOpen, setOpen }: Props) 
                 strong again."
               />
               <ConversationLayout.ReceiverBubble
-                authorIcon={generateIpfsImageLink(character.image.value)}
+                authorIcon={generateIpfsImageLink(character.image)}
                 authorName="Silverio of Khazad-dûm"
                 text="I&apos;m Silverio, and I&apos;m the best blacksmith in this village. What can I do for you?"
               />

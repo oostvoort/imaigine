@@ -12,6 +12,7 @@ import { generateIpfsImageLink } from '../../lib/utils'
 import { useAtom } from 'jotai'
 import { selectedCharacter_atom, selectedLocation_atom } from '../../atoms/globalAtoms'
 import { ChevronLeft } from 'lucide-react'
+import { useMUD } from '../../MUDContext'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -25,58 +26,24 @@ type Props = {
     action: () => void
   }>
 }
-const statsMockup: Props['gameStats'] = {
-  'Point of Interest': [
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0.jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (2).jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0.jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (2).jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0.jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (2).jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0.jpg',
-      label: 'Land of Oz',
-    },
-    {
-      img: 'src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (2).jpg',
-      label: 'Land of Oz',
-    },
-  ],
-  'Nearby NPC\'s': [
-    {
-      img: 'src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0.jpg',
-      label: 'Doom Girl on the trailer',
-    },
-    {
-      img: 'src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg',
-      label: 'Doom Girl on the trailer',
-    },
-  ],
-}
 
 export default function Game() {
-  const { currentLocation, locations, characters } = useGame()
+  const { systemCalls } = useMUD()
+  const {
+    currentLocation,
+    locations,
+    characters,
+    currentInteraction,
+    player
+  } = useGame()
 
   const [selectedLocation, setLocationToSelect] = useAtom(selectedLocation_atom)
-  const [selectedCharacter, setCharacterToSelect] = useAtom(selectedCharacter_atom)
+  // const [selectedCharacter, setCharacterToSelect] = useAtom(selectedCharacter_atom)
+
+  const selectedCharacter = React.useMemo(() => {
+    console.info("C", currentInteraction)
+    return currentInteraction?.entity ?? null
+  }, [currentInteraction])
 
   const [ isCharacterDialogOpen, setCharacterDialogOpen ] = React.useState<boolean>(false)
   const constrainsRef = React.useRef<HTMLDivElement>(null)
@@ -143,17 +110,22 @@ export default function Game() {
               <motion.div className="flex items-center gap-3 w-max" drag="x" dragConstraints={constrainsRef}>
                 {
                   characters.map((item, index) => (
-                    <img
-                      className={clsx([
-                        'w-[100px] h-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover object-top'
-                      ])}
+                    <button
                       key={JSON.stringify({ item, index })}
-                      src={generateIpfsImageLink(item.image.value)} alt={JSON.stringify(item.image.value)}
-                      draggable={false}
-                      onClick={() => {
-                        setCharacterToSelect(item)
-                      }}
-                    />
+                      onClick={() => systemCalls.enterInteraction(item.entity)}
+                    >
+                      {item.name.value}
+                      <img
+                        className={clsx([
+                          'w-[100px] h-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover object-top'
+                        ])}
+                        key={JSON.stringify({ item, index })}
+                        src={generateIpfsImageLink(item.image.value)}
+                        alt={JSON.stringify(item.image.value)}
+                        draggable={false}
+                      />
+                    </button>
+
                   ))
                 }
               </motion.div>
@@ -235,7 +207,9 @@ export default function Game() {
           </section>
         </div>
       </GridStoryLayout>
-      <CharacterConversationDialog isOpen={selectedCharacter !== null} setOpen={() => setCharacterToSelect(null)} />
+      <CharacterConversationDialog
+        setOpen={() => selectedCharacter && systemCalls.leaveInteraction(selectedCharacter.entity, player.entity)}
+      />
       <LocationInfoDialog
         isOpen={selectedLocation !== null}
         setOpen={() => setLocationToSelect(null)}

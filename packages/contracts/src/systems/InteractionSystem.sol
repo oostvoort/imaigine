@@ -63,8 +63,8 @@ contract InteractionSystem is System {
     bytes32 entityID,
     bytes32 actionID,
     string memory logHash,
-    bytes32[] memory participants,
-    string[][] memory participantsActions
+    bytes32[] memory participants, // playerID[]
+    string[][] memory participantsActions //
   )
   public
   returns (bytes32)
