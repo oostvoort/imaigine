@@ -42,13 +42,11 @@ export async function generateInteraction({
     'name': 'the name of whoever reacts',
     'summary': `summary of the interaction `,
     'possible': [
-      { mode: 'dialog', content: `dialog for ${activeEntity.name}`, effect: { karmaChange: 0 } },
+      { mode: 'dialog', content: `dialog for ${activeEntity.name}`, karmaEffect: 0 },
       {
         mode: 'action',
         content: `action for ${activeEntity.name}`,
-        effect: {
-          karmaChange: 0,
-        },
+        karmaEffect: 0,
       },
     ],
   }
@@ -68,7 +66,7 @@ export async function generateInteraction({
     ${interactablePrompt}
     Give me 5 future actions ${orSpoken} by ${activeEntity.name}, with their possible effects on karma, encoded in the json
     The actions can not have speech. The dialog has to be as if  ${activeEntity.name} speaks.
-    Karma changes are between -5 and 5, depending on whether the action would do evil or good.
+    Karma effect are numbers between -5 and 5, depending on whether the action is negative or good for the world and ${activeEntity.name}'s conscience .
 
     ${PROMPT_OUTPUT_JSON}.
     ${JSON.stringify(outputTemplate)}

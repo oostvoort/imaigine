@@ -96,14 +96,11 @@ export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
   imageHash: string,
 }
 
-export interface PossibleEffect {
-  karmaChange: number,
-}
 
 export interface Possible {
   mode: 'dialog' | 'action',
   content: string,
-  effect: PossibleEffect
+  karmaChange: number,
 }
 
 export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
