@@ -94,16 +94,18 @@ contract InteractionSystem is System {
     // max value is a representation of initial interaction and should have no kind of any effect
     if (actionIndex < type(uint256).max) {
       bytes memory raw_actions = PossibleComponent.getActions(cached_participants[0], entityID);
-      Types.ActionData[] memory action = abi.decode(raw_actions, (Types.ActionData[]));
+      if (raw_actions.length > 0) {
+        Types.ActionData[] memory action = abi.decode(raw_actions, (Types.ActionData[]));
 
-      bytes32 attrID = bytes32(abi.encode("karma"));
+        bytes32 attrID = bytes32(abi.encode("karma"));
 
-      // calculate changes to attr
-      int256 currKarma = AttributeIntComponent.get(cached_participants[0], attrID);
-      int256 nextKarma = currKarma + action[actionIndex].karmaChange;
+        // calculate changes to attr
+        int256 currKarma = AttributeIntComponent.get(cached_participants[0], attrID);
+        int256 nextKarma = currKarma + action[actionIndex].karmaChange;
 
-      // update attr value
-      AttributeIntComponent.set(cached_participants[0], attrID, nextKarma);
+        // update attr value
+        AttributeIntComponent.set(cached_participants[0], attrID, nextKarma);
+      }
     }
 
     uint256 timestamp = block.timestamp;

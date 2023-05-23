@@ -1,11 +1,10 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
-import { Entity, getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
-import { defaultAbiCoder, hexDataSlice, hexlify, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
+import { Entity, getComponentEntities, getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
+import { defaultAbiCoder, hexDataSlice, hexValue, hexZeroPad, Interface } from 'ethers/lib/utils'
 import { IWorld__factory } from 'contracts/types/ethers-contracts'
 import { ethers } from 'ethers'
-import { formatHex } from '@latticexyz/utils'
-import * as path from 'path'
+import { decodeActionData } from '../lib/utils'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
@@ -27,8 +26,9 @@ export default function useGame() {
       AliveComponent,
       ActionsComponent,
       LogComponent,
+      PossibleComponent,
     },
-    network: { playerEntity, singletonEntity },
+    network: { playerEntity, singletonEntity, storeCache },
     systemCalls,
   } = useMUD()
 
@@ -80,7 +80,6 @@ export default function useGame() {
       if (!playerEntity) return false
       const pathLocation = getComponentValueStrict(PathLocationComponent, entity)
       const currentLocation = getComponentValue(LocationComponent, playerEntity)
-      console.log({ currentLocation, pathLocation })
       if (!currentLocation) return false
       return pathLocation.location0 == currentLocation.value || pathLocation.location1 == currentLocation.value
     })
@@ -90,7 +89,7 @@ export default function useGame() {
       const pathLocation = getComponentValue(PathLocationComponent, entity)
       const pathLocations = pathLocation && [
         locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location0)),
-        locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location1))
+        locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location1)),
       ]
 
       return {
@@ -182,8 +181,16 @@ export default function useGame() {
     const summary = getComponentValueStrict(SummaryComponent, entity)
     const image = getComponentValueStrict(ImageComponent, entity)
     const alive = getComponentValue(AliveComponent, entity)
-    const actions = getComponentValue(ActionsComponent, entity)
     const logHash = getComponentValue(LogComponent, entity)
+
+    let entitiesWithPossibleComponent = getComponentEntities(PossibleComponent).next()
+    while (!entitiesWithPossibleComponent.done) {
+      if (entitiesWithPossibleComponent.value.split(':')[0] === hexZeroPad(playerEntity as any, 32)) break
+      entitiesWithPossibleComponent = getComponentEntities(PossibleComponent).next()
+    }
+    const possible = getComponentValue(PossibleComponent, entitiesWithPossibleComponent.value)
+    console.log({ possible: possible ? decodeActionData(possible.actions) : [] })
+
     const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
       .filter(entity => {
         if (!entity || entity.length == 0) return false
@@ -213,7 +220,13 @@ export default function useGame() {
       initialActions: interaction.initialActions,
       initialMsg: interaction.initialMsg,
       otherParticipants,
-      actions: actions ?? [],
+      possible: possible ? decodeActionData(possible.actions).map((p: Array<string>) => {
+        return {
+          mode: p[0],
+          content: p[1],
+          karmaChange: p[2][0],
+        }
+      }) : [],
     }
   }
 

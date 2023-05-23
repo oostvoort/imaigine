@@ -3,7 +3,6 @@ import useGame from '../../hooks/useGame'
 import { useMUD } from '../../MUDContext'
 import { Button } from '../../components/base'
 import { hexZeroPad } from 'ethers/lib/utils'
-import { Entity } from 'types'
 
 const IPFS_URL_PREFIX = import.meta.env.VITE_IPFS_URL_PREFIX
 
@@ -30,7 +29,7 @@ function DEV() {
       enterInteraction,
       saveInteraction,
       leaveInteraction,
-      playerTravelPath
+      playerTravelPath,
     },
     network: {
       playerEntity,
@@ -51,7 +50,7 @@ function DEV() {
         name: story.name.value,
         summary: story.summary.value,
       },
-    }, 5)
+    }, 2)
   }
 
   async function onClickPlayerTest() {
@@ -126,7 +125,7 @@ function DEV() {
     const otherParticipants = ongoingInteraction ? ongoingInteraction.otherParticipants : []
 
     await enterInteraction(entityID, {
-      mode: "interactable",
+      mode: 'interactable',
       storySummary: story.summary.value,
       location: {
         name: currentLocation.name.value,
@@ -138,7 +137,7 @@ function DEV() {
         summary: player.summary.value,
         name: player.name.value,
       },
-      logHash: 'QmUmTf999j42nnTYh5hjvzLCuYA3AXPk4FK4LdXexjTXXY',
+      logHash: ongoingInteraction?.logHash?.value ?? '',
       otherEntities: [
         {
           name: npc?.name?.value ?? '',
@@ -159,7 +158,7 @@ function DEV() {
   async function onClickSaveInteractionTest() {
     if (!playerEntity) return
     await saveInteraction({
-      mode: "interactable",
+      mode: 'interactable',
       storySummary: story.summary.value,
       location: {
         name: currentLocation.name.value,
@@ -186,7 +185,7 @@ function DEV() {
           }
         }),
       ],
-    }, currentInteraction.entity.entity, [ playerEntity, ...currentInteraction.otherParticipants.map(participant => hexZeroPad(participant.entity, 32)) ])
+    }, '0', currentInteraction.entity.entity, [ playerEntity, ...currentInteraction.otherParticipants.map(participant => participant.entity) ])
   }
 
   async function onClickLeaveInteractionTest() {
@@ -204,7 +203,7 @@ function DEV() {
         <div className={'grid gap-4'}>
           <Button size="xl" disabled={!!story} className={'w-64'}
                   onClick={() => onClickCreateStoryTest()}>CreateStoryTest</Button>
-          <Button size="xl" disabled={!story || !!startingLocation} className={'w-64'}
+          <Button size="xl" disabled={!!startingLocation} className={'w-64'}
                   onClick={() => onClickCreateStartingLocationTest()}>CreateStartingLocationTest</Button>
           <Button size="xl" disabled={!startingLocation} className={'w-64'}
                   onClick={() => onClickPlayerTest()}>CreatePlayerTest</Button>
@@ -217,6 +216,23 @@ function DEV() {
         </div>
       </Card>
 
+      <JSONCard title={'Current Interactions'} data={currentInteraction} />
+      <Card title={'Interact'}>
+        {characters.map(character =>
+          (
+            <div key={character.entity}>
+              {character.name.value}
+              <div className={'flex flex-row gap-x-2'}>
+                <Button disabled={!!currentInteraction} size="xl" className={'w-64'}
+                        onClick={() => onClickNPCInteractionTest(character.entity)}>
+                  Interact
+                </Button>
+                <Button size={'xl'}
+                        onClick={() => window.open(IPFS_URL_PREFIX + character.image.value, '_blank')}>👀</Button>
+              </div>
+            </div>
+          ))}
+      </Card>
       <Card title={'Travel'}>
         {paths
           .map(path => {
@@ -236,23 +252,6 @@ function DEV() {
       </Card>
       <JSONCard title={'Paths'} data={paths} />
       <JSONCard title={'Current Location'} data={currentLocation} />
-      <JSONCard title={'Current Interactions'} data={currentInteraction} />
-      <Card title={'Interact'}>
-        {characters.map(character =>
-          (
-            <div>
-              {character.name.value}
-              <div key={character.entity} className={'flex flex-row gap-x-2'}>
-                <Button disabled={currentInteraction} size="xl" className={'w-64'}
-                        onClick={() => onClickNPCInteractionTest(character.entity)}>
-                  Interact
-                </Button>
-                <Button size={'xl'}
-                        onClick={() => window.open(IPFS_URL_PREFIX + character.image.value, '_blank')}>👀</Button>
-              </div>
-            </div>
-          ))}
-      </Card>
       <JSONCard title={'Interactions'} data={interactions} />
       <JSONCard title={'Story'} data={story} />
       <JSONCard title={'Player'} data={player} />
