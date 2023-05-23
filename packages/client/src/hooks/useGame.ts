@@ -1,6 +1,6 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
-import { getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
+import { Entity, getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
 import { defaultAbiCoder, hexDataSlice, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
 import { IWorld__factory } from 'contracts/types/ethers-contracts'
 import { ethers } from 'ethers'
@@ -22,7 +22,9 @@ export default function useGame() {
       SceneComponent,
       ImageComponent,
       InteractComponent,
-      AliveComponent
+      AliveComponent,
+      ActionsComponent,
+      LogComponent
     },
     network: { playerEntity, singletonEntity },
     systemCalls,
@@ -51,7 +53,7 @@ export default function useGame() {
         name,
         summary,
         image,
-        alive: alive?.value ?? false
+        alive: alive?.value ?? false,
       }
     })[0]
 
@@ -109,39 +111,23 @@ export default function useGame() {
       const name = getComponentValueStrict(NameComponent, entity)
       const summary = getComponentValueStrict(SummaryComponent, entity)
       const image = getComponentValueStrict(ImageComponent, entity)
+      const alive = getComponentValue(AliveComponent, entity)
       return {
         entity,
         name,
         summary,
         image,
+        alive: alive?.value ?? false,
       }
     })
 
-
+  // Result is very similar to characters query, considering replacing characters
   // Interactions happening in the player's location
   const interactions = useEntityQuery([ Has(InteractComponent) ])
     .filter((entity) => {
       return inPlayersLocation(entity)
     })
-    .map((entity) => {
-      const interaction = getComponentValueStrict(InteractComponent, entity)
-      const name = getComponentValueStrict(NameComponent, entity)
-      const summary = getComponentValueStrict(SummaryComponent, entity)
-      const image = getComponentValueStrict(ImageComponent, entity)
-      const alive = getComponentValue(AliveComponent, entity)
-      return {
-        entity: {
-          entity,
-          name: name.value,
-          summary: summary.value,
-          image: image.value,
-          alive: alive?.value ?? false
-        },
-        initialActions: interaction.initialActions,
-        initialMsg: interaction.initialMsg,
-        participants: defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants),
-      }
-    })
+    .map(mapInteraction)
 
   // Current interaction the player is involved in
   const currentInteraction = useEntityQuery([ Has(InteractComponent) ])
@@ -152,47 +138,11 @@ export default function useGame() {
       const currentInteraction = result
         .map(participant => hexDataSlice(participant[0], 12))
         .find(participant => {
-          console.log({
-            participant,
-            playerEntity
-
-          })
           return participant == playerEntity
         })
       return currentInteraction != null
     })
-    .map((entity) => {
-      const interaction = getComponentValueStrict(InteractComponent, entity)
-      const name = getComponentValueStrict(NameComponent, entity)
-      const summary = getComponentValueStrict(SummaryComponent, entity)
-      const image = getComponentValueStrict(ImageComponent, entity)
-      const alive = getComponentValue(AliveComponent, entity)
-      const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
-        .filter(entity => hexDataSlice(entity[0], 12) != playerEntity)
-        .map(entity => {
-          const name = getComponentValueStrict(NameComponent, entity)
-          const summary = getComponentValueStrict(SummaryComponent, entity)
-          const alive = getComponentValue(AliveComponent, entity)
-          return {
-            entity,
-            name: name.value,
-            summary: summary.value,
-            alive: alive?.value ?? false,
-          }
-        })
-      return {
-        entity: {
-          entity,
-          name: name.value,
-          summary: summary.value,
-          image: image.value,
-          alive: alive?.value ?? false
-        },
-        initialActions: interaction.initialActions,
-        initialMsg: interaction.initialMsg,
-        otherParticipants: otherParticipants,
-      }
-    })[0]
+    .map(mapInteraction)[0]
 
 
   const otherPlayers = useEntityQuery([ Has(PlayerComponent) ])
@@ -230,6 +180,49 @@ export default function useGame() {
         summary,
       }
     })
+
+  // Helper Functions
+  function mapInteraction(entity: Entity) {
+    const interaction = getComponentValueStrict(InteractComponent, entity)
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
+    const alive = getComponentValue(AliveComponent, entity)
+    const actions = getComponentValue(ActionsComponent, entity)
+    const logHash = getComponentValue(LogComponent, entity)
+    const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
+      .filter(entity => {
+        if (!entity || entity.length == 0) return false
+        return hexDataSlice(entity[0], 12) != playerEntity
+      })
+      .map(entity => {
+        const name = getComponentValueStrict(NameComponent, entity)
+        const summary = getComponentValueStrict(SummaryComponent, entity)
+        const alive = getComponentValue(AliveComponent, entity)
+        return {
+          entity,
+          name: name.value,
+          summary: summary.value,
+          alive: alive?.value ?? false,
+        }
+      })
+    return {
+      // The entity you are interacting with
+      entity: {
+        entity,
+        name: name.value,
+        summary: summary.value,
+        image: image.value,
+        alive: alive?.value ?? false,
+      },
+      logHash: logHash,
+      initialActions: interaction.initialActions,
+      initialMsg: interaction.initialMsg,
+      otherParticipants,
+      actions: actions ?? []
+    }
+  }
+
 
   function inPlayersLocation(entity: any) {
     if (!playerEntity) return false
