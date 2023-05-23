@@ -115,12 +115,14 @@ contract InteractionSystemTest is MudV2Test {
     bytes32[] memory participants = new bytes32[](1);
     bytes[] memory participantsActions = new bytes[](participants.length);
     Types.ActionData[] memory actions = getActions();
+    uint256[] memory actionsLengths = new uint256[](1);
+    actionsLengths[0] = 3;
 
     participants[0] = mockPlayerID_DEV;
     participantsActions[0] = abi.encode(actions);
 
     // Initial interaction
-    world.saveInteraction(mockNpcID_0, type(uint256).max, "log", participants, participantsActions);
+    world.saveInteraction(mockNpcID_0, type(uint256).max, "log", participants, actionsLengths, participantsActions);
 
     PossibleComponentData memory dev_possibles = PossibleComponent.get(world, mockPlayerID_DEV, mockNpcID_0);
     assertGt(dev_possibles.createdAt, 0, "test_SaveInteraction::1");
@@ -147,7 +149,7 @@ contract InteractionSystemTest is MudV2Test {
     participants[1] = mockPlayerID_ALICE;
     participantsActions[1] = abi.encode(actions);
 
-    world.saveInteraction(mockNpcID_0, 0, "log", participants, participantsActions);
+    world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
   }
 
   function testFuzz_LeaveInteraction() public {

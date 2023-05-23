@@ -73,6 +73,7 @@ contract InteractionSystem is System {
     uint256 actionIndex,
     string memory logHash,
     bytes32[] memory participants,
+    uint256[] memory participantsActionsLength,
     bytes[] memory participantsActions
   )
   public
@@ -114,7 +115,7 @@ contract InteractionSystem is System {
 
       // TODO: multiplayer here, kick not responding participants
 
-      PossibleComponent.set(participants[i], entityID, timestamp, participantsActions[i]);
+      PossibleComponent.set(participants[i], entityID, timestamp, participantsActionsLength[i], participantsActions[i]);
     }
 
     // put the current participant to the last item of the list

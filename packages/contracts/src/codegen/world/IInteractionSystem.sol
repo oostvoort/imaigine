@@ -11,6 +11,7 @@ interface IInteractionSystem {
     uint256 actionIndex,
     string memory logHash,
     bytes32[] memory participants,
+    uint256[] memory participantsActionsLength,
     bytes[] memory participantsActions
   ) external returns (bytes32);
 
