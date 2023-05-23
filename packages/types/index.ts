@@ -98,9 +98,6 @@ export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
 
 export interface PossibleEffect {
   karmaChange: number,
-  healthChange: number,
-  currencyChange: number,
-  inventoryChange: string,
 }
 
 export interface Possible {
@@ -156,14 +153,9 @@ export interface InventoryChange {
 }
 
 
-export interface NextEvent {
-  mode: 'action' | 'dialog',
-  content: string
-}
-
 export interface GenerateInteractionResponse extends Summarized {
   logHash: string,
-  possible: NextEvent[],
+  possible: Possible[],
   currencyChange: number,
   inventoryChange: InventoryChange
 }
