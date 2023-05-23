@@ -178,6 +178,12 @@ export function createSystemCalls(
 
   }
 
+  const leaveInteraction = async (entityID: string, playerID: string) => {
+    console.log('leaveInteraction', hexZeroPad(entityID, 32))
+    await worldSend('leaveInteraction', [ hexZeroPad(entityID, 32), hexZeroPad(playerID, 32) ])
+    console.log('leaveInteraction done!')
+  }
+
 
   const playerTravelPath = async (optionLocationID: string) => {
     console.info({ optionLocationID })
@@ -187,6 +193,7 @@ export function createSystemCalls(
   return {
     saveInteraction,
     enterInteraction,
+    leaveInteraction,
     createCharacter,
     createStartingLocation,
     playerTravelPath,
