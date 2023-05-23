@@ -26,7 +26,7 @@
     "@radix-ui/react-progress": "^1.0.2",
     "@radix-ui/react-slot": "^1.0.1",
     "@radix-ui/react-tooltip": "^1.0.5",
-    "@tanstack/react-query": "^4.29.5",
+    "@tanstack/react-query": "5.0.0-alpha.35",
     "@wagmi/chains": "^0.2.22",
     "async-mutex": "^0.4.0",
     "class-variance-authority": "^0.6.0",
@@ -50,6 +50,7 @@
     "wagmi": "^1.0.2"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "5.0.0-alpha.36",
     "@types/lodash": "^4.14.194",
     "@types/react": "^18.2.6",
     "@types/react-copy-to-clipboard": "^5.0.4",

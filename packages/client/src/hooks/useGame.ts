@@ -4,6 +4,7 @@ import { getComponentValue, getComponentValueStrict, Has, Not } from '@latticexy
 import { defaultAbiCoder, hexDataSlice, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
 import { IWorld__factory } from 'contracts/types/ethers-contracts'
 import { ethers } from 'ethers'
+import { useMutation } from '@tanstack/react-query'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
@@ -25,7 +26,12 @@ export default function useGame() {
       AliveComponent
     },
     network: { playerEntity, singletonEntity },
-    systemCalls,
+    systemCalls: {
+      createPlayer,
+      createStory,
+      createStartingLocation,
+      createCharacter,
+    },
   } = useMUD()
 
   const story = useEntityQuery([ Has(StoryComponent), Has(SummaryComponent) ]).map((entity) => {

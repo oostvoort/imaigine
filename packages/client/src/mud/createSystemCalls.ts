@@ -46,9 +46,10 @@ export function createSystemCalls(
     console.log('createStory', props)
 
     const res: JsonResponse = await api('/generateStory', props)
-    await worldSend('createStory', [ res.name, res.summary, props.theme, props.races, props.currency ])
+    const worldSendRes = await worldSend('createStory', [ res.name, res.summary, props.theme, props.races, props.currency ])
 
     console.log('createStory done!')
+    return res
   }
 
   const createStartingLocation = async (props: GenerateLocationProps, locations = 2) => {
@@ -124,8 +125,15 @@ export function createSystemCalls(
     }
 
     await Promise.all(promises)
-
     console.log('createStartingLocation done!')
+    return {
+      startingLocation: {
+        name: startingLocationName,
+        summary: startingLocationSummary,
+        entity: startingLocation
+      },
+      story: props.story
+    }
   }
 
   const createPlayer = async (props: GeneratePlayerCharacterProps, startingLocation: Entity) => {
@@ -152,6 +160,7 @@ export function createSystemCalls(
       [],
     ])
     console.log('createCharacter done!')
+    return res
   }
 
   const enterInteraction = async (entityID: string) => {

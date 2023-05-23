@@ -9,10 +9,13 @@ import useGame from '../../hooks/useGame'
 import LoadingScreen from '../../components/shared/LoadingScreen'
 import envs from '../../env'
 import { generateIpfsImageLink } from '../../lib/utils'
-import { useAtom } from 'jotai'
-import { selectedCharacter_atom, selectedLocation_atom } from '../../atoms/globalAtoms'
+import { useAtom, useSetAtom } from 'jotai'
+import { activePage_atom, selectedCharacter_atom, selectedLocation_atom } from '../../atoms/globalAtoms'
 import { ChevronLeft } from 'lucide-react'
 import { useMUD } from '../../MUDContext'
+import useSetup from '../../hooks/useSetup'
+import { useMutationState } from '@tanstack/react-query'
+import ErrorScreen from '../../components/shared/ErrorScreen'
 
 type Props = {
   mapHexImage: 'not-sure-about-the-type-of-this-yet',
@@ -28,6 +31,12 @@ type Props = {
 }
 
 export default function Game() {
+  const setActivePage = useSetAtom(activePage_atom)
+  const [ storySetup ] = useMutationState({
+    filters: {
+      mutationKey: ['setup-story'],
+    }
+  })
   const { systemCalls } = useMUD()
   const {
     currentLocation,
@@ -38,19 +47,18 @@ export default function Game() {
   } = useGame()
 
   const [selectedLocation, setLocationToSelect] = useAtom(selectedLocation_atom)
-  // const [selectedCharacter, setCharacterToSelect] = useAtom(selectedCharacter_atom)
-
   const selectedCharacter = React.useMemo(() => {
     console.info("C", currentInteraction)
     return currentInteraction?.entity ?? null
   }, [currentInteraction])
 
-  const [ isCharacterDialogOpen, setCharacterDialogOpen ] = React.useState<boolean>(false)
   const constrainsRef = React.useRef<HTMLDivElement>(null)
 
+  console.log({ storySetup })
+
+  if (storySetup && storySetup.status != 'success' && storySetup.status != 'error') return <LoadingScreen message='Creating story...' />
   if (!currentLocation || !locations) return <LoadingScreen message='Loading all locations...' />
   if (!characters) return <LoadingScreen message='Loading all characters...' />
-
 
   return (
     <>
@@ -114,7 +122,6 @@ export default function Game() {
                       key={JSON.stringify({ item, index })}
                       onClick={() => systemCalls.enterInteraction(item.entity)}
                     >
-                      {item.name.value}
                       <img
                         className={clsx([
                           'w-[100px] h-[100px] rounded-full shadow-2xl cursor-pointer relative object-cover object-top'
@@ -214,7 +221,6 @@ export default function Game() {
         isOpen={selectedLocation !== null}
         setOpen={() => setLocationToSelect(null)}
       />
-      {/*<LoadingScreen message={'Generating avatars..'} />*/}
     </>
   )
 }

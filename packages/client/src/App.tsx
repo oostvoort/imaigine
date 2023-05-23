@@ -1,34 +1,46 @@
-
+import React from 'react'
 import MainLayout from './components/templates/MainLayout'
 import Welcome from './pages/welcome'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { activePage_atom } from './atoms/globalAtoms'
 import CreatePlayerNew from './pages/create-player-new'
 import Game from './pages/game'
 import DEV from './pages/DEV'
 import { useMUD } from './MUDContext'
+import useGame from './hooks/useGame'
+import usePlayerExisting from './hooks/usePlayerExisting'
+import LoadingScreen from './components/shared/LoadingScreen'
 
 export const App = () => {
-  const activePage = useAtomValue(activePage_atom)
+  const [activePage, setActivePage] = useAtom(activePage_atom)
 
-    return (
-          <MainLayout>
-            {
-              activePage == 'welcome' && <Welcome />
-            }
-            {
-              // TODO: loading component
-              activePage == 'loading' && <>loading component to be create</>
-            }
-            {
-              activePage == 'create' && <CreatePlayerNew />
-            }
-            {
-              activePage == 'game' && <Game />
-            }
-            {
-              activePage == 'dev' && <DEV />
-            }
-          </MainLayout>
-    );
+  const { data, isSuccess, isError, isLoading, isFetching, fetchStatus,  } = usePlayerExisting()
+
+  React.useEffect(() => {
+    if (isLoading) console.log('CHECK FOR PLAYER: loading!!!')
+    if (isError) return
+    if (isSuccess) {
+      console.log('CHECK FOR PLAYER: ', data)
+      if (data) setActivePage('game')
+    }
+  }, [data])
+
+  if (isLoading || isFetching) return <LoadingScreen message='Loading initial data...' />
+
+  return (
+    <MainLayout>
+      {
+        activePage == 'welcome' && <Welcome />
+      }
+      {
+        activePage == 'create' && <CreatePlayerNew />
+      }
+      {
+        activePage == 'game' && <Game />
+      }
+      {
+        activePage == 'dev' && <DEV />
+      }
+    </MainLayout>
+  );
 };
