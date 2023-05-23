@@ -184,9 +184,10 @@ export function createSystemCalls(
   }
 
 
-  const playerTravelPath = async (optionLocationID: string) => {
-    console.info({ optionLocationID })
-    await worldSend('playerTravelPath', [ optionLocationID ])
+  const playerTravelPath = async (pathID: string) => {
+    console.log('playerTravelPath', pathID)
+    await worldSend('playerTravelPath', [ hexZeroPad(pathID, 32) ])
+    console.log('playerTravelPath done')
   }
 
   return {

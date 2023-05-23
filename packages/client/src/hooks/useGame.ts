@@ -1,9 +1,11 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
 import { Entity, getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
-import { defaultAbiCoder, hexDataSlice, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
+import { defaultAbiCoder, hexDataSlice, hexlify, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
 import { IWorld__factory } from 'contracts/types/ethers-contracts'
 import { ethers } from 'ethers'
+import { formatHex } from '@latticexyz/utils'
+import * as path from 'path'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
@@ -24,7 +26,7 @@ export default function useGame() {
       InteractComponent,
       AliveComponent,
       ActionsComponent,
-      LogComponent
+      LogComponent,
     },
     network: { playerEntity, singletonEntity },
     systemCalls,
@@ -47,12 +49,14 @@ export default function useGame() {
       const summary = getComponentValueStrict(SummaryComponent, entity)
       const image = getComponentValueStrict(ImageComponent, entity)
       const alive = getComponentValue(AliveComponent, entity)
+      const location = getComponentValue(LocationComponent, entity)
 
       return {
         entity,
         name,
         summary,
         image,
+        location,
         alive: alive?.value ?? false,
       }
     })[0]
@@ -64,44 +68,38 @@ export default function useGame() {
       if (!currentLocation) return false
       return (hexValue(currentLocation.value) == hexValue(entity))
     })
+    .map(mapLocations)[0]
+
+  const startingLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map(mapLocations)[0]
+
+  const locations = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ])
+    .map(mapLocations)
+
+  const paths = useEntityQuery([ Has(PathComponent), Has(PathLocationComponent), Has(NameComponent), Has(SummaryComponent) ])
+    .filter((entity) => {
+      if (!playerEntity) return false
+      const pathLocation = getComponentValueStrict(PathLocationComponent, entity)
+      const currentLocation = getComponentValue(LocationComponent, playerEntity)
+      console.log({ currentLocation, pathLocation })
+      if (!currentLocation) return false
+      return pathLocation.location0 == currentLocation.value || pathLocation.location1 == currentLocation.value
+    })
     .map((entity) => {
       const name = getComponentValueStrict(NameComponent, entity)
       const summary = getComponentValueStrict(SummaryComponent, entity)
-      const image = getComponentValueStrict(ImageComponent, entity)
+      const pathLocation = getComponentValue(PathLocationComponent, entity)
+      const pathLocations = pathLocation && [
+        locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location0)),
+        locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location1))
+      ]
 
       return {
         entity,
         name,
         summary,
-        image,
+        pathLocations,
       }
-    })[0]
-
-  const startingLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
-    return {
-      entity,
-      name,
-      summary,
-      image,
-    }
-  })[0]
-
-
-  const locations = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
-    return {
-      entity,
-      name,
-      summary,
-      image,
-    }
-  })
-
+    })
 
   const characters = useEntityQuery([ Has(CharacterComponent), Not(PlayerComponent), Has(LocationComponent) ])
     .filter((entity) => {
@@ -163,25 +161,21 @@ export default function useGame() {
       }
     })
 
-  const paths = useEntityQuery([ Has(PathComponent), Has(PathLocationComponent), Has(NameComponent), Has(SummaryComponent) ])
-    .filter((entity) => {
-      if (!playerEntity) return false
-      const pathLocation = getComponentValueStrict(PathLocationComponent, entity)
-      const currentLocation = getComponentValue(LocationComponent, playerEntity)
-      if (!currentLocation) return false
-      if (pathLocation.location0 != currentLocation.value) return false
-    })
-    .map((entity) => {
-      const name = getComponentValueStrict(NameComponent, entity)
-      const summary = getComponentValueStrict(SummaryComponent, entity)
-      return {
-        entity,
-        name,
-        summary,
-      }
-    })
 
   // Helper Functions
+  function mapLocations(entity: Entity) {
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
+    return {
+      entity,
+      name,
+      summary,
+      image,
+    }
+  }
+
+
   function mapInteraction(entity: Entity) {
     const interaction = getComponentValueStrict(InteractComponent, entity)
     const name = getComponentValueStrict(NameComponent, entity)
@@ -219,7 +213,7 @@ export default function useGame() {
       initialActions: interaction.initialActions,
       initialMsg: interaction.initialMsg,
       otherParticipants,
-      actions: actions ?? []
+      actions: actions ?? [],
     }
   }
 

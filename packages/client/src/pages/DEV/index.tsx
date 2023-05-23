@@ -30,6 +30,7 @@ function DEV() {
       enterInteraction,
       saveInteraction,
       leaveInteraction,
+      playerTravelPath
     },
     network: {
       playerEntity,
@@ -125,6 +126,7 @@ function DEV() {
     const otherParticipants = ongoingInteraction ? ongoingInteraction.otherParticipants : []
 
     await enterInteraction(entityID, {
+      mode: "interactable",
       storySummary: story.summary.value,
       location: {
         name: currentLocation.name.value,
@@ -157,6 +159,7 @@ function DEV() {
   async function onClickSaveInteractionTest() {
     if (!playerEntity) return
     await saveInteraction({
+      mode: "interactable",
       storySummary: story.summary.value,
       location: {
         name: currentLocation.name.value,
@@ -191,6 +194,10 @@ function DEV() {
     await leaveInteraction(currentInteraction.entity.entity, playerEntity)
   }
 
+  async function onClickTravelTest(entityID: string) {
+    await playerTravelPath(entityID)
+  }
+
   return (
     <div className={'grid grid-cols-4 gap-4'}>
       <Card title={'DevTools'}>
@@ -210,9 +217,27 @@ function DEV() {
         </div>
       </Card>
 
-
+      <Card title={'Travel'}>
+        {paths
+          .map(path => {
+            return (
+              <div key={path.entity}>
+                <div>{path.name.value}</div>
+                <div>From {path.pathLocations?.[0]?.name?.value ?? ''} to {path.pathLocations?.[1]?.name?.value ?? ''}</div>
+                <div className={'flex flex-row gap-x-2'}>
+                  <Button size="xl" className={'w-64'}
+                          onClick={() => onClickTravelTest(path.entity)}>
+                    Travel
+                  </Button>
+                </div>
+              </div>
+            )
+          })}
+      </Card>
+      <JSONCard title={'Paths'} data={paths} />
+      <JSONCard title={'Current Location'} data={currentLocation} />
       <JSONCard title={'Current Interactions'} data={currentInteraction} />
-      <Card title={'NPCs'}>
+      <Card title={'Interact'}>
         {characters.map(character =>
           (
             <div>
@@ -231,11 +256,9 @@ function DEV() {
       <JSONCard title={'Interactions'} data={interactions} />
       <JSONCard title={'Story'} data={story} />
       <JSONCard title={'Player'} data={player} />
-      <JSONCard title={'Current Location'} data={currentLocation} />
       <JSONCard title={'Other Players'} data={otherPlayers} />
       <JSONCard title={'Starting Location'} data={startingLocation} />
       <JSONCard title={'Locations'} data={locations} />
-      <JSONCard title={'Paths'} data={paths} />
     </div>
   )
 }
