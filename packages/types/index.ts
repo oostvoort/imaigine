@@ -100,7 +100,7 @@ export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
 export interface Possible {
   mode: 'dialog' | 'action',
   content: string,
-  karmaChange: number,
+  karmaEffect: number,
 }
 
 export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
