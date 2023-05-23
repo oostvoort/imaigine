@@ -68,6 +68,7 @@ export default mudConfig({
             },
             schema: {
               createdAt: "uint256",
+              actionLength: "uint256",
               actions: "bytes",
             },
         },

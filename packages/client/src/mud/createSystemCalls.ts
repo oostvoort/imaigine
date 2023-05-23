@@ -17,7 +17,7 @@ import {
 } from 'types'
 import api from '../lib/api'
 import { IWorld__factory } from 'contracts/types/ethers-contracts/factories/IWorld__factory'
-import { hexZeroPad, Interface } from 'ethers/lib/utils'
+import { defaultAbiCoder, hexConcat, hexZeroPad, Interface } from 'ethers/lib/utils'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { ActionData, encodeActionDataArray } from '../lib/utils'
 import { ethers } from 'ethers'
@@ -176,13 +176,18 @@ export function createSystemCalls(
   const saveInteraction = async (props: GenerateInteractionProps, actionIndex: string, entityID: string, participants: Array<string>) => {
     console.log('saveInteraction', { props, interactionEntityId: entityID, participants })
     const res: GenerateInteractionResponse = await api('/generateInteraction', props)
-    const participantsActions = encodeActionDataArray(res.possible.map(p => [ p.mode, p.content, p.effect.karmaChange ] as ActionData))
+    const participantsActions = encodeActionDataArray(res.possible.map(p => [ p.mode, p.content, p.karmaEffect ] as ActionData))
     await worldSend('saveInteraction', [
       hexZeroPad(entityID, 32),
       actionIndex,
       res.logHash,
       participants.map(p => hexZeroPad(p, 32)),
-      participantsActions
+      [
+        res.possible.length,
+      ],
+      [
+        participantsActions, // player1
+      ]
     ])
     console.log('saveInteraction done!')
 

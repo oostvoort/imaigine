@@ -22,15 +22,17 @@ bytes32 constant PossibleComponentTableId = _tableId;
 
 struct PossibleComponentData {
   uint256 createdAt;
+  uint256 actionLength;
   bytes actions;
 }
 
 library PossibleComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](2);
+    SchemaType[] memory _schema = new SchemaType[](3);
     _schema[0] = SchemaType.UINT256;
-    _schema[1] = SchemaType.BYTES;
+    _schema[1] = SchemaType.UINT256;
+    _schema[2] = SchemaType.BYTES;
 
     return SchemaLib.encode(_schema);
   }
@@ -45,9 +47,10 @@ library PossibleComponent {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](2);
+    string[] memory _fieldNames = new string[](3);
     _fieldNames[0] = "createdAt";
-    _fieldNames[1] = "actions";
+    _fieldNames[1] = "actionLength";
+    _fieldNames[2] = "actions";
     return ("PossibleComponent", _fieldNames);
   }
 
@@ -123,6 +126,56 @@ library PossibleComponent {
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)));
   }
 
+  /** Get actionLength */
+  function getActionLength(
+    bytes32 interactingEntityID,
+    bytes32 interactedEntityID
+  ) internal view returns (uint256 actionLength) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32((interactingEntityID));
+    _keyTuple[1] = bytes32((interactedEntityID));
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Get actionLength (using the specified store) */
+  function getActionLength(
+    IStore _store,
+    bytes32 interactingEntityID,
+    bytes32 interactedEntityID
+  ) internal view returns (uint256 actionLength) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32((interactingEntityID));
+    _keyTuple[1] = bytes32((interactedEntityID));
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Set actionLength */
+  function setActionLength(bytes32 interactingEntityID, bytes32 interactedEntityID, uint256 actionLength) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32((interactingEntityID));
+    _keyTuple[1] = bytes32((interactedEntityID));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((actionLength)));
+  }
+
+  /** Set actionLength (using the specified store) */
+  function setActionLength(
+    IStore _store,
+    bytes32 interactingEntityID,
+    bytes32 interactedEntityID,
+    uint256 actionLength
+  ) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = bytes32((interactingEntityID));
+    _keyTuple[1] = bytes32((interactedEntityID));
+
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((actionLength)));
+  }
+
   /** Get actions */
   function getActions(
     bytes32 interactingEntityID,
@@ -132,7 +185,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
     return (bytes(_blob));
   }
 
@@ -146,7 +199,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
     return (bytes(_blob));
   }
 
@@ -156,7 +209,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 1, bytes((actions)));
+    StoreSwitch.setField(_tableId, _keyTuple, 2, bytes((actions)));
   }
 
   /** Set actions (using the specified store) */
@@ -170,7 +223,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    _store.setField(_tableId, _keyTuple, 1, bytes((actions)));
+    _store.setField(_tableId, _keyTuple, 2, bytes((actions)));
   }
 
   /** Get the length of actions */
@@ -179,7 +232,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 1, getSchema());
+    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 2, getSchema());
     return _byteLength / 1;
   }
 
@@ -193,7 +246,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 1, getSchema());
+    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 2, getSchema());
     return _byteLength / 1;
   }
 
@@ -207,7 +260,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 1, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
@@ -222,7 +275,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 1, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
@@ -232,7 +285,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    StoreSwitch.pushToField(_tableId, _keyTuple, 1, bytes((_slice)));
+    StoreSwitch.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
   }
 
   /** Push a slice to actions (using the specified store) */
@@ -246,7 +299,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    _store.pushToField(_tableId, _keyTuple, 1, bytes((_slice)));
+    _store.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
   }
 
   /** Pop a slice from actions */
@@ -255,7 +308,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    StoreSwitch.popFromField(_tableId, _keyTuple, 1, 1);
+    StoreSwitch.popFromField(_tableId, _keyTuple, 2, 1);
   }
 
   /** Pop a slice from actions (using the specified store) */
@@ -264,7 +317,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    _store.popFromField(_tableId, _keyTuple, 1, 1);
+    _store.popFromField(_tableId, _keyTuple, 2, 1);
   }
 
   /** Update a slice of actions at `_index` */
@@ -278,7 +331,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    StoreSwitch.updateInField(_tableId, _keyTuple, 1, _index * 1, bytes((_slice)));
+    StoreSwitch.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of actions (using the specified store) at `_index` */
@@ -293,7 +346,7 @@ library PossibleComponent {
     _keyTuple[0] = bytes32((interactingEntityID));
     _keyTuple[1] = bytes32((interactedEntityID));
 
-    _store.updateInField(_tableId, _keyTuple, 1, _index * 1, bytes((_slice)));
+    _store.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
   }
 
   /** Get the full data */
@@ -328,9 +381,10 @@ library PossibleComponent {
     bytes32 interactingEntityID,
     bytes32 interactedEntityID,
     uint256 createdAt,
+    uint256 actionLength,
     bytes memory actions
   ) internal {
-    bytes memory _data = encode(createdAt, actions);
+    bytes memory _data = encode(createdAt, actionLength, actions);
 
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32((interactingEntityID));
@@ -345,9 +399,10 @@ library PossibleComponent {
     bytes32 interactingEntityID,
     bytes32 interactedEntityID,
     uint256 createdAt,
+    uint256 actionLength,
     bytes memory actions
   ) internal {
-    bytes memory _data = encode(createdAt, actions);
+    bytes memory _data = encode(createdAt, actionLength, actions);
 
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32((interactingEntityID));
@@ -358,7 +413,7 @@ library PossibleComponent {
 
   /** Set the full data using the data struct */
   function set(bytes32 interactingEntityID, bytes32 interactedEntityID, PossibleComponentData memory _table) internal {
-    set(interactingEntityID, interactedEntityID, _table.createdAt, _table.actions);
+    set(interactingEntityID, interactedEntityID, _table.createdAt, _table.actionLength, _table.actions);
   }
 
   /** Set the full data using the data struct (using the specified store) */
@@ -368,21 +423,23 @@ library PossibleComponent {
     bytes32 interactedEntityID,
     PossibleComponentData memory _table
   ) internal {
-    set(_store, interactingEntityID, interactedEntityID, _table.createdAt, _table.actions);
+    set(_store, interactingEntityID, interactedEntityID, _table.createdAt, _table.actionLength, _table.actions);
   }
 
   /** Decode the tightly packed blob using this table's schema */
   function decode(bytes memory _blob) internal view returns (PossibleComponentData memory _table) {
-    // 32 is the total byte length of static data
-    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 32));
+    // 64 is the total byte length of static data
+    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 64));
 
     _table.createdAt = (uint256(Bytes.slice32(_blob, 0)));
 
+    _table.actionLength = (uint256(Bytes.slice32(_blob, 32)));
+
     // Store trims the blob if dynamic fields are all empty
-    if (_blob.length > 32) {
+    if (_blob.length > 64) {
       uint256 _start;
       // skip static data length + dynamic lengths word
-      uint256 _end = 64;
+      uint256 _end = 96;
 
       _start = _end;
       _end += _encodedLengths.atIndex(0);
@@ -391,12 +448,12 @@ library PossibleComponent {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 createdAt, bytes memory actions) internal view returns (bytes memory) {
+  function encode(uint256 createdAt, uint256 actionLength, bytes memory actions) internal view returns (bytes memory) {
     uint40[] memory _counters = new uint40[](1);
     _counters[0] = uint40(bytes(actions).length);
     PackedCounter _encodedLengths = PackedCounterLib.pack(_counters);
 
-    return abi.encodePacked(createdAt, _encodedLengths.unwrap(), bytes((actions)));
+    return abi.encodePacked(createdAt, actionLength, _encodedLengths.unwrap(), bytes((actions)));
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

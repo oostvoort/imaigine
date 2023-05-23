@@ -334,6 +334,7 @@ export function defineContractComponents(world: World) {
         world,
         {
           createdAt: RecsType.BigInt,
+          actionLength: RecsType.BigInt,
           actions: RecsType.String,
         },
         {
