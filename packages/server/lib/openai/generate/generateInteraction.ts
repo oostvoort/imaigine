@@ -64,7 +64,7 @@ export async function generateInteraction({
     ${otherChars}
     Everything takes place in ${location.name}, described as ${location.summary}.
     ${interactablePrompt}
-    Give me 3 future actions ${orSpoken} by ${activeEntity.name}, with their possible effects on karma, encoded in the json
+    Give me exactly 3 future actions ${orSpoken} by ${activeEntity.name}, with their possible effects on karma, encoded in the json
     The actions can not have speech. The dialog has to be as if  ${activeEntity.name} speaks.
     Karma effect are numbers between -5 and 5, depending on whether the action is negative or good for the world and ${activeEntity.name}'s conscience .
 
