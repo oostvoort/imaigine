@@ -1,5 +1,5 @@
 /* globals describe, expect, it */
-import { generateInteractionProps, item_warhammer, location1, npc, player, story } from './mock'
+import { generateInteractionProps, item_warhammer, location1, npc, player, story } from '../../types/mock'
 import { generateInteraction } from '../lib/openai/generate/generateInteraction'
 
 import * as dotenv from 'dotenv'
