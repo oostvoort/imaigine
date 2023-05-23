@@ -175,7 +175,6 @@ export default function useGame() {
   }
 
 
-
   function mapInteraction(entity: Entity) {
     const interaction = getComponentValueStrict(InteractComponent, entity)
     const name = getComponentValueStrict(NameComponent, entity)
@@ -185,12 +184,12 @@ export default function useGame() {
     const logHash = getComponentValue(LogComponent, entity)
 
     let entitiesWithPossibleComponent = getComponentEntities(PossibleComponent).next()
-    while(!entitiesWithPossibleComponent.done) {
-      if (entitiesWithPossibleComponent.value.split(":")[0] === hexZeroPad(playerEntity as any, 32)) break
+    while (!entitiesWithPossibleComponent.done) {
+      if (entitiesWithPossibleComponent.value.split(':')[0] === hexZeroPad(playerEntity as any, 32)) break
       entitiesWithPossibleComponent = getComponentEntities(PossibleComponent).next()
     }
     const possible = getComponentValue(PossibleComponent, entitiesWithPossibleComponent.value)
-    console.log({possible:  possible ? decodeActionData(possible.actions) : []})
+    console.log({ possible: possible ? decodeActionData(possible.actions) : [] })
 
     const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
       .filter(entity => {
@@ -221,7 +220,13 @@ export default function useGame() {
       initialActions: interaction.initialActions,
       initialMsg: interaction.initialMsg,
       otherParticipants,
-      possible: possible ? decodeActionData(possible.actions).map(p => p[1]) : [],
+      possible: possible ? decodeActionData(possible.actions).map((p: Array<string>) => {
+        return {
+          mode: p[0],
+          content: p[1],
+          karmaChange: p[2][0],
+        }
+      }) : [],
     }
   }
 
