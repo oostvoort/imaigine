@@ -42,7 +42,7 @@ export default function Welcome() {
           variant="accent"
           onClick={() => {
             setActivePage('create')
-            createStoryMutate.mutate()
+            // createStoryMutate.mutate()
           }}
           className="rounded-full px-14 mt-8 uppercase"
         >

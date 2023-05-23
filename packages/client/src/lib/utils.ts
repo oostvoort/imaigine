@@ -13,7 +13,8 @@ export function camelCaseToTitle(text: string) {
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-export function generateIpfsImageLink(param: string) {
+export function generateIpfsImageLink(param?: string) {
+  if (!param) return `${envs.API_IPFS_URL_PREFIX}/QmaG2A5FX7QPX5dvS2Ydjw584PtUzbocueSvFwmZK5sAP9`
   return `${envs.API_IPFS_URL_PREFIX}/${param}`
 }
 

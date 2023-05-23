@@ -98,7 +98,7 @@ export default function PlayerNav() {
       />
       <SettingsDialog
         name={'Alice'}
-        privateKey={'MIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8QuKUpRKfFLfRYC9AIKjbJTWit+CqvjWYzvQwECAwEAAQJAIJLixBy2qpFoS4DSmoEmo3qGy0t6z09AIJtH5OeRV1b00DY+pxLQnwfotadxd+Uy/Ow5T0q5gIJAiEAyS4RaI9YG8EWx/2w0T67ZUVAw8eOMB6BIUg0Xcu+3okCIBOs'}
+        privateKey={'********************************************************************************************************'}
         isOpen={openSettingsDialog}
         setOpen={value => setOpenSettingsDialog(value)} />
     </>

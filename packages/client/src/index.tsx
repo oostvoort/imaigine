@@ -16,18 +16,17 @@ const root = ReactDOM.createRoot(rootElement)
 
 setup().then((result) => {
   root.render(
-    <MUDProvider value={result}>
-      {/* Handle client routing if needed */}
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          {/* Manage application states */}
-          <JotaiProvider>
+    <JotaiProvider>
+      <MUDProvider value={result}>
+        {/* Handle client routing if needed */}
+        <BrowserRouter>
+          <QueryClientProvider client={queryClient}>
+            {/* Manage application states */}
             <App />
-          </JotaiProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
-
-    </MUDProvider>,
+          </QueryClientProvider>
+        </BrowserRouter>
+      </MUDProvider>
+    </JotaiProvider>,
   )
   mountDevTools()
 })

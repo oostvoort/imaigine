@@ -44,7 +44,7 @@ export default function useSetup() {
     retry: 5,
     retryDelay: 1000,
     onSuccess: async (data) => {
-      createStartingLocationMutate.mutate(data)
+      console.log('npc created!')
     }
   })
 
@@ -71,7 +71,7 @@ export default function useSetup() {
             race: 'Human',
             bodyType: 'Burly',
             height: 'Statuesque',
-            hairLength: 'Bald',
+            hairLength: 'Long',
             hairType: 'Wavy',
             hairColor: 'Red',
             eyeShape: 'Upturned',
@@ -107,13 +107,16 @@ export default function useSetup() {
           name: variables?.name,
           summary: variables?.summary,
       },
-      })
+      }, 4)
     },
     retry: 5,
     retryDelay: 1000,
     onSuccess: async (data: any) => {
       console.log('onsuccess of starting location', { data })
       createPlayerMutate.mutate(data)
+      createNPCMutate.mutate(data)
+      createNPCMutate.mutate(data)
+      createNPCMutate.mutate(data)
       createNPCMutate.mutate(data)
     },
     onError: (err) => {

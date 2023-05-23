@@ -14,18 +14,21 @@ import LoadingScreen from './components/shared/LoadingScreen'
 export const App = () => {
   const [activePage, setActivePage] = useAtom(activePage_atom)
 
-  const { data, isSuccess, isError, isLoading, isFetching, fetchStatus,  } = usePlayerExisting()
 
-  React.useEffect(() => {
-    if (isLoading) console.log('CHECK FOR PLAYER: loading!!!')
-    if (isError) return
-    if (isSuccess) {
-      console.log('CHECK FOR PLAYER: ', data)
-      if (data) setActivePage('game')
-    }
-  }, [data])
+  const { data, isSuccess, isError, isLoading } = usePlayerExisting()
 
-  if (isLoading || isFetching) return <LoadingScreen message='Loading initial data...' />
+  // React.useEffect(() => {
+  //   if (isLoading) console.log('CHECK FOR PLAYER: loading!!!')
+  //   if (isError) return
+  //   if (isSuccess) {
+  //     console.log('CHECK FOR PLAYER: ', data)
+  //     if (data) setActivePage('game')
+  //   }
+  // }, [data])
+
+  console.log({ isLoading })
+
+  if (isLoading) return <LoadingScreen message='Loading initial data...' />
 
   return (
     <MainLayout>
