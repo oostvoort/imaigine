@@ -7,7 +7,8 @@ export default function useSetup() {
     systemCalls: {
       createStory,
       createStartingLocation,
-      createPlayer
+      createPlayer,
+      createCharacter
     }
   } = useMUD()
 
