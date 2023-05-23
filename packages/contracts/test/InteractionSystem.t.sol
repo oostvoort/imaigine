@@ -159,7 +159,22 @@ contract InteractionSystemTest is MudV2Test {
     world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
     world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
 
-    int256 points = AttributeIntComponent.get(mockPlayerID_DEV, bytes32(abi.encode("karma")));
+    int256 points = AttributeIntComponent.get(world, mockPlayerID_DEV, bytes32(abi.encode("karma")));
+
+    console.logInt(points);
+
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 1, "log", participants, actionsLengths, participantsActions);
+
+    points = AttributeIntComponent.get(world, mockPlayerID_DEV, bytes32(abi.encode("karma")));
 
     console.logInt(points);
   }
