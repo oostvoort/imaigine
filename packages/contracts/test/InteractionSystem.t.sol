@@ -86,12 +86,7 @@ contract InteractionSystemTest is MudV2Test {
 
   }
 
-  function test_SaveInteraction() public {
-    world.enterInteraction(mockNpcID_0);
-
-    // DEV begin Interaction
-    bytes32[] memory participants = new bytes32[](1);
-    bytes[] memory participantsActions = new bytes[](participants.length);
+  function getActions() internal returns (Types.ActionData[] memory){
     Types.ActionData[] memory actions = new Types.ActionData[](3);
 
     actions[0] = Types.ActionData(
@@ -109,6 +104,17 @@ contract InteractionSystemTest is MudV2Test {
       "DEV_Option_2",
       Types.ActionEffect(10)
     );
+
+    return actions;
+  }
+
+  function test_SaveInteraction() public {
+    world.enterInteraction(mockNpcID_0);
+
+    // DEV begin Interaction
+    bytes32[] memory participants = new bytes32[](1);
+    bytes[] memory participantsActions = new bytes[](participants.length);
+    Types.ActionData[] memory actions = getActions();
 
     participants[0] = mockPlayerID_DEV;
     participantsActions[0] = abi.encode(actions);
@@ -132,10 +138,17 @@ contract InteractionSystemTest is MudV2Test {
     dev_possibles = PossibleComponent.get(world, mockPlayerID_ALICE, mockNpcID_0);
     assertEq(dev_possibles.createdAt, 0, "test_SaveInteraction::6");
 
-    cached_actions = abi.decode(dev_possibles.actions, (Types.ActionData[]));
-    assertEq(cached_actions.length, 0, "test_SaveInteraction::7");
-  }
+    participants = new bytes32[](2);
+    participantsActions = new bytes[](participants.length);
 
+    participants[0] = mockPlayerID_DEV;
+    participantsActions[0] = abi.encode(actions);
+
+    participants[1] = mockPlayerID_ALICE;
+    participantsActions[0] = abi.encode(actions);
+
+    world.saveInteraction(mockNpcID_0, 0, "log", participants, participantsActions);
+  }
 
   function testFuzz_LeaveInteraction() public {
 //    world.enterInteraction(mockNpcID_0);

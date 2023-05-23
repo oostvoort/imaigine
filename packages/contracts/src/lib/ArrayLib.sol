@@ -23,7 +23,7 @@ library ArrayLib {
   function shiftIndexToLast(bytes32[] memory array, uint256 index) internal pure returns (bytes32[] memory){
     require(array.length > 0, "array is empty");
     bytes32 element = array[index];
-    for(uint256 i=index; i<array.length; i++) {
+    for(uint256 i=index; i<array.length - 1; i++) {
       array[i] = array[i+1];
     }
     array[array.length - 1] = element;
