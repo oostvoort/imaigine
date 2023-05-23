@@ -140,14 +140,11 @@ export function createSystemCalls(
 
   const createPlayer = async (props: GeneratePlayerCharacterProps, startingLocation: Entity) => {
     console.log('createPlayer', props)
-    // const res = await api('/generatePlayerCharacter', props)
+    const res = await api('/generatePlayerCharacter', props)
     await worldSend('createPlayer', [
-      // res.name,
-      're',
-      // res.summary,
-      'res',
-      // res.imageHash,
-      'res',
+      res.name,
+      res.summary,
+      res.imageHash,
       hexZeroPad(startingLocation.toString(), 32),
     ])
     console.log('createPlayer done!')
