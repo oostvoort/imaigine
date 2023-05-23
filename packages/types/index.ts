@@ -1,4 +1,5 @@
 export interface GenerateStoryProps {
+  mock?: boolean
   theme: string,
   races: Array<string>,
   currency: string,
@@ -10,10 +11,12 @@ export interface GenerateStoryResponse extends Summarized {
 }
 
 export interface GenerateLocationProps {
+  mock?: boolean
   story: Summarized,
 }
 
 export interface GenerateItemProps {
+  mock?: boolean
   story: Summarized,
   name: string,
 }
@@ -61,6 +64,7 @@ export interface CharacterStats {
 
 
 export interface GeneratePlayerCharacterProps {
+  mock?: boolean
   characterStats: CharacterStats,
   characterStory: CharacterStory,
   location: Summarized,
@@ -74,6 +78,7 @@ export interface Summarized {
 }
 
 export interface GenerateNonPlayerCharacterProps {
+  mock?: boolean
   characterStats: CharacterStats,
   location: Summarized,
   story: Summarized,
@@ -97,6 +102,7 @@ export interface GeneratePathResponse extends JsonResponse {
 
 
 export interface GeneratePathProps {
+  mock?: boolean
   story: GenerateStoryResponse
   toLocation: Summarized,
   fromLocation: Summarized,
@@ -104,10 +110,11 @@ export interface GeneratePathProps {
 
 export interface Entity extends Summarized {
   isAlive: boolean
-  owner: string
+  owner?: string
 }
 
 export interface GenerateInteractionProps {
+  mock?: boolean
   storySummary: string,
   location: Summarized,
   activeEntity: Entity,
@@ -135,6 +142,7 @@ export interface GenerateInteractionResponse extends Summarized {
 }
 
 export interface GenerateTravelProps {
+  mock?: boolean
   storySummary: string,
   pathSummary: string,
   playerSummary: string

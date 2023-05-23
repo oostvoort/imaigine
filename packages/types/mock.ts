@@ -10,7 +10,7 @@ import {
   GenerateStoryProps,
   GenerateStoryResponse,
   GenerateTravelProps,
-} from '../../types'
+} from './index'
 
 export const story: GenerateStoryResponse = {
   name: 'Smokey Gold',
@@ -44,6 +44,7 @@ export const npc: GeneratePlayerCharacterResponse = {
   visualSummary: 'petite, slim, athletic female elf, medium wavy yellow hair, almond shaped red eyes',
   isAlive: true,
   imageHash: 'QmRtg59QrTDJ3eH8iSuPXwMoKfkE86qxrY6SbNVEzsZzbo',
+  owner: '',
 }
 
 export const item_warhammer: GenerateItemResponse = {
