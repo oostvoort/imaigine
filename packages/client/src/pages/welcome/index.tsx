@@ -1,16 +1,13 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import imaigineIcon from '../../assets/img_imaigine_logo.svg'
 import { Button } from '../../components/base/Button'
-import { Dialog, DialogContent, DialogTrigger } from '../../components/base/Dialog'
+import { Dialog, DialogContent } from '../../components/base/Dialog'
 import { Input } from '../../components/base/Input'
 import { useSetAtom } from 'jotai'
 import { activePage_atom } from '../../atoms/globalAtoms'
 import { clsx } from 'clsx'
 import useLocalStorageState from '../../hooks/useLocalStorageState'
-import useGame from '../../hooks/useGame'
 import { Simulate } from 'react-dom/test-utils'
-import play = Simulate.play
-import { useMUD } from '../../MUDContext'
 
 export default function Welcome() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
@@ -27,7 +24,7 @@ export default function Welcome() {
         <img src={imaigineIcon} alt={String(imaigineIcon)} className="aspect-auto w-[300px] mx-auto" />
         <p className="font-rancho text-2xl tracking-wider text-center">Imagination Engine</p>
         <Button size="xl" variant="accent" onClick={() => setActivePage('create')}
-                className="rounded-full px-14 mt-8 uppercase">Create New</Button>
+                className="rounded-full px-14 mt-8 uppercase">Create New Character</Button>
         <Dialog open={isOpen} onOpenChange={(value) => setIsOpen(value)}>
           <Button size="xl" variant="outline" onClick={() => setIsOpen(true)} className="rounded-full px-14 mt-2 uppercase">Load Existing</Button>
           <DialogContent>
