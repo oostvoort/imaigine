@@ -31,9 +31,9 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
   const prompt = promptTemplates[mode].prompt.replace('%', rawPrompt)
 
   if (process.env.LOG_PROMPTS == 'true') console.log(`Leonardo Prompt: `, prompt)
-  
-  const params = promptTemplates[mode]
 
+  const params = promptTemplates[mode]
+  console.debug('prompting Leonardo')
   const response = await fetch('https://cloud.leonardo.ai/api/rest/v1/generations', {
     method: 'POST',
     headers: {
@@ -49,6 +49,7 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
   const json = await response.json()
   const generationId = json.sdGenerationJob.generationId
 
+  console.debug('waiting Leonardo')
 
   let images = []
   let result
@@ -74,6 +75,7 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
     method: 'GET',
   })
 
+  console.debug('pinning')
 
   const pinResponse = await pinata.pinFileToIPFS(
     Readable.fromWeb(<ReadableStream>readableStream.body),
@@ -85,6 +87,7 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
         cidVersion: 0,
       },
     })
+  console.debug('returning hash')
 
   return pinResponse.IpfsHash
 
