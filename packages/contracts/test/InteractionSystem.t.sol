@@ -92,17 +92,17 @@ contract InteractionSystemTest is MudV2Test {
     actions[0] = Types.ActionData(
       "action",
       "DEV_Option_0",
-      Types.ActionEffect(10)
+      10
     );
     actions[1] = Types.ActionData(
       "action",
       "DEV_Option_1",
-      Types.ActionEffect(10)
+      10
     );
     actions[2] = Types.ActionData(
       "action",
       "DEV_Option_2",
-      Types.ActionEffect(10)
+      10
     );
 
     return actions;
@@ -145,7 +145,7 @@ contract InteractionSystemTest is MudV2Test {
     participantsActions[0] = abi.encode(actions);
 
     participants[1] = mockPlayerID_ALICE;
-    participantsActions[0] = abi.encode(actions);
+    participantsActions[1] = abi.encode(actions);
 
     world.saveInteraction(mockNpcID_0, 0, "log", participants, participantsActions);
   }

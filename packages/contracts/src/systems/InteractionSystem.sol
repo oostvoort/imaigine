@@ -100,7 +100,7 @@ contract InteractionSystem is System {
 
       // calculate changes to attr
       int256 currKarma = AttributeIntComponent.get(cached_participants[0], attrID);
-      int256 nextKarma = currKarma + action[actionIndex].effects.karmaChange;
+      int256 nextKarma = currKarma + action[actionIndex].karmaChange;
 
       // update attr value
       AttributeIntComponent.set(cached_participants[0], attrID, nextKarma);
