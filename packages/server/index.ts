@@ -31,6 +31,7 @@ const port = 3000
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
 app.use(
   cors({
     origin: '*',
@@ -44,9 +45,7 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('OK 👌')
-})
+app.use('/', express.static('public'))
 
 app.post('/generateStory', async (req: Request, res: Response, next) => {
   const props: GenerateStoryProps = req.body

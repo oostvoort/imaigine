@@ -11,7 +11,8 @@
     "initialize": "pnpm recursive run initialize",
     "mud:up": "pnpm recursive exec mud set-version -v canary && pnpm install",
     "prepare": "(forge --version || pnpm foundry:up)",
-    "test": "pnpm recursive run test"
+    "test": "pnpm recursive run test",
+    "deploy": "cd packages/client && pnpm run build && cp -R dist/* ../server/public && cd ../../ && rsync -avr * imaigine:/root/imaigine/server/"
   },
   "devDependencies": {
     "@latticexyz/cli": "2.0.0-alpha.1.149+024f6037",

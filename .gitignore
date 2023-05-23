@@ -147,3 +147,5 @@ dist
 .pnp.*
 
 .idea
+
+packages/server/public
