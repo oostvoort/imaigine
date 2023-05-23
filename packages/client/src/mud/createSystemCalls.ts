@@ -177,7 +177,7 @@ export function createSystemCalls(
     console.log('saveInteraction', { props, interactionEntityId: entityID, participants })
     const res: GenerateInteractionResponse = await api('/generateInteraction', props)
     const participantsActions = encodeActionDataArray(res.possible.map(p => [ p.mode, p.content, p.karmaEffect ] as ActionData))
-    await worldSend('saveInteraction', [
+    const tx = await worldSend('saveInteraction', [
       hexZeroPad(entityID, 32),
       actionIndex,
       res.logHash,
@@ -189,20 +189,23 @@ export function createSystemCalls(
         participantsActions, // player1
       ]
     ])
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
     console.log('saveInteraction done!')
 
   }
 
   const leaveInteraction = async (entityID: string, playerID: string) => {
     console.log('leaveInteraction', hexZeroPad(entityID, 32))
-    await worldSend('leaveInteraction', [ hexZeroPad(entityID, 32), hexZeroPad(playerID, 32) ])
+    const tx = await worldSend('leaveInteraction', [ hexZeroPad(entityID, 32), hexZeroPad(playerID, 32) ])
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
     console.log('leaveInteraction done!')
   }
 
 
   const playerTravelPath = async (pathID: string) => {
     console.log('playerTravelPath', pathID)
-    await worldSend('playerTravelPath', [ hexZeroPad(pathID, 32) ])
+    const tx = await worldSend('playerTravelPath', [ hexZeroPad(pathID, 32) ])
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
     console.log('playerTravelPath done')
   }
 
