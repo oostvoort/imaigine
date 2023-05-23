@@ -148,6 +148,11 @@ function DEV() {
     }, currentInteraction.entity.entity ,[playerEntity, ...currentInteraction.otherParticipants.map(participant => hexZeroPad(participant.entity, 32))])
   }
 
+  async function onClickLeaveInteractionTest() {
+    if (!playerEntity) return
+    await leaveInteraction(currentInteraction.entity.entity, playerEntity)
+  }
+
   return (
     <div className={'grid grid-cols-4 gap-4'}>
       <Card title={'DevTools'}>
