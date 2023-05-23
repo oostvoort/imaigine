@@ -223,7 +223,7 @@ function DEV() {
                   Interact
                 </Button>
                 <Button size={'xl'}
-                        onClick={() => window.open(IPFS_URL_PREFIX + +character.image.value, '_blank')}>👀</Button>
+                        onClick={() => window.open(IPFS_URL_PREFIX + character.image.value, '_blank')}>👀</Button>
               </div>
             </div>
           ))}
