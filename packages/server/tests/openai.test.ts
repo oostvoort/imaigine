@@ -16,7 +16,7 @@ import {
   location2,
   physicalFeatures,
   story,
-} from './mock'
+} from '../../types/mock'
 import { generateTravel } from '../lib/openai/generate/generateTravel'
 import { generateItem } from '../lib/openai/generate/generateItem'
 

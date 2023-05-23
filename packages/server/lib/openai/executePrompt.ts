@@ -15,6 +15,7 @@ export async function executePrompt(prompt: string): Promise<string> {
   console.log(response.data.usage)
   let responseText = response.data.choices[0].text
   responseText = cleanAiJsonAnswer(responseText)
+  console.log(responseText)
   return responseText.replace(/^\s+|\n/g, '').trimStart()
 }
 
