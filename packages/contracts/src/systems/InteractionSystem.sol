@@ -94,7 +94,7 @@ contract InteractionSystem is System {
     // max value is a representation of initial interaction and should have no kind of any effect
     if (actionIndex < type(uint256).max) {
       bytes memory raw_actions = PossibleComponent.getActions(cached_participants[0], entityID);
-      if (raw_actions.length == 0) {
+      if (raw_actions.length > 0) {
         Types.ActionData[] memory action = abi.decode(raw_actions, (Types.ActionData[]));
 
         bytes32 attrID = bytes32(abi.encode("karma"));
