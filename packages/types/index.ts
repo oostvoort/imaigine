@@ -10,10 +10,6 @@ export interface GenerateStoryResponse extends Summarized {
   visualSummary?: string
 }
 
-export interface GenerateLocationProps {
-  mock?: boolean
-  story: Summarized,
-}
 
 export interface GenerateItemProps {
   mock?: boolean
@@ -27,6 +23,16 @@ export interface GenerateItemResponse extends Summarized {
   visualSummary: string
   isAlive: boolean
   owner: string
+}
+
+export interface Logged {
+  logHash: string
+}
+
+
+export interface GenerateLocationProps {
+  mock?: boolean
+  story: Summarized,
 }
 
 export interface GenerateLocationResponse extends Summarized {
@@ -87,7 +93,27 @@ export interface GenerateNonPlayerCharacterProps {
 export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
   initialMessage: string,
   visualSummary: string,
-  imageHash: string
+  imageHash: string,
+}
+
+export interface PossibleEffect {
+  karmaChange: number,
+  healthChange: number,
+  currencyChange: number,
+  inventoryChange: string,
+}
+
+export interface Possible {
+  mode: 'dialog' | 'action',
+  content: string,
+  effect: PossibleEffect
+}
+
+export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
+  initialMessage: string,
+  visualSummary: string,
+  imageHash: string,
+  possible: Possible[]
 }
 
 export interface JsonResponse {
@@ -111,10 +137,11 @@ export interface GeneratePathProps {
 export interface Entity extends Summarized {
   isAlive: boolean
   owner?: string
+  karma?: number
 }
 
 export interface GenerateInteractionProps {
-  mock?: boolean
+  mode: 'location' | 'interactable'
   storySummary: string,
   location: Summarized,
   activeEntity: Entity,

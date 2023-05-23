@@ -328,8 +328,39 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    PossibleComponent: (() => {
+      const tableId = new TableId("", "PossibleComponen");
+      return defineComponent(
+        world,
+        {
+          createdAt: RecsType.BigInt,
+          actions: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     AttributeUintComponent: (() => {
       const tableId = new TableId("", "AttributeUintCom");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AttributeIntComponent: (() => {
+      const tableId = new TableId("", "AttributeIntComp");
       return defineComponent(
         world,
         {

@@ -18,14 +18,16 @@ export const story: GenerateStoryResponse = {
   visualSummary: 'dark fantasy, goblins, elves, hazy smoky planet, secrets, danger, gold-based currency',
 
 }
-
 export const location1 = {
   name: 'Rockweed Meadows',
   summary: 'Rockweed Meadows is a sprawling, windswept prairie located in Smokus, home to many of its goblins and elves. Despite it being an undeniably hazardous place, this otherwise uncivilized corner of the world is teeming with life. Its vast open world is the very center of its unique economy based on the use of gold and contains a considerable population. Unfortunately, due to its poverty level, its inhabitants are often left living in difficult circumstances. Despite the dangers present, brave adventurers can find rewards deep within the meadow, such as hidden secrets. Rockweed Meadows is a land of wonder and danger, testing those who dare to venture forth.  ',
+  logHash: '',
 }
+
 export const location2 = {
   name: 'Golden Reach',
   summary: 'Golden Reach is a mountain settlement set amongst the smoky haze of Daerkoolf. Despite the ever-present struggles between goblins and elves, the two civilizations are bound together by the precious gold that flows through the mountain passes. An important trade hub for the planet, Golden Reach has been part of the economy since the earliest days of Daerkoolf, helping to bring wealth and stability to the region. The settlement has grown over the years, becoming a bustling metropolis with a middle class population and a very safe atmosphere. Both goblins and elves come to trade goods and services, unlocking the secrets of the hidden planet. Despite the unease between the two civilizations, Golden Reach remains an enduring symbol of stability in the darkened skies of Daerkoolf.',
+  logHash: '',
 }
 
 export const player: GeneratePlayerCharacterResponse = {

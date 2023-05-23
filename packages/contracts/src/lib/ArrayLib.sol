@@ -38,6 +38,14 @@ library ArrayLib {
     }
   }
 
+  function findIndex(string[] memory array, string memory data) internal pure returns (int256 index) {
+    // not found
+    index = -1;
+    for(uint256 i=0; i<array.length; i++) {
+      if (keccak256(abi.encode(array[i])) == keccak256(abi.encode(data))) index = int256(i);
+    }
+  }
+
   function push(bytes32[] memory array, bytes32 data) internal pure returns (bytes32[] memory){
     bytes32[] memory new_array = new bytes32[](array.length + 1);
     for(uint256 i=0; i<array.length; i++) {

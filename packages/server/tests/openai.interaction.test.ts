@@ -35,6 +35,7 @@ describe('Test OpenAI', function () {
       otherEntities: [ item_warhammer ],
       logHash: '',
       action: '',
+      mode: 'interactable',
     }
 
     const interaction = await generateInteraction(
@@ -57,6 +58,7 @@ describe('Test OpenAI', function () {
       otherEntities: [ item_warhammer ],
       logHash: '',
       action: '',
+      mode: 'interactable',
     }
 
     let logs: string[] = await loadJson(props.logHash, [])
@@ -89,6 +91,30 @@ describe('Test OpenAI', function () {
       otherEntities: [ npc ],
       logHash: '',
       action: '',
+      mode: 'interactable',
+    }
+
+    const interaction = await generateInteraction(
+      props,
+    )
+
+    console.log('interaction: ', JSON.stringify(interaction, null, '\t'))
+    await remove(props.logHash)
+    await remove(interaction.logHash)
+
+
+  })
+
+
+  it('should generate initial actions between player and location', async function () {
+    const props: GenerateInteractionProps = {
+      storySummary: story.summary,
+      location: location1,
+      activeEntity: player,
+      otherEntities: [],
+      logHash: '',
+      action: '',
+      mode: 'location',
     }
 
     const interaction = await generateInteraction(
@@ -103,7 +129,15 @@ describe('Test OpenAI', function () {
   })
 
   it('should generate a complex interaction between player and npc', async function () {
-    const props = generateInteractionProps
+    const props: GenerateInteractionProps = {
+      activeEntity: player,
+      otherEntities: [ npc ],
+      location: location1,
+      storySummary: story.summary,
+      logHash: '',
+      action: 'buy a hammer',
+      mode: 'interactable',
+    }
     let logs: string[] = await loadJson(props.logHash, [])
 
     logs = logs.concat([ `${player.name} begins dancing uncontrollably`,

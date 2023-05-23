@@ -1,10 +1,11 @@
 import { useMUD } from '../MUDContext'
 import { useEntityQuery } from '@latticexyz/react'
-import { getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
-import { defaultAbiCoder, hexDataSlice, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
+import { Entity, getComponentValue, getComponentValueStrict, Has, Not } from '@latticexyz/recs'
+import { defaultAbiCoder, hexDataSlice, hexlify, hexStripZeros, hexValue, Interface } from 'ethers/lib/utils'
 import { IWorld__factory } from 'contracts/types/ethers-contracts'
 import { ethers } from 'ethers'
-import { useMutation } from '@tanstack/react-query'
+import { formatHex } from '@latticexyz/utils'
+import * as path from 'path'
 
 const worldAbi = IWorld__factory.abi
 const worldInterface = new Interface(worldAbi)
@@ -23,15 +24,12 @@ export default function useGame() {
       SceneComponent,
       ImageComponent,
       InteractComponent,
-      AliveComponent
+      AliveComponent,
+      ActionsComponent,
+      LogComponent,
     },
     network: { playerEntity, singletonEntity },
-    systemCalls: {
-      createPlayer,
-      createStory,
-      createStartingLocation,
-      createCharacter,
-    },
+    systemCalls,
   } = useMUD()
 
   const story = useEntityQuery([ Has(StoryComponent), Has(SummaryComponent) ]).map((entity) => {
@@ -51,13 +49,15 @@ export default function useGame() {
       const summary = getComponentValueStrict(SummaryComponent, entity)
       const image = getComponentValueStrict(ImageComponent, entity)
       const alive = getComponentValue(AliveComponent, entity)
+      const location = getComponentValue(LocationComponent, entity)
 
       return {
         entity,
         name,
         summary,
         image,
-        alive: alive?.value ?? false
+        location,
+        alive: alive?.value ?? false,
       }
     })[0]
 
@@ -68,44 +68,38 @@ export default function useGame() {
       if (!currentLocation) return false
       return (hexValue(currentLocation.value) == hexValue(entity))
     })
+    .map(mapLocations)[0]
+
+  const startingLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map(mapLocations)[0]
+
+  const locations = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ])
+    .map(mapLocations)
+
+  const paths = useEntityQuery([ Has(PathComponent), Has(PathLocationComponent), Has(NameComponent), Has(SummaryComponent) ])
+    .filter((entity) => {
+      if (!playerEntity) return false
+      const pathLocation = getComponentValueStrict(PathLocationComponent, entity)
+      const currentLocation = getComponentValue(LocationComponent, playerEntity)
+      console.log({ currentLocation, pathLocation })
+      if (!currentLocation) return false
+      return pathLocation.location0 == currentLocation.value || pathLocation.location1 == currentLocation.value
+    })
     .map((entity) => {
       const name = getComponentValueStrict(NameComponent, entity)
       const summary = getComponentValueStrict(SummaryComponent, entity)
-      const image = getComponentValueStrict(ImageComponent, entity)
+      const pathLocation = getComponentValue(PathLocationComponent, entity)
+      const pathLocations = pathLocation && [
+        locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location0)),
+        locations.find(location => hexValue(location.entity) == hexValue(pathLocation.location1))
+      ]
 
       return {
         entity,
         name,
         summary,
-        image,
+        pathLocations,
       }
-    })[0]
-
-  const startingLocation = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
-    return {
-      entity,
-      name,
-      summary,
-      image,
-    }
-  })[0]
-
-
-  const locations = useEntityQuery([ Has(SceneComponent), Has(NameComponent), Has(SummaryComponent), Has(ImageComponent) ]).map((entity) => {
-    const name = getComponentValueStrict(NameComponent, entity)
-    const summary = getComponentValueStrict(SummaryComponent, entity)
-    const image = getComponentValueStrict(ImageComponent, entity)
-    return {
-      entity,
-      name,
-      summary,
-      image,
-    }
-  })
-
+    })
 
   const characters = useEntityQuery([ Has(CharacterComponent), Not(PlayerComponent), Has(LocationComponent) ])
     .filter((entity) => {
@@ -115,39 +109,23 @@ export default function useGame() {
       const name = getComponentValueStrict(NameComponent, entity)
       const summary = getComponentValueStrict(SummaryComponent, entity)
       const image = getComponentValueStrict(ImageComponent, entity)
+      const alive = getComponentValue(AliveComponent, entity)
       return {
         entity,
         name,
         summary,
         image,
+        alive: alive?.value ?? false,
       }
     })
 
-
+  // Result is very similar to characters query, considering replacing characters
   // Interactions happening in the player's location
   const interactions = useEntityQuery([ Has(InteractComponent) ])
     .filter((entity) => {
       return inPlayersLocation(entity)
     })
-    .map((entity) => {
-      const interaction = getComponentValueStrict(InteractComponent, entity)
-      const name = getComponentValueStrict(NameComponent, entity)
-      const summary = getComponentValueStrict(SummaryComponent, entity)
-      const image = getComponentValueStrict(ImageComponent, entity)
-      const alive = getComponentValue(AliveComponent, entity)
-      return {
-        entity: {
-          entity,
-          name: name.value,
-          summary: summary.value,
-          image: image.value,
-          alive: alive?.value ?? false
-        },
-        initialActions: interaction.initialActions,
-        initialMsg: interaction.initialMsg,
-        participants: defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants),
-      }
-    })
+    .map(mapInteraction)
 
   // Current interaction the player is involved in
   const currentInteraction = useEntityQuery([ Has(InteractComponent) ])
@@ -158,47 +136,11 @@ export default function useGame() {
       const currentInteraction = result
         .map(participant => hexDataSlice(participant[0], 12))
         .find(participant => {
-          console.log({
-            participant,
-            playerEntity
-
-          })
           return participant == playerEntity
         })
       return currentInteraction != null
     })
-    .map((entity) => {
-      const interaction = getComponentValueStrict(InteractComponent, entity)
-      const name = getComponentValueStrict(NameComponent, entity)
-      const summary = getComponentValueStrict(SummaryComponent, entity)
-      const image = getComponentValueStrict(ImageComponent, entity)
-      const alive = getComponentValue(AliveComponent, entity)
-      const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
-        .filter(entity => hexDataSlice(entity[0], 12) != playerEntity)
-        .map(entity => {
-          const name = getComponentValueStrict(NameComponent, entity)
-          const summary = getComponentValueStrict(SummaryComponent, entity)
-          const alive = getComponentValue(AliveComponent, entity)
-          return {
-            entity,
-            name: name.value,
-            summary: summary.value,
-            alive: alive?.value ?? false,
-          }
-        })
-      return {
-        entity: {
-          entity,
-          name: name.value,
-          summary: summary.value,
-          image: image.value,
-          alive: alive?.value ?? false
-        },
-        initialActions: interaction.initialActions,
-        initialMsg: interaction.initialMsg,
-        otherParticipants: otherParticipants,
-      }
-    })[0]
+    .map(mapInteraction)[0]
 
 
   const otherPlayers = useEntityQuery([ Has(PlayerComponent) ])
@@ -219,23 +161,62 @@ export default function useGame() {
       }
     })
 
-  const paths = useEntityQuery([ Has(PathComponent), Has(PathLocationComponent), Has(NameComponent), Has(SummaryComponent) ])
-    .filter((entity) => {
-      if (!playerEntity) return false
-      const pathLocation = getComponentValueStrict(PathLocationComponent, entity)
-      const currentLocation = getComponentValue(LocationComponent, playerEntity)
-      if (!currentLocation) return false
-      if (pathLocation.location0 != currentLocation.value) return false
-    })
-    .map((entity) => {
-      const name = getComponentValueStrict(NameComponent, entity)
-      const summary = getComponentValueStrict(SummaryComponent, entity)
-      return {
+
+  // Helper Functions
+  function mapLocations(entity: Entity) {
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
+    return {
+      entity,
+      name,
+      summary,
+      image,
+    }
+  }
+
+
+  function mapInteraction(entity: Entity) {
+    const interaction = getComponentValueStrict(InteractComponent, entity)
+    const name = getComponentValueStrict(NameComponent, entity)
+    const summary = getComponentValueStrict(SummaryComponent, entity)
+    const image = getComponentValueStrict(ImageComponent, entity)
+    const alive = getComponentValue(AliveComponent, entity)
+    const actions = getComponentValue(ActionsComponent, entity)
+    const logHash = getComponentValue(LogComponent, entity)
+    const otherParticipants = ethers.utils.defaultAbiCoder.decode([ 'bytes32[]' ], interaction.participants)
+      .filter(entity => {
+        if (!entity || entity.length == 0) return false
+        return hexDataSlice(entity[0], 12) != playerEntity
+      })
+      .map(entity => {
+        const name = getComponentValueStrict(NameComponent, entity)
+        const summary = getComponentValueStrict(SummaryComponent, entity)
+        const alive = getComponentValue(AliveComponent, entity)
+        return {
+          entity,
+          name: name.value,
+          summary: summary.value,
+          alive: alive?.value ?? false,
+        }
+      })
+    return {
+      // The entity you are interacting with
+      entity: {
         entity,
-        name,
-        summary,
-      }
-    })
+        name: name.value,
+        summary: summary.value,
+        image: image.value,
+        alive: alive?.value ?? false,
+      },
+      logHash: logHash,
+      initialActions: interaction.initialActions,
+      initialMsg: interaction.initialMsg,
+      otherParticipants,
+      actions: actions ?? [],
+    }
+  }
+
 
   function inPlayersLocation(entity: any) {
     if (!playerEntity) return false

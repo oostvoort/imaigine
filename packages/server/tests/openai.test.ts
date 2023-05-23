@@ -1,5 +1,9 @@
 /* globals describe, expect, it */
-import { GenerateNonPlayerCharacterProps, GeneratePlayerCharacterProps } from '../../types'
+import {
+  GenerateNonPlayerCharacterProps,
+  GeneratePlayerCharacterProps,
+  GeneratePlayerCharacterResponse,
+} from '../../types'
 
 import { generateNonPlayerCharacter, generatePlayerCharacter } from '../lib/openai/generate/generateCharacter'
 import { generateStory } from '../lib/openai/generate/generateStory'
@@ -15,6 +19,7 @@ import {
   location1,
   location2,
   physicalFeatures,
+  player,
   story,
 } from '../../types/mock'
 import { generateTravel } from '../lib/openai/generate/generateTravel'
@@ -33,10 +38,11 @@ describe('Test OpenAI', function () {
 
   it('should generate a Location', async function () {
 
-    let location1 = await generateLocation({ story })
-    console.log('location: ', location1)
+    let location1 = await generateLocation({ story, player })
+    console.log('location: ', JSON.stringify(location1, null, '\t'))
 
   })
+
 
   it('should generate a PlayerCharacter', async function () {
 
@@ -48,7 +54,7 @@ describe('Test OpenAI', function () {
       characterStats,
       physicalFeatures,
     }
-    let player = await generatePlayerCharacter(input)
+    let player: GeneratePlayerCharacterResponse = await generatePlayerCharacter(input)
     console.log('player: ', player)
 
   })

@@ -36,8 +36,6 @@ contract TravelSystem is System {
 
     LocationComponent.set(playerID, toLocationID);
 
-    emit UpdatedLocation(playerID, fromLocationID, toLocationID);
-
     return toLocationID;
   }
 }

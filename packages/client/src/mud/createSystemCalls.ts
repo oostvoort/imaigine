@@ -163,21 +163,20 @@ export function createSystemCalls(
     return res
   }
 
-  const enterInteraction = async (entityID: string) => {
+  const enterInteraction = async (entityID: string, props: GenerateInteractionProps, participants: Array<string>) => {
     console.log('enterInteraction', hexZeroPad(entityID, 32))
-    await worldSend('enterInteraction', [ hexZeroPad(entityID, 32) ])
+    const tx =  await worldSend('enterInteraction', [ hexZeroPad(entityID, 32) ])
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+    await saveInteraction(props, entityID, participants)
     console.log('enterInteraction done!')
   }
 
-  const saveInteraction = async (props: GenerateInteractionProps, interactionEntityId: string, participants: Array<string>) => {
-    console.log('saveInteraction', { props, interactionEntityId, participants })
-
+  const saveInteraction = async (props: GenerateInteractionProps, entityID: string, participants: Array<string>) => {
+    console.log('saveInteraction', { props, interactionEntityId: entityID, participants })
     const res: GenerateInteractionResponse = await api('/generateInteraction', props)
-
-    let participantsActions = [ (res.possible.map(p => p.content)) ]
-
+    const participantsActions = [ (res.possible.map(p => p.content)) ]
     await worldSend('saveInteraction', [
-      hexZeroPad(interactionEntityId, 32),
+      hexZeroPad(entityID, 32),
       hexZeroPad('0x0', 32),
       res.logHash,
       participants.map(p => defaultAbiCoder.encode([ 'bytes32' ], [ hexZeroPad(p, 32) ])),
@@ -194,9 +193,10 @@ export function createSystemCalls(
   }
 
 
-  const playerTravelPath = async (optionLocationID: string) => {
-    console.info({ optionLocationID })
-    await worldSend('playerTravelPath', [ optionLocationID ])
+  const playerTravelPath = async (pathID: string) => {
+    console.log('playerTravelPath', pathID)
+    await worldSend('playerTravelPath', [ hexZeroPad(pathID, 32) ])
+    console.log('playerTravelPath done')
   }
 
   return {
