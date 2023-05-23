@@ -97,7 +97,7 @@ contract InteractionSystemTest is MudV2Test {
     actions[1] = Types.ActionData(
       "action",
       "DEV_Option_1",
-      10
+      -10
     );
     actions[2] = Types.ActionData(
       "action",
@@ -142,6 +142,7 @@ contract InteractionSystemTest is MudV2Test {
 
     participants = new bytes32[](2);
     participantsActions = new bytes[](participants.length);
+    actionsLengths = new uint256[](2);
 
     participants[0] = mockPlayerID_DEV;
     participantsActions[0] = abi.encode(actions);
@@ -149,7 +150,18 @@ contract InteractionSystemTest is MudV2Test {
     participants[1] = mockPlayerID_ALICE;
     participantsActions[1] = abi.encode(actions);
 
+    actionsLengths[0] = 3;
+    actionsLengths[1] = 3;
+
     world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
+    world.saveInteraction(mockNpcID_0, 0, "log", participants, actionsLengths, participantsActions);
+
+    int256 points = AttributeIntComponent.get(mockPlayerID_DEV, bytes32(abi.encode("karma")));
+
+    console.logInt(points);
   }
 
   function testFuzz_LeaveInteraction() public {

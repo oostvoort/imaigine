@@ -79,6 +79,9 @@ contract InteractionSystem is System {
   public
   returns (bytes32)
   {
+    require(participants.length == participantsActionsLength.length, "invariance with participants and participantsActionsLength length");
+    require(participants.length == participantsActions.length, "invariance with participants and participantsActions length");
+
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
     InteractComponentData memory interactData = InteractComponent.get(entityID);
@@ -91,6 +94,8 @@ contract InteractionSystem is System {
 
     // TODO: verify the deadline of participants
     // require(participants[0] == playerID, "not player's turn yet or not participating yet");
+
+    require(cached_participants.length > 0, "cached_participants length is 0");
 
     // max value is a representation of initial interaction and should have no kind of any effect
     if (actionIndex < type(uint256).max) {
@@ -109,6 +114,8 @@ contract InteractionSystem is System {
       }
     }
 
+    require(participants.length == cached_participants.length, "invariance with participants and cached_participants length");
+
     uint256 timestamp = block.timestamp;
     for (uint256 i=0; i< participants.length; i++) {
       require(participants.findIndex(cached_participants[i]) >= 0, "trying to update player not participating");
@@ -119,10 +126,10 @@ contract InteractionSystem is System {
     }
 
     // put the current participant to the last item of the list
-    if (cached_participants.length > 1) {
-      cached_participants = cached_participants.shiftIndexToLast(0);
-      InteractComponent.setParticipants(entityID, abi.encode(cached_participants));
-    }
+//    if (cached_participants.length > 1) {
+//      cached_participants = cached_participants.shiftIndexToLast(0);
+//      InteractComponent.setParticipants(entityID, abi.encode(cached_participants));
+//    }
 
     LogComponent.set(entityID, logHash);
 
