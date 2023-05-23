@@ -1,10 +1,11 @@
 # imaigine
 
-note about pnpm: the mud template provided by the lattice team uses pnpm and it's the only way of using the template, refactoring to use yarn can work but may take some time, don't fix what ain't broke I guess 
+note about pnpm: the mud template provided by the lattice team uses pnpm and it's the only way of using the template,
+refactoring to use yarn can work but may take some time, don't fix what ain't broke I guess
 
 setup
 
-`pnpm recursive install`
+`pnpm recursive initialize`
 
 running
 
@@ -12,14 +13,11 @@ running
 
 or you know, just click on the run button next to the script in the package.json to let webstorm handle it
 
-
-if you get `Error: Command failed with ENOENT: forge cleans` or any similar error when trying to run contract 
-scripts using webstorm the fix for this is copying your terminal $PATH and overriding the webstorm run configuration. 
+if you get `Error: Command failed with ENOENT: forge cleans` or any similar error when trying to run contract
+scripts using webstorm the fix for this is copying your terminal $PATH and overriding the webstorm run configuration.
 best to update the template so you won't have to do it everytime
 
-
 ![img.png](assets/img.png)
-
 
 ![img_1.png](assets/img_1.png)
 
