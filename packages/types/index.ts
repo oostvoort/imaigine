@@ -29,26 +29,15 @@ export interface Logged {
   logHash: string
 }
 
-export interface GenerateLocationActionsProps {
-  story: Summarized,
-  location: Summarized | Logged,
-  player: Summarized
-}
-
-export interface GenerateLocationActionsResponse {
-  possible: Possible[]
-}
 
 export interface GenerateLocationProps {
   mock?: boolean
   story: Summarized,
-  player: Entity
 }
 
 export interface GenerateLocationResponse extends Summarized {
   imageHash: string
   visualSummary: string
-  possible: Possible[]
 }
 
 export interface CharacterStory {
