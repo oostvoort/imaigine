@@ -29,3 +29,9 @@ Override this variable
 
 Should now affect all npm configurations in the project
 ![img_4.png](assets/img_4.png)
+
+# Issues Encountered
+There seems to be a problem with the newest version of anvil. The following is the fix:
+````shell
+foundryup -C f3c20d5
+````
