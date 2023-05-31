@@ -10,6 +10,7 @@ import { useMUD } from './MUDContext'
 import useGame from './hooks/useGame'
 import usePlayerExisting from './hooks/usePlayerExisting'
 import LoadingScreen from './components/shared/LoadingScreen'
+import { ChooseAvatar } from './pages/choose-avatar'
 
 export const App = () => {
   const [activePage, setActivePage] = useAtom(activePage_atom)
@@ -25,10 +26,17 @@ export const App = () => {
   //     if (data) setActivePage('game')
   //   }
   // }, [data])
-
-  console.log({ isLoading })
+  //
+  // console.log({ isLoading })
 
   if (isLoading) return <LoadingScreen message='Loading initial data...' />
+
+  const tempImgLinks: string[] = [
+    'src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg',
+    'src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0.jpg',
+    'src/assets/Leonardo_Select_Adult_Female_Bluish_Asian_Elf_Long_white_wavy_0.jpg'
+  ]
+
 
   return (
     <MainLayout>
@@ -43,6 +51,9 @@ export const App = () => {
       }
       {
         activePage == 'dev' && <DEV />
+      }
+      {
+        activePage == 'choose-avatar' && <ChooseAvatar avatars={tempImgLinks}/>
       }
     </MainLayout>
   );
