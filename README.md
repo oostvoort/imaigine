@@ -6,6 +6,10 @@ refactoring to use yarn can work but may take some time, don't fix what ain't br
 setup
 
 `pnpm recursive initialize`
+````shell
+pnpm i --recursive
+````
+
 
 running
 
