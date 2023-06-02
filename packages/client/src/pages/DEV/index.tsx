@@ -298,3 +298,51 @@ function Card({ title, children }) {
 }
 
 export default DEV
+
+//
+// function DEV() {
+//   return (
+//     <div className={"relative"}>
+//
+//       <div className={"grid grid-cols-12 gap-10 bg-black p-3 sticky"}>
+//         <div className={"absolute bg-red-100 rounded-full top-1 left-1 overflow-hidden"}>
+//           <img src="src/assets/Leonardo_Creative_Adult_Female_Bluish_Asian_Elf_Long_white_wav_0 (1).jpg" alt="test" className={"h-[130px] w-[130px]"}/>
+//         </div>
+//         <div className={"col-span-1"}></div>
+//         <div className={"col-span-1 flex gap-2"}>
+//           <img src="src/assets/history.png" alt="test" className={"h-[60px] w-[80px]"}/>
+//           <p className={"self-center text-lg"}>History</p>
+//         </div>
+//         <div className={"col-span-1 flex gap-2"}>
+//           <img src="src/assets/settings.png" alt="test" className={"h-[60px] w-[80px]"}/>
+//           <p className={"self-center text-lg"}>Settings</p>
+//         </div>
+//       </div>
+//       <div className={"grid grid-cols-2 border border-black m-8 mt-[115px] rounded-xl overflow-hidden h-[85%] "}>
+//         <div className={"col-span-1 aspect-square w-fit"}>
+//           <img src="src/assets/RPG_40_masterpiece_best_quality_ultradetailed_illustration_no_0 (1).jpg" alt="" className={"w-full"}/>
+//         </div>
+//         <div className={"col-span-1 pt-10 pl-8 pr-8 text-white overflow-y-scroll"}>
+//           <p className={"text-3xl"}>
+//             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam eveniet illo laborum maiores neque possimus quasi quisquam. Architecto deserunt eum minus molestias, natus nulla officia, repellat saepe tempore veniam voluptatum.
+//           </p>
+//         </div>
+//       </div>
+//
+//       <div className={"flex gap-96 justify-center w-full sticky-footer"}>
+//         <div>
+//           <button className={"rounded-md p-7 border border-green-500"}>action 1</button>
+//         </div>
+//         <div>
+//           <button className={"rounded-md p-7 border border-green-500"}>action 2</button>
+//         </div>
+//         <div>
+//           <button className={"rounded-md p-7 border border-green-500"}>action 3</button>
+//         </div>
+//       </div>
+//
+//     </div>
+//   )
+// }
+//
+// export default DEV
