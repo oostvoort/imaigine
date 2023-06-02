@@ -2,7 +2,7 @@ import { atom } from 'jotai'
 import { Entity, getComponentValueStrict, Type } from '@latticexyz/recs'
 
 // indicator of what page to render to the client
-export const activePage_atom = atom<'create' | 'game' | 'welcome' | 'loading' | 'dev' | 'choose-avatar'>('choose-avatar')
+export const activePage_atom = atom<'create' | 'game' | 'welcome' | 'loading' | 'dev' | 'choose-avatar'>('dev')
 export const selectedPath_atom = atom<{
   entity: Entity,
   name: ReturnType<typeof getComponentValueStrict<{ value: Type.String }, undefined>>,
