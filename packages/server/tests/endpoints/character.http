@@ -1,0 +1,37 @@
+#### Generate a player character with three different image hashes
+POST {{host}}/generatePlayerCharacter
+Content-Type: application/json
+
+{
+  "story": {
+    "name": "Amadea",
+    "summary": "A beautiful world filled with vibrant and luscious plantation. Different indigenous species live in this amazing planet such as orcs, elves, nymphs, and fairies. Innovation was stuck in the middle ages but magic abounded everywhere."
+  },
+  "location": {
+    "name": "Silverstream",
+    "summary": "A stream so beautiful that the river itself looks silver to the naked eye. Softly, the stream would flow into a massive ocean, but strangely enough the water was hydrating and fresh. Deer would often come and drink water here accompanied by a dryad."
+  },
+  "characterStats": {
+    "strength": "Feeble",
+    "dexterity": "Clumsy",
+    "constitution": "Frail",
+    "intelligence": "Genius",
+    "charisma": "Average",
+    "wisdom": "Insightful"
+  },
+  "physicalFeatures": {
+    "ageGroup": "Elderly",
+    "genderIdentity": "Nonbinary",
+    "race": "nymph",
+    "bodyType": "Slim",
+    "height": "Statuesque",
+    "hairLength": "Long",
+    "hairType": "Straight",
+    "hairColor": "Green",
+    "eyeShape": "Upturned",
+    "eyeColor": "Grey"
+  },
+  "characterStory": {
+    "favColor": "Green"
+  }
+}

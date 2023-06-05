@@ -93,7 +93,11 @@ export interface GenerateNonPlayerCharacterProps {
 export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
   initialMessage: string,
   visualSummary: string,
-  imageHash: string,
+  imageHash: string
+}
+
+export interface GenerateHumanPlayerCharacterResponse extends GeneratePlayerCharacterResponse {
+  choices: string[]
 }
 
 
