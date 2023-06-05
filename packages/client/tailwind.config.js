@@ -87,6 +87,7 @@ export default {
       fontFamily: {
         jost: ['Jost', 'sans-serif'],
         rancho: ['Rancho', 'sans-serif'],
+        amiri: ['Amiri', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
