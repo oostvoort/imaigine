@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import {
+  GenerateHumanPlayerCharacterResponse,
   GenerateInteractionProps,
   GenerateInteractionResponse,
   GenerateItemProps,
@@ -23,6 +24,7 @@ import { generateTravel } from './lib/openai/generate/generateTravel'
 import { generateInteraction } from './lib/openai/generate/generateInteraction'
 import { generateLocationImage } from './lib/leonardo/executePrompt'
 import { generateItem } from './lib/openai/generate/generateItem'
+import { PLAYER_IMAGE_CHOICES } from './constants'
 
 dotenv.config()
 const app = express()
@@ -79,8 +81,12 @@ app.post('/generateItem', async (req: Request, res: Response) => {
 app.post('/generatePlayerCharacter', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerCharacterProps = req.body
   try {
-    const player = await generatePlayerCharacter(props)
-    player.imageHash = await generatePlayerImage(player.visualSummary)
+    const player: GenerateHumanPlayerCharacterResponse = { ...await generatePlayerCharacter(props), choices: [] }
+    const generatePlayerImagePromises: Promise<string>[] = []
+    for (let i = 0; i < PLAYER_IMAGE_CHOICES; i ++) {
+      generatePlayerImagePromises.push(generatePlayerImage(player.visualSummary))
+    }
+    player.choices = await Promise.all(generatePlayerImagePromises)
     res.send(player)
   } catch (e) {
     next(e)
