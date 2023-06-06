@@ -94,7 +94,7 @@ export async function extractElements({ summary }: ExtractElementsProps): Promis
   const prompt = `
       From this summary:
       "${summary}",
-      extract the locations, characters and named items.
+      extract the locations (making sure that the number of locations extracted is more than two), characters and named items.
 
       ${PROMPT_OUTPUT_JSON}
 
@@ -106,7 +106,7 @@ export async function extractElements({ summary }: ExtractElementsProps): Promis
         }],
         "items": [{
           "name": "the name of the item",
-          "summary": "make a 2-paragraph-long description detailing the item's history within the world and its features",
+          "summary": "make a description detailing the item's history within the world and its features",
           "visualSummary": "a string of comma separated keywords"
         }],
         "characters": [{
