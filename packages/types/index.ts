@@ -171,3 +171,30 @@ export interface GenerateTravelProps {
 export interface GenerateTravelResponse extends JsonResponse {
   todo?: boolean
 }
+
+export type ExtractElementsProps = Summarized
+
+export interface VisualizedSummary extends Summarized {
+  imageHash: string,
+  visualSummary: string
+}
+
+export interface ExtractElementsResponse {
+  locations: VisualizedSummary[],
+  characters: VisualizedSummary[],
+  items: VisualizedSummary[]
+}
+
+export interface GenerateDescriptiveLocationProps extends GenerateLocationProps {
+  baseSummary?: Summarized
+  imageHash?: string
+
+  /// flag that determines if all elements need to have newly generated images
+  generateElementImages?: boolean
+}
+
+export interface GenerateDescriptiveLocationResponse {
+  mainLocation: VisualizedSummary,
+  elements: ExtractElementsResponse
+}
+
