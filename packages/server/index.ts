@@ -65,16 +65,16 @@ app.post('/generateStory', async (req: Request, res: Response, next) => {
 app.post('/generateDescriptiveLocation', async (req: Request, res: Response, next) => {
   const props: GenerateDescriptiveLocationProps = req.body
   try {
-    const location = await generateDescriptiveLocation(props)
+    const mainLocation = await generateDescriptiveLocation(props)
 
     // if image for this was already generated, use that
     if (props.imageHash) {
-      location.imageHash = props.imageHash
+      mainLocation.imageHash = props.imageHash
     } else {
-      location.imageHash = await generateLocationImage(location.visualSummary)
+      mainLocation.imageHash = await generateLocationImage(mainLocation.visualSummary)
     }
 
-    let extractedElements: ExtractElementsResponse = {
+    let elements: ExtractElementsResponse = {
       locations: [],
       characters: [],
       items: []
@@ -82,25 +82,29 @@ app.post('/generateDescriptiveLocation', async (req: Request, res: Response, nex
 
     // sometimes chatgpt doesn't extract all the locations so, we're making it redo it until it extracts at least 2
     do {
-      extractedElements = await extractElements(location)
-    } while (extractedElements.locations.length < 2)
+      elements = await extractElements(mainLocation)
+    } while (elements.locations.length < 2)
+
+    // switch out the extracted location info of the main location
+    const indexOfMainLocation = elements.locations.findIndex(location => location.name === mainLocation.name)
+    if (indexOfMainLocation > -1) elements.locations[indexOfMainLocation] = mainLocation
 
 
     if (props.generateElementImages) {
-      for (let i = 0; i < extractedElements.locations.length; i++) {
+      for (let i = 0; i < elements.locations.length; i++) {
         // do not generate image for the mainLocation
-        if (extractedElements.locations[i].name === location.name) continue
-        extractedElements.locations[i].imageHash = await generateLocationImage(extractedElements.locations[i].visualSummary)
+        if (elements.locations[i].name === mainLocation.name) continue
+        elements.locations[i].imageHash = await generateLocationImage(elements.locations[i].visualSummary)
       }
-      for (let i = 0; i < extractedElements.items.length; i++) {
-        extractedElements.items[i].imageHash = await generateItemImage(extractedElements.items[i].visualSummary)
+      for (let i = 0; i < elements.items.length; i++) {
+        elements.items[i].imageHash = await generateItemImage(elements.items[i].visualSummary)
       }
-      for (let i = 0; i < extractedElements.characters.length; i++) {
-        extractedElements.characters[i].imageHash = await generatePlayerImage(extractedElements.characters[i].visualSummary)
+      for (let i = 0; i < elements.characters.length; i++) {
+        elements.characters[i].imageHash = await generatePlayerImage(elements.characters[i].visualSummary)
       }
     }
 
-    const response: GenerateDescriptiveLocationResponse = { mainLocation: location, elements: extractedElements}
+    const response: GenerateDescriptiveLocationResponse = { mainLocation, elements}
     res.send(response)
 
   } catch (e) {
