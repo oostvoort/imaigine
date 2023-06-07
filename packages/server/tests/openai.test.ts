@@ -7,7 +7,7 @@ import {
 
 import { generateNonPlayerCharacter, generatePlayerCharacter } from '../lib/openai/generate/generateCharacter'
 import { generateStory } from '../lib/openai/generate/generateStory'
-import { generateLocation } from '../lib/openai/generate/generateLocation'
+import { extractElements, generateDescriptiveLocation, generateLocation } from '../lib/openai/generate/generateLocation'
 import { generatePath } from '../lib/openai/generate/generatePath'
 
 import {
@@ -28,6 +28,7 @@ import { generateItem } from '../lib/openai/generate/generateItem'
 
 // Super basic smokechecks
 describe('Test OpenAI', function () {
+  this.timeout(6000 * 2000);
 
   it('should generate a Story', async function () {
 
@@ -106,4 +107,11 @@ describe('Test OpenAI', function () {
 
   })
 
+  it('should generate descriptive location', async function() {
+    const storyName = "Amadea"
+    const storySummary = "A beautiful world filled with vibrant and luscious plantation. Different indigenous species live in this amazing planet such as orcs, elves, nymphs, and fairies. Innovation was stuck in the middle ages but magic abounded everywhere."
+    const result = await generateDescriptiveLocation({story: { name: storyName, summary: storySummary}})
+    const extracted = await extractElements(result)
+    const expand = await generateDescriptiveLocation({ story: { name: storyName, summary: storySummary }, baseSummary: extracted.locations[1] })
+  })
 })

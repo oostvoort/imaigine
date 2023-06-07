@@ -1,0 +1,29 @@
+#### generate starting location for a player
+POST {{host}}/generateDescriptiveLocation
+Content-Type: application/json
+
+{
+  "story": {
+    "name": "Amadea",
+    "summary": "A beautiful world filled with vibrant and luscious plantation. Different indigenous species live in this amazing planet such as orcs, elves, nymphs, and fairies. Innovation was stuck in the middle ages but magic abounded everywhere."
+  },
+  "generateElementImages": true
+}
+
+#### generate descriptive location based on a summary that was already given
+POST {{host}}/generateDescriptiveLocation
+Content-Type: application/json
+
+{
+  "story": {
+    "name": "Amadea",
+    "summary": "A beautiful world filled with vibrant and luscious plantation. Different indigenous species live in this amazing planet such as orcs, elves, nymphs, and fairies. Innovation was stuck in the middle ages but magic abounded everywhere."
+  },
+  "baseSummary": {
+    "name": "Los Aporca",
+    "summary": "Los Aporca is a nearby lake to Fageira where the beautiful nymph Isis dwells.",
+    "visualSummary": "lake, nymph"
+  },
+  "generateElementImages": true,
+  "imageHash": "QmNpWs2x4zextNmuCqZqSczpoqyCDWr1AkFXkUJMrg8rcJ"
+}

@@ -11,6 +11,7 @@ import useGame from './hooks/useGame'
 import usePlayerExisting from './hooks/usePlayerExisting'
 import LoadingScreen from './components/shared/LoadingScreen'
 import { ChooseAvatar } from './pages/choose-avatar'
+import { Test } from './pages/test'
 
 export const App = () => {
   const [activePage, setActivePage] = useAtom(activePage_atom)
@@ -54,6 +55,9 @@ export const App = () => {
       }
       {
         activePage == 'choose-avatar' && <ChooseAvatar avatars={tempImgLinks}/>
+      }
+      {
+        activePage == 'test' && <Test/>
       }
     </MainLayout>
   );

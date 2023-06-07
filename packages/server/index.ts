@@ -2,6 +2,9 @@ import * as dotenv from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import {
+  ExtractElementsResponse,
+  GenerateDescriptiveLocationProps,
+  GenerateDescriptiveLocationResponse,
   GenerateHumanPlayerCharacterResponse,
   GenerateInteractionProps,
   GenerateInteractionResponse,
@@ -16,7 +19,7 @@ import {
   GenerateTravelResponse,
 } from 'types'
 import { generateStory } from './lib/openai/generate/generateStory'
-import { generateLocation } from './lib/openai/generate/generateLocation'
+import { extractElements, generateDescriptiveLocation, generateLocation } from './lib/openai/generate/generateLocation'
 import { generateNonPlayerCharacter, generatePlayerCharacter } from './lib/openai/generate/generateCharacter'
 import { generateItemImage, generatePlayerImage } from './lib/leonardo'
 import { generatePath } from './lib/openai/generate/generatePath'
@@ -54,6 +57,56 @@ app.post('/generateStory', async (req: Request, res: Response, next) => {
   try {
     const story = await generateStory(props)
     res.send(story)
+  } catch (e) {
+    next(e)
+  }
+})
+
+app.post('/generateDescriptiveLocation', async (req: Request, res: Response, next) => {
+  const props: GenerateDescriptiveLocationProps = req.body
+  try {
+    const mainLocation = await generateDescriptiveLocation(props)
+
+    // if image for this was already generated, use that
+    if (props.imageHash) {
+      mainLocation.imageHash = props.imageHash
+    } else {
+      mainLocation.imageHash = await generateLocationImage(mainLocation.visualSummary)
+    }
+
+    let elements: ExtractElementsResponse = {
+      locations: [],
+      characters: [],
+      items: []
+    }
+
+    // sometimes chatgpt doesn't extract all the locations so, we're making it redo it until it extracts at least 2
+    do {
+      elements = await extractElements(mainLocation)
+    } while (elements.locations.length < 2)
+
+    // switch out the extracted location info of the main location
+    const indexOfMainLocation = elements.locations.findIndex(location => location.name === mainLocation.name)
+    if (indexOfMainLocation > -1) elements.locations[indexOfMainLocation] = mainLocation
+
+
+    if (props.generateElementImages) {
+      for (let i = 0; i < elements.locations.length; i++) {
+        // do not generate image for the mainLocation
+        if (elements.locations[i].name === mainLocation.name) continue
+        elements.locations[i].imageHash = await generateLocationImage(elements.locations[i].visualSummary)
+      }
+      for (let i = 0; i < elements.items.length; i++) {
+        elements.items[i].imageHash = await generateItemImage(elements.items[i].visualSummary)
+      }
+      for (let i = 0; i < elements.characters.length; i++) {
+        elements.characters[i].imageHash = await generatePlayerImage(elements.characters[i].visualSummary)
+      }
+    }
+
+    const response: GenerateDescriptiveLocationResponse = { mainLocation, elements}
+    res.send(response)
+
   } catch (e) {
     next(e)
   }
