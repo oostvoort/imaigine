@@ -78,6 +78,8 @@ async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
   console.debug('pinning')
 
   const pinResponse = await pinata.pinFileToIPFS(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     Readable.fromWeb(<ReadableStream>readableStream.body),
     {
       pinataMetadata: {
