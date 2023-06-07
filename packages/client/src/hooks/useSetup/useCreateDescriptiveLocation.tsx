@@ -15,11 +15,13 @@ export const useCreateDescriptiveLocation = () => {
   return useMutation({
     mutationKey: ['setup-starting-location', story],
     mutationFn: async (variables: any) => {
-
       return createDescriptiveLocation({
-        story: {
+        story: !story ? {
           name: variables?.name,
           summary: variables?.summary,
+        } : {
+          name: story.name,
+          summary: story.summary
         },
       })
     },
