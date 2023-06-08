@@ -29,17 +29,14 @@ const targetVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        location:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        npc:
-          "border border-input text-primary-foreground hover:bg-background hover:text-primary-foreground/80",
-        item:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        animal: "hover:bg-primary/20 hover:text-primary-foreground/80",
+        location: "text-[#FFBB00]",
+        npc: "text-[#24E1FF]",
+        item: "text-[#CDFF00]",
+        animal: "text-[#FF4DFF]",
       },
       size: {
         sm: "h-9 px-3 rounded-md text-sm",
-        default: "h-10 py-2 px-4 text-md",
+        default: "h-10 py-2 text-3xl font-amiri",
         lg: "h-12 px-8 py-8 rounded-lg text-lg",
         xl: "h-16 px-12 rounded-lg text-2xl",
       },
@@ -88,14 +85,18 @@ const replaceTargets = (text: string, targets: TargetType[], onTarget?: (target:
 const Content: React.FC<PropsType> = ({ img, text, targets, onTarget}) => {
   const targetedText = targets ? replaceTargets(text, targets, onTarget) : text
   return (
-    <div className={"grid grid-cols-2 border border-black m-8 mt-[115px] rounded-xl overflow-hidden h-[85%] "}>
-      <div className={"col-span-1 aspect-square w-fit"}>
-        <img src={img.src} alt={img.alt ?? "illustration of the text"} className={"w-full"}/>
-      </div>
-      <div className={"col-span-1 pt-10 pl-8 pr-8 text-white overflow-y-scroll"}>
-        <p className={"text-3xl"}>
-          {targetedText}
-        </p>
+    <div className="flex w-full p-8">
+      <div className="w-full h-[75vh] flex border border-[#715600] rounded-xl">
+        <div className="w-6/12 h-full rounded-l-xl">
+          <img
+            src={img.src}
+            alt={img.alt ?? "illustration of the text"}
+            className={"w-full h-full rounded-l-xl"}
+          />
+        </div>
+        <div className="w-6/12 h-full py-8 px-6 overflow-auto bg-[#222E37] rounded-r-xl">
+          <p className="text-2xl font-amiri leading-10">{targetedText}</p>
+        </div>
       </div>
     </div>
   )

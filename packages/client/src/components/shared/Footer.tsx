@@ -17,7 +17,7 @@ const NUMBER_OF_CHOICES = 3
 // eslint-disable-next-line react/prop-types
 const Footer: React.FC<PropsType> = ({ actions, onAction }) => {
   return (
-    <div className={"flex lg:gap-20 md:gap-10 sm:gap-1 justify-center w-full sticky-footer"}>
+    <div className={"flex lg:gap-4 md:gap-10 sm:gap-1 justify-center w-full px-44"}>
       {/* eslint-disable-next-line react/prop-types */}
 
       { actions
