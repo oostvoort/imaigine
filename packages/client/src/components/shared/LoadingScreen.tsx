@@ -11,15 +11,15 @@ type Props = {
 export default function LoadingScreen({ message }: Props) {
 
   return (
-    <div className="absolute z-50 w-full h-full flex justify-center items-center bg-primary">
+    <div className="absolute z-50 w-full mt-10 flex justify-center items-center">
       <section className="flex-1 flex flex-col gap-10">
         <div className='flex flex-col gap-5'>
-          <img src={imaigineIcon} alt={String(imaigineIcon)} className="aspect-auto w-[300px] mx-auto" />
-          <p className="font-rancho text-2xl tracking-wider text-center">Imagination Engine</p>
+          <img src={imaigineIcon} alt={String(imaigineIcon)} className="aspect-auto w-[226px] mx-auto" />
+          <p className="font-rancho text-md tracking-wider text-center">Imagination Engine</p>
         </div>
-        <p className='font-bold text-4xl text-center mt-10 -mb-6'>Please wait...</p>
+        <p className='font-bold text-4xl text-center -mb-6'>Please wait...</p>
         <Card className='mx-auto'>
-          <CardContent className='min-h-[100px] min-w-xl mx-auto flex flex-col justify-center items-center p-10 gap-10'>
+          <CardContent className='w-[30em] h-[30em] mx-auto flex flex-col justify-center items-center p-10 gap-10'>
             <div className="loader-wrapper">
               <div className="loader">
                 <span></span>

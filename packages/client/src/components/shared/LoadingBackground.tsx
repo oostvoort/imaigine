@@ -7,8 +7,8 @@ type PropType = {
 
 export const LoadingBackground = ({ children }: PropType) => {
   const backgrounds = ['bg1.jpg', 'bg2.jpg', 'bg3.jpg', 'bg4.jpg', 'bg5.jpg', 'bg6.jpg']
-  const [currentBackground, setCurrentBackground] = React.useState(0)
-  const [opacity, setOpacity] = React.useState(100)
+  const [currentBackground, setCurrentBackground] = React.useState<number>(0)
+  const [opacity, setOpacity] = React.useState<number>(100)
 
   const changeBackground = () => {
     setOpacity(0)
@@ -31,7 +31,7 @@ export const LoadingBackground = ({ children }: PropType) => {
         className={clsx([
           'absolute w-full h-full',
           'transition-opacity duration-1000',
-          { 'opacity-0': opacity === 0, 'opacity-100': opacity === 100 }
+          { 'opacity-0': opacity === 0, 'opacity-50': opacity === 100 }
         ])}
       />
       {children}
