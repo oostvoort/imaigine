@@ -6,6 +6,8 @@ import useGame from '../../hooks/useGame'
 import { useCreatePaths } from '../../hooks/useSetup/useCreatePaths'
 import { useCreateCharacter } from '../../hooks/useSetup/useCreateCharacter'
 import { useCreateItem } from '../../hooks/useSetup/useCreateItem'
+import { useCreateThreeCharacters } from '../../hooks/useSetup/useCreateThreeCharacters'
+import { useCreateMyPlayer } from '../../hooks/useSetup/useCreateMyPlayer'
 
 export const Test = () => {
   const createStory = useCreateStory()
@@ -13,10 +15,11 @@ export const Test = () => {
   const createPath = useCreatePaths()
   const createCharacter = useCreateCharacter()
   const createItem = useCreateItem()
+  const createThreeCharacters = useCreateThreeCharacters()
+  const createMyPlayer = useCreateMyPlayer()
 
   const [ createdStory, setStory ] = React.useState<any>()
   const [ descriptiveLocation, setDescriptiveLocation ] = React.useState<any>()
-
 
   const {
     story,
@@ -89,6 +92,61 @@ export const Test = () => {
         >
          Create Items
         </Button>
+        <Button
+          onClick={() => {
+            createThreeCharacters.mutate(
+              {
+                characterStats: {
+                  strength: 'Herculean',
+                  dexterity: 'Clumsy',
+                  constitution: 'Frail',
+                  intelligence: 'Ignorant',
+                  charisma: 'Foolish',
+                  wisdom: 'Awkward',
+                },
+                story: {
+                  name: 'a',
+                  summary: 'b',
+                },
+                physicalFeatures: {
+                  ageGroup: 'Young Adult',
+                  genderIdentity: 'Female',
+                  race: 'Human',
+                  bodyType: 'Random',
+                  height: 'Statuesque',
+                  hairLength: 'Long',
+                  hairType: 'Wavy',
+                  hairColor: 'Red',
+                  eyeShape: 'Upturned',
+                  eyeColor: 'Red',
+                },
+                location: {
+                  name: 'a',
+                  summary: 'b',
+                },
+                characterStory: {
+                  favColor: 'green',
+                },
+              }
+            )
+          }}
+        >
+        Create 3 Characters
+        </Button>
+
+        <Button
+          onClick={() => {
+            createMyPlayer.mutate({
+              name: 'a',
+              summary: 'b',
+              imageHash: 'c',
+              startingLocation: descriptiveLocation.startingLocation
+            })
+          }}
+        >
+          Chosen Character
+        </Button>
+
       </div>
       <div className={'flex gap-2'}>
         <div>
