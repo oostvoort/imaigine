@@ -11,6 +11,8 @@ export default {
       'action-section': "url('./assets/bg_actions.png')",
       'player-nav': "url('./assets/bg_nav.png')",
       'avatar-frame': "url('./assets/bg_avatarFrame.png')",
+      'transparent-to-dark': 'linear-gradient(to right, rgba(0, 0, 0, 0), rgba(34, 46, 55, 1))',
+      'gold-to-dark': 'linear-gradient(to right, rgba(193, 157, 93, 1), rgba(193, 157, 93, 0.2))',
     },
     container: {
       center: true,
