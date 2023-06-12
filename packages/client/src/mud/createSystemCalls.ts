@@ -1,6 +1,6 @@
 import { SetupNetworkResult } from './setupNetwork'
 import { ClientComponents } from './createClientComponents'
-import { Entity, getComponentValue, HasValue, runQuery } from '@latticexyz/recs'
+import { Entity, getComponentValue, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
 
 import {
   GenerateDescriptiveLocationProps,
@@ -56,6 +56,7 @@ export function createSystemCalls(
     return res
   }
 
+
   const createDescriptiveLocation = async (props: GenerateDescriptiveLocationProps) => {
     console.log('createDescriptiveLocation', props)
 
@@ -64,66 +65,66 @@ export function createSystemCalls(
 
     console.info('getting the locations, npc and items from backend')
 
-    // const data: GenerateDescriptiveLocationResponse = await api('/generateDescriptiveLocation', { ...props, generateElementImages: true  })
+    const data: GenerateDescriptiveLocationResponse = await api('/generateDescriptiveLocation', { ...props, generateElementImages: true  })
 
-    const data: GenerateDescriptiveLocationResponse = {
-      'mainLocation': {
-        'name': 'Lac-ul Nora',
-        'summary': 'Lacul Nora is a very large and very safe coral reef biome located in the middle of Amadea, an incredibly beautiful world filled with vibrant and luscious plantations. It is an upper middle class settlement and is popular among the natives, elves, orcs, and nymphs. It is surrounded by two other settlements, Frostal Ah and Aureal Lakes, both a few milesp away from Lacul Nora. It is known for its two mystical items - the Oracle Orb and the Starfall Gauntlet - which both offer the locals a connection with the realm of magic. Two of the most popular characters in the area are Lucina Valsam and Trevor Yule, both of whom have been around for centuries and are known to be very wise and wise. Visually, Lacul Nora is a stunning coral reef with clear blue waters and sparkling gems that give off a subtle glow in the night. ',
-        'visualSummary': 'coral reef, clear waters, sparkling gems, subtle glow in the night',
-        'imageHash': 'Qmc265Ri761WJx9Q4GMXD8icoW5yoPLJTzuXgs1HmbJQb5',
-      },
-      'elements': {
-        'locations': [
-          {
-            'name': 'Lacul Nora',
-            'summary': 'Lacul Nora is a very large and very safe coral reef biome located in the middle of Amadea. It is an upper middle class settlement and is popular among the natives, elves, orcs, and nymphs. It is surrounded by two other settlements, Frostal Ah and Aureal Lakes, both a few miles away from Lacul Nora. Visually, Lacul Nora is a stunning coral reef with clear blue waters and sparkling gems that give off a subtle glow in the night.',
-            'visualSummary': 'coral, reef, clear blue waters, gems, subtle glow',
-            'imageHash': 'Qmc265Ri761WJx9Q4GMXD8icoW5yoPLJTzuXgs1HmbJQb5',
-          },
-          {
-            'name': 'Frostal Ah',
-            'summary': 'Frostal Ah is one of the two settlements located near Lacul Nora. It is located a few miles away and is surrounded by lush forests and the distant mountains of Amadea. The town is known for its friendly yet relaxed atmosphere and its bustling marketplace where locals come to buy and sell goods.',
-            'visualSummary': 'lush forests, distant mountains, bustling marketplace',
-            'imageHash': 'QmUiEoA6hnjC2rNn4ji3mo5ceacDdQU4sr3udPHXQoNHZj',
-          },
-          {
-            'name': 'Aureal Lakes',
-            'summary': 'Aureal Lakes is one of the two settlements located near Lacul Nora. It is located a few miles away and is encompassed by vast lakes and wetlands, giving off an enchanting and peaceful atmosphere. The town is also known for its world renowned magical artifacts and relics, which draw many adventurers to the area in search of something special.',
-            'visualSummary': 'vast lakes, wetlands, enchanting, peaceful, world renowned magical artifacts',
-            'imageHash': 'QmX9GP9Gj9nS2MvxpuReQJM3kSRopzGCV7JfGgbP8QEqQM',
-          },
-        ],
-        'items': [
-          {
-            'name': 'Oracle Orb',
-            'summary': 'The Oracle Orb is a mystical item found in Lacul Nora that offers the locals a connection with the realm of magic. It is a powerful relic of great importance to the town, as it is said to provide insight to the future and even confer powerful protection from harm. The Orb is usually kept hidden and only the bravest of adventurers are able to find it.',
-            'visualSummary': 'mystical, realm of magic, powerful, hidden',
-            'imageHash': 'QmcDc5jMjY1YkYwrDuoGnKJSi8vtBmDZhhpmv913i2Rvy4',
-          },
-          {
-            'name': 'Starfall Gauntlet',
-            'summary': 'The Starfall Gauntlet is another mystical item found in Lacul Nora that provides locals with a special connection to the realm of magic. It is an ancient artifact that grants its user vast magical abilities, although its power is limited and should be used wisely. It has been rumored to be kept in a hidden chamber deep within the coral reef, making it very hard to recover.',
-            'visualSummary': 'mystical, realm of magic, ancient, magical abilities, hidden',
-            'imageHash': 'QmehX8tZ3aXPPz4GDkN4nE8bAwLv16H2vZD2zyud1NYLz4',
-          },
-        ],
-        'characters': [
-          {
-            'name': 'Lucina Valsam',
-            'summary': 'Lucina Valsam is one of the two most popular characters in the Lacul Nora area. She has been around for centuries and is known to be very wise and wise. She is an elf with sharp, green eyes, and long wavy brown hair. She is known to wear extravagant jewelry and clothing that makes her stand out from the crowd.',
-            'visualSummary': 'elf, green eyes, long wavy brown hair, extravagant jewelry, clothing',
-            'imageHash': 'QmSu93jEFvFwL4wwgHsaTjpTLxM1eELntBJz2EPBEf7HhR',
-          },
-          {
-            'name': 'Trevor Yule',
-            'summary': 'Trevor Yule is the other most popular character in the Lacul Nora area. He has been around for centuries and is known to be very wise and wise. He is an orc with dark brown eyes, a thick black beard and tanned skin. He is known to wear bright colored clothing with ludicrous jewelry and accessories that draw the attention of many.',
-            'visualSummary': 'orc, dark brown eyes, black beard, tanned skin, bright colored clothing, ludicrous jewelry',
-            'imageHash': 'QmPxcVgsoyjNeFi835owXpZdrmqcUNRaC3CN82zr5vBspE',
-          },
-        ],
-      },
-    }
+    // const data: GenerateDescriptiveLocationResponse = {
+    //   'mainLocation': {
+    //     'name': 'Lac-ul Nora',
+    //     'summary': 'Lacul Nora is a very large and very safe coral reef biome located in the middle of Amadea, an incredibly beautiful world filled with vibrant and luscious plantations. It is an upper middle class settlement and is popular among the natives, elves, orcs, and nymphs. It is surrounded by two other settlements, Frostal Ah and Aureal Lakes, both a few milesp away from Lacul Nora. It is known for its two mystical items - the Oracle Orb and the Starfall Gauntlet - which both offer the locals a connection with the realm of magic. Two of the most popular characters in the area are Lucina Valsam and Trevor Yule, both of whom have been around for centuries and are known to be very wise and wise. Visually, Lacul Nora is a stunning coral reef with clear blue waters and sparkling gems that give off a subtle glow in the night. ',
+    //     'visualSummary': 'coral reef, clear waters, sparkling gems, subtle glow in the night',
+    //     'imageHash': 'Qmc265Ri761WJx9Q4GMXD8icoW5yoPLJTzuXgs1HmbJQb5',
+    //   },
+    //   'elements': {
+    //     'locations': [
+    //       {
+    //         'name': 'Lacul Nora',
+    //         'summary': 'Lacul Nora is a very large and very safe coral reef biome located in the middle of Amadea. It is an upper middle class settlement and is popular among the natives, elves, orcs, and nymphs. It is surrounded by two other settlements, Frostal Ah and Aureal Lakes, both a few miles away from Lacul Nora. Visually, Lacul Nora is a stunning coral reef with clear blue waters and sparkling gems that give off a subtle glow in the night.',
+    //         'visualSummary': 'coral, reef, clear blue waters, gems, subtle glow',
+    //         'imageHash': 'Qmc265Ri761WJx9Q4GMXD8icoW5yoPLJTzuXgs1HmbJQb5',
+    //       },
+    //       {
+    //         'name': 'Frostal Ah',
+    //         'summary': 'Frostal Ah is one of the two settlements located near Lacul Nora. It is located a few miles away and is surrounded by lush forests and the distant mountains of Amadea. The town is known for its friendly yet relaxed atmosphere and its bustling marketplace where locals come to buy and sell goods.',
+    //         'visualSummary': 'lush forests, distant mountains, bustling marketplace',
+    //         'imageHash': 'QmUiEoA6hnjC2rNn4ji3mo5ceacDdQU4sr3udPHXQoNHZj',
+    //       },
+    //       {
+    //         'name': 'Aureal Lakes',
+    //         'summary': 'Aureal Lakes is one of the two settlements located near Lacul Nora. It is located a few miles away and is encompassed by vast lakes and wetlands, giving off an enchanting and peaceful atmosphere. The town is also known for its world renowned magical artifacts and relics, which draw many adventurers to the area in search of something special.',
+    //         'visualSummary': 'vast lakes, wetlands, enchanting, peaceful, world renowned magical artifacts',
+    //         'imageHash': 'QmX9GP9Gj9nS2MvxpuReQJM3kSRopzGCV7JfGgbP8QEqQM',
+    //       },
+    //     ],
+    //     'items': [
+    //       {
+    //         'name': 'Oracle Orb',
+    //         'summary': 'The Oracle Orb is a mystical item found in Lacul Nora that offers the locals a connection with the realm of magic. It is a powerful relic of great importance to the town, as it is said to provide insight to the future and even confer powerful protection from harm. The Orb is usually kept hidden and only the bravest of adventurers are able to find it.',
+    //         'visualSummary': 'mystical, realm of magic, powerful, hidden',
+    //         'imageHash': 'QmcDc5jMjY1YkYwrDuoGnKJSi8vtBmDZhhpmv913i2Rvy4',
+    //       },
+    //       {
+    //         'name': 'Starfall Gauntlet',
+    //         'summary': 'The Starfall Gauntlet is another mystical item found in Lacul Nora that provides locals with a special connection to the realm of magic. It is an ancient artifact that grants its user vast magical abilities, although its power is limited and should be used wisely. It has been rumored to be kept in a hidden chamber deep within the coral reef, making it very hard to recover.',
+    //         'visualSummary': 'mystical, realm of magic, ancient, magical abilities, hidden',
+    //         'imageHash': 'QmehX8tZ3aXPPz4GDkN4nE8bAwLv16H2vZD2zyud1NYLz4',
+    //       },
+    //     ],
+    //     'characters': [
+    //       {
+    //         'name': 'Lucina Valsam',
+    //         'summary': 'Lucina Valsam is one of the two most popular characters in the Lacul Nora area. She has been around for centuries and is known to be very wise and wise. She is an elf with sharp, green eyes, and long wavy brown hair. She is known to wear extravagant jewelry and clothing that makes her stand out from the crowd.',
+    //         'visualSummary': 'elf, green eyes, long wavy brown hair, extravagant jewelry, clothing',
+    //         'imageHash': 'QmSu93jEFvFwL4wwgHsaTjpTLxM1eELntBJz2EPBEf7HhR',
+    //       },
+    //       {
+    //         'name': 'Trevor Yule',
+    //         'summary': 'Trevor Yule is the other most popular character in the Lacul Nora area. He has been around for centuries and is known to be very wise and wise. He is an orc with dark brown eyes, a thick black beard and tanned skin. He is known to wear bright colored clothing with ludicrous jewelry and accessories that draw the attention of many.',
+    //         'visualSummary': 'orc, dark brown eyes, black beard, tanned skin, bright colored clothing, ludicrous jewelry',
+    //         'imageHash': 'QmPxcVgsoyjNeFi835owXpZdrmqcUNRaC3CN82zr5vBspE',
+    //       },
+    //     ],
+    //   },
+    // }
 
     console.info('GenerateDescriptiveLocationResponse', data)
 
@@ -219,29 +220,46 @@ export function createSystemCalls(
   async function createCharacters(characters: any[], startingLocation: Entity) {
     const promises = []
     console.info('creating characters ...')
+    console.info({ startingLocation })
+
+    const charactersEntity: Array<Entity> = []
+    async function setCharacter(character: any, startingLocation: any) {
+      const tx = await worldSend('createCharacter', [
+        character.name,
+        character.summary,
+        character.imageHash,
+        hexZeroPad(startingLocation.toString(), 32),
+        '',
+        [],
+      ])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+
+      const characterEntity = runQuery([
+        HasValue(NameComponent, {value: character.name}),
+        HasValue(SummaryComponent, {value: character.summary}),
+        HasValue(ImageComponent, {value: character.imageHash}),
+        HasValue(LocationComponent, {value: hexZeroPad(startingLocation.toString(), 32)})
+      ])
+
+      charactersEntity.push(characterEntity.values().next().value as Entity)
+    }
 
     for (const character of characters) {
-      promises.push(
-        await worldSend('createCharacter', [
-          character.name,
-          character.summary,
-          character.imageHash,
-          hexZeroPad(startingLocation.toString(), 32),
-          '',
-          [],
-        ]),
-      )
+      promises.push(await setCharacter(character, startingLocation))
     }
+
     await Promise.all(promises)
     console.info('Done creating characters!')
+    return charactersEntity
   }
 
   async function createItems(items: any[], startingLocation: Entity) {
     const promises: any[] = []
     console.info('creating items ...')
 
-    for (const item of items) {
-      await worldSend('createItem', [
+    const itemsEntities : Array<Entity> = []
+    async function setItem(item: any, startingLocation: Entity) {
+      const tx = await worldSend('createItem', [
         item.name,
         item.summary,
         item.imageHash,
@@ -250,10 +268,26 @@ export function createSystemCalls(
         [ 'action1', 'action2', 'action3' ],
         hexZeroPad('0x0', 32),
       ])
+
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+
+      const itemEntity = runQuery([
+        HasValue(NameComponent, {value: item.name}),
+        HasValue(SummaryComponent, {value: item.summary}),
+        HasValue(ImageComponent, {value: item.imageHash}),
+        HasValue(LocationComponent, {value: hexZeroPad(startingLocation.toString(), 32)})
+      ])
+
+      itemsEntities.push(itemEntity.values().next().value as Entity)
+    }
+
+    for (const item of items) {
+      promises.push(await setItem(item, startingLocation))
     }
 
     await Promise.all(promises)
     console.info('Done creating items!')
+    return itemsEntities
   }
 
   async function createMyPlayer(name: string, summary: string, imageHash: string, startingLocation: Entity) {

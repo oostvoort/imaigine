@@ -12,6 +12,7 @@ import usePlayerExisting from './hooks/usePlayerExisting'
 import LoadingScreen from './components/shared/LoadingScreen'
 import { ChooseAvatar } from './pages/choose-avatar'
 import { Test } from './pages/test'
+import { Gametest } from './pages/gametest'
 
 export const App = () => {
   const [activePage, setActivePage] = useAtom(activePage_atom)
@@ -58,6 +59,9 @@ export const App = () => {
       }
       {
         activePage == 'test' && <Test/>
+      }
+      {
+        activePage == "gameplay" && <Gametest/>
       }
     </MainLayout>
   );
