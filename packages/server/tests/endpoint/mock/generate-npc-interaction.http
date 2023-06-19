@@ -1,6 +1,0 @@
-POST {{host}}/mock/api/v1/generate-npc-interaction
-Content-Type: application/json
-
-{
-
-}

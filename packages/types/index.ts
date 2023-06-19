@@ -1,49 +1,47 @@
 export interface GenerateStoryProps {
-  mock?: boolean
   theme: string,
-  races: Array<string>,
-  currency: string,
-  extraDescriptions?: Array<string>,
+  races: string[]
 }
 
-export interface GenerateStoryResponse extends Summarized {
-  visualSummary?: string
-}
-
-
-export interface GenerateItemProps {
-  mock?: boolean
-  story: Summarized,
+export interface GenerateStoryResponse {
   name: string,
+  description: string
 }
-
-export interface GenerateItemResponse extends Summarized {
-  value: number,
-  imageHash: string
-  visualSummary: string
-  isAlive: boolean
-  owner: string
-}
-
-export interface Logged {
-  logHash: string
-}
-
-
 export interface GenerateLocationProps {
-  mock?: boolean
-  story: Summarized,
+  id: string
 }
 
-export interface GenerateLocationResponse extends Summarized {
-  imageHash: string
-  visualSummary: string
+export interface GenerateLocationResponse {
+  name: string,
+  description: string,
+  image: string
+}
+
+export interface PlayerAttributesProps {
+  characterStats: CharacterStats,
+  characterStory: CharacterStory,
+  location: Summarized,
+  story: Summarized,
+  physicalFeatures: CharacterPhysicalFeatures,
+}
+
+export interface CharacterStats {
+  strength: string;
+  dexterity: string;
+  constitution: string;
+  intelligence: string;
+  charisma: string;
+  wisdom: string;
 }
 
 export interface CharacterStory {
   favColor: 'Green' | 'Brown' | 'Blue' | 'White' | 'Yellow' | 'Grey' | 'Red' | string
 }
 
+export interface Summarized {
+  name: string,
+  summary: string
+}
 export interface CharacterPhysicalFeatures {
   ageGroup: string
   genderIdentity: string
@@ -57,159 +55,30 @@ export interface CharacterPhysicalFeatures {
   eyeColor: string
 }
 
-export type CharacterStat = keyof CharacterStats;
-
-export interface CharacterStats {
-  strength: string;
-  dexterity: string;
-  constitution: string;
-  intelligence: string;
-  charisma: string;
-  wisdom: string;
-}
-
-
-export interface GeneratePlayerCharacterProps {
-  mock?: boolean
-  characterStats: CharacterStats,
-  characterStory: CharacterStory,
-  location: Summarized,
-  story: Summarized,
-  physicalFeatures: CharacterPhysicalFeatures,
-}
-
-export interface Summarized {
+export interface PlayerAttributesResponse {
   name: string,
-  summary: string
+  description: string,
+  image: string
 }
 
-export interface GenerateNonPlayerCharacterProps {
-  mock?: boolean
-  characterStats: CharacterStats,
-  location: Summarized,
-  story: Summarized,
-}
-
-export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
-  initialMessage: string,
-  visualSummary: string,
-  imageHash: string
-}
-
-export interface GenerateHumanPlayerCharacterResponse extends GeneratePlayerCharacterResponse {
-  choices: string[]
-}
-
-
-export interface Possible {
-  mode: 'dialog' | 'action',
-  content: string,
-  karmaEffect: number,
-}
-
-export interface GeneratePlayerCharacterResponse extends Summarized, Entity {
-  initialMessage: string,
-  visualSummary: string,
-  imageHash: string,
-  possible: Possible[]
-}
-
-export interface JsonResponse {
-  name: string,
-  summary: string,
-}
-
-
-export interface GeneratePathResponse extends JsonResponse {
-  imageHash?: string
-}
-
-
-export interface GeneratePathProps {
-  mock?: boolean
-  story: GenerateStoryResponse
-  toLocation: Summarized,
-  fromLocation: Summarized,
-}
-
-export interface Entity extends Summarized {
-  isAlive: boolean
-  owner?: string
-  karma?: number
-}
-
-export interface GenerateInteractionProps {
-  mode: 'location' | 'interactable'
-  storySummary: string,
-  location: Summarized,
-  activeEntity: Entity,
-  otherEntities: Entity[],
-  logHash: string,
-  action: string
-}
-
-export interface InventoryChange {
-  itemsAdded: string[],
-  itemsRemoved: string[]
-}
-
-
-export interface GenerateInteractionResponse extends Summarized {
-  logHash: string,
-  possible: Possible[],
-  currencyChange: number,
-  inventoryChange: InventoryChange
-}
-
-export interface GenerateTravelProps {
-  mock?: boolean
-  storySummary: string,
-  pathSummary: string,
-  playerSummary: string
-}
-
-export interface GenerateTravelResponse extends JsonResponse {
-  todo?: boolean
-}
-
-export type ExtractElementsProps = Summarized
-
-export interface VisualizedSummary extends Summarized {
-  imageHash: string,
-  visualSummary: string
-}
-
-export interface ExtractElementsResponse {
-  locations: VisualizedSummary[],
-  characters: VisualizedSummary[],
-  items: VisualizedSummary[]
-}
-
-export interface GenerateDescriptiveLocationProps extends GenerateLocationProps {
-  baseSummary?: Summarized
-  imageHash?: string
-
-  /// flag that determines if all elements need to have newly generated images
-  generateElementImages?: boolean
-}
-
-export interface GenerateDescriptiveLocationResponse {
-  mainLocation: VisualizedSummary,
-  elements: ExtractElementsResponse
-}
-
-export interface LogHistoryProps {
-  hash: string
-  log: Log
-}
-
-export interface LogHistoryResponse {
-  hash: string
-}
-
-export interface Log {
-  block: number,
-  players: string[],
+export interface GenerateNpcProps {
+  id: string,
   description: string
 }
 
+export interface GenerateNpcResponse {
+  name: string,
+  description: string,
+  image: string
+}
+
+export interface GenerateTravelProps {
+  routeIds: string[],
+  from: string,
+  to: string
+}
+
+export interface GenerateTravelResponse {
+  situation: string,
+  playerHistory: string
+}
