@@ -167,7 +167,6 @@ app.post('/generatePath', async (req: Request, res: Response, next) => {
   }
 })
 
-
 app.post('/generateInteraction', async (req: Request, res: Response, next) => {
   const props: GenerateInteractionProps = req.body
   try {
@@ -177,7 +176,6 @@ app.post('/generateInteraction', async (req: Request, res: Response, next) => {
     next(e)
   }
 })
-
 
 app.post('/generateTravel', async (req: Request, res: Response, next) => {
   const props: GenerateTravelProps = req.body
@@ -210,7 +208,11 @@ app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, nex
   res.send({
     name: "Ariana Shadowheart",
     description: "Ariana Shadowheart is a skilled elven ranger with a mysterious past. Her emerald eyes gleam with wisdom and determination, and her long silver hair flows gracefully as she moves through the enchanted forests. Clad in lightweight, forest-green attire, she is armed with a finely crafted bow and a quiver of arrows. Ariana possesses a deep connection with nature, often communicating with woodland creatures and harnessing the power of the forest in her spells. She is known for her unparalleled archery skills and her unwavering loyalty to her companions.",
-    imageHash: "jkl012"
+    imageHash: [
+      "QmSSLuNfitVEDoda5x5DvzgydT6J8mwLjXMFrw5fq5rfJb",
+      "QmYseeJuSTUedYcsKdn4BPhqsUUebxB2V3DZGQttZ3rnm7",
+      "QmTjuQDVSPTyDrLC4Ri3pLvqn7HYibW6bA7WYoSKE73MAM"
+    ]
   })
 })
 
@@ -296,6 +298,8 @@ app.post('/mock/api/v1/generate-location-interaction', async (req: Request, res:
     ]
   })
 })
+
+
 
 
 app.listen(port, () => {
