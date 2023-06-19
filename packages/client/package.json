@@ -8,7 +8,9 @@
     "build": "vite build",
     "dev": "wait-port localhost:8545 && vite",
     "preview": "vite preview",
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
@@ -33,11 +35,20 @@
     "tailwindcss-animate": "^1.0.6"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^7.0.22",
+    "@storybook/addon-interactions": "^7.0.22",
+    "@storybook/addon-links": "^7.0.22",
+    "@storybook/blocks": "^7.0.22",
+    "@storybook/react": "^7.0.22",
+    "@storybook/react-vite": "^7.0.22",
+    "@storybook/testing-library": "^0.0.14-next.2",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^3.1.0",
     "eslint-plugin-react": "7.31.11",
     "eslint-plugin-react-hooks": "4.6.0",
+    "prop-types": "^15.8.1",
+    "storybook": "^7.0.22",
     "tailwindcss": "^3.3.2",
     "vite": "^4.2.1",
     "wait-port": "^1.0.4"
