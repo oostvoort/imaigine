@@ -1,0 +1,6 @@
+POST {{host}}/mock/api/v1/generate-location-interaction
+Content-Type: application/json
+
+{
+
+}

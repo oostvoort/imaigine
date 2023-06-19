@@ -16,7 +16,7 @@ import {
   GeneratePlayerCharacterProps,
   GenerateStoryProps,
   GenerateTravelProps,
-  GenerateTravelResponse, LogHistoryProps, LogHistoryResponse,
+  GenerateTravelResponse,
 } from 'types'
 import { generateStory } from './lib/openai/generate/generateStory'
 import { extractElements, generateDescriptiveLocation, generateLocation } from './lib/openai/generate/generateLocation'
@@ -28,7 +28,6 @@ import { generateInteraction } from './lib/openai/generate/generateInteraction'
 import { generateLocationImage } from './lib/leonardo/executePrompt'
 import { generateItem } from './lib/openai/generate/generateItem'
 import { PLAYER_IMAGE_CHOICES } from './global/constants'
-import logHistory from './lib/ipfs/logHistory'
 
 dotenv.config()
 const app = express()
@@ -190,16 +189,112 @@ app.post('/generateTravel', async (req: Request, res: Response, next) => {
   }
 })
 
-app.post('/logHistory', async (req: Request, res: Response, next) => {
-  const props: LogHistoryProps = req.body
-  try {
-    const response: LogHistoryResponse = {
-      hash: await logHistory(props)
-    }
-    res.send(response)
-  } catch (e) {
-    next(e)
-  }
+// mock api
+
+app.post('/mock/api/v1/generate-story', async (req: Request, res: Response, next) => {
+  res.send({
+    name: "Fantasy World",
+    description: "This magical fantasy world is populated with elf, goblin, human, nymph, dwarf, troll and many other fantastical creatures. It features rolling hills, towering mountaintops, sparkling waterfalls and mysterious forests. Magical creatures soar through the skies and cast potent spells with ease. The inhabitants live in small towns and villages, or in large imposing castles."
+  })
+})
+
+app.post('/mock/api/v1/generate-location', async (req: Request, res: Response, next) => {
+  res.send({
+    name: "Eldoria",
+    description: "Eldoria is a hidden elven city nestled deep within an ancient forest. The city is built on treetops, connected by rope bridges and shimmering magic. The air is filled with the sweet scent of blooming flowers, and the ethereal glow of luminescent creatures dances among the leaves. The elven inhabitants are known for their graceful nature and affinity for magic.",
+    imageHash: "abc123"
+  })
+})
+
+app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {
+  res.send({
+    name: "Ariana Shadowheart",
+    description: "Ariana Shadowheart is a skilled elven ranger with a mysterious past. Her emerald eyes gleam with wisdom and determination, and her long silver hair flows gracefully as she moves through the enchanted forests. Clad in lightweight, forest-green attire, she is armed with a finely crafted bow and a quiver of arrows. Ariana possesses a deep connection with nature, often communicating with woodland creatures and harnessing the power of the forest in her spells. She is known for her unparalleled archery skills and her unwavering loyalty to her companions.",
+    imageHash: "jkl012"
+  })
+})
+
+app.post('/mock/api/v1/generate-npc', async (req: Request, res: Response, next) => {
+  res.send({
+    name: "Eldrick Stoneforge",
+    description: "Eldrick Stoneforge is a grizzled dwarf blacksmith hailing from the mountain stronghold of Hammerfall. With a weathered face adorned with a thick, braided beard and piercing blue eyes, Eldrick is a master of his craft. He can be found in his smoky forge, hammering and shaping metal with expert precision. His muscular frame and stout stature reflect years of hard labor and battles fought. Eldrick is known for his unparalleled ability to forge legendary weapons and armor, which have become sought-after treasures among adventurers and warriors across the realm.",
+    imageHash: "mno345"
+  })
+})
+
+app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, next) => {
+
+  res.send({
+    situation: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias animi asperiores consequuntur corporis illo iusto nihil sunt vero? Corporis earum eligendi excepturi explicabo laboriosam minima nostrum optio quam recusandae sed. ",
+    playerHistory: "mno345"
+  })
+})
+
+app.post('/mock/api/v1/generate-npc-interaction', async (req: Request, res: Response, next) => {
+
+  res.send({
+    conversationHistory: [
+      {
+        blockTimestamp: 1,
+        mode: 'dialog',
+        text: 'Hi! How are you?',
+        speaker: 'NPC',
+        players: ['player-1']
+      },
+      {
+        blockTimestamp: 2,
+        mode: 'dialog',
+        text: 'Good?',
+        speaker: 'Player',
+        players: ['player-1']
+      }
+    ],
+    playerHistory: "sample123",
+    entityHistory: "sample456",
+    possibles: [
+      {
+        karmaPoints: 10,
+        mode: 'action',
+        text: "action 1"
+      },
+      {
+        karmaPoints: 5,
+        mode: 'action',
+        text: "action 2"
+      },
+      {
+        karmaPoints: 5,
+        mode: 'action',
+        text: "action 3"
+      }
+    ]
+  })
+})
+
+app.post('/mock/api/v1/generate-location-interaction', async (req: Request, res: Response, next) => {
+
+  res.send({
+    situation: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias animi asperiores consequuntur corporis illo iusto nihil sunt vero? Corporis earum eligendi excepturi explicabo laboriosam minima nostrum optio quam recusandae sed. ",
+    playerHistory: "sample123",
+    entityHistory: "sample456",
+    possibles: [
+      {
+        karmaPoints: 10,
+        mode: 'action',
+        text: "action 1"
+      },
+      {
+        karmaPoints: 5,
+        mode: 'action',
+        text: "action 2"
+      },
+      {
+        karmaPoints: 5,
+        mode: 'action',
+        text: "action 3"
+      }
+    ]
+  })
 })
 
 
