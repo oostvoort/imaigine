@@ -74,8 +74,29 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+@font-face {
+  src: url("./fonts/Jost-VariableFont_wght.ttf");
+  font-family: Jost;
+}
+
+@font-face {
+  src: url("./fonts/Rancho-Regular.ttf");
+  font-family: Rancho;
+}
+
+@font-face {
+  src: url("./fonts/Amiri-Regular.ttf");
+  font-family: Amiri;
+}
+
+@font-face {
+  src: url("./fonts/Inkfree.ttf");
+  font-family: InkFree;
 }

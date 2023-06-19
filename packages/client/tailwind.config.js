@@ -90,6 +90,7 @@ export default {
         jost: ['Jost', 'sans-serif'],
         rancho: ['Rancho', 'sans-serif'],
         amiri: ['Amiri', 'sans-serif'],
+        inkFree: ['Inkfree', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
