@@ -27,7 +27,7 @@ import { generateTravel } from './lib/openai/generate/generateTravel'
 import { generateInteraction } from './lib/openai/generate/generateInteraction'
 import { generateLocationImage } from './lib/leonardo/executePrompt'
 import { generateItem } from './lib/openai/generate/generateItem'
-import { PLAYER_IMAGE_CHOICES } from './constants'
+import { PLAYER_IMAGE_CHOICES } from './global/constants'
 import logHistory from './lib/ipfs/logHistory'
 
 dotenv.config()
@@ -62,8 +62,6 @@ app.post('/generateStory', async (req: Request, res: Response, next) => {
     next(e)
   }
 })
-
-app.post('/mock/generateDescriptiveLocation')
 
 app.post('/generateDescriptiveLocation', async (req: Request, res: Response, next) => {
   const props: GenerateDescriptiveLocationProps = req.body
