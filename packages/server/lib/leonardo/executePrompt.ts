@@ -2,7 +2,6 @@ import { pinata, promptTemplates } from './index'
 import { Readable } from 'stream'
 import { ReadableStream } from 'node:stream/web'
 
-
 export async function generateNpcImage(prompt: string): Promise<string> {
   const result = await executePrompt('npc', prompt)
   return result
@@ -26,7 +25,6 @@ export async function generatePlayerImage(prompt: string): Promise<string> {
 }
 
 async function executePrompt(mode: string, rawPrompt: string): Promise<string> {
-
 
   const prompt = promptTemplates[mode].prompt.replace('%', rawPrompt)
 

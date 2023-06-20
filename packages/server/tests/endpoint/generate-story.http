@@ -1,4 +1,4 @@
-POST localhost:3000/mock/api/v1/generate-story
+POST localhost:3000/api/v1/generate-story
 Content-Type: application/json
 
 {

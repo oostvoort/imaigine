@@ -1,0 +1,10 @@
+POST localhost:3000/api/v1/generate-location
+Content-Type: application/json
+
+{
+  "id": "0x01",
+  "story": {
+    "name": "Fantasy World",
+    "description": "The world is populated by elves, orcs, and humans, and the currency is known as gold. The land is home to rolling plains, dense forests, and majestic mountains, and the climates range from balmy beaches to arctic tundras. Ancient castles, deep dungeons, top-secret laboratories, and bustling bustling cities all await those who venture forth on this daring journey. The sky is awash with stars, and - should one look carefully - distant galaxies far beyond."
+  }
+}
