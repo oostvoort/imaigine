@@ -5,12 +5,397 @@ import { defineComponent, Type as RecsType, World } from "@latticexyz/recs";
 
 export function defineContractComponents(world: World) {
   return {
-    Counter: (() => {
-      const tableId = new TableId("", "Counter");
+    StoryComponent: (() => {
+      const tableId = new TableId("", "StoryComponent");
       return defineComponent(
         world,
         {
-          value: RecsType.Number,
+          themeID: RecsType.String,
+          currencyID: RecsType.String,
+          racesID: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    ItemComponent: (() => {
+      const tableId = new TableId("", "ItemComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    OwnerComponent: (() => {
+      const tableId = new TableId("", "OwnerComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AliveComponent: (() => {
+      const tableId = new TableId("", "AliveComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    NameComponent: (() => {
+      const tableId = new TableId("", "NameComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    SummaryComponent: (() => {
+      const tableId = new TableId("", "SummaryComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    ImageComponent: (() => {
+      const tableId = new TableId("", "ImageComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PriceComponent: (() => {
+      const tableId = new TableId("", "PriceComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    RaceComponent: (() => {
+      const tableId = new TableId("", "RaceComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    CharacterComponent: (() => {
+      const tableId = new TableId("", "CharacterCompone");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    TangibleComponent: (() => {
+      const tableId = new TableId("", "TangibleComponen");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    CountComponent: (() => {
+      const tableId = new TableId("", "CountComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PlayerComponent: (() => {
+      const tableId = new TableId("", "PlayerComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    LocationComponent: (() => {
+      const tableId = new TableId("", "LocationComponen");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    SceneComponent: (() => {
+      const tableId = new TableId("", "SceneComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PathComponent: (() => {
+      const tableId = new TableId("", "PathComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PathLocationComponent: (() => {
+      const tableId = new TableId("", "PathLocationComp");
+      return defineComponent(
+        world,
+        {
+          location0: RecsType.String,
+          location1: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    InteractComponent: (() => {
+      const tableId = new TableId("", "InteractComponen");
+      return defineComponent(
+        world,
+        {
+          initialMsg: RecsType.String,
+          initialActions: RecsType.String,
+          participants: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    InteractionComponent: (() => {
+      const tableId = new TableId("", "InteractionCompo");
+      return defineComponent(
+        world,
+        {
+          waitingFor: RecsType.String,
+          lastInteraction: RecsType.BigInt,
+          participantsActions: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    LogComponent: (() => {
+      const tableId = new TableId("", "LogComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    ActionsComponent: (() => {
+      const tableId = new TableId("", "ActionsComponent");
+      return defineComponent(
+        world,
+        {
+          createdAt: RecsType.BigInt,
+          actions: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    PossibleComponent: (() => {
+      const tableId = new TableId("", "PossibleComponen");
+      return defineComponent(
+        world,
+        {
+          createdAt: RecsType.BigInt,
+          actionLength: RecsType.BigInt,
+          actions: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AttributeUintComponent: (() => {
+      const tableId = new TableId("", "AttributeUintCom");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AttributeIntComponent: (() => {
+      const tableId = new TableId("", "AttributeIntComp");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    AttributeStringComponent: (() => {
+      const tableId = new TableId("", "AttributeStringC");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    StoryActionComponent: (() => {
+      const tableId = new TableId("", "StoryActionCompo");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
         },
         {
           metadata: {
