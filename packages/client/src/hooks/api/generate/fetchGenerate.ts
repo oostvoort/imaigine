@@ -5,7 +5,7 @@ import {
     RequestGenerateStory, RequestGenerateTravel
 } from "./typesGenerate";
 
-const server_api = "http://localhost:3000/mock"
+const server_api = import.meta.env.VITE_API_ENDPOINT
 
 export const fetchPostGenerateStory = async (data: RequestGenerateStory) => {
     const response = await fetch(
