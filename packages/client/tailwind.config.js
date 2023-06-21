@@ -11,8 +11,14 @@ export default {
       'action-section': "url('./assets/bg_actions.png')",
       'player-nav': "url('./assets/bg_nav.png')",
       'avatar-frame': "url('./assets/bg_avatarFrame.png')",
+      'content-bg-gray': "url('./assets/background/bg_gray.jpg')",
+      'main-bg-neutral': "url('./assets/background/main_bg_neutral.jpg')",
+      'avatar-outer-frame': "url('./assets/avatar/frames/outer_frames.png')",
+      'avatar-inner-frame': "url('./assets/avatar/frames/inner_frames.png')",
+      'avatar-karma-gauge': "url('./assets/avatar/frames/karma_gauge.png')",
       'transparent-to-dark': 'linear-gradient(to right, rgba(0, 0, 0, 0), rgba(34, 46, 55, 1))',
       'gold-to-dark': 'linear-gradient(to right, rgba(193, 157, 93, 1), rgba(193, 157, 93, 0.2))',
+      'header-gradient': 'linear-gradient(90deg, rgba(23, 19, 3, 1), rgba(41, 31, 11, 1))',
     },
     container: {
       center: true,
@@ -89,11 +95,6 @@ export default {
         lg: `var(--radius)`,
         md: `calc(var(--radius) - 2px)`,
         sm: "calc(var(--radius) - 4px)",
-      },
-      fontWeight: {
-        medium: 500,
-        semibold: 600,
-        bold: 900
       },
       fontFamily: {
         jost: ['Jost', 'sans-serif'],
