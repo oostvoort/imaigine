@@ -116,31 +116,11 @@
 }
 
 @font-face {
-  src: url("./fonts/Jost-VariableFont_wght.ttf");
-  font-family: Jost;
+  src: url("fonts/Segoe_UI.ttf");
+  font-family: "Segoe UI";
 }
 
 @font-face {
-  src: url("./fonts/Rancho-Regular.ttf");
-  font-family: Rancho;
+  src: url("fonts/Segoe_UI_Bold.ttf");
+  font-family: "Segoe UI Bold";
 }
-
-@font-face {
-  src: url("./fonts/Amiri-Regular.ttf");
-  font-family: Amiri;
-}
-
-@font-face {
-  src: url("./fonts/Inkfree.ttf");
-  font-family: InkFree;
-}
-
-@font-face {
-  src: url("./fonts/Segoe UI Bold.ttf");
-  font-family: Segoe UI;
-}
-
-/*@font-face {*/
-/*  src: url("./fonts/Segoe UI Bold.ttf");*/
-/*  font-family: Segoe UI;*/
-/*}*/

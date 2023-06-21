@@ -99,8 +99,8 @@ export default function CreateAvatarScreen() {
       </section>
       {
         step == 1 && (
-          <section className="flex flex-col gap-3"><p
-            className="text-4xl font-segoe text-white leading-[48px] text-center">Let&apos;s create your character</p>
+          <section className="flex flex-col gap-3">
+            <p className="text-4xl font-segoebold text-white leading-[48px] text-center">Let&apos;s create your character</p>
             <Card className="min-w-[500px] shadow-2xl">
               <CardContent className="flex flex-col gap-8">
                 {

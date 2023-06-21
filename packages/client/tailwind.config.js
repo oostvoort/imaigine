@@ -97,6 +97,7 @@ export default {
         amiri: ['Amiri', 'sans-serif'],
         inkFree: ['Inkfree', 'sans-serif'],
         segoe: ['Segoe UI', 'sans-serif'],
+        segoebold: ['Segoe UI Bold', 'sans-serif']
       },
       keyframes: {
         "accordion-down": {
