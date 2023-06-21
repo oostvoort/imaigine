@@ -18,7 +18,7 @@ const buttonVariants = cva(
         ghost: 'hover:bg-primary/20 hover:text-primary-foreground/80',
         link: 'underline-offset-4 hover:underline text-primary',
         accent: 'bg-white text-accent-3 hover:bg-white/80',
-        selective: 'bg-primary text-primary-foreground font-normal tracking-wide font-sans hover:bg-primary/80',
+        selective: 'bg-primary font-normal tracking-wide font-sans hover:bg-primary/80',
       },
       size: {
         sm: 'h-9 px-3 rounded-md text-sm',
@@ -28,7 +28,7 @@ const buttonVariants = cva(
         '2xl': 'h-20 px-12',
       },
       isHighlighted: {
-        true: 'outline outline-accent',
+        true: 'outline outline-accent text-primary-foreground',
       },
     },
     defaultVariants: {

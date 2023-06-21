@@ -86,11 +86,17 @@ export default {
         md: `calc(var(--radius) - 2px)`,
         sm: "calc(var(--radius) - 4px)",
       },
+      fontWeight: {
+        medium: 500,
+        semibold: 600,
+        bold: 900
+      },
       fontFamily: {
         jost: ['Jost', 'sans-serif'],
         rancho: ['Rancho', 'sans-serif'],
         amiri: ['Amiri', 'sans-serif'],
         inkFree: ['Inkfree', 'sans-serif'],
+        segoe: ['Segoe UI', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
