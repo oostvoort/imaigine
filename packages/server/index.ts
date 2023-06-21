@@ -12,6 +12,7 @@ import {getLocation} from "./utils/getLocation";
 import {generateLocation, generateNonPlayerCharacter, generatePlayerCharacter, generateStory} from "./lib/langchain";
 import {generateLocationImage, generatePlayerImage} from "./lib/leonardo";
 import {PLAYER_IMAGE_CHOICES} from "./global/constants";
+import {getRandomLocation} from "./utils/getRandomLocation";
 
 dotenv.config()
 const app = express()
@@ -102,13 +103,14 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
   const imageHashes: string[] = []
 
   try {
-    const locationName = await getLocation(props.id)
+
+    const location = getRandomLocation()
 
     const player = await generatePlayerCharacter({
       storyName: props.story.name,
       storyDescription: props.story.description,
-      locationName: locationName,
-      locationDescription: props.locationDescription,
+      locationName: location.name,
+      locationDescription: location.summary,
       ageGroup: props.ageGroup,
       bodyType: props.bodyType,
       race: props.race,
@@ -116,8 +118,8 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
       genderIdentity: props.genderIdentity,
       skinColor: props.skinColor
     })
-    
-    for (let i = 1; i <= 3; i++) {
+
+    for (let i = 1; i <= PLAYER_IMAGE_CHOICES; i++) {
       const image = await generatePlayerImage(player.visualSummary)
       imageHashes.push(image)
     }
@@ -125,7 +127,8 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     res.send({
       name: player.name,
       description: player.description,
-      imageHashes: imageHashes
+      imageHashes: imageHashes,
+      locationId: location.id
     } as GeneratePlayerResponse)
 
   }catch (e) {
@@ -158,7 +161,8 @@ app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, nex
       "QmSSLuNfitVEDoda5x5DvzgydT6J8mwLjXMFrw5fq5rfJb",
       "QmYseeJuSTUedYcsKdn4BPhqsUUebxB2V3DZGQttZ3rnm7",
       "QmTjuQDVSPTyDrLC4Ri3pLvqn7HYibW6bA7WYoSKE73MAM"
-    ]
+    ],
+    locationId: "0x00000000000000000000000023"
   })
 })
 

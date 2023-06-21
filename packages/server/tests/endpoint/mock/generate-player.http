@@ -2,16 +2,14 @@ POST localhost:3000/mock/api/v1/generate-player
 Content-Type: application/json
 
 {
-  "id": "0x05",
   "story": {
     "name": "Fantasy World",
     "summary": "This magical fantasy world is populated with elf, goblin, human, nymph, dwarf, troll and many other fantastical creatures. It features rolling hills, towering mountaintops, sparkling waterfalls and mysterious forests. Magical creatures soar through the skies and cast potent spells with ease. The inhabitants live in small towns and villages, or in large imposing castles."
   },
-  "locationDescription": "Celestial Summit is a location within the magical fantasy world populated with elf, goblin, human, nymph, dwarf, troll and many other fantastical creatures. It is located within a Chaparral biome and is home to small towns and villages, or large imposing castles. The area has moderate safety and is fairly poor. The rustic landscape features rolling hills, towering mountaintops, sparkling waterfalls, and mysterious forests. Magical creatures soar through the skies and cast potent spells with ease.",
-  "ageGroup": "adult",
+  "ageGroup": "young adult",
   "genderIdentity": "female",
-  "race": "elf",
+  "race": "human",
   "skinColor": "light",
-  "bodyType": "burly",
-  "favColor": "red"
+  "bodyType": "average",
+  "favColor": "white"
 }

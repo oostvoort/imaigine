@@ -32,9 +32,7 @@ export interface GenerateNpcResponse {
   initialMessage: string
 }
 export interface GeneratePlayerProps {
-  id: string
   story: Story,
-  locationDescription: string,
   ageGroup: string,
   genderIdentity: string,
   race: string,
@@ -45,7 +43,8 @@ export interface GeneratePlayerProps {
 export interface GeneratePlayerResponse {
   name: string,
   description: string,
-  imageHashes: string[]
+  imageHashes: string[],
+  locationId: string
 }
 export interface GenerateTravelProps {
   routeIds: string[],
