@@ -49,7 +49,7 @@ contract InteractionSystemTest is MudV2Test {
      BOB = payable(address(makeAddr("bob")));
 
     // location
-    mockLocationID = world.createLocation("A", "B", "C");
+    mockLocationID = world.createLocation("A", "B", "C", 0x0000000000000000000000000000000000000000000000000000000000000021);
 
     // players
     mockPlayerID_DEV = world.createPlayer("Dev", "A warrior", "456", mockLocationID);

@@ -176,7 +176,8 @@ contract CreationSystem is System {
   function createLocation(
     string memory name,
     string memory summary,
-    string memory imgHash
+    string memory imgHash,
+    bytes32 locationID
   )
   public
   returns (bytes32)
@@ -185,8 +186,6 @@ contract CreationSystem is System {
     require(bytes(name).length > 0, "invalid name length");
     require(bytes(summary).length > 0, "invalid summary length");
     require(bytes(imgHash).length > 0, "invalid imgHash length");
-
-    bytes32 locationID = getUniqueEntity();
 
     SceneComponent.set(locationID, true);
     NameComponent.set(locationID, name);
