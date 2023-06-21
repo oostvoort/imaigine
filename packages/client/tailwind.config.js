@@ -36,6 +36,9 @@ export default {
         'option-6': "hsl(var(--option-6))",
         'option-7': "hsl(var(--option-7))",
         'option-8': "hsl(var(--option-8))",
+        'option-9': "hsl(var(--option-9))",
+        'option-10': "hsl(var(--option-10))",
+        'option-11': "hsl(var(--option-11))",
         night: "hsl(var(--night))",
         'conversation-receiver': {
           DEFAULT: "hsl(var(--conversation-receiver))",
@@ -124,6 +127,7 @@ export default {
         "btnGoodHover": "url('src/assets/background/btn_good_hover.png')",
         "btnEvil": "url('src/assets/background/btn_evil.png')",
         "btnEvilHover": "url('src/assets/background/btn_evil_hover.png')",
+        "modal": "url('src/assets/background/bg_gray.jpg')",
       }
     },
   },
