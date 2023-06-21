@@ -35,6 +35,7 @@ export default {
         'option-5': "hsl(var(--option-5))",
         'option-6': "hsl(var(--option-6))",
         'option-7': "hsl(var(--option-7))",
+        'option-8': "hsl(var(--option-8))",
         night: "hsl(var(--night))",
         'conversation-receiver': {
           DEFAULT: "hsl(var(--conversation-receiver))",
@@ -97,7 +98,7 @@ export default {
         amiri: ['Amiri', 'sans-serif'],
         inkFree: ['Inkfree', 'sans-serif'],
         segoe: ['Segoe UI', 'sans-serif'],
-        segoebold: ['Segoe UI Bold', 'sans-serif']
+        segoeBold: ['Segoe UI Bold', 'sans-serif']
       },
       keyframes: {
         "accordion-down": {
@@ -113,6 +114,17 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        "mainNeutral": "url('src/assets/background/main_bg_neutral.jpg')",
+        "mainGood": "url('src/assets/background/main_bg_good.jpg')",
+        "mainEvil": "url('src/assets/background/main_bg_evil.jpg')",
+        "btnNeutral": "url('src/assets/background/btn_neutral.png')",
+        "btnNeutralHover": "url('src/assets/background/btn_neutral_hover.png')",
+        "btnGood": "url('src/assets/background/btn_good.png')",
+        "btnGoodHover": "url('src/assets/background/btn_good_hover.png')",
+        "btnEvil": "url('src/assets/background/btn_evil.png')",
+        "btnEvilHover": "url('src/assets/background/btn_evil_hover.png')",
+      }
     },
   },
   plugins: [import("tailwindcss-animate")],
