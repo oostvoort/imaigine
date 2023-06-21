@@ -14,6 +14,7 @@ contract PostDeploy is Script {
     string imgHash;
     string name;
     string summary;
+    bytes32 id;
   }
 
   struct Path {
@@ -71,7 +72,8 @@ contract PostDeploy is Script {
       bytes32 locationID = world.createLocation(
         locations[i].name,
         locations[i].summary,
-        locations[i].imgHash
+        locations[i].imgHash,
+        locations[i].id
       );
 
       mapKeys[locations[i].name] = locationID;

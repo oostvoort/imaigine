@@ -1,6 +1,7 @@
-POST {{host}}/mock/api/v1/generate-npc
+POST localhost:3000/mock/api/v1/generate-npc
 Content-Type: application/json
 
 {
-
+  "id": "0x0000000000000000000000000000000000000000000000000000000000000006",
+  "description": "Kishan Cave is a hidden metropolis located in Xelva. It is a cave system populated by many humans and creatures, all living under the protection of the Ancient Spirit. The cave is shrouded in mystery, but the locals know that it once served as a hideout during the wars between the Demon King and The Church. It's inhabitants are poor, but they make the best out of what they have. As such, the safety level within the walls of the cave remains Very Safe. Ancient remnants and hidden artifacts can be found throughout the chambers, leading many adventurers from around Xelva to search for riches.",
 }

@@ -1,4 +1,4 @@
-POST localhost:3000/mock/api/v1/generate-player
+POST localhost:3000/api/v1/generate-player
 Content-Type: application/json
 
 {
@@ -7,5 +7,5 @@ Content-Type: application/json
   "race": "human",
   "skinColor": "light",
   "bodyType": "average",
-  "favColor": "white"
+  "favColor": "yellow"
 }

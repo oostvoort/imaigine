@@ -38,7 +38,12 @@ interface ICreationSystem {
     bytes32 ownerID
   ) external returns (bytes32);
 
-  function createLocation(string memory name, string memory summary, string memory imgHash) external returns (bytes32);
+  function createLocation(
+    string memory name,
+    string memory summary,
+    string memory imgHash,
+    bytes32 locationID
+  ) external returns (bytes32);
 
   function createPath(
     bytes32 fromLocation,

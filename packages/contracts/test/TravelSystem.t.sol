@@ -22,10 +22,10 @@ contract TravelSystemTest is MudV2Test {
   function test_PlayerTravelPath() public {
 
     // create available locations
-    bytes32 location0 = world.createLocation("location0", "Location 0", "Image");
-    bytes32 location1 = world.createLocation("location1", "Location 1", "Image");
-    bytes32 location2 = world.createLocation("location1", "Location 2", "Image");
-    bytes32 location3 = world.createLocation("location1", "Location 3", "Image");
+    bytes32 location0 = world.createLocation("location0", "Location 0", "Image", 0x0000000000000000000000000000000000000000000000000000000000000021);
+    bytes32 location1 = world.createLocation("location1", "Location 1", "Image", 0x0000000000000000000000000000000000000000000000000000000000000022);
+    bytes32 location2 = world.createLocation("location1", "Location 2", "Image", 0x0000000000000000000000000000000000000000000000000000000000000023);
+    bytes32 location3 = world.createLocation("location1", "Location 3", "Image", 0x0000000000000000000000000000000000000000000000000000000000000024);
 
     /*
     location0 -> location1 -> location2
@@ -74,7 +74,7 @@ contract TravelSystemTest is MudV2Test {
   }
 
   function test_revert_PlayerTravelPath() public {
-    bytes32 location0 = world.createLocation("location0", "Location 0", "Image");
+    bytes32 location0 = world.createLocation("location0", "Location 0", "Image", 0x0000000000000000000000000000000000000000000000000000000000000025);
 
     vm.expectRevert(abi.encodePacked("to location does not exist"));
     world.playerTravelPath(location0);

@@ -38,7 +38,7 @@ contract CreationSystemTest is MudV2Test {
     super.setUp();
     world = IWorld(worldAddress);
 
-    mockLocationID = world.createLocation("A", "B", "C");
+    mockLocationID = world.createLocation("A", "B", "C", 0x0000000000000000000000000000000000000000000000000000000000000021);
   }
 
   function testWorldExists() public {
@@ -205,13 +205,14 @@ contract CreationSystemTest is MudV2Test {
   function testFuzz_CreateLocation(
     string memory name,
     string memory summary,
-    string memory imgHash
+    string memory imgHash,
+    bytes32 id
   ) public {
     vm.assume(bytes(name).length > 0);
     vm.assume(bytes(summary).length > 0);
     vm.assume(bytes(imgHash).length > 0);
 
-    bytes32 locationID = world.createLocation(name, summary, imgHash);
+    bytes32 locationID = world.createLocation(name, summary, imgHash, id);
 
     assertTrue(SceneComponent.get(world, locationID));
     assertEq(NameComponent.get(world, locationID), name);
@@ -223,12 +224,13 @@ contract CreationSystemTest is MudV2Test {
     string memory name = "name";
     string memory summary = "summary";
     string memory imgHash = "imgHash";
+    bytes32 locationId = 0x0000000000000000000000000000000000000000000000000000000000000021;
 
     vm.expectRevert(abi.encodePacked("invalid name length"));
-    world.createLocation("", summary, imgHash);
+    world.createLocation("", summary, imgHash, locationId);
     vm.expectRevert(abi.encodePacked("invalid summary length"));
-    world.createLocation(name, "", imgHash);
+    world.createLocation(name, "", imgHash, locationId);
     vm.expectRevert(abi.encodePacked("invalid imgHash length"));
-    world.createLocation(name, summary, "");
+    world.createLocation(name, summary, "", locationId);
   }
 }
