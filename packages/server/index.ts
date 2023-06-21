@@ -11,7 +11,7 @@ import {
 import {getLocation} from "./utils/getLocation";
 import {generateLocation, generateNonPlayerCharacter, generatePlayerCharacter, generateStory} from "./lib/langchain";
 import {generateLocationImage, generatePlayerImage} from "./lib/leonardo";
-import {PLAYER_IMAGE_CHOICES} from "./global/constants";
+import {PLAYER_IMAGE_CHOICES, STORY} from "./global/constants";
 import {getRandomLocation} from "./utils/getRandomLocation";
 
 dotenv.config()
@@ -54,7 +54,7 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
   try {
     const locationName = await getLocation(props.id)
 
-    const location = await generateLocation(props.story, locationName)
+    const location = await generateLocation(STORY, locationName)
 
     const imageHash= await generateLocationImage(location.visualSummary)
 
@@ -76,13 +76,11 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
     const locationName = await getLocation(props.id)
 
     const npc = await generateNonPlayerCharacter({
-      storyName: props.story.name,
-      storyDescription: props.story.description,
+      storyName: STORY.name,
+      storyDescription: STORY.description,
       locationName: locationName,
       locationDescription: props.description
     })
-
-    console.info({npc})
 
     const imageHash = await generatePlayerImage(npc.visualSummary)
 
@@ -107,8 +105,8 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     const location = getRandomLocation()
 
     const player = await generatePlayerCharacter({
-      storyName: props.story.name,
-      storyDescription: props.story.description,
+      storyName: STORY.name,
+      storyDescription: STORY.description,
       locationName: location.name,
       locationDescription: location.summary,
       ageGroup: props.ageGroup,

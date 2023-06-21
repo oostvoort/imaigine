@@ -1,4 +1,8 @@
 export const PLAYER_IMAGE_CHOICES = 3
+export const STORY: {name: string, description: string} = {
+    name: "Fantasy World",
+    description: "This magical fantasy world is populated with elf, goblin, human, nymph, dwarf, troll and many other fantastical creatures. It features rolling hills, towering mountaintops, sparkling waterfalls and mysterious forests. Magical creatures soar through the skies and cast potent spells with ease. The inhabitants live in small towns and villages, or in large imposing castles."
+}
 
 // first five locations here are treated as starting locations
 export const MOCK_LOCATION = [

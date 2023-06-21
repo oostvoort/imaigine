@@ -13,7 +13,6 @@ export interface GenerateStoryResponse {
 }
 export interface GenerateLocationProps {
   id: string,
-  story: Story
 }
 export interface GenerateLocationResponse {
   name: string,
@@ -23,7 +22,6 @@ export interface GenerateLocationResponse {
 export interface GenerateNpcProps {
   id: string,
   description: string,
-  story: Story
 }
 export interface GenerateNpcResponse {
   name: string,
@@ -32,7 +30,6 @@ export interface GenerateNpcResponse {
   initialMessage: string
 }
 export interface GeneratePlayerProps {
-  story: Story,
   ageGroup: string,
   genderIdentity: string,
   race: string,
