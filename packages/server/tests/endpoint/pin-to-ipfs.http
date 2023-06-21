@@ -3,7 +3,14 @@ Content-Type: application/json
 
 {
   "json": {
-    "name": "test",
-    "summary": "test summary"
-  }
+    "name": "Xelva",
+    "summary": "Xelva is an ancient and mysterious fantasy world, populated by elves, orcs, and humans. It has two moons, one of which is often shrouded in mist and bathed in a kaleidoscope of soft and colorful light. Xelva’s technology varies from primitive magic to aetherpunk – a mix of modern and arcane technology. Its currency circulates around gold, and it has seven beautiful continents, each with its own culture and stories.But Xelva is a world at war; between the Demon King and The Church, battles rage daily. It is said that the church is blessed by a powerful angel, and that the Demon King is partnered with a powerful force of darkness. Whatever the truth may be, Xelva is a place full of adventure and mystery, ready to be explored. Visitors to Xelva can expect to discover ancient caves, enchanted jungles, and hidden tombs filled with treasure. They will see magnificent monuments soaring high into the sky, and perhaps even witness one of the legendary battles between the Demon King and The Church. Magical creatures dwell within dense forests, untold secrets await to be unraveled, and riches exist for those brave enough to seek them. Xelva awaits adventurers, ready to explore and discover its wonders. ",
+    "theme": "fantasy",
+    "currency": "gold",
+    "races": [
+      "elves",
+      "orcs",
+      "humans"
+    ]
+}
 }

@@ -4,13 +4,8 @@ export default mudConfig({
     systems: {
     },
     tables: {
-        StoryComponent: {
-            schema: {
-                themeID: "bytes32", // keccak256(theme)
-                currencyID: "bytes32", // The currency
-                racesID: "bytes", // Store available races to occur on story
-            },
-        },
+        StoryComponent: "bool",
+        ConfigComponent: "string",
         ItemComponent: "bool",
         OwnerComponent: "bytes32",
         AliveComponent: "bool",
