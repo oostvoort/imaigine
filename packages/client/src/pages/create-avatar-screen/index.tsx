@@ -65,7 +65,7 @@ export default function CreateAvatarScreen() {
     skinColor: '',
     bodyType: '',
   }))
-  const [ selectedAvatar, setSelectedAvatar ] = React.useState<number>(null)
+  const [ selectedAvatar, setSelectedAvatar ] = React.useState<number | null>(null)
 
   const userInputsJsonParsed: UserInputType = React.useMemo(() => {
     return JSON.parse(userInputs)
@@ -100,7 +100,8 @@ export default function CreateAvatarScreen() {
       {
         step == 1 && (
           <section className="flex flex-col gap-3">
-            <p className="text-4xl font-segoebold text-white leading-[48px] text-center">Let&apos;s create your character</p>
+            <p className="text-4xl font-segoeBold font-bold text-white leading-[48px] text-center">Let&apos;s create
+              your character</p>
             <Card className="min-w-[500px] shadow-2xl">
               <CardContent className="flex flex-col gap-8">
                 {

@@ -1,6 +1,7 @@
-import StartingScreen from '@/pages/starting-screen'
-import MainLayout from '@/pages/MainLayout'
+// import StartingScreen from '@/pages/starting-screen'
+
 import CreateAvatarScreen from '@/pages/create-avatar-screen'
+import MainLayout from '@/components/layouts/MainLayout'
 
 export const App = () => {
   return (
