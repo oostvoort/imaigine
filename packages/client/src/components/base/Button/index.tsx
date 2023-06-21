@@ -1,6 +1,7 @@
 import React from 'react'
-import { VariantProps, cva } from 'class-variance-authority'
+import { cva, VariantProps } from 'class-variance-authority'
 import { cn } from '@/global/utils'
+import { clsx } from 'clsx'
 
 
 const buttonVariants = cva(
@@ -19,6 +20,9 @@ const buttonVariants = cva(
         link: 'underline-offset-4 hover:underline text-primary',
         accent: 'bg-white text-accent-3 hover:bg-white/80',
         selective: 'bg-primary font-normal tracking-wide font-sans hover:bg-primary/80',
+        neutral: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center bg-auto hover:bg-btnNeutralHover' ]),
+        good: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnGood bg-no-repeat bg-center bg-auto hover:bg-btnGoodHover' ]),
+        evil: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnEvil bg-no-repeat bg-center bg-auto hover:bg-btnEvilHover' ]),
       },
       size: {
         sm: 'h-9 px-3 rounded-md text-sm',
@@ -26,6 +30,7 @@ const buttonVariants = cva(
         lg: 'h-12 px-8 py-8 rounded-lg text-lg',
         xl: 'h-16 px-12 rounded-lg text-2xl',
         '2xl': 'h-20 px-12',
+        'btnWithBgImg': 'w-full h-[88px]',
       },
       isHighlighted: {
         true: 'outline outline-accent text-primary-foreground',
