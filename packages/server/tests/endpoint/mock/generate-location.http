@@ -1,0 +1,10 @@
+POST localhost:3000/mock/api/v1/generate-location
+Content-Type: application/json
+
+{
+  "id": "0x01",
+  "story": {
+    "name": "Fantasy World",
+    "description": "The Fantasy World is populated by elves, orcs, and humans. All forms of currency exist in this world, but gold is the most sought-after form. Life is filled with adventures and magic, offering a world of excitement and opportunity. The landscape varies from lush forests and rolling hills, to rocky mountains and deep oceans. Ancient dungeons and ruins guarded by powerful creatures lie in forgotten corners of the world, each waiting to be explored and conquered. This is a world of exploration and enchantment, a world of possibility and wonder."
+  }
+}

@@ -1,0 +1,15 @@
+POST localhost:3000/mock/api/v1/generate-player
+Content-Type: application/json
+
+{
+  "story": {
+    "name": "Fantasy World",
+    "summary": "This magical fantasy world is populated with elf, goblin, human, nymph, dwarf, troll and many other fantastical creatures. It features rolling hills, towering mountaintops, sparkling waterfalls and mysterious forests. Magical creatures soar through the skies and cast potent spells with ease. The inhabitants live in small towns and villages, or in large imposing castles."
+  },
+  "ageGroup": "young adult",
+  "genderIdentity": "female",
+  "race": "human",
+  "skinColor": "light",
+  "bodyType": "average",
+  "favColor": "white"
+}

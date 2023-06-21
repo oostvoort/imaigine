@@ -1,0 +1,11 @@
+POST localhost:3000/mock/api/v1/generate-npc
+Content-Type: application/json
+
+{
+  "id": "0x05",
+  "description": "Celestial Summit is the name given to this majestic location in the Fantasy World. It is a swampy area particularly known for its upper-middle class wealth, and is home to small, highly safe population of elves, goblins, humans, nymphs, dwarves, and trolls. The landscape is beautiful and full of life, with rolling hills, towering peaks, and mesmerizing waterfalls. Magical creatures everywhere create a captivating atmosphere, while the inhabitants enjoy the peacefulness of the remote yet easily accessible location.",
+  "story": {
+    "name": "Fantasy World",
+    "description": "The magical world of Fantasy is populated by elves, orcs, and humans. Gold is the main form of currency in circulation throughout the world. The enchanting landscape is full of towering mountains, lush forests, and crystal clear rivers."
+  }
+}
