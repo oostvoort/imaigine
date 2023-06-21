@@ -6,6 +6,8 @@
   :root {
     /*--background: 206 24% 17%;*/
     /*--foreground: 226 39% 81%;*/
+    /*--system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
+
     --background: 208 25% 20%;
     --foreground: 226 39% 81%;
 
@@ -58,6 +60,7 @@
     --option-5: 54 92% 41%;
     --option-6: 227 22% 64%;
     --option-7: 0 100% 50%;
+    --option-8: 52 100% 79%;
 
     --radius: 0.5rem;
   }
@@ -116,11 +119,31 @@
 }
 
 @font-face {
-  src: url("fonts/Segoe_UI.ttf");
-  font-family: "Segoe UI";
+  src: url("./fonts/Jost-VariableFont_wght.ttf");
+  font-family: Jost;
 }
 
 @font-face {
-  src: url("fonts/Segoe_UI_Bold.ttf");
-  font-family: "Segoe UI Bold";
+  src: url("./fonts/Rancho-Regular.ttf");
+  font-family: Rancho;
+}
+
+@font-face {
+  src: url("./fonts/Amiri-Regular.ttf");
+  font-family: Amiri;
+}
+
+@font-face {
+  src: url("./fonts/Inkfree.ttf");
+  font-family: InkFree;
+}
+
+@font-face {
+  src: url("./fonts/Segoe UI.ttf");
+  font-family: Segoe UI;
+}
+
+@font-face {
+  src: url("./fonts/Segoe UI Bold.ttf");
+  font-family: Segoe UI Bold;
 }
