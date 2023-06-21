@@ -6,13 +6,14 @@ import {
   GenerateLocationResponse,
   GenerateNpcProps, GenerateNpcResponse,
   GeneratePlayerProps, GeneratePlayerResponse,
-  GenerateStoryProps
+  GenerateStoryProps, StoreToIPFS
 } from 'types'
 import {getLocation} from "./utils/getLocation";
 import {generateLocation, generateNonPlayerCharacter, generatePlayerCharacter, generateStory} from "./lib/langchain";
 import {generateLocationImage, generatePlayerImage} from "./lib/leonardo";
 import {PLAYER_IMAGE_CHOICES, STORY} from "./global/constants";
 import {getRandomLocation} from "./utils/getRandomLocation";
+import {storeJson} from "./lib/ipfs";
 
 dotenv.config()
 const app = express()
@@ -130,6 +131,19 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     } as GeneratePlayerResponse)
 
   }catch (e) {
+    next(e)
+  }
+})
+
+app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
+  const props: StoreToIPFS = req.body
+
+  try {
+    const hash = await storeJson(props.json)
+    res.send({
+      ipfsHash: hash
+    })
+  } catch (e) {
     next(e)
   }
 })

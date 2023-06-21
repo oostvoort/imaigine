@@ -52,3 +52,6 @@ export interface GenerateTravelResponse {
   situation: string,
   playerHistory: string
 }
+export interface StoreToIPFS {
+  json: any
+}
