@@ -11,10 +11,10 @@ contract PostDeploy is Script {
   using ArrayLib for string[];
 
   struct Location {
+    bytes32 id;
     string imgHash;
     string name;
     string summary;
-    bytes32 id;
   }
 
   struct Path {
