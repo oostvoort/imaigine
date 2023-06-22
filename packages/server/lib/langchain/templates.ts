@@ -41,13 +41,13 @@ export const locationPrompt = `
     {storySummary}\n
     Generate a 3 paragraph description of a location named {locationName} in {storyName}.\n
     Describe it's history within the world.\n\n
-    
+
     And must have the following features:\n
     It is in a ${getRandomValue(biomes)} biome.\n
     It's population size is ${getRandomValue(populationSizes)}\n
     It's safety level is ${getRandomValue(safetyLevels)}\n
     It's wealth level is ${getRandomValue(wealthLevels)}\n\n
-    
+
     Summarize the location visually\n
 `
 
@@ -56,11 +56,11 @@ export const nonPlayerCharacterPrompt = `
 
     The character lives in {storyName} with the description "{storyDescription}"\n
     Don't include the world description in the character description.\n\n
-    
+
     They start in a location named "{locationName}" with the description "{locationDescription}"\n
     Don't include the location description in the character description.\n
     Describe how the character is related to the location, like how they lived or came to that place.\n
-     
+
     The character possesses the following stats:\n
     Strength: ${getRandomValue(strengthLevels)}\n
     Dexterity: ${getRandomValue(dexterityLevels)}\n
@@ -68,7 +68,7 @@ export const nonPlayerCharacterPrompt = `
     Intelligence: ${getRandomValue(intelligenceLevels)}\n
     Charisma: ${getRandomValue(charismaLevels)}\n
     Wisdom: ${getRandomValue(wisdomLevels)}\n\n
-    
+
     The character is a ${getRandomValue(ageGroup)}\n
     The character identifies as ${getRandomValue(genderIdentity)}\n
     The character is a ${getRandomValue(races)}\n
@@ -87,13 +87,13 @@ export const nonPlayerCharacterPrompt = `
 export const playerCharacterPrompt = `
     Generate a character description based on the following:\n\n
 
-    The character lives in {storyName} with the description "{storySummary}"\n
+    The character lives in {storyName} with the description "{storyDescription}"\n
     Don't include the world description in the character description.\n\n
-    
+
     They start in a location named "{locationName}" with the description "{locationDescription}"\n
     Don't include the location description in the character description.\n
     Describe how the character is related to the location, like how they lived or came to that place.\n
-     
+
     The character possesses the following stats:\n
     Strength: ${getRandomValue(strengthLevels)}\n
     Dexterity: ${getRandomValue(dexterityLevels)}\n
@@ -101,7 +101,7 @@ export const playerCharacterPrompt = `
     Intelligence: ${getRandomValue(intelligenceLevels)}\n
     Charisma: ${getRandomValue(charismaLevels)}\n
     Wisdom: ${getRandomValue(wisdomLevels)}\n\n
-    
+
     The character is a {ageGroup}\n
     The character identifies as {genderIdentity}\n
     The character is a {race}\n

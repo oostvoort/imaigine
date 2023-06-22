@@ -38,20 +38,31 @@ export interface GeneratePlayerProps {
   favColor: string
 }
 export interface GeneratePlayerResponse {
-  name: string,
-  description: string,
-  imageHashes: string[],
+  ipfsHash: string
+  imgHashes: string[],
   locationId: string
-}
-export interface GenerateTravelProps {
-  routeIds: string[],
-  from: string,
-  to: string
-}
-export interface GenerateTravelResponse {
-  situation: string,
-  playerHistory: string
 }
 export interface StoreToIPFS {
   json: any
+}
+
+export interface Based {
+  name: string,
+  summary: string
+}
+export interface StoryConfig {
+  name: string,
+  summary: string,
+  theme: string,
+  currency: string,
+  races: string[]
+}
+export interface StartingLocation {
+  config: string,
+  imgHash: string,
+  id: string
+}
+export interface BaseConfig {
+  storyConfig: string,
+  startingLocations: Array<StartingLocation>
 }

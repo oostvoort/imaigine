@@ -1,0 +1,15 @@
+#POST localhost:3000/write-history
+#Content-Type: application/json
+#
+#{
+#  "counterpart": "location",
+#  "players": [
+#    "elves",
+#    "orcs",
+#    "humans"
+#  ],
+#  "log": "explored the city"
+#}
+
+GET localhost:3000/read-history
+Content-Type: application/json
