@@ -3,6 +3,8 @@ import { mount as mountDevTools } from "@latticexyz/dev-tools";
 import { App } from "./App";
 import { setup } from "./mud/setup";
 import { MUDProvider } from "./MUDContext";
+import {QueryClientProvider} from "react-query";
+import {queryClient} from "./provider/queryClient";
 import './index.css'
 
 const rootElement = document.getElementById("react-root");
@@ -13,7 +15,9 @@ const root = ReactDOM.createRoot(rootElement);
 setup().then((result) => {
   root.render(
     <MUDProvider value={result}>
-      <App />
+      <QueryClientProvider client={queryClient}>
+          <App />
+      </QueryClientProvider>
     </MUDProvider>
   );
   mountDevTools();
