@@ -117,22 +117,28 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
   const props: GenerateNpcProps = req.body
 
   try {
-    const locationName = await getLocation(props.id)
+
+    const location: Based = await getFromIpfs(props.locationIpfsHash)
 
     const npc = await generateNonPlayerCharacter({
-      storyName: STORY.name,
-      storyDescription: STORY.description,
-      locationName: locationName,
-      locationDescription: props.description,
+      storyName: storyConfig.name,
+      storyDescription: storyConfig.summary,
+      locationName: location.name,
+      locationDescription: location.summary,
     })
+
+    const npcIpfsHash = await storeJson({
+      name: npc.name,
+      summary: npc.description
+    })
+
+    // TODO: Initial message of NPC to db
 
     const imageHash = await generatePlayerImage(npc.visualSummary)
 
     res.send({
-      name: npc.name,
-      description: npc.description,
+      ipfsHash: npcIpfsHash,
       imageHash: imageHash,
-      initialMessage: npc.initialMessage,
     } as GenerateNpcResponse)
   } catch (e) {
     next(e)
@@ -228,10 +234,8 @@ app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, nex
 
 app.post('/mock/api/v1/generate-npc', async (req: Request, res: Response, next) => {
   res.send({
-    name: 'Eldrick Stoneforge',
-    description: 'Eldrick Stoneforge is a grizzled dwarf blacksmith hailing from the mountain stronghold of Hammerfall. With a weathered face adorned with a thick, braided beard and piercing blue eyes, Eldrick is a master of his craft. He can be found in his smoky forge, hammering and shaping metal with expert precision. His muscular frame and stout stature reflect years of hard labor and battles fought. Eldrick is known for his unparalleled ability to forge legendary weapons and armor, which have become sought-after treasures among adventurers and warriors across the realm.',
-    imageHash: 'mno345',
-    initialMessage: 'Hi I\'m Eldrick Stoneforge',
+    ipfsHash: "QmRRMUGrbuD8eUDRcTLQ7HUWnrZ2xDEg5e2o4NxT1UDMVr",
+    imageHash: "Qmerx5j6Ep5idSzGTSa8BrhmjhaLEw9BpARGdXfFzY4eTS"
   })
 })
 
