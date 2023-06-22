@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import {
+  BaseConfig, Based,
   GenerateLocationProps,
   GenerateLocationResponse,
   GenerateNpcProps,
@@ -9,7 +10,7 @@ import {
   GeneratePlayerProps,
   GeneratePlayerResponse,
   GenerateStoryProps,
-  StoreToIPFS,
+  StoreToIPFS, StoryConfig,
 } from 'types'
 import { getLocation } from './utils/getLocation'
 import { generateLocation, generateNonPlayerCharacter, generatePlayerCharacter, generateStory } from './lib/langchain'
@@ -17,6 +18,8 @@ import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { PLAYER_IMAGE_CHOICES, STORY } from './global/constants'
 import { getRandomLocation } from './utils/getRandomLocation'
 import { storeJson } from './lib/ipfs'
+import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
+import { getFromIpfs } from './utils/getFromIpfs'
 
 dotenv.config()
 const app = express()
@@ -31,6 +34,16 @@ app.use(
     origin: '*',
   }),
 )
+
+let baseConfig: BaseConfig = {} as BaseConfig
+let storyConfig: StoryConfig = {} as StoryConfig
+
+app.listen(port,async () => {
+  baseConfig = await getBaseConfigFromIpfs()
+  storyConfig = await getFromIpfs(baseConfig.storyConfig)
+
+  console.log(`Example app listening on port ${port}`)
+})
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -106,13 +119,15 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
 
   try {
 
-    const location = getRandomLocation()
+    const startingLocation = getRandomLocation(baseConfig.startingLocations)
+
+    const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
 
     const player = await generatePlayerCharacter({
-      storyName: STORY.name,
-      storyDescription: STORY.description,
-      locationName: location.name,
-      locationDescription: location.summary,
+      storyName: storyConfig.name,
+      storyDescription: storyConfig.summary,
+      locationName: startingLocationDetails.name,
+      locationDescription: startingLocationDetails.summary,
       ageGroup: props.ageGroup,
       bodyType: props.bodyType,
       race: props.race,
@@ -121,17 +136,21 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
       skinColor: props.skinColor,
     })
 
+    const playerIpfsHash = await storeJson({
+      name: player.name,
+      description: player.description
+    })
+
     for (let i = 1; i <= PLAYER_IMAGE_CHOICES; i++) {
       const image = await generatePlayerImage(player.visualSummary)
       imageHashes.push(image)
     }
 
-    // res.send({
-    //   name: player.name,
-    //   description: player.description,
-    //   imageHashes: imageHashes,
-    //   locationId: location.id,
-    // } as GeneratePlayerResponse)
+    res.send({
+      ipfsHash: playerIpfsHash,
+      imgHashes: imageHashes,
+      locationId: startingLocation.id
+    } as GeneratePlayerResponse)
 
   } catch (e) {
     next(e)
@@ -198,6 +217,3 @@ app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, nex
   })
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
