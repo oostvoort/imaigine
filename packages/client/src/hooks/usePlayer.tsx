@@ -10,11 +10,12 @@ import {GeneratePlayerProps, GeneratePlayerResponse} from '@/global/types';
 export default function usePlayer () {
     const {
         components: {
+            PlayerComponent,
+            ConfigComponent,
             CharacterComponent,
             AliveComponent,
             ImageComponent,
             LocationComponent,
-            InteractComponent,
         },
 
         network: {
@@ -25,11 +26,12 @@ export default function usePlayer () {
     } = useMUD();
 
     const player = {
+        player: useComponentValue(PlayerComponent, playerEntity),
+        config: useComponentValue(ConfigComponent, playerEntity),
         character: useComponentValue(CharacterComponent, playerEntity),
         alive: useComponentValue(AliveComponent, playerEntity),
-        imgHash: useComponentValue(ImageComponent, playerEntity),
+        image: useComponentValue(ImageComponent, playerEntity),
         location: useComponentValue(LocationComponent, playerEntity),
-        interact: useComponentValue(InteractComponent, playerEntity),
     }
 
     const generatePlayer = useMutation<Awaited<GeneratePlayerResponse>, Error, GeneratePlayerProps>(async (data) => {
