@@ -1,3 +1,5 @@
+import {PromiseOrValue} from "contracts/types/ethers-contracts/common";
+
 export type RequestGenerateStory = {
     theme: string,
     races: Array<string>
@@ -18,6 +20,12 @@ export type ResponseGenerateLocation = {
     description: string
 }
 
+export type GenerateLocation = {
+    name: PromiseOrValue<string>,
+    summary: PromiseOrValue<string>,
+    imgHash: PromiseOrValue<string>,
+}
+
 export type RequestGeneratePlayer = {
     attributes: Partial<object>
 }
@@ -25,6 +33,13 @@ export type RequestGeneratePlayer = {
 export type ResponseGeneratePlayer = ResponseGenerateStory & {
     image: Array<string>;
 };
+
+export type GeneratePlayer = {
+    config: PromiseOrValue<string>,
+    imgHash: PromiseOrValue<string>,
+    locationId: PromiseOrValue<string> // represent bytes32
+}
+
 
 export type RequestGenerateNpc = {
     id: string,
