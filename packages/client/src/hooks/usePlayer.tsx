@@ -4,7 +4,7 @@ import {useMutation} from "react-query";
 import { SERVER_API } from '@/global/constant'
 import {GeneratePlayer} from "./api/generate/typesGenerate";
 import {awaitStreamValue} from "@latticexyz/utils";
-import {GeneratePlayerProps, GeneratePlayerResponse} from '@/global/types';
+import { GeneratedPlayer, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { getFromIPFS } from '@/global/utils'
 
 
@@ -35,7 +35,7 @@ export default function usePlayer () {
         location: useComponentValue(LocationComponent, playerEntity),
     }
 
-    const generatePlayer = useMutation<Awaited<GeneratePlayerResponse>, Error, GeneratePlayerProps>(async (data) => {
+    const generatePlayer = useMutation<Awaited<GeneratedPlayer>, Error, GeneratePlayerProps>(async (data) => {
         const response = await fetch(`${SERVER_API}/api/v1/generate-player`, {
           method: "POST",
           headers: {
@@ -54,6 +54,7 @@ export default function usePlayer () {
     }, {
         mutationKey: ["generatePlayer"],
     })
+
 
     const createPlayer = useMutation<typeof player, Error, GeneratePlayer>(async (data) => {
         const { config, imgHash, locationId } = data;

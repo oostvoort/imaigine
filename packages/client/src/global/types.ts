@@ -28,3 +28,8 @@ export interface GeneratePlayerResponse {
   imgHashes: string[],
   locationId: string
 }
+
+export interface GeneratedPlayer extends GeneratePlayerResponse{
+  description: string
+  name: string
+}
