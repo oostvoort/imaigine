@@ -2,8 +2,10 @@ import { clsx } from 'clsx'
 import React from 'react'
 import { Button } from '@/components/base/Button'
 import Header from '@/components/layouts/Header'
+import ConversationDialog from '@/components/ConversationDialog'
 
 export default function CurrentLocationScreen() {
+  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
   return (
     <div className={clsx([
       'flex flex-col items-center',
@@ -39,7 +41,7 @@ export default function CurrentLocationScreen() {
           <p className={clsx([
             'font-amiri',
             'text-[30px]',
-          ])}>
+          ])} onClick={() => setIsOpen(true)}>
             Alice opened her eyes, finding herself in Mystic Forest an unfamiliar land.
             She stood at the foot of a towering mountain range known as the Everpeak Mountains,
             it&apos;s snow-capped peaks reaching for the heavens. Nearby, a babbling river called the Silverstream
@@ -61,6 +63,7 @@ export default function CurrentLocationScreen() {
           Succumb to panic
         </Button>
       </div>
+      <ConversationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)}/>
     </div>
   )
 }
