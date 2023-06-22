@@ -14,7 +14,8 @@ import {
   PlayerComponent,
   CharacterComponent,
   AliveComponent,
-  SceneComponent
+  SceneComponent,
+  KarmaPointsComponent
 } from "../codegen/Tables.sol";
 
 import { ArrayLib } from "../lib/ArrayLib.sol";
@@ -67,6 +68,7 @@ contract CreationSystem is System {
     AliveComponent.set(playerID, true);
     ImageComponent.set(playerID, imgHash);
     LocationComponent.set(playerID, locationID);
+    KarmaPointsComponent.set(playerID, 0);
 
     return playerID;
   }

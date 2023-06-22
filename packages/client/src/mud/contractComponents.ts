@@ -260,6 +260,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    KarmaPointsComponent: (() => {
+      const tableId = new TableId("", "KarmaPointsCompo");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     PathLocationComponent: (() => {
       const tableId = new TableId("", "PathLocationComp");
       return defineComponent(

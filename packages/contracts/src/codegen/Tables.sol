@@ -20,6 +20,7 @@ import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponen
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
 import { SceneComponent, SceneComponentTableId } from "./tables/SceneComponent.sol";
 import { PathComponent, PathComponentTableId } from "./tables/PathComponent.sol";
+import { KarmaPointsComponent, KarmaPointsComponentTableId } from "./tables/KarmaPointsComponent.sol";
 import { PathLocationComponent, PathLocationComponentData, PathLocationComponentTableId } from "./tables/PathLocationComponent.sol";
 import { InteractComponent, InteractComponentData, InteractComponentTableId } from "./tables/InteractComponent.sol";
 import { InteractionComponent, InteractionComponentData, InteractionComponentTableId } from "./tables/InteractionComponent.sol";

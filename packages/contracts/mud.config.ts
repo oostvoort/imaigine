@@ -21,6 +21,7 @@ export default mudConfig({
         LocationComponent: "bytes32",
         SceneComponent: "bool",
         PathComponent: "bool",
+        KarmaPointsComponent: "int8",
         PathLocationComponent: {
             schema: {
                 location0: "bytes32",
