@@ -15,9 +15,8 @@ export interface GenerateLocationProps {
   id: string,
 }
 export interface GenerateLocationResponse {
-  name: string,
-  description: string,
-  imageHash: string
+  ipfsHash: string,
+  imageHash: string,
 }
 export interface GenerateNpcProps {
   id: string,
@@ -46,9 +45,16 @@ export interface StoreToIPFS {
   json: any
 }
 
-export interface BaseValue {
+export interface Based {
   name: string,
   summary: string
+}
+export interface StoryConfig {
+  name: string,
+  summary: string,
+  theme: string,
+  currency: string,
+  races: string[]
 }
 export interface StartingLocation {
   config: string,
@@ -57,15 +63,5 @@ export interface StartingLocation {
 }
 export interface BaseConfig {
   storyConfig: string,
-  startingLocation: Array<StartingLocation>
-}
-
-export interface GenerateTravelProps {
-  routeIds: string[],
-  from: string,
-  to: string
-}
-export interface GenerateTravelResponse {
-  situation: string,
-  playerHistory: string
+  startingLocations: Array<StartingLocation>
 }

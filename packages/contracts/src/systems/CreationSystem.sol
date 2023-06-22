@@ -14,16 +14,18 @@ import {
   PlayerComponent,
   CharacterComponent,
   AliveComponent,
-  SceneComponent
+  SceneComponent,
+  KarmaPointsComponent,
+  VotingComponent,
+  CounterpartComponent
 } from "../codegen/Tables.sol";
+
+import { VotingStatusType } from "../codegen/Types.sol";
 
 import { ArrayLib } from "../lib/ArrayLib.sol";
 import { Constants } from "../lib/Constants.sol";
 
 contract CreationSystem is System {
-  using ArrayLib for string[];
-  using ArrayLib for bytes;
-  using ArrayLib for bytes32[];
 
   function createStory(
     string memory config
@@ -67,6 +69,8 @@ contract CreationSystem is System {
     AliveComponent.set(playerID, true);
     ImageComponent.set(playerID, imgHash);
     LocationComponent.set(playerID, locationID);
+    KarmaPointsComponent.set(playerID, 0);
+    CounterpartComponent.set(playerID, locationID);
 
     return playerID;
   }
@@ -93,6 +97,7 @@ contract CreationSystem is System {
     AliveComponent.set(characterID, true);
     ImageComponent.set(characterID, imgHash);
     LocationComponent.set(characterID, locationID);
+    VotingComponent.set(characterID, VotingStatusType.OPEN, new bytes(0), new bytes(0));
 
     return characterID;
   }

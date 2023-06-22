@@ -150,3 +150,17 @@
   src: url("./fonts/Segoe UI Bold.ttf");
   font-family: Segoe UI Bold;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #394853;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #000000;
+  border-radius: 4px;
+}

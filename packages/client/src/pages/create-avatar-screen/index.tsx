@@ -5,6 +5,7 @@ import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
 import { camelCaseToTitle } from '@/global/utils'
+import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
 
 type SetupOptionType = Array<{
   label: string,
@@ -93,6 +94,8 @@ export default function CreateAvatarScreen() {
       'mx-auto max-w-7xl my-[3rem]',
       'flex flex-col items-center gap-10',
     ])}>
+      <ConversationDialog isOpen={true} setOpen={() => console.log('true')}/>
+
       <section className="flex flex-col gap-2">
         <img src={imaigineIcon} alt={String(imaigineIcon)} className="aspect-auto w-[225px]" />
         <p className="font-inkFree tracking-wider text-center text-sm text-primary-foreground">Imagination Engine</p>

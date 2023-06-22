@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import {
+  BaseConfig, Based,
   GenerateLocationProps,
   GenerateLocationResponse,
   GenerateNpcProps,
@@ -9,7 +10,7 @@ import {
   GeneratePlayerProps,
   GeneratePlayerResponse,
   GenerateStoryProps,
-  StoreToIPFS,
+  StoreToIPFS, StoryConfig,
 } from 'types'
 import { getLocation } from './utils/getLocation'
 import { generateLocation, generateNonPlayerCharacter, generatePlayerCharacter, generateStory } from './lib/langchain'
@@ -17,8 +18,28 @@ import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { PLAYER_IMAGE_CHOICES, STORY } from './global/constants'
 import { getRandomLocation } from './utils/getRandomLocation'
 import { storeJson } from './lib/ipfs'
-
+import sqlite3 from "sqlite3";
+import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
+import { getFromIpfs } from './utils/getFromIpfs'
+import { getLocationDetails, getLocationList } from './utils/getLocationList'
 dotenv.config()
+
+const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
+  if (err) {
+    console.error(err.message)
+    throw err
+  } else {
+    database.run(`CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY, counterpart TEXT, players TEXT, log TEXT)`,
+        (err) => {
+          if (err) {
+            console.error('Error creating table:', err)
+          } else {
+            console.log('Database is ready.')
+          }
+        })
+  }
+})
+
 const app = express()
 const port = 3000
 
@@ -31,6 +52,18 @@ app.use(
     origin: '*',
   }),
 )
+
+let baseConfig: BaseConfig = {} as BaseConfig
+let storyConfig: StoryConfig = {} as StoryConfig
+let locations: Array<{name: string, entityId: string}> = []
+
+app.listen(port,async () => {
+  baseConfig = await getBaseConfigFromIpfs()
+  storyConfig = await getFromIpfs(baseConfig.storyConfig)
+  locations = await getLocationList()
+
+  console.log(`Example app listening on port ${port}`)
+})
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -56,15 +89,22 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
   const props: GenerateLocationProps = req.body
 
   try {
-    const locationName = await getLocation(props.id)
 
-    const location = await generateLocation(STORY, locationName)
+    const locationDetails = await getLocationDetails(locations, props.id)
+
+    if (locationDetails === undefined) throw new Error("Undefined Location!")
+
+    const location = await generateLocation({name: storyConfig.name, description: storyConfig.summary}, locationDetails.name)
+
+    const locationIpfsHash = await storeJson({
+      name: location.name,
+      summary: location.description
+    })
 
     const imageHash = await generateLocationImage(location.visualSummary)
 
     res.send({
-      name: location.name,
-      description: location.description,
+      ipfsHash: locationIpfsHash,
       imageHash: imageHash,
     } as GenerateLocationResponse)
 
@@ -106,13 +146,15 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
 
   try {
 
-    const location = getRandomLocation()
+    const startingLocation = getRandomLocation(baseConfig.startingLocations)
+
+    const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
 
     const player = await generatePlayerCharacter({
-      storyName: STORY.name,
-      storyDescription: STORY.description,
-      locationName: location.name,
-      locationDescription: location.summary,
+      storyName: storyConfig.name,
+      storyDescription: storyConfig.summary,
+      locationName: startingLocationDetails.name,
+      locationDescription: startingLocationDetails.summary,
       ageGroup: props.ageGroup,
       bodyType: props.bodyType,
       race: props.race,
@@ -121,17 +163,21 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
       skinColor: props.skinColor,
     })
 
+    const playerIpfsHash = await storeJson({
+      name: player.name,
+      description: player.description
+    })
+
     for (let i = 1; i <= PLAYER_IMAGE_CHOICES; i++) {
       const image = await generatePlayerImage(player.visualSummary)
       imageHashes.push(image)
     }
 
-    // res.send({
-    //   name: player.name,
-    //   description: player.description,
-    //   imageHashes: imageHashes,
-    //   locationId: location.id,
-    // } as GeneratePlayerResponse)
+    res.send({
+      ipfsHash: playerIpfsHash,
+      imgHashes: imageHashes,
+      locationId: startingLocation.id
+    } as GeneratePlayerResponse)
 
   } catch (e) {
     next(e)
@@ -162,10 +208,9 @@ app.post('/mock/api/v1/generate-story', async (req: Request, res: Response, next
 
 app.post('/mock/api/v1/generate-location', async (req: Request, res: Response, next) => {
   res.send({
-    name: 'Eldoria',
-    description: 'Eldoria is a hidden elven city nestled deep within an ancient forest. The city is built on treetops, connected by rope bridges and shimmering magic. The air is filled with the sweet scent of blooming flowers, and the ethereal glow of luminescent creatures dances among the leaves. The elven inhabitants are known for their graceful nature and affinity for magic.',
-    imageHash: 'abc123',
-  })
+    ipfsHash: "QmNt5Rgq9FiPMSepTCzCcp3iA16RzKYEJwsxa5YbigiJwF",
+    imageHash: "QmRUkLidYCU1SULZ9A7xMnydC11Um5syAScjFSUDmeEJoQ"
+  } as GenerateLocationResponse)
 })
 
 app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {
@@ -198,6 +243,36 @@ app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, nex
   })
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+// Write data to the history table
+app.post('/write-history', (req, res) => {
+  const counterpart = req.body.counterpart;
+  const players = req.body.players;
+  const log = req.body.log;
+
+  const insertQuery = 'INSERT INTO history (counterpart, players, log) VALUES (?, ?, ?)';
+
+  database.run(insertQuery, [counterpart, players, log], function (err) {
+    if (err) {
+      console.error('Error inserting data:', err);
+      res.status(500).send('Error inserting data');
+    } else {
+      console.log('Data inserted successfully');
+      res.status(200).send('Data inserted successfully');
+    }
+  });
+});
+
+// Read data from the history table
+app.get('/read-history', (req, res) => {
+  const selectQuery = 'SELECT * FROM history';
+
+  database.all(selectQuery, (err, rows) => {
+    if (err) {
+      console.error('Error reading data:', err);
+      res.status(500).send('Error reading data');
+    } else {
+      console.log('Data retrieved successfully');
+      res.status(200).json(rows);
+    }
+  });
+});

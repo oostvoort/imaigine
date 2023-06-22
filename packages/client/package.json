@@ -60,6 +60,7 @@
     "postcss": "^8.4.24",
     "prop-types": "^15.8.1",
     "storybook": "^7.0.22",
+    "tailwind-scrollbar": "^3.0.4",
     "tailwindcss": "^3.3.2",
     "vite": "^4.2.1",
     "wait-port": "^1.0.4"

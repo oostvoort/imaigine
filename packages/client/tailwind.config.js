@@ -19,6 +19,16 @@ export default {
       'transparent-to-dark': 'linear-gradient(to right, rgba(0, 0, 0, 0), rgba(34, 46, 55, 1))',
       'gold-to-dark': 'linear-gradient(to right, rgba(193, 157, 93, 1), rgba(193, 157, 93, 0.2))',
       'header-gradient': 'linear-gradient(90deg, rgba(23, 19, 3, 1), rgba(41, 31, 11, 1))',
+      "mainNeutral": "url('src/assets/background/main_bg_neutral.jpg')",
+      "mainGood": "url('src/assets/background/main_bg_good.jpg')",
+      "mainEvil": "url('src/assets/background/main_bg_evil.jpg')",
+      "btnNeutral": "url('src/assets/background/btn_neutral.png')",
+      "btnNeutralHover": "url('src/assets/background/btn_neutral_hover.png')",
+      "btnGood": "url('src/assets/background/btn_good.png')",
+      "btnGoodHover": "url('src/assets/background/btn_good_hover.png')",
+      "btnEvil": "url('src/assets/background/btn_evil.png')",
+      "btnEvilHover": "url('src/assets/background/btn_evil_hover.png')",
+      "modal": "url('src/assets/background/bg_gray.jpg')",
     },
     container: {
       center: true,
@@ -118,19 +128,12 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
-      backgroundImage: {
-        "mainNeutral": "url('src/assets/background/main_bg_neutral.jpg')",
-        "mainGood": "url('src/assets/background/main_bg_good.jpg')",
-        "mainEvil": "url('src/assets/background/main_bg_evil.jpg')",
-        "btnNeutral": "url('src/assets/background/btn_neutral.png')",
-        "btnNeutralHover": "url('src/assets/background/btn_neutral_hover.png')",
-        "btnGood": "url('src/assets/background/btn_good.png')",
-        "btnGoodHover": "url('src/assets/background/btn_good_hover.png')",
-        "btnEvil": "url('src/assets/background/btn_evil.png')",
-        "btnEvilHover": "url('src/assets/background/btn_evil_hover.png')",
-        "modal": "url('src/assets/background/bg_gray.jpg')",
+      spacing: {
+        sm: '15px',
+        md: '30px',
+        lg: '60px'
       }
     },
   },
-  plugins: [import("tailwindcss-animate")],
+  plugins: [import("tailwindcss-animate"), import('tailwind-scrollbar')],
 }

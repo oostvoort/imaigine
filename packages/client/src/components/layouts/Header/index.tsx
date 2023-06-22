@@ -5,7 +5,7 @@ export default function Header(){
     <div className={clsx([
       'fixed top-0 pb-[2px]',
       'w-full h-20',
-      'bg-gold-to-dark',
+      'bg-gold-to-dark', 'opacity-80'
     ])}>
       <div className={clsx([
         'w-full h-full',
