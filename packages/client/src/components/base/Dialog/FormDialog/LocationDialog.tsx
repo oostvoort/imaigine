@@ -35,7 +35,6 @@ const LocationDialog = ({ isOpen, setOpen, locationInfo }: PropType) => {
             </div>
           </section>
         </DialogContent>
-
     </Dialog>
   )
 }

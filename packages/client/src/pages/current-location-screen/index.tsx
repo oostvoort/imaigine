@@ -2,7 +2,8 @@ import { clsx } from 'clsx'
 import React from 'react'
 import { Button } from '@/components/base/Button'
 import Header from '@/components/layouts/Header'
-import ConversationDialog from '@/components/ConversationDialog'
+import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
+import Footer from '@/components/layouts/Footer'
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
@@ -50,19 +51,7 @@ export default function CurrentLocationScreen() {
           </p>
         </div>
       </div>
-      <div className={clsx([
-        'flex gap-x-3 my-8',
-      ])}>
-        <Button variant={'neutral'} size={'btnWithBgImg'}>
-          Explore Surroundings
-        </Button>
-        <Button variant={'neutral'} size={'btnWithBgImg'}>
-          Follow the nearest trail
-        </Button>
-        <Button variant={'neutral'} size={'btnWithBgImg'}>
-          Succumb to panic
-        </Button>
-      </div>
+      <Footer/>
       <ConversationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)}/>
     </div>
   )
