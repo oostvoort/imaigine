@@ -5,6 +5,7 @@ import { setup } from "./mud/setup";
 import { MUDProvider } from "./MUDContext";
 import {QueryClientProvider} from "react-query";
 import {queryClient} from "./provider/queryClient";
+import './index.css'
 
 const rootElement = document.getElementById("react-root");
 if (!rootElement) throw new Error("React root not found");

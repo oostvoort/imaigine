@@ -10,9 +10,22 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          themeID: RecsType.String,
-          currencyID: RecsType.String,
-          racesID: RecsType.String,
+          value: RecsType.Boolean,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    ConfigComponent: (() => {
+      const tableId = new TableId("", "ConfigComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
         },
         {
           metadata: {
