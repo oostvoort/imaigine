@@ -19,6 +19,10 @@ import { PLAYER_IMAGE_CHOICES, STORY } from './global/constants'
 import { getRandomLocation } from './utils/getRandomLocation'
 import { storeJson } from './lib/ipfs'
 import sqlite3 from "sqlite3";
+import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
+import { getFromIpfs } from './utils/getFromIpfs'
+import { getLocationDetails, getLocationList } from './utils/getLocationList'
+dotenv.config()
 
 const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
   if (err) {
@@ -35,10 +39,7 @@ const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
         })
   }
 })
-import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
-import { getFromIpfs } from './utils/getFromIpfs'
 
-dotenv.config()
 const app = express()
 const port = 3000
 
@@ -54,10 +55,12 @@ app.use(
 
 let baseConfig: BaseConfig = {} as BaseConfig
 let storyConfig: StoryConfig = {} as StoryConfig
+let locations: Array<{name: string, entityId: string}> = []
 
 app.listen(port,async () => {
   baseConfig = await getBaseConfigFromIpfs()
   storyConfig = await getFromIpfs(baseConfig.storyConfig)
+  locations = await getLocationList()
 
   console.log(`Example app listening on port ${port}`)
 })
@@ -86,15 +89,22 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
   const props: GenerateLocationProps = req.body
 
   try {
-    const locationName = await getLocation(props.id)
 
-    const location = await generateLocation(STORY, locationName)
+    const locationDetails = await getLocationDetails(locations, props.id)
+
+    if (locationDetails === undefined) throw new Error("Undefined Location!")
+
+    const location = await generateLocation({name: storyConfig.name, description: storyConfig.summary}, locationDetails.name)
+
+    const locationIpfsHash = await storeJson({
+      name: location.name,
+      summary: location.description
+    })
 
     const imageHash = await generateLocationImage(location.visualSummary)
 
     res.send({
-      name: location.name,
-      description: location.description,
+      ipfsHash: locationIpfsHash,
       imageHash: imageHash,
     } as GenerateLocationResponse)
 
@@ -198,10 +208,9 @@ app.post('/mock/api/v1/generate-story', async (req: Request, res: Response, next
 
 app.post('/mock/api/v1/generate-location', async (req: Request, res: Response, next) => {
   res.send({
-    name: 'Eldoria',
-    description: 'Eldoria is a hidden elven city nestled deep within an ancient forest. The city is built on treetops, connected by rope bridges and shimmering magic. The air is filled with the sweet scent of blooming flowers, and the ethereal glow of luminescent creatures dances among the leaves. The elven inhabitants are known for their graceful nature and affinity for magic.',
-    imageHash: 'abc123',
-  })
+    ipfsHash: "QmNt5Rgq9FiPMSepTCzCcp3iA16RzKYEJwsxa5YbigiJwF",
+    imageHash: "QmRUkLidYCU1SULZ9A7xMnydC11Um5syAScjFSUDmeEJoQ"
+  } as GenerateLocationResponse)
 })
 
 app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {

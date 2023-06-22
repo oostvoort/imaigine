@@ -15,9 +15,8 @@ export interface GenerateLocationProps {
   id: string,
 }
 export interface GenerateLocationResponse {
-  name: string,
-  description: string,
-  imageHash: string
+  ipfsHash: string,
+  imageHash: string,
 }
 export interface GenerateNpcProps {
   id: string,
