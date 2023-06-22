@@ -5,6 +5,7 @@ import { IPFS_URL_PREFIX, SERVER_API } from '@/global/constant'
 import {GeneratePlayer} from "./api/generate/typesGenerate";
 import {awaitStreamValue} from "@latticexyz/utils";
 import {GeneratePlayerProps, GeneratePlayerResponse} from '@/global/types';
+import { getFromIPFS } from '@/global/utils'
 
 
 export default function usePlayer () {
@@ -45,9 +46,7 @@ export default function usePlayer () {
 
         const responseData = await response.json() as GeneratePlayerResponse;
 
-        const getDataFromIPFS = await fetch(`${IPFS_URL_PREFIX}/${responseData.ipfsHash}`, {
-          method: "GET",
-        });
+        const getDataFromIPFS = await getFromIPFS(responseData.ipfsHash);
 
         const ipfsData = await getDataFromIPFS.json();
 
