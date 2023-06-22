@@ -33,3 +33,9 @@ export interface GeneratedPlayer extends GeneratePlayerResponse{
   description: string
   name: string
 }
+
+export type GeneratePlayer = {
+  config: PromiseOrValue<string>,
+  imgHash: PromiseOrValue<string>,
+  locationId: PromiseOrValue<string> // represent bytes32
+}
