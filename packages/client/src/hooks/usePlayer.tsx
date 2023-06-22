@@ -1,7 +1,7 @@
 import {useMUD} from '@/MUDContext';
 import {useComponentValue} from "@latticexyz/react"
 import {useMutation} from "react-query";
-import { IPFS_URL_PREFIX, SERVER_API } from '@/global/constant'
+import { SERVER_API } from '@/global/constant'
 import {GeneratePlayer} from "./api/generate/typesGenerate";
 import {awaitStreamValue} from "@latticexyz/utils";
 import {GeneratePlayerProps, GeneratePlayerResponse} from '@/global/types';
