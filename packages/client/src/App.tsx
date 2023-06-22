@@ -1,11 +1,15 @@
-import { useComponentValue } from "@latticexyz/react";
-import { useMUD } from "./MUDContext";
+// import StartingScreen from '@/pages/starting-screen'
+
+import CreateAvatarScreen from '@/pages/create-avatar-screen'
+import MainLayout from '@/components/layouts/MainLayout'
+import CurrentLocationScreen from '@/pages/current-location-screen'
 
 export const App = () => {
-
   return (
-    <>
-      Hello World
-    </>
-  );
-};
+    <MainLayout>
+      {/*<StartingScreen />*/}
+      {/*<CreateAvatarScreen />*/}
+      <CurrentLocationScreen />
+    </MainLayout>
+  )
+}
