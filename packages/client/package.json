@@ -39,6 +39,8 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.2",
     "@storybook/addon-essentials": "^7.0.22",
     "@storybook/addon-interactions": "^7.0.22",
