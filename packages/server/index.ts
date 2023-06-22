@@ -18,6 +18,23 @@ import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { PLAYER_IMAGE_CHOICES, STORY } from './global/constants'
 import { getRandomLocation } from './utils/getRandomLocation'
 import { storeJson } from './lib/ipfs'
+import sqlite3 from "sqlite3";
+
+const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
+  if (err) {
+    console.error(err.message)
+    throw err
+  } else {
+    database.run(`CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY, counterpart TEXT, players TEXT, log TEXT)`,
+        (err) => {
+          if (err) {
+            console.error('Error creating table:', err)
+          } else {
+            console.log('Database is ready.')
+          }
+        })
+  }
+})
 import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
 import { getFromIpfs } from './utils/getFromIpfs'
 
@@ -217,3 +234,40 @@ app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, nex
   })
 })
 
+// Write data to the history table
+app.post('/write-history', (req, res) => {
+  const counterpart = req.body.counterpart;
+  const players = req.body.players;
+  const log = req.body.log;
+
+  const insertQuery = 'INSERT INTO history (counterpart, players, log) VALUES (?, ?, ?)';
+
+  database.run(insertQuery, [counterpart, players, log], function (err) {
+    if (err) {
+      console.error('Error inserting data:', err);
+      res.status(500).send('Error inserting data');
+    } else {
+      console.log('Data inserted successfully');
+      res.status(200).send('Data inserted successfully');
+    }
+  });
+});
+
+// Read data from the history table
+app.get('/read-history', (req, res) => {
+  const selectQuery = 'SELECT * FROM history';
+
+  database.all(selectQuery, (err, rows) => {
+    if (err) {
+      console.error('Error reading data:', err);
+      res.status(500).send('Error reading data');
+    } else {
+      console.log('Data retrieved successfully');
+      res.status(200).json(rows);
+    }
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
