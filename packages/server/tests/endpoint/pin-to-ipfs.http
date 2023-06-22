@@ -1,0 +1,9 @@
+POST localhost:3000/api/v1/pin-to-ipfs
+Content-Type: application/json
+
+{
+  "json": {
+    "name": "test",
+    "summary": "test summary"
+  }
+}
