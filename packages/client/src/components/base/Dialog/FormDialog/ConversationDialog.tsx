@@ -18,7 +18,7 @@ export default function ConversationDialog({
   return (
     <Dialog open={isOpen} onOpenChange={() => null}>
       <DialogPrimitive.Portal
-        className={'fixed inset-0 z-50  flex items-start justify-center sm:items-center duration-[3000ms] delay-1000 ease-in-out'}>
+        className={'fixed inset-0 z-50  flex items-start justify-center '}>
         <DialogPrimitive.Overlay
           style={{ backgroundImage: `url(${fetchedUrl})` }}
           className={clsx([ 'fixed inset-0 bg-cover bg-no-repeat flex items-start justify-center  duration-[3000ms] delay-1000 ease-in-out' ])}>
@@ -31,9 +31,9 @@ export default function ConversationDialog({
           <DialogPrimitive.Content
             className={clsx([
               'sm:min-w-[1479px] h-[75%] p-10 top-24',
-              '!rounded-3xl !border-option-10',
+              'rounded-3xl border border-option-10 !outline-0',
               'bg-modal bg-cover',
-              'fixed z-50 grid gap-4 rounded-b-lg border bg-background p-6 shadow-lg animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:max-w-lg sm:rounded-lg sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0',
+              'fixed z-50 bg-background p-md shadow-lg',
             ])}
           >
 
