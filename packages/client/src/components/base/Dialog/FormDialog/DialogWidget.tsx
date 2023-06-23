@@ -61,7 +61,7 @@ export default function DialogWidget({ children, button, isAvatar }: PropType) {
 
           <DialogPrimitive.Content
             onPointerDownOutside={e => e.preventDefault()}
-            className={clsx([ 'min-h-[20%+] max-h-[75%]', 'fixed z-50', 'bg-modal', 'rounded-[36px] shadow-lg', 'p-md', 'border border-option-10 !outline-0' ])}>
+            className={clsx([ 'min-h-[20%] max-h-[75%]', 'fixed z-50', 'bg-modal', 'rounded-[36px] shadow-lg', 'p-md', 'border border-option-10 !outline-0' ])}>
             {children}
           </DialogPrimitive.Content>
         </DialogPrimitive.Overlay>
