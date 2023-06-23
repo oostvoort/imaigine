@@ -1,23 +1,42 @@
 # imaigine
 
-note about pnpm: the mud template provided by the lattice team uses pnpm and it's the only way of using the template,
-refactoring to use yarn can work but may take some time, don't fix what ain't broke I guess
+## Setup
+- NodeJs : This project needs **Node 18** :  
+```shell 
+nvm use 18
+```
 
-setup
-
-`pnpm recursive initialize`
-````shell
+- Install dependencies for all projects: 
+```shell 
 pnpm i --recursive
-````
+```
+
+- Default .env for contracts
+```shell 
+cp packages/contracts/.env.example packages/contracts/.env 
+```
 
 
-running
+## Running
+- Local evm node: 
+```shell 
+pnpm dev:contracts
+```
+- Webapp: 
+```shell 
+pnpm dev:client
+```
+- Server: 
+```shell 
+pnpm dev:server
+```
 
-`pnpm dev:contracts` then `pnpm dev:client` then  `pnpm dev:server`
+## Possible errors and how to resolve
+- `Error: Command failed with ENOENT: forge cleans`
 
 or you know, just click on the run button next to the script in the package.json to let webstorm handle it
 
-if you get `Error: Command failed with ENOENT: forge cleans` or any similar error when trying to run contract
+if you get  or any similar error when trying to run contract
 scripts using webstorm the fix for this is copying your terminal $PATH and overriding the webstorm run configuration.
 best to update the template so you won't have to do it everytime
 
