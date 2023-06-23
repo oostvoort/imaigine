@@ -20,21 +20,11 @@ function clicked() {
   const p = d3.mouse(this);
   const i = findCell(p[0], p[1]);
 
-  if (grand.id === "emblems") editEmblem();
-  else if (parent.id === "rivers") editRiver(el.id);
-  else if (grand.id === "routes") editRoute();
-  else if (el.tagName === "tspan" && grand.parentNode.parentNode.id === "labels") editLabel();
-  else if (grand.id === "burgLabels") editBurg();
-  else if (grand.id === "burgIcons") editBurg();
-  else if (parent.id === "ice") editIce();
-  else if (parent.id === "terrain") editReliefIcon();
-  else if (grand.id === "markers" || great.id === "markers") editMarker();
-  else if (grand.id === "coastline") editCoastline();
-  else if (great.id === "armies") editRegiment();
-  else if (pack.cells.t[i] === 1) {
-    const node = byId("island_" + pack.cells.f[i]);
-    editCoastline(node);
-  } else if (grand.id === "lakes") editLake();
+  if (grand.id === "burgLabels" || grand.id === "burgIcons")
+  {
+    window.parent.postMessage(`LocationClicked : ${i}`)
+  }
+
 }
 
 // clear elSelected variable

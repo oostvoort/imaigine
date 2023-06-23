@@ -22,7 +22,10 @@ import sqlite3 from "sqlite3";
 import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
 import { getFromIpfs } from './utils/getFromIpfs'
 import { getLocationDetails, getLocationList } from './utils/getLocationList'
+import * as path from 'path'
+import { generateMap } from './generate'
 dotenv.config()
+import fs from "fs-extra"
 
 const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
   if (err) {
@@ -43,6 +46,9 @@ const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
 const app = express()
 const port = 3000
 
+
+app.use('/map', express.static(path.join(process.cwd(), "../fantasy-map-generator")));
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -62,7 +68,7 @@ app.listen(port,async () => {
   storyConfig = await getFromIpfs(baseConfig.storyConfig)
   locations = await getLocationList()
 
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Example app listening on port ${port}: http://localhost:3000`)
 })
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -72,7 +78,28 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
-app.use('/', express.static('public'))
+
+app.get('/mapdata', async (req: Request, res: Response) => {
+
+  try {
+    const seed = parseInt(<string>req.query.seed)
+
+    const filename = `${seed}.map`
+
+    if(fs.existsSync(filename)){
+      res.send(fs.readFileSync(filename))
+    }else{
+      const response = await generateMap(seed)
+      res.send(response)
+    }
+
+
+  } catch (e) {
+    res.sendStatus(500)
+  }
+})
+
+
 
 app.post('/api/v1/generate-story', async (req: Request, res: Response, next) => {
   const props: GenerateStoryProps = req.body

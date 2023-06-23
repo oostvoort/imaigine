@@ -4,6 +4,7 @@ import { Button } from '@/components/base/Button'
 import Header from '@/components/layouts/Header'
 import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
 import Footer from '@/components/layouts/Footer'
+import Map from '@/components/Map'
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
@@ -15,6 +16,7 @@ export default function CurrentLocationScreen() {
       'bg-main-bg-neutral bg-no-repeat bg-cover',
     ])}>
       <Header />
+      <Map></Map>
       <div className={clsx([
         'flex',
         'w-full h-[820px]',

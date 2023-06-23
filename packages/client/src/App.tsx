@@ -10,6 +10,7 @@ export const App = () => {
       {/*<StartingScreen />*/}
       {/*<CreateAvatarScreen />*/}
       <CurrentLocationScreen />
+
     </MainLayout>
   )
 }
