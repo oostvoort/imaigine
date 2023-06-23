@@ -3,7 +3,7 @@ import { BACKGROUND_IMAGES } from '@/global/constants'
 import { clsx } from 'clsx'
 
 type PropType = {
-  children: ReactNode
+  children?: ReactNode
 }
 
 const BackgroundCarousel = ({ children }: PropType) => {

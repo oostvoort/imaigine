@@ -152,6 +152,79 @@
 }
 
 ::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 10px;
+  background-color: #4F4F63;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #191919;
+}
+
+.loader-wrapper {
+  width: 100%;
+  height: 50%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  position: relative;
+  width: 178px;
+  height: 178px;
+  border-radius: 50%;
+  background: linear-gradient(#f07e6e, yellowgreen, #5ad1cd);
+  animation: animate 1.2s linear infinite;
+}
+
+.loader span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(#f07e6e, yellowgreen, #5ad1cd);
+}
+
+.loader span:nth-child(1) {
+  filter: blur(5px);
+}
+
+.loader span:nth-child(2) {
+  filter: blur(10px);
+}
+
+.loader span:nth-child(3) {
+  filter: blur(25px);
+}
+
+.loader span:nth-child(4) {
+  filter: blur(50px);
+}
+
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: #2C3B47;
+  border: solid white 9px;
+  border-radius: 50%;
+}
+
+.aiLogo {
+  position: absolute;
+  margin-left: -12px;
+}
+
+
+
+::-webkit-scrollbar {
   width: 6px;
 }
 
