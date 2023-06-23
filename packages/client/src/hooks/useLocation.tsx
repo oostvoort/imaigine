@@ -28,7 +28,7 @@ export default function useLocation(locationIdParam?: Entity) {
   if (locationIdParam !== locationId && locationIdParam !== undefined) {
     setLocationId(locationIdParam);
   }
-}, [locationIdParam]);
+}, [locationId, locationIdParam]);
 
  const location = {
    config: useComponentValue(ConfigComponent, locationId),
