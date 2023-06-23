@@ -59,3 +59,17 @@ export type GenerateLocation = {
   imgHash: PromiseOrValue<string>,
   locationId: PromiseOrValue<string> // represent bytes32
 }
+
+export interface GenerateNpcProps {
+  locationIpfsHash: string
+}
+
+export interface GenerateNpcResponse {
+  ipfsHash: string
+  imageHash : string
+}
+
+export interface GeneratedNpc extends GenerateNpcResponse {
+  name: string
+  summary: string
+}
