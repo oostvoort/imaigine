@@ -15,19 +15,15 @@ export interface GenerateLocationProps {
   id: string,
 }
 export interface GenerateLocationResponse {
-  name: string,
-  description: string,
-  imageHash: string
+  ipfsHash: string,
+  imageHash: string,
 }
 export interface GenerateNpcProps {
-  id: string,
-  description: string,
+  locationIpfsHash: string,
 }
 export interface GenerateNpcResponse {
-  name: string,
-  description: string,
+  ipfsHash: string,
   imageHash: string,
-  initialMessage: string
 }
 export interface GeneratePlayerProps {
   ageGroup: string,

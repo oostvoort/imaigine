@@ -17,14 +17,14 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("PathComponent")));
-bytes32 constant PathComponentTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("CounterpartCompo")));
+bytes32 constant CounterpartComponentTableId = _tableId;
 
-library PathComponent {
+library CounterpartComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.BOOL;
+    _schema[0] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_schema);
   }
@@ -40,7 +40,7 @@ library PathComponent {
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
     _fieldNames[0] = "value";
-    return ("PathComponent", _fieldNames);
+    return ("CounterpartComponent", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -66,25 +66,25 @@ library PathComponent {
   }
 
   /** Get value */
-  function get(bytes32 key) internal view returns (bool value) {
+  function get(bytes32 key) internal view returns (bytes32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
-    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+    return (Bytes.slice32(_blob, 0));
   }
 
   /** Get value (using the specified store) */
-  function get(IStore _store, bytes32 key) internal view returns (bool value) {
+  function get(IStore _store, bytes32 key) internal view returns (bytes32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
-    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+    return (Bytes.slice32(_blob, 0));
   }
 
   /** Set value */
-  function set(bytes32 key, bool value) internal {
+  function set(bytes32 key, bytes32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -92,7 +92,7 @@ library PathComponent {
   }
 
   /** Set value (using the specified store) */
-  function set(IStore _store, bytes32 key, bool value) internal {
+  function set(IStore _store, bytes32 key, bytes32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -100,7 +100,7 @@ library PathComponent {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(bool value) internal view returns (bytes memory) {
+  function encode(bytes32 value) internal view returns (bytes memory) {
     return abi.encodePacked(value);
   }
 
@@ -124,11 +124,5 @@ library PathComponent {
     _keyTuple[0] = key;
 
     _store.deleteRecord(_tableId, _keyTuple);
-  }
-}
-
-function _toBool(uint8 value) pure returns (bool result) {
-  assembly {
-    result := value
   }
 }

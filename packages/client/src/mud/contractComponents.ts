@@ -140,21 +140,6 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    RaceComponent: (() => {
-      const tableId = new TableId("", "RaceComponent");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.Boolean,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
     CharacterComponent: (() => {
       const tableId = new TableId("", "CharacterCompone");
       return defineComponent(
@@ -245,12 +230,12 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    PathComponent: (() => {
-      const tableId = new TableId("", "PathComponent");
+    KarmaPointsComponent: (() => {
+      const tableId = new TableId("", "KarmaPointsCompo");
       return defineComponent(
         world,
         {
-          value: RecsType.Boolean,
+          value: RecsType.Number,
         },
         {
           metadata: {
@@ -260,58 +245,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    PathLocationComponent: (() => {
-      const tableId = new TableId("", "PathLocationComp");
-      return defineComponent(
-        world,
-        {
-          location0: RecsType.String,
-          location1: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    InteractComponent: (() => {
-      const tableId = new TableId("", "InteractComponen");
-      return defineComponent(
-        world,
-        {
-          initialMsg: RecsType.String,
-          initialActions: RecsType.String,
-          participants: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    InteractionComponent: (() => {
-      const tableId = new TableId("", "InteractionCompo");
-      return defineComponent(
-        world,
-        {
-          waitingFor: RecsType.String,
-          lastInteraction: RecsType.BigInt,
-          participantsActions: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    LogComponent: (() => {
-      const tableId = new TableId("", "LogComponent");
+    CounterpartComponent: (() => {
+      const tableId = new TableId("", "CounterpartCompo");
       return defineComponent(
         world,
         {
@@ -325,90 +260,14 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    ActionsComponent: (() => {
-      const tableId = new TableId("", "ActionsComponent");
+    VotingComponent: (() => {
+      const tableId = new TableId("", "VotingComponent");
       return defineComponent(
         world,
         {
-          createdAt: RecsType.BigInt,
-          actions: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    PossibleComponent: (() => {
-      const tableId = new TableId("", "PossibleComponen");
-      return defineComponent(
-        world,
-        {
-          createdAt: RecsType.BigInt,
-          actionLength: RecsType.BigInt,
-          actions: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    AttributeUintComponent: (() => {
-      const tableId = new TableId("", "AttributeUintCom");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.BigInt,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    AttributeIntComponent: (() => {
-      const tableId = new TableId("", "AttributeIntComp");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.BigInt,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    AttributeStringComponent: (() => {
-      const tableId = new TableId("", "AttributeStringC");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    StoryActionComponent: (() => {
-      const tableId = new TableId("", "StoryActionCompo");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
+          votingStatus: RecsType.Number,
+          voters: RecsType.String,
+          voteChoices: RecsType.String,
         },
         {
           metadata: {
