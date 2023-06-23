@@ -4,7 +4,8 @@ export default mudConfig({
     systems: {
     },
     enums: {
-      VotingStatusType: ["NOT_ACCEPTING_VOTES", "OPEN", "CLOSED"]
+      VotingStatusType: ["NOT_ACCEPTING_VOTES", "OPEN", "CLOSED"],
+      InteractionType: ["NOT_INTERACTABLE", "SINGLE", "MULTIPLE"]
     },
     tables: {
         StoryComponent: "bool",
@@ -23,14 +24,30 @@ export default mudConfig({
         LocationComponent: "bytes32",
         SceneComponent: "bool",
         KarmaPointsComponent: "int8",
-        CounterpartComponent: "bytes32",
-        VotingComponent: {
+        InteractableComponent: "bytes32",
+        InteractionTypeComponent: "InteractionType",
+        SingleInteractionComponent: {
+          keySchema: {
+            player: "bytes32",
+            interactable: "bytes32"
+          },
           schema: {
-            votingStatus: "VotingStatusType",
-            voters: "bytes", // all voter player ids go here
-            voteChoices: "bytes" // all their choices go in here
+            available: "bool",
+            choice: "uint256",
+            processingTimeout: "uint256",
           }
-        }
+        },
+        MultiInteractionComponent: {
+          schema: {
+            available: "bool",
+            playerCount: "uint256", // keeps track of how many players there are
+            processingTimeout: "uint256",
+            players: "bytes", // abi encoded bytes32 of all the players
+            choices: "bytes", // abi encoded uint256 of all the players choices
+            timeouts: "bytes" // abi encoded uint256 of when players will timeout
+          }
+        },
+
     },
     modules: [
         {

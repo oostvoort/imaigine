@@ -7,14 +7,17 @@ import { System } from "@latticexyz/world/src/System.sol";
 
 import {
   PlayerComponent,
-  KarmaPointsComponent,
-  CharacterComponent,
-  VotingComponent,
   LocationComponent,
-  CounterpartComponent
+  KarmaPointsComponent,
+  SingleInteractionComponent,
+  SingleInteractionComponentData,
+  MultiInteractionComponent,
+  MultiInteractionComponentData,
+  InteractionTypeComponent,
+  InteractableComponent
 } from "../codegen/Tables.sol";
 
-import { VotingStatusType } from "../codegen/Types.sol";
+import { InteractionType } from "../codegen/Types.sol";
 
 import { ArrayLib } from "../lib/ArrayLib.sol";
 import { Constants } from "../lib/Constants.sol";
@@ -22,196 +25,264 @@ import { Constants } from "../lib/Constants.sol";
 contract InteractionSystem is System {
   using ArrayLib for bytes;
   using ArrayLib for bytes32[];
+  using ArrayLib for uint256[];
 
-  struct VoteStruct {
-    bytes32 player;
-    uint8 choice; // 0 for no vote yet, 1-3 actual choices
-  }
+  uint256 private constant PROCESSING_TIMEOUT = 1_000 * 60 * 60;
 
-  /// @dev Ideally the change in karma points should be performed by the Backend
-  function changeKarmaPoints(
-    address forPlayer,
-    int8 karmaPoints
-  )
+  /// @notice interact with an interactable that handles single interaction
+  /// @param interactableId is the id of the interactable the player wants to interact with
+  /// @param choiceId is the id of the choice; 0 - will enter into the interaction, 1-3 - actual choices
+  /// @return interactableId
+  function interactSingle(bytes32 interactableId, uint256 choiceId)
   public
   returns (bytes32)
   {
-    bytes32 playerID = bytes32(uint256(uint160(forPlayer)));
-    return changeKarmaPoints(playerID, karmaPoints);
-  }
+    // check if single interaction is possible
+    require(InteractionTypeComponent.get(interactableId) == InteractionType.SINGLE, "cannot single interact");
 
-  /// @dev Ideally the change in karma points should be performed by the Backend
-  function changeKarmaPoints(
-    bytes32 playerID,
-    int8 karmaPoints
-  )
-  public
-  returns (bytes32)
-  {
-    require(PlayerComponent.get(playerID), "cannot change karma for nonPlayer entity");
-    int8 oldKarmaPoints = KarmaPointsComponent.get(playerID);
-    KarmaPointsComponent.set(playerID, oldKarmaPoints + karmaPoints);
-    return playerID;
-  }
-
-  /// @notice sent by the player to enter voting
-  function enterVote(
-    bytes32 npcId
-  )
-  public
-  returns (bytes32)
-  {
-    require(VotingComponent.getVotingStatus(npcId) == VotingStatusType.OPEN, "must be open for voting");
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
-    require(CounterpartComponent.get(playerID) == LocationComponent.get(npcId), "must be interacting with the npc's location");
+    if (choiceId == 0) {
+      SingleInteractionComponent.set(playerID, interactableId, true, choiceId, 0);
 
-    bytes memory voters = VotingComponent.getVoters(npcId);
+      // leave old multiInteraction if was part of a multiInteraction
+      bytes32 oldInteractable = InteractableComponent.get(playerID);
+      if (InteractionTypeComponent.get(oldInteractable) == InteractionType.MULTIPLE) {
+        MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(oldInteractable);
+        bytes32[] memory players = multiInteraction.players.decodeBytes32Array();
+        int256 playerIndex = players.findIndex(playerID);
 
-    if (voters.length == 0) {
-      bytes32[] memory playerInArray = new bytes32[](0);
-      playerInArray.push(playerID);
-      bytes32[] memory choicesInArray = new bytes32[](0);
-      choicesInArray.push(bytes32(uint256(1))); // i'm doing 1 for default
-      VotingComponent.setVoters(npcId, playerInArray.encode());
-      VotingComponent.setVoteChoices(npcId, choicesInArray.encode());
-    } else {
-      bytes32[] memory allPlayers = voters.decodeBytes32Array();
-      require(allPlayers.findIndex(playerID) == -1, "already entered voting");
+        if (playerIndex != -1) {
+          uint256[] memory choices = multiInteraction.choices.decodeUint256Array();
+          uint256[] memory timeouts = multiInteraction.timeouts.decodeUint256Array();
 
-      bytes memory voteChoices = VotingComponent.getVoteChoices(npcId);
-      bytes32[] memory allChoices = voteChoices.decodeBytes32Array();
+          players.remove(uint256(playerIndex));
+          choices.remove(uint256(playerIndex));
+          timeouts.remove(uint256(playerIndex));
 
-      allPlayers.push(playerID);
-      allChoices.push(bytes32(uint256(1))); // using 1 as default
+          // TODO: figure out if this is safe
+          // this could cause some unintended return of stale data
+          MultiInteractionComponent.set(
+            oldInteractable,
+            multiInteraction.available,
+            multiInteraction.playerCount - 1,
+            multiInteraction.processingTimeout,
+            players.encode(),
+            choices.encode(),
+            timeouts.encode()
+          );
+        }
+      }
 
-      VotingComponent.setVoters(npcId, allPlayers.encode());
-      VotingComponent.setVoteChoices(npcId, allChoices.encode());
+      InteractableComponent.set(playerID, interactableId);
+      return interactableId; // early returning here
     }
 
-    CounterpartComponent.set(playerID, npcId);
+    // get interaction
+    SingleInteractionComponentData memory singleInteraction = SingleInteractionComponent.get(playerID, interactableId);
 
-    return npcId;
+    if (singleInteraction.available) {
+      changeKarma(playerID, choiceId);
+      SingleInteractionComponent.set(playerID, interactableId, false, choiceId, block.timestamp + PROCESSING_TIMEOUT);
+    } else {
+      require(block.timestamp >= singleInteraction.processingTimeout, "process has not timed out yet");
+      SingleInteractionComponent.set(playerID, interactableId, true, 0, 0);
+    }
+
+    return interactableId;
   }
 
-  /// @notice sent by the player to vote
-  function vote(
-    bytes32 npcId,
-    uint8 choice
-  )
+  /// @notice interact with an interactable that handles multi interaction
+  /// @param interactableId is the id of the interactable the player wants to interact with
+  /// @param choiceId is the id of the choice; 0 - will enter into the interaction, 1-3 - actual choices
+  /// @return interactableId
+  function interactMulti(bytes32 interactableId, uint256 choiceId)
   public
   returns (bytes32)
   {
-    require(VotingComponent.getVotingStatus(npcId) == VotingStatusType.OPEN, "must be open for voting");
+    // check if multi interaction is possible
+    require(InteractionTypeComponent.get(interactableId) == InteractionType.MULTIPLE, "cannot multi interact");
 
-    bytes memory voters = VotingComponent.getVoters(npcId);
-    bytes32[] memory allVoters = voters.decodeBytes32Array();
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    int256 playerIndex = allVoters.findIndex(playerID);
+    MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(interactableId);
 
-    require(playerIndex != -1, "player has not entered voting");
+    bytes32[] memory players = multiInteraction.players.decodeBytes32Array();
 
-    bytes memory voteChoices = VotingComponent.getVoteChoices(npcId);
-    bytes32[] memory allChoices = voteChoices.decodeBytes32Array();
+    if (!multiInteraction.available) {
+      require(multiInteraction.processingTimeout < block.timestamp, "not ready for interaction");
 
-    require(allChoices[uint256(playerIndex)] == bytes32(uint256(1)), "player has already voted");
+      for (uint256 i = 0; i < multiInteraction.playerCount; i++) {
+        InteractableComponent.set(players[i], LocationComponent.get(players[i]));
+      }
 
-    bytes32[] memory newChoices = new bytes32[](0);
-    for(uint256 i = 0; i < allChoices.length; i ++) {
-      if (i == uint256(playerIndex)) {
-        newChoices.push(bytes32(uint256(choice + 1)));
+      // reset the state for the interactable
+      MultiInteractionComponent.set(interactableId, true, 0, 0, new bytes(0), new bytes(0), new bytes(0));
+      return LocationComponent.get(playerID); // returning early
+    }
+
+    uint256[] memory choices = multiInteraction.choices.decodeUint256Array();
+    uint256[] memory timeouts = multiInteraction.timeouts.decodeUint256Array();
+
+    int256 playerIndex = players.findIndex(playerID);
+
+    if (choiceId == 0) {
+      require(playerIndex == -1, "player has already entered interaction");
+      players.push(playerID);
+      choices.push(choiceId);
+      timeouts.push(block.timestamp + PROCESSING_TIMEOUT);
+
+      MultiInteractionComponent.set(
+        interactableId,
+        true,
+        multiInteraction.playerCount + 1,
+        block.timestamp + PROCESSING_TIMEOUT,
+        players.encode(),
+        choices.encode(),
+        timeouts.encode()
+      );
+      InteractableComponent.set(playerID, interactableId);
+      return interactableId; // early returning here
+    }
+
+    require(playerIndex != -1, "player has not entered interaction yet");
+    require(choiceId > 0 && choiceId < 4, "unknown choice");
+
+    choices[uint256(playerIndex)] = choiceId;
+    timeouts[uint256(playerIndex)] = block.timestamp + PROCESSING_TIMEOUT;
+
+    bytes32[] memory updatedPlayers = new bytes32[](0);
+    uint256[] memory updatedChoices = new uint256[](0);
+    uint256[] memory updatedTimeouts = new uint256[](0);
+
+    uint256 updatedPlayerCount = multiInteraction.playerCount;
+    uint256 nonzeroChoicesCount = 0;
+
+    // remove timed out zero choices
+    for (uint256 i = 0; i < multiInteraction.playerCount; i++) {
+      if (choices[i] != 0 || timeouts[i] > block.timestamp)  {
+        updatedPlayers.push(players[i]);
+        updatedChoices.push(choices[i]);
+        updatedTimeouts.push(timeouts[i]);
+        if (choices[i] != 0) nonzeroChoicesCount++;
       } else {
-        newChoices.push(allChoices[i]);
+        // change to interact with the Location
+        InteractableComponent.set(players[i], LocationComponent.get(players[i]));
+        updatedPlayerCount--;
       }
     }
 
-    VotingComponent.setVoteChoices(npcId, newChoices.encode());
+    MultiInteractionComponent.set(
+      interactableId,
+      true,
+      updatedPlayerCount,
+      block.timestamp + PROCESSING_TIMEOUT,
+      updatedPlayers.encode(),
+      updatedChoices.encode(),
+      updatedTimeouts.encode()
+    );
 
-    return npcId;
-  }
+    // not everyone has voted, so the interaction is not yet over
+    if (nonzeroChoicesCount != updatedPlayerCount) return interactableId;
 
-  /// @notice sent by the player to close voting
-  function move_to_close_vote(
-    bytes32 npcId
-  )
-  public
-  returns (bytes32)
-  {
-    require(VotingComponent.getVotingStatus(npcId) == VotingStatusType.OPEN, "must be open for voting");
+    MultiInteractionComponent.setAvailable(interactableId, false);
 
-    bytes memory voters = VotingComponent.getVoters(npcId);
-    bytes32[] memory allVoters = voters.decodeBytes32Array();
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    int256 playerIndex = allVoters.findIndex(playerID);
+    uint256 winner = winningChoice(interactableId);
 
-    require(playerIndex != -1, "player has not entered voting");
+    // if the winningChoice is 0, the players disagreed
+    // TODO: figure out if karma points should be hit when disagreement has occurred
+    if (winner == 0) return interactableId;
 
-    bytes memory voteChoices = VotingComponent.getVoteChoices(npcId);
-    bytes32[] memory allChoices = voteChoices.decodeBytes32Array();
-
-    for(uint256 i = 0; i < allChoices.length; i ++) {
-      require(allChoices[i] != bytes32(uint256(1)), "a player has not yet voted");
+    for (uint256 i = 0; i < updatedPlayerCount; i++) {
+      changeKarma(updatedPlayers[i], winner);
     }
 
-    VotingComponent.setVotingStatus(npcId, VotingStatusType.CLOSED);
-
-    return npcId;
+    return interactableId;
   }
 
-  /// @notice sent by the player to exit vote
-  function exit_vote(
-    bytes32 npcId,
-    uint8 choice
-  )
-  public
-  returns (bytes32)
-  {
-    // cannot exit voting if deliberation is on going
-    require(VotingComponent.getVotingStatus(npcId) == VotingStatusType.OPEN, "must be open for voting");
-
-    bytes memory voters = VotingComponent.getVoters(npcId);
-    bytes32[] memory allVoters = voters.decodeBytes32Array();
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    int256 playerIndex = allVoters.findIndex(playerID);
-
-    require(playerIndex != -1, "player has not entered voting");
-
-    bytes memory voteChoices = VotingComponent.getVoteChoices(npcId);
-    bytes32[] memory allChoices = voteChoices.decodeBytes32Array();
-
-    allVoters.remove(uint256(playerIndex));
-    allChoices.remove(uint256(playerIndex));
-
-    VotingComponent.set(npcId, VotingStatusType.OPEN, allVoters.encode(), allChoices.encode());
-
-    bytes32 locationID = LocationComponent.get(playerID);
-    CounterpartComponent.set(playerID, locationID);
-
-    return locationID;
+  /// @notice backend sends this to allow players to choose again
+  /// @param playerId is the playerId in single player mode or can be bytes(0) for multiplayer
+  /// @param interactableId is the interactable the player needs to open interaction for
+  function openInteraction(bytes32 playerId, bytes32 interactableId)
+  public {
+    InteractionType interactionType = InteractionTypeComponent.get(interactableId);
+    require(interactionType != InteractionType.NOT_INTERACTABLE, "cannot open interaction for non-interactable");
+    if (interactionType == InteractionType.SINGLE) {
+      SingleInteractionComponent.set(playerId, interactableId, true, 0, 0);
+    } else {
+      MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(interactableId);
+      uint256[] memory array = new uint256[](multiInteraction.playerCount);
+      bytes memory encodedArray = array.encode();
+      MultiInteractionComponent.set(
+        interactableId,
+        true,
+        multiInteraction.playerCount,
+        0,
+        multiInteraction.players,
+        encodedArray,
+        encodedArray
+      );
+    }
   }
 
-  /// @notice sent by the backend to open voting
-  function open_voting(
-    bytes32 npcId,
-    int8 karmaPoints
-  )
+  /// @notice gets the choice a player made in a single interaction
+  /// @param playerId is the player's address in bytes32
+  function getPlayerChoiceInSingleInteraction(bytes32 playerId)
   public
-  returns (bytes32)
-  {
-    require(VotingComponent.getVotingStatus(npcId) == VotingStatusType.CLOSED, "must be closed for voting");
+  view
+  returns(uint256) {
+    return SingleInteractionComponent.getChoice(playerId, InteractableComponent.get(playerId));
+  }
 
-    bytes memory voters = VotingComponent.getVoters(npcId);
-    bytes32[] memory allVoters = voters.decodeBytes32Array();
-    bytes32[] memory resetChoices = new bytes32[](0);
+  /// @notice gets the winning choice for a multi interaction
+  /// @param interactableId is the id of the multiInteractable entity
+  function winningChoice(bytes32 interactableId)
+  public
+  view
+  returns(uint256) {
+    bytes memory choicesBytes = MultiInteractionComponent.getChoices(interactableId);
+    uint256[] memory choices = choicesBytes.decodeUint256Array();
+    uint256[] memory choiceCounts = new uint256[](4);
 
-    for(uint256 i = 0; i < allVoters.length; i++) {
-      changeKarmaPoints(allVoters[i], karmaPoints);
-      resetChoices.push(bytes32(uint256(1)));
+    // calculate number of players that chose that choice
+    for (uint256 i = 0; i < choices.length; i++) {
+      choiceCounts[choices[i]]++;
     }
 
-    VotingComponent.set(npcId, VotingStatusType.OPEN, voters, resetChoices.encode());
+    // get the largest amount of players that picked a choice
+    uint256 largestChoiceCount = 0;
+    for(uint256 i = 0; i < choiceCounts.length; i++) {
+      if (choiceCounts[i] > largestChoiceCount) largestChoiceCount = choiceCounts[i];
+    }
 
-    return npcId;
+    // get the choice with the largest amounts of votes
+    uint256 winner = 0;
+    for (uint256 i = 0; i < choiceCounts.length; i++) {
+      if (largestChoiceCount == choiceCounts[i]) {
+        if (winner == 0) winner = choiceCounts[i];
+        // meaning that there were two or more largest number meaning the players disagreed
+        else return 0;
+      }
+    }
+
+    return winner;
+  }
+
+  function changeKarma(bytes32 playerId, uint256 choiceId)
+  private
+  {
+    require(choiceId > 0 && choiceId < 4, "unknown choice");
+    int8 karmaPoints = KarmaPointsComponent.get(playerId);
+
+    // couldn't put constants so doing this instead
+    KarmaPointsComponent.set(
+      playerId,
+      karmaPoints + int8(
+        choiceId == 1 ? int8(-5) :
+          choiceId == 2 ? int8(0) :
+            int8(5)
+      )
+    );
+
   }
 
 }

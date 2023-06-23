@@ -19,5 +19,7 @@ import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponen
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
 import { SceneComponent, SceneComponentTableId } from "./tables/SceneComponent.sol";
 import { KarmaPointsComponent, KarmaPointsComponentTableId } from "./tables/KarmaPointsComponent.sol";
-import { CounterpartComponent, CounterpartComponentTableId } from "./tables/CounterpartComponent.sol";
-import { VotingComponent, VotingComponentData, VotingComponentTableId } from "./tables/VotingComponent.sol";
+import { InteractableComponent, InteractableComponentTableId } from "./tables/InteractableComponent.sol";
+import { InteractionTypeComponent, InteractionTypeComponentTableId } from "./tables/InteractionTypeComponent.sol";
+import { SingleInteractionComponent, SingleInteractionComponentData, SingleInteractionComponentTableId } from "./tables/SingleInteractionComponent.sol";
+import { MultiInteractionComponent, MultiInteractionComponentData, MultiInteractionComponentTableId } from "./tables/MultiInteractionComponent.sol";
