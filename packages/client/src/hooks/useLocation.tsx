@@ -3,7 +3,7 @@ import { useMUD } from '@/MUDContext'
 import { useComponentValue } from "@latticexyz/react"
 import { Entity } from "@latticexyz/recs"
 import { useMutation } from 'react-query'
-import { SERVER_API } from '@/global/constant'
+import { SERVER_API } from '@/global/constants'
 import { GeneratedLocation, GenerateLocation, GenerateLocationProps, GenerateLocationResponse } from '@/global/types'
 import { getFromIPFS } from '@/global/utils'
 import { awaitStreamValue } from '@latticexyz/utils'
