@@ -5,6 +5,7 @@ import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
 import Location from '@/components/base/Dialog/FormDialog/DialogContent/Location'
+import usePlayer from '@/hooks/usePlayer'
 
 type PropType = {
   children: React.ReactNode
@@ -63,6 +64,7 @@ const menus: Array<PropType> = [
 {/*TODO: Remove Location menu after the demo*/}
 
 export default function Header() {
+  const { player } = usePlayer()
   return (
     <div
       className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'opacity-80' ])}>
@@ -71,7 +73,7 @@ export default function Header() {
         <div className={clsx([ 'flex items-center space-x-md' ])}>
           {
             menus.map((menu, key) => (
-              <DialogWidget key={key} button={menu.button} isAvatar={menu.isAvatar}>
+              <DialogWidget key={key} button={menu.button} isAvatar={menu.isAvatar} avatar={player.image?.value}>
                 {menu.children}
               </DialogWidget>
             ))

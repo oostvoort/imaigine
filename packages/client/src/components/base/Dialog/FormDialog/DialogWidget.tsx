@@ -3,11 +3,13 @@ import { clsx } from 'clsx'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Dialog, DialogTrigger } from '@/components/base/Dialog'
 import { Button, ButtonProps } from '@/components/base/Button'
+import { IPFS_URL_PREFIX } from '@/global/constants'
 
 type PropType = {
   children: React.ReactNode
   button: ButtonPropType
-  isAvatar: boolean
+  isAvatar: boolean,
+  avatar?: string,
 }
 
 export type ButtonPropType = {
@@ -19,7 +21,7 @@ export type ButtonPropType = {
   imgClassName?: string
 }
 
-export default function DialogWidget({ children, button, isAvatar }: PropType) {
+export default function DialogWidget({ children, button, isAvatar, avatar }: PropType) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -32,8 +34,10 @@ export default function DialogWidget({ children, button, isAvatar }: PropType) {
                 {/* Outer Frame */}
                 <div className={clsx([ 'absolute z-50 w-36 h-36', 'bg-avatar-outer-frame bg-cover bg-no-repeat' ])}>
                   {/* Avatar */}
-                  <img src={'src/assets/avatar/avatar1.jpg'} alt="Profile"
-                       className={clsx([ 'absolute w-24', 'z-50 inset-6 rounded-full' ])} />
+                  <img src={`${avatar ? `${IPFS_URL_PREFIX}/${avatar}` : 'src/assets/avatar/avatar1.jpg'}`}
+                       alt="Profile"
+                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full' ])}
+                       draggable={false} />
                 </div>
                 {/* Karma Gauge */}
                 <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-karma-gauge bg-cover bg-no-repeat' ])} />

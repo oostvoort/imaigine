@@ -76,8 +76,7 @@ const colorPalette = [
 ]
 
 export default function CreateAvatarScreen() {
-  const { generatePlayer, createPlayer, player } = usePlayer()
-  const { generateLocation, createLocation, location } = useLocation()
+  const { generatePlayer, createPlayer } = usePlayer()
 
   const [ step, setStep ] = React.useState(1)
   const [ userInputs, setUserInputs ] = React.useState<GeneratePlayerProps>({
@@ -93,8 +92,6 @@ export default function CreateAvatarScreen() {
   const [ generatedPlayer, setGeneratedPlayer ] = React.useState<GeneratePlayerResponse | null>(null)
   const [ selectedAvatar, setSelectedAvatar ] = React.useState<number | null>(null)
   const [ avatarHash, setAvatarHash ] = React.useState<string>('')
-
-  const [ generatedLocation, setGeneratedLocation ] = React.useState<GenerateLocation | null>(null)
 
   const [ isLoading, setIsLoading ] = React.useState<boolean>(false)
   const [ activeLoader, setActiveLoader ] = useAtom(currentLoader_atom)
@@ -146,61 +143,17 @@ export default function CreateAvatarScreen() {
   }
 
   const handleCreatePlayer = async () => {
-    setActiveScreen('currentLocationScreen')
-
-    // try {
-    //   if (!generatedPlayer) return
-    //   await createPlayer.mutateAsync({
-    //     config: generatedPlayer.ipfsHash,
-    //     imgHash: avatarHash,
-    //     locationId: generatedPlayer.locationId,
-    //   })
-    //   await handleGenerateLocation(generatedPlayer.locationId)
-    // } catch (error) {
-    //   console.error()
-    // }
-  }
-
-  const handleGenerateLocation = async (id: string) => {
     try {
       if (!generatedPlayer) return
-      const location = await generateLocation.mutateAsync({ id: id })
-      // setGeneratedLocation({
-      //   config: location.ipfsHash,
-      //   imgHash: location.imageHash,
-      //   locationId: generatedPlayer.locationId,
-      // })
-      if (location) {
-        console.log('INNNNNNNNNNNNNNNNNNNNNN', location)
-        console.log('generatedPlayer', generatedPlayer.locationId)
-        await createLocation.mutateAsync({
-          config: location.ipfsHash,
-          imgHash: location.imageHash,
-          locationId: generatedPlayer.locationId,
-        })
-      }
-      // await handleCreateLocation()
+      await createPlayer.mutateAsync({
+        config: generatedPlayer.ipfsHash,
+        imgHash: avatarHash,
+        locationId: generatedPlayer.locationId,
+      })
+      setActiveScreen('currentLocationScreen')
     } catch (error) {
-      console.error('[generateLocation]', error)
+      console.error()
     }
-  }
-
-  const handleCreateLocation = async () => {
-    // try {
-    //   if (!generatedLocation) return
-    //   await createLocation.mutateAsync({
-    //     config: generatedLocation.config,
-    //     imgHash: generatedLocation.imgHash,
-    //     locationId: generatedLocation.locationId,
-    //   })
-    // } catch (error) {
-    //   console.error('[createLocation]', error)
-    // }
-    await createLocation.mutateAsync({
-      config: 'QmNt5Rgq9FiPMSepTCzCcp3iA16RzKYEJwsxa5YbigiJwF',
-      imgHash: 'QmRUkLidYCU1SULZ9A7xMnydC11Um5syAScjFSUDmeEJoQ',
-      locationId: "0x0000000000000000000000000000000000000000000000000000000000000002",
-    })
   }
 
   React.useEffect(() => {
@@ -211,19 +164,6 @@ export default function CreateAvatarScreen() {
       }
     })
   }, [ selectedColor ])
-
-  // TODO: My Player
-  React.useEffect(() => {
-    if (player.player !== undefined){
-      console.log('player', player)
-      console.log('loc', generatedLocation)
-    }
-  }, [ player ])
-
-  React.useEffect(() => {
-    if (location !== undefined)
-      console.log('location', location)
-  }, [ location ])
 
   return (
     <React.Fragment>
