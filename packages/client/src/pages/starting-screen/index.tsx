@@ -19,6 +19,7 @@ export default function StartingScreen() {
             src={`/src/assets/logo/imaigine_logo.svg`}
             alt={'Imaigine Logo'}
             className="w-[31.8em] h-[9.5em] mb-5"
+            draggable={false}
           />
           <p className="font-inkFree text-white text-3xl tracking-wider text-center mb-8">Imagination Engine</p>
           <Button
