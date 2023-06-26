@@ -19,11 +19,14 @@ const data = {
 }
 
 const isWorldMap = true
+import Footer from '@/components/layouts/Footer'
+import Map from '@/components/Map'
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
   return (
     <LocationLayout>
+      <Map></Map>
       <div className={clsx([
         'flex',
         'w-full h-[820px]',
