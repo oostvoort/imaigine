@@ -1,13 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
-import { GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
+import { GenerateLocation, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
-import { camelCaseToTitle } from '@/global/utils'
+import { camelCaseToTitle, getFromIPFS } from '@/global/utils'
 import usePlayer from '@/hooks/usePlayer'
 import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import LoadingScreen from '@/components/shared/LoadingScreen'
+import LoadingStory from '@/components/shared/LoadingStory'
+import { useAtom } from 'jotai'
+import { currentLoader_atom } from '@/global/states'
+import BlurredImage from '@/components/shared/BlurredImage'
+import useLocation from '@/hooks/useLocation'
 
 type SetupOptionType = Array<{
   label: string,
@@ -72,6 +77,8 @@ const colorPalette = [
 
 export default function CreateAvatarScreen() {
   const { generatePlayer, createPlayer, player } = usePlayer()
+  const { generateLocation, createLocation, location } = useLocation()
+
   const [ step, setStep ] = React.useState(1)
   const [ userInputs, setUserInputs ] = React.useState<GeneratePlayerProps>({
     ageGroup: '',
@@ -86,7 +93,11 @@ export default function CreateAvatarScreen() {
   const [ generatedPlayer, setGeneratedPlayer ] = React.useState<GeneratePlayerResponse | null>(null)
   const [ selectedAvatar, setSelectedAvatar ] = React.useState<number | null>(null)
   const [ avatarHash, setAvatarHash ] = React.useState<string>('')
+
+  const [ generatedLocation, setGeneratedLocation ] = React.useState<GenerateLocation | null>(null)
+
   const [ isLoading, setIsLoading ] = React.useState<boolean>(false)
+  const [ activeLoader, setActiveLoader ] = useAtom(currentLoader_atom)
 
   const handleRandomCharacter = async () => {
     const getRandomOption = (options: Array<string>) => {
@@ -117,13 +128,14 @@ export default function CreateAvatarScreen() {
   }
 
   const handleGeneratePlayer = async () => {
+    setActiveLoader('loadingAvatar')
     setIsLoading(true)
     try {
-      const data = await generatePlayer.mutateAsync(userInputs)
+      const player = await generatePlayer.mutateAsync(userInputs)
       setGeneratedPlayer({
-        ipfsHash: data.ipfsHash,
-        imgHashes: data.imgHashes,
-        locationId: data.locationId,
+        ipfsHash: player.ipfsHash,
+        imgHashes: player.imgHashes,
+        locationId: player.locationId,
       })
       setIsLoading(false)
       setStep(3)
@@ -140,9 +152,52 @@ export default function CreateAvatarScreen() {
         imgHash: avatarHash,
         locationId: generatedPlayer.locationId,
       })
+      await handleGenerateLocation(generatedPlayer.locationId)
     } catch (error) {
       console.error()
     }
+  }
+
+  const handleGenerateLocation = async (id: string) => {
+    try {
+      if (!generatedPlayer) return
+      const location = await generateLocation.mutateAsync({ id: id })
+      // setGeneratedLocation({
+      //   config: location.ipfsHash,
+      //   imgHash: location.imageHash,
+      //   locationId: generatedPlayer.locationId,
+      // })
+      if (location) {
+        console.log('INNNNNNNNNNNNNNNNNNNNNN', location)
+        console.log('generatedPlayer', generatedPlayer.locationId)
+        await createLocation.mutateAsync({
+          config: location.ipfsHash,
+          imgHash: location.imageHash,
+          locationId: generatedPlayer.locationId,
+        })
+      }
+      // await handleCreateLocation()
+    } catch (error) {
+      console.error('[generateLocation]', error)
+    }
+  }
+
+  const handleCreateLocation = async () => {
+    // try {
+    //   if (!generatedLocation) return
+    //   await createLocation.mutateAsync({
+    //     config: generatedLocation.config,
+    //     imgHash: generatedLocation.imgHash,
+    //     locationId: generatedLocation.locationId,
+    //   })
+    // } catch (error) {
+    //   console.error('[createLocation]', error)
+    // }
+    await createLocation.mutateAsync({
+      config: 'QmNt5Rgq9FiPMSepTCzCcp3iA16RzKYEJwsxa5YbigiJwF',
+      imgHash: 'QmRUkLidYCU1SULZ9A7xMnydC11Um5syAScjFSUDmeEJoQ',
+      locationId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+    })
   }
 
   React.useEffect(() => {
@@ -156,16 +211,24 @@ export default function CreateAvatarScreen() {
 
   // TODO: My Player
   React.useEffect(() => {
-    if (player.player !== undefined)
+    if (player.player !== undefined){
       console.log('player', player)
+      console.log('loc', generatedLocation)
+    }
   }, [ player ])
+
+  React.useEffect(() => {
+    if (location !== undefined)
+      console.log('location', location)
+  }, [ location ])
 
   return (
     <React.Fragment>
       {
         isLoading ? (
           <BackgroundCarousel>
-            <LoadingScreen message={'Generating Avatars...'} />
+            {activeLoader == 'loadingAvatar' && <LoadingScreen message={'Generating Avatars...'} />}
+            {activeLoader == 'loadingStory' && <LoadingStory message={'Summary Story'} isLoading={false} />}
           </BackgroundCarousel>
         ) : (
           <div className={clsx([
@@ -173,7 +236,12 @@ export default function CreateAvatarScreen() {
             'flex flex-col items-center gap-10',
           ])}>
             <section className={clsx('flex flex-col gap-2')}>
-              <img src={imaigineIcon} alt={String(imaigineIcon)} className={clsx('aspect-auto w-[225px]')} />
+              <img
+                src={imaigineIcon}
+                alt={String(imaigineIcon)}
+                className={clsx('aspect-auto w-[225px]')}
+                draggable={false}
+              />
               <p className={clsx([
                 'text-sm text-center text-primary-foreground',
                 'font-inkFree tracking-wide',
@@ -308,6 +376,7 @@ export default function CreateAvatarScreen() {
                                 isSelectedAvatar ? 'ring-4 ring-yellow-300' : selectedAvatar === null ? 'opacity-100' : 'opacity-25',
                               ])}
                               onClick={() => handleSelectAvatar(index)}
+                              draggable={false}
                             />
                           )
                         })
