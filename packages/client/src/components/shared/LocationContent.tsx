@@ -2,6 +2,9 @@ import React from 'react'
 import { cn } from '@/global/utils'
 import { cva } from 'class-variance-authority'
 import { clsx } from 'clsx'
+import { Button } from '@/components/base/Button'
+import { useSetAtom } from 'jotai/index'
+import { activeScreen_atom } from '@/global/states'
 
 type TargetType = {
   id: string,
@@ -46,6 +49,7 @@ const targetVariants = cva(
 )
 
 const Target: React.FC<TargetProps> = ({ definition, onTarget }) => {
+
   return (
     <span
       className={cn(targetVariants({ variant: definition.type }))}
@@ -78,6 +82,8 @@ const replaceTargets = (text: string, targets: TargetType[], onTarget?: (target:
 }
 
 const LocationContent: React.FC<PropType> = ({ content, target, onTarget}) => {
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+
   const targetedText = target ? replaceTargets(content, target, onTarget) : content
   return (
     <React.Fragment>
@@ -87,6 +93,11 @@ const LocationContent: React.FC<PropType> = ({ content, target, onTarget}) => {
       ])}>
         {targetedText}
       </p>
+
+      {/*TODO: Remove this after the demo*/}
+      <div className={clsx(['flex justify-center items-center mt-52'])}>
+        <Button variant={'ghost'} size={"sm"} className={'text-option-3'} onClick={() => setActiveScreen('wishPrompt')}>Simulate Evil God Prompt</Button>
+      </div>
     </React.Fragment>
   )
 }

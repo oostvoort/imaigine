@@ -4,7 +4,7 @@ import { Input } from '@/components/base/Input'
 import { Button } from '@/components/base/Button'
 
 export default function WishPrompt() {
-  const isGood = false
+  const isGood = true
 
   return (
     <div

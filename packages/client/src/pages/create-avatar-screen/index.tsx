@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
+import React  from 'react'
 import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
 import { GenerateLocation, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
-import { camelCaseToTitle, getFromIPFS } from '@/global/utils'
+import { camelCaseToTitle } from '@/global/utils'
 import usePlayer from '@/hooks/usePlayer'
 import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import LoadingScreen from '@/components/shared/LoadingScreen'
 import LoadingStory from '@/components/shared/LoadingStory'
 import { useAtom } from 'jotai'
-import { currentLoader_atom } from '@/global/states'
-import BlurredImage from '@/components/shared/BlurredImage'
+import { activeScreen_atom, currentLoader_atom } from '@/global/states'
 import useLocation from '@/hooks/useLocation'
+import { useSetAtom } from 'jotai/index'
 
 type SetupOptionType = Array<{
   label: string,
@@ -98,6 +98,7 @@ export default function CreateAvatarScreen() {
 
   const [ isLoading, setIsLoading ] = React.useState<boolean>(false)
   const [ activeLoader, setActiveLoader ] = useAtom(currentLoader_atom)
+  const setActiveScreen = useSetAtom(activeScreen_atom)
 
   const handleRandomCharacter = async () => {
     const getRandomOption = (options: Array<string>) => {
@@ -145,17 +146,19 @@ export default function CreateAvatarScreen() {
   }
 
   const handleCreatePlayer = async () => {
-    try {
-      if (!generatedPlayer) return
-      await createPlayer.mutateAsync({
-        config: generatedPlayer.ipfsHash,
-        imgHash: avatarHash,
-        locationId: generatedPlayer.locationId,
-      })
-      await handleGenerateLocation(generatedPlayer.locationId)
-    } catch (error) {
-      console.error()
-    }
+    setActiveScreen('currentLocationScreen')
+
+    // try {
+    //   if (!generatedPlayer) return
+    //   await createPlayer.mutateAsync({
+    //     config: generatedPlayer.ipfsHash,
+    //     imgHash: avatarHash,
+    //     locationId: generatedPlayer.locationId,
+    //   })
+    //   await handleGenerateLocation(generatedPlayer.locationId)
+    // } catch (error) {
+    //   console.error()
+    // }
   }
 
   const handleGenerateLocation = async (id: string) => {

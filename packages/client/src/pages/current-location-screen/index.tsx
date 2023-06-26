@@ -67,7 +67,7 @@ export default function CurrentLocationScreen() {
           <LocationContent
             content={data.text}
             target={data.target}
-            onTarget={(target) => console.log({target})}
+            onTarget={() => setIsOpen(true)}
           />
         </div>
       </div>
