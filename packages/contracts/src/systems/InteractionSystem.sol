@@ -27,7 +27,14 @@ contract InteractionSystem is System {
   using ArrayLib for bytes32[];
   using ArrayLib for uint256[];
 
+  /// @dev counts if the process timed out without making interaction available
   uint256 private constant PROCESSING_TIMEOUT = 1_000 * 60 * 60;
+
+  /// @dev returned in multiInteract when a winningChoice is not yet available
+  uint256 private constant NOT_YET_AVAILABLE = 4;
+
+  /// @dev need to make this into a constant
+  int8[] private KARMA_EFFECTS = [int8(0), -5, 0, 5];
 
   /// @notice interact with an interactable that handles single interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
@@ -95,10 +102,10 @@ contract InteractionSystem is System {
   /// @notice interact with an interactable that handles multi interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
   /// @param choiceId is the id of the choice; 0 - will enter into the interaction, 1-3 - actual choices
-  /// @return interactableId
+  /// @return winningChoice (0 for disagreement, 1-3 actual choice, 4 - not yet available)
   function interactMulti(bytes32 interactableId, uint256 choiceId)
   public
-  returns (bytes32)
+  returns (uint256)
   {
     // check if multi interaction is possible
     require(InteractionTypeComponent.get(interactableId) == InteractionType.MULTIPLE, "cannot multi interact");
@@ -117,7 +124,7 @@ contract InteractionSystem is System {
 
       // reset the state for the interactable
       MultiInteractionComponent.set(interactableId, true, 0, 0, new bytes(0), new bytes(0), new bytes(0));
-      return LocationComponent.get(playerID); // returning early
+      return NOT_YET_AVAILABLE; // returning early
     }
 
     uint256[] memory choices = multiInteraction.choices.decodeUint256Array();
@@ -141,7 +148,7 @@ contract InteractionSystem is System {
         timeouts.encode()
       );
       InteractableComponent.set(playerID, interactableId);
-      return interactableId; // early returning here
+      return NOT_YET_AVAILABLE; // early returning here
     }
 
     require(playerIndex != -1, "player has not entered interaction yet");
@@ -182,7 +189,7 @@ contract InteractionSystem is System {
     );
 
     // not everyone has voted, so the interaction is not yet over
-    if (nonzeroChoicesCount != updatedPlayerCount) return interactableId;
+    if (nonzeroChoicesCount != updatedPlayerCount) return NOT_YET_AVAILABLE;
 
     MultiInteractionComponent.setAvailable(interactableId, false);
 
@@ -190,13 +197,13 @@ contract InteractionSystem is System {
 
     // if the winningChoice is 0, the players disagreed
     // TODO: figure out if karma points should be hit when disagreement has occurred
-    if (winner == 0) return interactableId;
+    if (winner == 0) return NOT_YET_AVAILABLE;
 
     for (uint256 i = 0; i < updatedPlayerCount; i++) {
       changeKarma(updatedPlayers[i], winner);
     }
 
-    return interactableId;
+    return winner;
   }
 
   /// @notice backend sends this to allow players to choose again
@@ -273,15 +280,7 @@ contract InteractionSystem is System {
     require(choiceId > 0 && choiceId < 4, "unknown choice");
     int8 karmaPoints = KarmaPointsComponent.get(playerId);
 
-    // couldn't put constants so doing this instead
-    KarmaPointsComponent.set(
-      playerId,
-      karmaPoints + int8(
-        choiceId == 1 ? int8(-5) :
-          choiceId == 2 ? int8(0) :
-            int8(5)
-      )
-    );
+    KarmaPointsComponent.set(playerId, karmaPoints + KARMA_EFFECTS[choiceId]);
 
   }
 

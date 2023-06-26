@@ -6,7 +6,7 @@ pragma solidity >=0.8.0;
 interface IInteractionSystem {
   function interactSingle(bytes32 interactableId, uint256 choiceId) external returns (bytes32);
 
-  function interactMulti(bytes32 interactableId, uint256 choiceId) external returns (bytes32);
+  function interactMulti(bytes32 interactableId, uint256 choiceId) external returns (uint256);
 
   function openInteraction(bytes32 playerId, bytes32 interactableId) external;
 
