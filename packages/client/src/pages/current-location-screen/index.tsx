@@ -1,9 +1,8 @@
 import { clsx } from 'clsx'
 import React from 'react'
-import Header from '@/components/layouts/Header'
 import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
-import Footer from '@/components/layouts/Footer'
 import LocationContent from '@/components/shared/LocationContent'
+import LocationLayout from '@/components/layouts/LocationLayout'
 
 const TARGETS = [ 'location', 'npc', 'item', 'animal' ] as const
 const data = {
@@ -12,23 +11,17 @@ const data = {
     '            its snow-capped peaks reaching for the heavens. Nearby, a babbling river called the Silverstream\n' +
     '            flowed gracefully through the lush green fields. A friendly NPC named Eleanor the Dryad approached,\n' +
     '            offering a warm smile and a map of the realm.',
-  target: [  {
+  target: [ {
     id: '1',
     name: 'Eleanor the Dryad',
-    type: TARGETS[1]
-  },]
+    type: TARGETS[1],
+  } ],
 }
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
   return (
-    <div className={clsx([
-      'flex flex-col items-center',
-      'h-screen w-screen',
-      'px-10 pt-28',
-      'bg-main-bg-neutral bg-no-repeat bg-cover',
-    ])}>
-      <Header />
+    <LocationLayout>
       <div className={clsx([
         'flex',
         'w-full h-[820px]',
@@ -38,15 +31,15 @@ export default function CurrentLocationScreen() {
         <div className={clsx([
           'aspect-video w-1/2',
           'border-r-[1px] border-[#AB8200]',
+          'flex'
         ])}>
           <img
             src={'/src/assets/background/bg1.jpg'}
             alt={'Location'}
             className={clsx([
-              'object-cover w-full h-full',
+              'object-top w-full h-full',
               'rounded-l-2xl',
             ])}
-            draggable={false}
           />
         </div>
         <div className={clsx([
@@ -61,8 +54,7 @@ export default function CurrentLocationScreen() {
           />
         </div>
       </div>
-      <Footer/>
-      <ConversationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)}/>
-    </div>
+      <ConversationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)} />
+    </LocationLayout>
   )
 }

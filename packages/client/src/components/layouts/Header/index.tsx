@@ -25,6 +25,17 @@ const menus: Array<PropType> = [
     },
   },
   {
+    children: <>World Map</>,
+    isAvatar: false,
+    button: {
+      variant: 'menu',
+      title: 'World Map',
+      imgSrc: '/src/assets/svg/icon_map.png',
+      imgAlt: '',
+      imgClassName: 'h-[59px] w-[59px]',
+    },
+  },
+  {
     children: <History />,
     isAvatar: false,
     button: {

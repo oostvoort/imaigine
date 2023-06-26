@@ -29,3 +29,15 @@ export interface PlayerCharacterProps extends NonPlayerCharacterProps {
     bodyType: string,
     favColor: string
 }
+
+export interface LocationInteractionProps {
+  storyName: string,
+  storySummary: string,
+  locationName: string,
+  locationSummary: string,
+  npcName: string,
+  npcSummary: string,
+  playerName: string,
+  playerSummary: string,
+  locationHistory: string
+}

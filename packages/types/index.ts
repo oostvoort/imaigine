@@ -18,6 +18,20 @@ export interface GenerateLocationResponse {
   ipfsHash: string,
   imageHash: string,
 }
+export interface GenerateLocationInteractionProps {
+  locationIpfsHash: string,
+  locationId: string,
+  playerIpfsHash: string,
+  npcIpfsHash: string
+}
+export interface GenerateLocationInteractionResponse {
+  scenario: string,
+  options: {
+    good: string,
+    evil: string,
+    neutral: string
+  }
+}
 export interface GenerateNpcProps {
   locationIpfsHash: string,
 }

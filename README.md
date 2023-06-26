@@ -1,5 +1,10 @@
 # imaigine
 
+## Repo
+- The fantasy-map-generator has been added as a git subtree using the command `git subtree add --prefix packages/fantasy-map-generator  https://github.com/Azgaar/Fantasy-Map-Generator.git master --squash`.
+- More info: https://blog.developer.atlassian.com/the-power-of-git-subtree/?_ga=2-71978451-1385799339-1568044055-1068396449-1567112770
+- To update the map from upstream: ```git subtree pull --prefix packages/fantasy-map-generator https://github.com/Azgaar/Fantasy-Map-Generator.git master --squash```
+
 ## Setup
 - NodeJs : This project needs **Node 18** :  
 ```shell 

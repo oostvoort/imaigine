@@ -3,8 +3,10 @@ import { Button } from '@/components/base/Button'
 import React from 'react'
 
 export default function Footer(){
-  return(
+
+  return (
     <>
+      {/*todo: make it compound component*/}
       <div className={clsx([
         'flex gap-x-3 my-8',
       ])}>

@@ -8,6 +8,13 @@ export default defineConfig({
     fs: {
       strict: false,
     },
+    proxy: {
+      '/map': {
+        target: 'http://localhost:3000/',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/map/, ''),
+      },
+    },
   },
   build: {
     target: 'es2022',
