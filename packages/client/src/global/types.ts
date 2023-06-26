@@ -73,3 +73,20 @@ export interface GeneratedNpc extends GenerateNpcResponse {
   name: string
   summary: string
 }
+
+export type GenerateNpc = {
+  config: PromiseOrValue<string>,
+  imgHash: PromiseOrValue<string>,
+  locationIpfsHash: PromiseOrValue<string>
+}
+
+export interface GenerateStoryProps {
+  theme: string,
+  races: Array<string>,
+  currency: string
+}
+
+export interface GenerateStoryResponse {
+  name: string,
+  description: string,
+}
