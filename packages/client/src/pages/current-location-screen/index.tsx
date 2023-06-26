@@ -18,15 +18,10 @@ const data = {
   } ],
 }
 
-const isWorldMap = true
-import Footer from '@/components/layouts/Footer'
-import Map from '@/components/Map'
-
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
   return (
     <LocationLayout>
-      <Map></Map>
       <div className={clsx([
         'flex',
         'w-full h-[820px]',
@@ -36,12 +31,13 @@ export default function CurrentLocationScreen() {
         <div className={clsx([
           'aspect-video w-1/2',
           'border-r-[1px] border-[#AB8200]',
+          'flex'
         ])}>
           <img
             src={'/src/assets/background/bg1.jpg'}
             alt={'Location'}
             className={clsx([
-              'object-cover w-full h-full',
+              'object-top w-full h-full',
               'rounded-l-2xl',
             ])}
           />

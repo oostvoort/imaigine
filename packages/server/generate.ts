@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 import fs from "fs-extra"
-import {loadJson, storeFile, storeJson} from './ipfs'
+// import {loadJson, storeFile, storeJson} from './ipfs'
 
 export async function generateMap(seed: number) : Promise<string>{
 
@@ -25,6 +25,7 @@ export async function generateMap(seed: number) : Promise<string>{
     await page.keyboard.press("i")
 
     const data = await page.evaluate(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return getMapData()
     });
