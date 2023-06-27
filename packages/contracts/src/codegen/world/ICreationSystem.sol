@@ -10,5 +10,9 @@ interface ICreationSystem {
 
   function createCharacter(string memory config, string memory imgHash, bytes32 locationID) external returns (bytes32);
 
-  function createLocation(string memory config, string memory imgHash, bytes32 locationID) external returns (bytes32);
+  function createLocation(
+    string memory config,
+    string memory imgHash,
+    uint256 locationNumber
+  ) external returns (bytes32);
 }
