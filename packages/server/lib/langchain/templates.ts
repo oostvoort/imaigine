@@ -1,4 +1,4 @@
-import {getRandomValue} from "../openai/utils";
+import {getRandomValue} from "../../utils/getRandomValue";
 
 const wealthLevels = [ 'Poor', 'Lower Middle Class', 'Middle Class', 'Upper Middle Class', 'Wealthy' ]
 const populationSizes = [ 'Small', 'Medium', 'Large', 'Very Large', 'Metropolis' ]
@@ -115,4 +115,14 @@ export const playerCharacterPrompt = `
     Give the character a unique name based on all the information.\n\n
 
     Describe the character visually
+`
+
+export const locationInteractionPropmt = `
+  Consider a world called "{storyName}". {storySummary}\n
+  "{locationName}" is a location in {storyName}. The following is its description:\n
+  "{locationSummary}"\n
+  {locationHistory}
+  Consider that the main character is {playerName} is in this location. This scenario must mention {npcName}, {npcSummary}.\n
+
+  The scenario should also sprinkle in past events.
 `
