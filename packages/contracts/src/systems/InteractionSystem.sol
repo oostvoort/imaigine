@@ -27,6 +27,9 @@ contract InteractionSystem is System {
   using ArrayLib for bytes32[];
   using ArrayLib for uint256[];
 
+  /// @dev counts if the vote has timed out without player voting
+  uint256 private constant VOTING_TIMEOUT = 1_000 * 15;
+
   /// @dev counts if the process timed out without making interaction available
   uint256 private constant PROCESSING_TIMEOUT = 1_000 * 60 * 60;
 
@@ -49,52 +52,59 @@ contract InteractionSystem is System {
 
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
+    // leave old multiInteraction if was part of a multiInteraction
+    bytes32 oldInteractable = InteractableComponent.get(playerID);
+    if (InteractionTypeComponent.get(oldInteractable) == InteractionType.MULTIPLE) {
+      MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(oldInteractable);
+      bytes32[] memory players = multiInteraction.players.decodeBytes32Array();
+      int256 playerIndex = players.findIndex(playerID);
+
+      if (playerIndex != -1) {
+        uint256[] memory choices = multiInteraction.choices.decodeUint256Array();
+        uint256[] memory timeouts = multiInteraction.timeouts.decodeUint256Array();
+
+        players.remove(uint256(playerIndex));
+        choices.remove(uint256(playerIndex));
+        timeouts.remove(uint256(playerIndex));
+
+        // TODO: figure out if this is safe
+        // this could cause some unintended return of stale data
+        MultiInteractionComponent.set(
+          oldInteractable,
+          multiInteraction.available,
+          multiInteraction.playerCount - 1,
+          multiInteraction.processingTimeout,
+          players.encode(),
+          choices.encode(),
+          timeouts.encode()
+        );
+      }
+    }
+
+    if (InteractableComponent.get(playerID) != interactableId) InteractableComponent.set(playerID, interactableId);
+
     if (choiceId == 0) {
       SingleInteractionComponent.set(playerID, interactableId, true, choiceId, 0);
-
-      // leave old multiInteraction if was part of a multiInteraction
-      bytes32 oldInteractable = InteractableComponent.get(playerID);
-      if (InteractionTypeComponent.get(oldInteractable) == InteractionType.MULTIPLE) {
-        MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(oldInteractable);
-        bytes32[] memory players = multiInteraction.players.decodeBytes32Array();
-        int256 playerIndex = players.findIndex(playerID);
-
-        if (playerIndex != -1) {
-          uint256[] memory choices = multiInteraction.choices.decodeUint256Array();
-          uint256[] memory timeouts = multiInteraction.timeouts.decodeUint256Array();
-
-          players.remove(uint256(playerIndex));
-          choices.remove(uint256(playerIndex));
-          timeouts.remove(uint256(playerIndex));
-
-          // TODO: figure out if this is safe
-          // this could cause some unintended return of stale data
-          MultiInteractionComponent.set(
-            oldInteractable,
-            multiInteraction.available,
-            multiInteraction.playerCount - 1,
-            multiInteraction.processingTimeout,
-            players.encode(),
-            choices.encode(),
-            timeouts.encode()
-          );
-        }
-      }
-
-      InteractableComponent.set(playerID, interactableId);
       return interactableId; // early returning here
     }
 
     // get interaction
     SingleInteractionComponentData memory singleInteraction = SingleInteractionComponent.get(playerID, interactableId);
 
-    if (singleInteraction.available) {
-      changeKarma(playerID, choiceId);
-      SingleInteractionComponent.set(playerID, interactableId, false, choiceId, block.timestamp + PROCESSING_TIMEOUT);
-    } else {
-      require(block.timestamp >= singleInteraction.processingTimeout, "process has not timed out yet");
-      SingleInteractionComponent.set(playerID, interactableId, true, 0, 0);
-    }
+    require(
+      block.timestamp >= singleInteraction.processingTimeout ||
+      singleInteraction.available,
+      "process has not timed out yet"
+    );
+
+    changeKarma(playerID, choiceId);
+    SingleInteractionComponent.set(
+      playerID,
+      interactableId,
+      false,
+      choiceId,
+      block.timestamp + PROCESSING_TIMEOUT
+    );
 
     return interactableId;
   }
@@ -155,7 +165,7 @@ contract InteractionSystem is System {
     require(choiceId > 0 && choiceId < 4, "unknown choice");
 
     choices[uint256(playerIndex)] = choiceId;
-    timeouts[uint256(playerIndex)] = block.timestamp + PROCESSING_TIMEOUT;
+    timeouts[uint256(playerIndex)] = block.timestamp + VOTING_TIMEOUT;
 
     bytes32[] memory updatedPlayers = new bytes32[](0);
     uint256[] memory updatedChoices = new uint256[](0);
