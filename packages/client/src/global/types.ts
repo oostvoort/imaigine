@@ -57,7 +57,7 @@ export interface GeneratedLocation extends GenerateLocationResponse {
 export type GenerateLocation = {
   config: PromiseOrValue<string>,
   imgHash: PromiseOrValue<string>,
-  locationId: PromiseOrValue<string> // represent bytes32
+  locationNumber: PromiseOrValue<string> // represent bytes32
 }
 
 export interface GenerateNpcProps {
@@ -89,4 +89,36 @@ export interface GenerateStoryProps {
 export interface GenerateStoryResponse {
   name: string,
   description: string,
+}
+
+// TODO: add types for generate story props for useStory hook
+// start here
+// <! close >
+
+export interface GenerateLocationInteractionProps {
+  locationIpfsHash: string,
+  locationId: string,
+  playerIpfsHash: string,
+  npcIpfsHashes: Array<string>,
+  options: Partial<{
+    scenario: string,
+    interaction: {
+      choide: string,
+      effect: string
+    }
+  }>
+}
+
+export interface GenerateLocationInteractionResponse {
+  scenario: string,
+  options: {
+    good: string,
+    evil: string,
+    neutral: string
+  }
+}
+
+export type GenerateLocationInteraction = {
+  interactableId: PromiseOrValue<string>,
+  choiceId: PromiseOrValue<string>
 }
