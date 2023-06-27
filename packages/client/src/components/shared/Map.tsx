@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 
-const Map: React.FC = () => {
+type PropType = {
+  className?: string
+}
+
+const Map: React.FC<PropType> = ({ className }) => {
     const mapSeed = 123
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -46,12 +50,13 @@ const Map: React.FC = () => {
     //     }
     // };
     return (
-      <div className={'w-screen h-screen'}>
+      <div className={'w-full h-full'}>
         {/*<button onClick={sendMessageToIframe}>Send Message to Iframe</button>*/}
         {/*<button onClick={callFunctionInIframe}>Call Function in Iframe</button>*/}
         <iframe
           ref={iframeRef}
           width={'w-[inherit]'}
+          className={className}
           src={`http://localhost:3000/map/index.html?maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
           title="Map"
         />
