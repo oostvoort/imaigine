@@ -12,7 +12,7 @@ export interface GenerateStoryResponse {
   description: string
 }
 export interface GenerateLocationProps {
-  id: string,
+  id: number,
 }
 export interface GenerateLocationResponse {
   ipfsHash: string,

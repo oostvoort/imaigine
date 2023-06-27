@@ -7,7 +7,18 @@ import { SERVER_API } from '@/global/constants'
 import { GeneratedLocation, GenerateLocation, GenerateLocationProps, GenerateLocationResponse } from '@/global/types'
 import { getFromIPFS } from '@/global/utils'
 import { awaitStreamValue } from '@latticexyz/utils'
-import { hexZeroPad } from 'ethers/lib/utils'
+import { hexZeroPad, keccak256, solidityPack } from 'ethers/lib/utils'
+
+const cellNumberToId = (cellNumber: number) => {
+  return (
+    keccak256(
+      solidityPack(
+        ['bytes16', 'uint256'],
+        ['0x4c4f434154494f4e0000000000000000', cellNumber]
+      )
+    )
+  )
+}
 
 export default function useLocation(locationIdParam?: Entity) {
   const {
