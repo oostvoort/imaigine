@@ -1,6 +1,6 @@
 import React from 'react'
 import { clsx } from 'clsx'
-import Header from '@/components/layouts/NavigationLayout'
+import Header from '@/components/layouts/MainLayout/NavigationLayout'
 import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayout'
 
 const Template = ({ children }: { children: React.ReactNode }) => {
