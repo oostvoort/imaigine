@@ -112,9 +112,18 @@ export interface GenerateLocationInteractionProps {
 export interface GenerateLocationInteractionResponse {
   scenario: string,
   options: {
-    good: string,
-    evil: string,
-    neutral: string
+    good: {
+      choice: string,
+      effect: string
+    },
+    evil: {
+      choice: string,
+      effect: string
+    },
+    neutral: {
+      choice: string,
+      effect: string
+    }
   }
 }
 
