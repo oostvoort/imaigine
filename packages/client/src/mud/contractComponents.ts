@@ -245,8 +245,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    CounterpartComponent: (() => {
-      const tableId = new TableId("", "CounterpartCompo");
+    InteractableComponent: (() => {
+      const tableId = new TableId("", "InteractableComp");
       return defineComponent(
         world,
         {
@@ -260,14 +260,49 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    VotingComponent: (() => {
-      const tableId = new TableId("", "VotingComponent");
+    InteractionTypeComponent: (() => {
+      const tableId = new TableId("", "InteractionTypeC");
       return defineComponent(
         world,
         {
-          votingStatus: RecsType.Number,
-          voters: RecsType.String,
-          voteChoices: RecsType.String,
+          value: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    SingleInteractionComponent: (() => {
+      const tableId = new TableId("", "SingleInteractio");
+      return defineComponent(
+        world,
+        {
+          available: RecsType.Boolean,
+          choice: RecsType.BigInt,
+          processingTimeout: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    MultiInteractionComponent: (() => {
+      const tableId = new TableId("", "MultiInteraction");
+      return defineComponent(
+        world,
+        {
+          available: RecsType.Boolean,
+          playerCount: RecsType.BigInt,
+          processingTimeout: RecsType.BigInt,
+          players: RecsType.String,
+          choices: RecsType.String,
+          timeouts: RecsType.String,
         },
         {
           metadata: {

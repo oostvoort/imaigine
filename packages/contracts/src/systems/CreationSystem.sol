@@ -16,11 +16,10 @@ import {
   AliveComponent,
   SceneComponent,
   KarmaPointsComponent,
-  VotingComponent,
-  CounterpartComponent
+  InteractionTypeComponent
 } from "../codegen/Tables.sol";
 
-import { VotingStatusType } from "../codegen/Types.sol";
+import { InteractionType } from "../codegen/Types.sol";
 
 import { ArrayLib } from "../lib/ArrayLib.sol";
 import { Constants } from "../lib/Constants.sol";
@@ -70,7 +69,6 @@ contract CreationSystem is System {
     ImageComponent.set(playerID, imgHash);
     LocationComponent.set(playerID, locationID);
     KarmaPointsComponent.set(playerID, 0);
-    CounterpartComponent.set(playerID, locationID);
 
     return playerID;
   }
@@ -97,7 +95,7 @@ contract CreationSystem is System {
     AliveComponent.set(characterID, true);
     ImageComponent.set(characterID, imgHash);
     LocationComponent.set(characterID, locationID);
-    VotingComponent.set(characterID, VotingStatusType.OPEN, new bytes(0), new bytes(0));
+    InteractionTypeComponent.set(characterID, InteractionType.MULTIPLE);
 
     return characterID;
   }
@@ -120,6 +118,7 @@ contract CreationSystem is System {
     ConfigComponent.set(locationID, config);
     SceneComponent.set(locationID, true);
     ImageComponent.set(locationID, imgHash);
+    InteractionTypeComponent.set(locationID, InteractionType.SINGLE);
 
     return locationID;
   }

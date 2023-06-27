@@ -1,2 +1,5 @@
 node_modules
 /packages/server/.env
+/packages/server/*.map
+/packages/server/logs.sqlite
+.idea

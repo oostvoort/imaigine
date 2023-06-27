@@ -3,7 +3,7 @@ import { BACKGROUND_IMAGES } from '@/global/constants'
 import { clsx } from 'clsx'
 
 type PropType = {
-  children: ReactNode
+  children?: ReactNode
 }
 
 const BackgroundCarousel = ({ children }: PropType) => {
@@ -33,6 +33,7 @@ const BackgroundCarousel = ({ children }: PropType) => {
           'transition-opacity duration-1000',
           { 'opacity-0': opacity === 0, 'opacity-30': opacity === 100 },
         ])}
+        draggable={false}
       />
       {children}
     </React.Fragment>
