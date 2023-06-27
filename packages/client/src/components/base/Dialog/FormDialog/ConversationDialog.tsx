@@ -3,7 +3,7 @@ import { Dialog } from '@/components/base/Dialog'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
-import ConversationLayout from '@/components/layouts/ConversationLayout'
+import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayout'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/base/Avatar'
 
 const players = [

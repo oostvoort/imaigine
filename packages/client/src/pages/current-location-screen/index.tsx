@@ -2,7 +2,10 @@ import { clsx } from 'clsx'
 import React from 'react'
 import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
 import LocationContent from '@/components/shared/LocationContent'
-import LocationLayout from '@/components/layouts/LocationLayout'
+import { ButtonWrapper, Footer } from '@/components/base/Footer'
+import { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
+import { Button } from '@/components/base/Button'
+
 
 const TARGETS = [ 'location', 'npc', 'item', 'animal' ] as const
 const data = {
@@ -20,8 +23,30 @@ const data = {
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
+
+  const buttonOptions: Array<ButtonPropType> = [
+    {
+      title: 'Explore surroundings',
+      variant: 'neutral',
+      size: 'btnWithBgImg',
+      action: () => console.log('Hello'),
+    },
+    {
+      title: 'Follow the nearest trail',
+      variant: 'neutral',
+      size: 'btnWithBgImg',
+      action: () => console.log('Hello'),
+    },
+    {
+      title: 'Succumb to panic',
+      variant: 'neutral',
+      size: 'btnWithBgImg',
+      action: () => console.log('Hello'),
+    },
+  ]
+
   return (
-    <LocationLayout>
+    <>
       <div className={clsx([
         'flex',
         'w-full h-[820px]',
@@ -31,7 +56,7 @@ export default function CurrentLocationScreen() {
         <div className={clsx([
           'aspect-video w-1/2',
           'border-r-[1px] border-[#AB8200]',
-          'flex'
+          'flex',
         ])}>
           <img
             src={'/src/assets/background/bg1.jpg'}
@@ -54,7 +79,18 @@ export default function CurrentLocationScreen() {
           />
         </div>
       </div>
+      <Footer>
+        {/*<HourglassLoader>Waiting for other players...</HourglassLoader>*/}
+        <ButtonWrapper>
+          {
+            buttonOptions.map((btn, key) => (
+              <Button key={key} variant={btn.variant} size={btn.size}>{btn.title}</Button>
+            ))
+          }
+        </ButtonWrapper>
+      </Footer>
+
       <ConversationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)} />
-    </LocationLayout>
+    </>
   )
 }
