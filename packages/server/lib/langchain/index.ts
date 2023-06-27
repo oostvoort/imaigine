@@ -24,7 +24,12 @@ import {
   PlayerCharacterProps,
 } from './types'
 import * as dotenv from 'dotenv'
-import { GenerateLocationInteractionResponse, GenerateStoryProps, GenerateStoryResponse, Story } from 'types'
+import {
+  GenerateStoryProps,
+  GenerateStoryResponse,
+  InteractSingleDoneResponse,
+  Story,
+} from 'types'
 
 dotenv.config()
 
@@ -100,7 +105,7 @@ export async function generateLocation(story: Story, locationName: string): Prom
   }
 }
 
-export async function generateLocationInteraction(interaction: LocationInteractionProps): Promise<GenerateLocationInteractionResponse> {
+export async function generateLocationInteraction(interaction: LocationInteractionProps): Promise<InteractSingleDoneResponse> {
   const parser = StructuredOutputParser.fromNamesAndDescriptions(locationInteractionSchema)
 
   const formatInstruction = parser.getFormatInstructions()
@@ -116,9 +121,18 @@ export async function generateLocationInteraction(interaction: LocationInteracti
   return {
     scenario: parseData.scenario,
     options: {
-      good: parseData.goodChoice,
-      evil: parseData.evilChoice,
-      neutral: parseData.neutralChoice
+      good: {
+        choice: parseData.goodChoice,
+        effect: parseData.goodEffect,
+      },
+      evil: {
+        choice: parseData.evilChoice,
+        effect: parseData.evilEffect,
+      },
+      neutral: {
+        choice: parseData.neutralChoice,
+        effect: parseData.neutralEffect,
+      }
     }
   }
 }

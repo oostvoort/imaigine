@@ -1,9 +1,0 @@
-POST localhost:3000/mock/api/v1/generate-location-interaction
-Content-Type: application/json
-
-{
-  "locationIpfsHash": "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
-  "npcIpfsHash": ["QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj"],
-  "playerIpfsHash": "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
-  "locationId": "0x0000000000000000000000000000000000000000000000000000000000000021"
-}

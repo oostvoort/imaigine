@@ -1,0 +1,32 @@
+POST localhost:3000/api/v1/interact-single-done
+Content-Type: application/json
+
+{
+  "locationIpfsHash": "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
+  "npcIpfsHash": [
+    "QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj"
+  ],
+  "playerIpfsHash": "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
+  "locationId": "0x0000000000000000000000000000000000000000000000000000000000000021"
+}
+
+###
+POST localhost:3000/api/v1/interact-single-done
+Content-Type: application/json
+
+{
+  "locationIpfsHash": "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
+  "npcIpfsHash": [
+    "QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj"
+  ],
+  "playerIpfsHash": "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
+  "locationId": "0x0000000000000000000000000000000000000000000000000000000000000021",
+  "option": {
+    "scenario": "test",
+    "interaction": {
+      "choice": "Take advantage of Lirio",
+      "effect": "Ariana and Lirio decide to leave the beggar, exploring the city in search of more adventure without the weigh of conscience. Unfortunately, they soon find themselves pursued by an unknown figure intent on revenge. They are forced to embark on a long and arduous quest to escape the unknown person and their pursuers."
+    }
+  }
+}
+

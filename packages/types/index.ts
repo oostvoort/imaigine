@@ -18,18 +18,26 @@ export interface GenerateLocationResponse {
   ipfsHash: string,
   imageHash: string,
 }
-export interface GenerateLocationInteractionProps {
+export interface InteractionOption {
+  choice: string,
+  effect: string
+}
+export interface InteractSingleDoneProps {
   locationIpfsHash: string,
   locationId: string,
   playerIpfsHash: string,
-  npcIpfsHash: string
+  npcIpfsHash: string,
+  option?: {
+    scenario: string,
+    interaction: InteractionOption
+  }
 }
-export interface GenerateLocationInteractionResponse {
+export interface InteractSingleDoneResponse {
   scenario: string,
   options: {
-    good: string,
-    evil: string,
-    neutral: string
+    good: InteractionOption,
+    evil: InteractionOption,
+    neutral: InteractionOption
   }
 }
 export interface GenerateNpcProps {
@@ -55,7 +63,6 @@ export interface GeneratePlayerResponse {
 export interface StoreToIPFS {
   json: any
 }
-
 export interface Based {
   name: string,
   summary: string

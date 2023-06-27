@@ -122,7 +122,5 @@ export const locationInteractionPropmt = `
   "{locationName}" is a location in {storyName}. The following is its description:\n
   "{locationSummary}"\n
   {locationHistory}
-  Consider that the main character is {playerName} is in this location. This scenario must mention {npcName}, {npcSummary}.\n
-
-  The scenario should also sprinkle in past events.
+  Consider that the main character is {playerName} is in this location and the other character is {npcName}, {npcSummary}.\n
 `
