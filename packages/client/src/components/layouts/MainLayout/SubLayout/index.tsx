@@ -1,11 +1,8 @@
 import React from 'react'
 import { clsx } from 'clsx'
+import LocationContent from '@/components/shared/LocationContent'
 
-type PropType = {
-  children: React.ReactNode
-}
-
-const SubLayout = ({ children }: PropType) => {
+const SubLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       className={clsx([
@@ -21,7 +18,7 @@ const SubLayout = ({ children }: PropType) => {
   )
 }
 
-const MapViewLayout = ({ children }: PropType) => {
+const MapViewLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className={clsx(['w-full h-full'])}>
       {children}
@@ -29,7 +26,7 @@ const MapViewLayout = ({ children }: PropType) => {
   )
 }
 
-const VisualSummaryLayout = ({ children }: PropType) => {
+const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React.ReactNode, summary: any, setIsOpen: () => void}) => {
   return (
     <div
       className={clsx([
@@ -37,7 +34,26 @@ const VisualSummaryLayout = ({ children }: PropType) => {
         'w-full h-full',
       ])}
     >
-      {children}
+      <div className={clsx([
+        'aspect-video w-1/2',
+        'border-r-[1px] border-[#AB8200]',
+        'flex',
+      ])}>
+        <React.Fragment>
+          {children}
+        </React.Fragment>
+      </div>
+      <div className={clsx([
+        'w-1/2 p-[30px]',
+        'bg-content-bg-gray bg-no-repeat bg-cover',
+        'rounded-r-2xl',
+      ])}>
+        <LocationContent
+          content={summary.text}
+          target={summary.target}
+          onTarget={setIsOpen}
+        />
+      </div>
     </div>
   )
 }
