@@ -1,8 +1,11 @@
 import { clsx } from 'clsx'
 import React from 'react'
 import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
-import LocationContent from '@/components/shared/LocationContent'
-import LocationLayout from '@/components/layouts/LocationLayout'
+import { ButtonWrapper, Footer } from '@/components/base/Footer'
+import { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
+import { Button } from '@/components/base/Button'
+import SubLayout from '@/components/layouts/MainLayout/SubLayout'
+
 
 const TARGETS = [ 'location', 'npc', 'item', 'animal' ] as const
 const data = {
@@ -20,41 +23,53 @@ const data = {
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
+
+  const buttonOptions: Array<ButtonPropType> = [
+    {
+      title: 'Explore surroundings',
+      variant: 'loading',
+      size: 'btnWithBgImg',
+      action: () => console.log('Hello'),
+    },
+    {
+      title: 'Follow the nearest trail',
+      variant: 'loading',
+      size: 'btnWithBgImg',
+      action: () => console.log('Hello'),
+    },
+    {
+      title: 'Succumb to panic',
+      variant: 'loading',
+      size: 'btnWithBgImg',
+      action: () => console.log('Hello'),
+    },
+  ]
+
   return (
-    <LocationLayout>
-      <div className={clsx([
-        'flex',
-        'w-full h-[820px]',
-        'border border-[#AB8200]',
-        'rounded-2xl',
-      ])}>
-        <div className={clsx([
-          'aspect-video w-1/2',
-          'border-r-[1px] border-[#AB8200]',
-          'flex'
-        ])}>
+    <React.Fragment>
+      <SubLayout>
+        <SubLayout.VisualSummaryLayout summary={data} setIsOpen={() => setIsOpen(true)}>
           <img
             src={'/src/assets/background/bg1.jpg'}
             alt={'Location'}
             className={clsx([
-              'object-top w-full h-full',
+              'object-cover w-full h-full',
               'rounded-l-2xl',
             ])}
           />
-        </div>
-        <div className={clsx([
-          'w-1/2 p-[30px]',
-          'bg-content-bg-gray bg-no-repeat bg-cover',
-          'rounded-r-2xl',
-        ])}>
-          <LocationContent
-            content={data.text}
-            target={data.target}
-            onTarget={() => setIsOpen(true)}
-          />
-        </div>
-      </div>
+        </SubLayout.VisualSummaryLayout>
+      </SubLayout>
+      <Footer>
+        {/*<HourglassLoader>Waiting for other players...</HourglassLoader>*/}
+        <ButtonWrapper>
+          {
+            buttonOptions.map((btn, key) => (
+              <Button key={key} variant={btn.variant} size={btn.size}>{btn.title}</Button>
+            ))
+          }
+        </ButtonWrapper>
+      </Footer>
       <ConversationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)} />
-    </LocationLayout>
+    </React.Fragment>
   )
 }

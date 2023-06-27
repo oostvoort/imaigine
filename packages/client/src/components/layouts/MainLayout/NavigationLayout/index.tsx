@@ -4,7 +4,6 @@ import DialogWidget, { ButtonPropType } from '@/components/base/Dialog/FormDialo
 import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings'
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
-import Location from '@/components/base/Dialog/FormDialog/DialogContent/Location'
 import usePlayer from '@/hooks/usePlayer'
 
 type PropType = {
@@ -59,20 +58,7 @@ const menus: Array<PropType> = [
       imgClassName: 'h-[59px] w-[59px]',
     },
   },
-  {
-    children: <Location />,
-    isAvatar: false,
-    button: {
-      className: '',
-      variant: 'menu',
-      title: 'Location',
-      imgSrc: '',
-      imgAlt: '',
-      imgClassName: 'h-[59px] w-[59px]',
-    },
-  },
 ]
-{/*TODO: Remove Location menu after the demo*/}
 
 export default function Header() {
   const { player } = usePlayer()
