@@ -15,7 +15,7 @@ export default function useNpc() {
       AliveComponent,
       ImageComponent,
       LocationComponent,
-      VotingComponent,
+      InteractionTypeComponent,
     },
 
     network: {
@@ -31,7 +31,7 @@ export default function useNpc() {
     alive: useComponentValue(AliveComponent, singletonEntity),
     image: useComponentValue(ImageComponent, singletonEntity),
     location: useComponentValue(LocationComponent, singletonEntity),
-    voting: useComponentValue(VotingComponent, singletonEntity),
+    interactionType: useComponentValue(InteractionTypeComponent, singletonEntity),
   }
 
   const generateNpc = useMutation<Awaited<GeneratedNpc>, Error, GenerateNpcProps>(async (data) => {

@@ -15,6 +15,7 @@ export default function useLocation(locationIdParam?: Entity) {
       ConfigComponent,
       SceneComponent,
       ImageComponent,
+      InteractionTypeComponent,
     },
 
     network: {
@@ -34,6 +35,7 @@ export default function useLocation(locationIdParam?: Entity) {
    config: useComponentValue(ConfigComponent, locationId),
    scene: useComponentValue(SceneComponent, locationId),
    imgHash: useComponentValue(ImageComponent, locationId),
+   interactionType: useComponentValue(InteractionTypeComponent, locationId),
  }
 
   const generateLocation = useMutation<Awaited<GeneratedLocation>, Error, GenerateLocationProps>(async (data) => {
