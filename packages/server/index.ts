@@ -4,14 +4,13 @@ import express, { Request, Response } from 'express'
 import {
   BaseConfig,
   Based,
-  GenerateLocationInteractionProps,
   GenerateLocationProps,
   GenerateLocationResponse,
   GenerateNpcProps,
   GenerateNpcResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
-  GenerateStoryProps,
+  GenerateStoryProps, InteractSingleDoneProps, InteractSingleDoneResponse,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -41,14 +40,28 @@ const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
     console.error(err.message)
     throw err
   } else {
-    database.run(`CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY, counterpart TEXT, players TEXT, log TEXT)`,
-      (err) => {
-        if (err) {
-          console.error('Error creating table:', err)
-        } else {
-          console.log('Database is ready.')
-        }
-      })
+    // Create the "history" and "location_history" tables
+    database.serialize(() => {
+      database.run(`
+    CREATE TABLE IF NOT EXISTS history (
+      id INTEGER PRIMARY KEY,
+      counterpart TEXT,
+      players TEXT,
+      log TEXT
+    );
+  `)
+
+      database.run(`
+    CREATE TABLE IF NOT EXISTS location_history (
+      log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      interactable_id TEXT,
+      players TEXT,
+      mode TEXT,
+      by TEXT,
+      player_log TEXT
+    );
+  `)
+    })
   }
 })
 
@@ -229,13 +242,49 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
   }
 })
 
-app.post('/api/v1/generate-location-interaction', async (req: Request, res: Response, next) => {
-  const props: GenerateLocationInteractionProps = req.body
+app.post('/api/v1/interact-single-done', async (req: Request, res: Response, next) => {
+  const props: InteractSingleDoneProps = req.body
 
-  // TODO: get history from database
   const location: Based = await getFromIpfs(props.locationIpfsHash)
   const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
   const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
+
+  if (props.option) {
+    const insertData = {
+      interactable_id: props.locationId,
+      players: player.name,
+      mode: 'action',
+      by: player.name,
+      player_log: props.option.interaction.effect
+    };
+
+    const insertQuery = `INSERT INTO location_history (interactable_id, players, mode, by, player_log)
+                       VALUES (?, ?, ?, ?, ?)`;
+
+    database.run(insertQuery, [insertData.interactable_id, insertData.players, insertData.mode, insertData.by, insertData.player_log], function(err) {
+      if (err) {
+        console.error('Error inserting data:', err);
+      } else {
+        console.log('Data inserted successfully.');
+      }
+    });
+  }
+
+  let history = ``
+
+  const selectQuery = `SELECT * FROM location_history WHERE interactable_id = '${props.locationId}'`
+
+  const historySql = await fetchData(selectQuery)
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (historySql.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    for (const historyRow of historySql) {
+      history += historyRow.player_log + '\n';
+    }
+  }
 
   const locationInteraction = await generateLocationInteraction({
     storyName: storyConfig.name,
@@ -246,10 +295,10 @@ app.post('/api/v1/generate-location-interaction', async (req: Request, res: Resp
     npcSummary: npc.summary,
     playerName: player.name,
     playerSummary: player.description,
-    locationHistory: ``,
+    locationHistory: history ? `Location History: "${history}" \n` : '',
   })
 
-  res.send(locationInteraction)
+  res.send(locationInteraction as InteractSingleDoneResponse)
 })
 
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
@@ -264,6 +313,7 @@ app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
     next(e)
   }
 })
+
 // mock api
 
 app.post('/mock/api/v1/generate-story', async (req: Request, res: Response, next) => {
@@ -340,6 +390,21 @@ app.post('/write-history', (req, res) => {
     }
   })
 })
+
+
+async function fetchData(selectQuery: string) {
+  return new Promise((resolve, reject) => {
+    database.all(selectQuery, (err, rows) => {
+      if (err) {
+        console.error('Error reading data:', err);
+        reject(err); // Reject the promise with the error
+      } else {
+        console.log('Data retrieved successfully');
+        resolve(rows); // Resolve the promise with the retrieved rows
+      }
+    });
+  });
+}
 
 // Read data from the history table
 app.get('/read-history', (req, res) => {
