@@ -37,13 +37,15 @@ export default function useLocation(locationIdParam?: number) {
     }
   } = useMUD()
 
- const [locationNumber, setLocationNumber] = React.useState<number>(0);
+
+  const [locationNumber, setLocationNumber] = React.useState<number>(0);
 
   React.useEffect(() => {
-  if (locationIdParam !== locationNumber && locationIdParam !== undefined) {
-    setLocationNumber(locationNumber);
-  }
-}, [locationNumber, locationIdParam]);
+    if (locationIdParam !== locationNumber && locationIdParam !== undefined) {
+      setLocationNumber(locationNumber);
+    }
+  }, [locationNumber, locationIdParam]);
+
 
  const location = {
    config: useComponentValue(ConfigComponent, parseCellToLocationId(locationNumber) as Entity),
@@ -72,7 +74,8 @@ export default function useLocation(locationIdParam?: number) {
     mutationKey: ["generateLocation"]
   })
 
-  const createLocation = useMutation<typeof location, Error, GenerateLocation>(async (data) => {
+
+    const createLocation = useMutation<typeof location, Error, GenerateLocation>(async (data) => {
     const { config, imgHash, locationNumber } = data
     const tx = await worldSend("createLocation", [config, imgHash, locationNumber])
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
