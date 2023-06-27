@@ -2,6 +2,7 @@ import React from 'react'
 import { cn } from '@/global/utils'
 import { cva } from 'class-variance-authority'
 import { clsx } from 'clsx'
+import { Skeleton } from '@/components/base/Skeleton'
 
 type TargetType = {
   id: string,
@@ -86,7 +87,12 @@ const LocationContent: React.FC<PropType> = ({ content, target, onTarget}) => {
         'font-amiri',
         'text-[30px]',
       ])}>
-        {targetedText}
+        {/*{targetedText}*/}
+        <div className="space-y-5 ">
+          <Skeleton className="h-4 w-full h-[40px]" />
+          <Skeleton className="h-4 w-full h-[40px]" />
+          <Skeleton className="h-4 w-9/12 h-[40px]" />
+        </div>
       </p>
     </React.Fragment>
   )

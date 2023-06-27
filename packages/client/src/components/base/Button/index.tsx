@@ -24,7 +24,8 @@ const buttonVariants = cva(
         good: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnGood bg-no-repeat bg-center hover:bg-btnGoodHover' ]),
         evil: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnEvil bg-no-repeat bg-center hover:bg-btnEvilHover' ]),
         modalClose: clsx(['']),
-        menu: clsx(['text-option-8 text-center text-xl', 'font-amiri'])
+        menu: clsx(['text-option-8 text-center text-xl', 'font-amiri']),
+        loading: clsx(['animate-pulse bg-muted text-muted'])
       },
       size: {
         sm: 'h-9 px-3 rounded-md text-sm',

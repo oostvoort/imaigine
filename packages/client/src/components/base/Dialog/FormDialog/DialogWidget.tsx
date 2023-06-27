@@ -38,11 +38,13 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                   {/* Avatar */}
                   <img src={`${avatar ? `${IPFS_URL_PREFIX}/${avatar}` : 'src/assets/avatar/avatar1.jpg'}`}
                        alt="Profile"
-                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full' ])}
-                       draggable={false} />
+                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full', {'animate-pulse': !avatar} ])}
+                       draggable={false}
+                       style={{ filter: avatar ? 'none' : 'blur(10px)' }}
+                  />
                 </div>
                 {/* Karma Gauge */}
-                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-karma-gauge bg-cover bg-no-repeat' ])} />
+                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-karma-gauge bg-cover bg-no-repeat' , {'hidden': !avatar}])} />
               </div>
               {/* End ofInner Frame */}
             </div>

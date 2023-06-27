@@ -6,7 +6,7 @@ export const activeScreen_atom = atom<
   'createAvatarScreen' |
   'currentLocationScreen' |
   'travelScreen'
->('startingScreen')
+>('currentLocationScreen')
 
 export const currentLoader_atom = atom<
   'loadingAvatar' |

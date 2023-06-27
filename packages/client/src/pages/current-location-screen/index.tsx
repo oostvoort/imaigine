@@ -27,19 +27,19 @@ export default function CurrentLocationScreen() {
   const buttonOptions: Array<ButtonPropType> = [
     {
       title: 'Explore surroundings',
-      variant: 'neutral',
+      variant: 'loading',
       size: 'btnWithBgImg',
       action: () => console.log('Hello'),
     },
     {
       title: 'Follow the nearest trail',
-      variant: 'neutral',
+      variant: 'loading',
       size: 'btnWithBgImg',
       action: () => console.log('Hello'),
     },
     {
       title: 'Succumb to panic',
-      variant: 'neutral',
+      variant: 'loading',
       size: 'btnWithBgImg',
       action: () => console.log('Hello'),
     },
