@@ -95,7 +95,7 @@ contract CreationSystem is System {
     AliveComponent.set(characterID, true);
     ImageComponent.set(characterID, imgHash);
     LocationComponent.set(characterID, locationID);
-    InteractionTypeComponent.set(locationID, InteractionType.MULTIPLE);
+    InteractionTypeComponent.set(characterID, InteractionType.MULTIPLE);
 
     return characterID;
   }
