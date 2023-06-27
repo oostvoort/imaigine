@@ -4,9 +4,8 @@ import { atom } from 'jotai'
 export const activeScreen_atom = atom<
   'startingScreen' |
   'createAvatarScreen' |
-  'currentLocationScreen' |
-  'wishPrompt'
->('startingScreen')
+  'currentLocationScreen'
+>('currentLocationScreen')
 
 export const currentLoader_atom = atom<
   'loadingAvatar' |

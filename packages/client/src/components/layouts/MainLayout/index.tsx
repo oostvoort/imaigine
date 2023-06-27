@@ -1,9 +1,30 @@
-import { ReactNode } from 'react'
+import React from 'react'
+import { clsx } from 'clsx'
+import Header from '@/components/layouts/NavigationLayout'
+import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayout'
 
-export default function MainLayout({ children }: { children: ReactNode }) {
+const Template = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main className='flex flex-row-reverse flex-1 [&>div]:flex-1'>
+    <div className={clsx([ 'flex flex-row-reverse flex-1 [&>div]:flex-1' ])}>
       {children}
-    </main>
+    </div>
   )
 }
+
+const FullScreenLayout = ({ children }: { children: React.ReactNode }) => {
+  return <div className={clsx([ 'w-screen h-screen' ])}>{children}</div>
+}
+
+const ContentLayout = ({ children }: { children: React.ReactNode }) => {
+  return <div
+    className={clsx([ 'flex flex-col items-center', 'h-screen w-screen', 'px-10 pt-28', 'bg-main-bg-neutral bg-no-repeat bg-cover' ])}>
+    <Header />
+    {children}
+  </div>
+}
+
+export default Template
+Template.Template = Template
+Template.FullScreenLayout = FullScreenLayout
+Template.ContentLayout = ContentLayout
+Template.ConversationLayout = ConversationLayout

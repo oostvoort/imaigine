@@ -15,10 +15,12 @@ type PropType = {
 export type ButtonPropType = {
   className?: string
   variant: ButtonProps['variant']
+  size?: ButtonProps['size']
   title: string
-  imgSrc: string
-  imgAlt: string
+  imgSrc?: string
+  imgAlt?: string
   imgClassName?: string
+  action?: () => void
 }
 
 export default function DialogWidget({ children, button, isAvatar, avatar }: PropType) {
