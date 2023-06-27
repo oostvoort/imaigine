@@ -31,7 +31,7 @@ contract InteractionSystem is MudV2Test {
     super.setUp();
     world = IWorld(worldAddress);
 
-    mockLocationID = world.createLocation("config", "image", 0x0000000000000000000000000000000000000000000000000000000000000552);
+    mockLocationID = world.createLocation("config", "image", 99);
     console.logBytes32(mockLocationID);
 
     mockNPCID = world.createCharacter("config", "image", mockLocationID);

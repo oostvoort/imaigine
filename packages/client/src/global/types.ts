@@ -41,7 +41,7 @@ export type GeneratePlayer = {
 }
 
 export interface GenerateLocationProps {
-  id: string
+  id: number
 }
 
 export interface GenerateLocationResponse {
