@@ -1,36 +1,29 @@
 import { useMutation } from 'react-query'
 import { SERVER_API } from '@/global/constants'
 import {
-  GenerateLocationInteraction,
-  GenerateLocationInteractionProps,
   GenerateLocationInteractionResponse,
 } from '@/global/types'
 import { useMUD } from '@/MUDContext'
-import { useComponentValue } from "@latticexyz/react"
 import { awaitStreamValue } from '@latticexyz/utils'
+import { InteractLocationProps, InteractSingleDoneResponse } from '../../../types'
+import usePlayer from '@/hooks/usePlayer'
 
 export default function useLocationInteraction() {
 
   const {
-    components: {
-      SingleInteractionComponent,
-      MultiInteractionComponent,
-    },
 
     network: {
       worldSend,
       txReduced$,
-      playerEntity,
     }
   } = useMUD()
 
-  const locationInteraction = {
-    singleInteractionComponent: useComponentValue(SingleInteractionComponent, playerEntity),
-    multiInteractionComponent: useComponentValue(MultiInteractionComponent, playerEntity),
-  }
+  const { player } = usePlayer()
 
-  const generateLocationInteraction = useMutation<Awaited<GenerateLocationInteractionResponse>, Error, GenerateLocationInteractionProps>(async (data) => {
-    const response = await fetch(`${SERVER_API}/api/v1/interact-single-done`, {
+  const locationId = player.location?.value
+
+  const generateLocationInteraction = useMutation<Awaited<GenerateLocationInteractionResponse>, Error, InteractLocationProps>(async (data) => {
+    const response = await fetch(`${SERVER_API}/api/v1/interact-location`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,22 +31,22 @@ export default function useLocationInteraction() {
       body: JSON.stringify(data),
     })
 
-    return await response.json() as GenerateLocationInteractionResponse
+    return await response.json() as InteractSingleDoneResponse
   }, {
     mutationKey: ["generateLocationInteraction"],
   })
 
 
-  const createLocationInteraction = useMutation<typeof locationInteraction, Error, GenerateLocationInteraction>(async (data) => {
-    const { interactableId, choiceId } = data
-    const tx = await worldSend('interactSingle', [interactableId, choiceId])
+  const createLocationInteraction = useMutation<number, Error, {choiceId: number}>(async (data) => {
+    if (!locationId) throw new Error('NO LOCATION')
+    const { choiceId } = data
+    const tx = await worldSend('interactSingle', [locationId, choiceId])
     await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
-    return locationInteraction
+    return choiceId
   })
 
 
   return {
-    locationInteraction,
     generateLocationInteraction,
     createLocationInteraction
   }
