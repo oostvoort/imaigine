@@ -4,27 +4,27 @@
     {
       "config": "QmXAhHbjycyBsW7ubHCXB87us6WCkrJZ13i8pdA2ksHvJ4",
       "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
-      "id": "0x0000000000000000000000000000000000000000000000000000000000000002"
+      "id": 1
     },
     {
       "config": "QmWQ8MwBxi5tAeU1eXr9ShdmhgMpDoC7EwsCoxux6D9wR8",
       "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
-      "id": "0x0000000000000000000000000000000000000000000000000000000000000003"
+      "id": 2
     },
     {
       "config": "QmPxCqxw7gMxuPBGMyGUu2vFfpZj9izc535cr1VEYZmfyL",
       "imgHash": "QmUfpCvGbsUpvii5ZDPiVDZS59ZYKW6YueJ5dt3xzobeSR",
-      "id": "0x0000000000000000000000000000000000000000000000000000000000000004"
+      "id": 3
     },
     {
       "config": "Qme6wbUb55gxbzdfZXXHEv4MjZ2uyy9MdTBp59KiusvtYP",
       "imgHash": "QmVtteVD3KV9LpAoY6vmLxDCkfGwrmcXsf1Kh89KKaGKyk",
-      "id": "0x0000000000000000000000000000000000000000000000000000000000000005"
+      "id": 4
     },
     {
       "config": "QmdVbCn4CXANy7oFqvQiNi6o97bAyobML8BkxmpNG5sQQp",
       "imgHash": "QmYUiYn3sc165qKcEL8RPCFhGZuL2rubEQtarLBPabFABv",
-      "id": "0x0000000000000000000000000000000000000000000000000000000000000006"
+      "id": 5
     }
   ]
 }

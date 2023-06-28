@@ -25,6 +25,7 @@ export async function generateMap(seed: number) : Promise<string>{
     await page.keyboard.press("i")
 
     const data = await page.evaluate(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return getMapData()
     });

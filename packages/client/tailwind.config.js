@@ -55,6 +55,9 @@ export default {
         'option-9': "hsl(var(--option-9))",
         'option-10': "hsl(var(--option-10))",
         'option-11': "hsl(var(--option-11))",
+        'option-12': "hsl(var(--option-12))",
+        'option-13': "hsl(var(--option-13))",
+        'option-14': "hsl(var(--option-14))",
         night: "hsl(var(--night))",
         'conversation-receiver': {
           DEFAULT: "hsl(var(--conversation-receiver))",

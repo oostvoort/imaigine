@@ -1,11 +1,35 @@
 import { StructuredOutputParser } from 'langchain/output_parsers'
-import { locationSchema, nonPlayerCharacterSchema, playerCharacterSchema, storySchema } from './schemas'
+import {
+  locationInteractionSchema,
+  locationSchema,
+  nonPlayerCharacterSchema,
+  playerCharacterSchema,
+  storySchema,
+} from './schemas'
 import { OpenAI, PromptTemplate } from 'langchain'
 import { PipelinePromptTemplate } from 'langchain/prompts'
-import { locationPrompt, nonPlayerCharacterPrompt, playerCharacterPrompt, storyPrompt } from './templates'
-import { Based, Location, NonPlayerCharacterProps, NonPlayerCharacterResponse, PlayerCharacterProps } from './types'
+import {
+  locationInteractionPropmt,
+  locationPrompt,
+  nonPlayerCharacterPrompt,
+  playerCharacterPrompt,
+  storyPrompt,
+} from './templates'
+import {
+  Based,
+  Location,
+  LocationInteractionProps,
+  NonPlayerCharacterProps,
+  NonPlayerCharacterResponse,
+  PlayerCharacterProps,
+} from './types'
 import * as dotenv from 'dotenv'
-import { GenerateStoryProps, GenerateStoryResponse, Story } from 'types'
+import {
+  GenerateStoryProps,
+  GenerateStoryResponse,
+  InteractSingleDoneResponse,
+  Story,
+} from 'types'
 
 dotenv.config()
 
@@ -80,6 +104,39 @@ export async function generateLocation(story: Story, locationName: string): Prom
     visualSummary: parseData.visualSummary,
   }
 }
+
+export async function generateLocationInteraction(interaction: LocationInteractionProps): Promise<InteractSingleDoneResponse> {
+  const parser = StructuredOutputParser.fromNamesAndDescriptions(locationInteractionSchema)
+
+  const formatInstruction = parser.getFormatInstructions()
+
+  const composedPrompt = await createFullPrompt(locationInteractionPropmt, formatInstruction)
+
+  const locationInteraction = await composedPrompt.format(interaction)
+
+  const result = await model.call(locationInteraction)
+
+  const parseData = await parser.parse(result)
+
+  return {
+    scenario: parseData.scenario,
+    options: {
+      good: {
+        choice: parseData.goodChoice,
+        effect: parseData.goodEffect,
+      },
+      evil: {
+        choice: parseData.evilChoice,
+        effect: parseData.evilEffect,
+      },
+      neutral: {
+        choice: parseData.neutralChoice,
+        effect: parseData.neutralEffect,
+      }
+    }
+  }
+}
+
 
 export async function generateNonPlayerCharacter(npc: NonPlayerCharacterProps): Promise<NonPlayerCharacterResponse> {
   const parser = StructuredOutputParser.fromNamesAndDescriptions(nonPlayerCharacterSchema)

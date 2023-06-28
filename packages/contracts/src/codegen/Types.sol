@@ -7,3 +7,9 @@ enum VotingStatusType {
   OPEN,
   CLOSED
 }
+
+enum InteractionType {
+  NOT_INTERACTABLE,
+  SINGLE,
+  MULTIPLE
+}
