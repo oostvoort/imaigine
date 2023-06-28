@@ -40,19 +40,20 @@ const Map: React.FC<PropType> = ({ className }) => {
     //         }
     //     }
     // };
-    // const callFunctionInIframe = () => {
-    //     if (iframeRef.current) {
-    //         const iframeWindow = iframeRef.current.contentWindow;
-    //         if (iframeWindow) {
-    //             // Call the JavaScript function within the iframe
-    //             iframeWindow.helloFromParent()
-    //         }
-    //     }
-    // };
+    const callFunctionInIframe = () => {
+        if (iframeRef.current) {
+            const iframeWindow = iframeRef.current.contentWindow;
+            if (iframeWindow) {
+                // Call the JavaScript function within the iframe
+
+              iframeWindow.helloFromParent()
+            }
+        }
+    };
     return (
       <div className={'w-full h-full'}>
         {/*<button onClick={sendMessageToIframe}>Send Message to Iframe</button>*/}
-        {/*<button onClick={callFunctionInIframe}>Call Function in Iframe</button>*/}
+        <button onClick={callFunctionInIframe}>Call Function in Iframe</button>
         <iframe
           ref={iframeRef}
           width={'w-[inherit]'}
