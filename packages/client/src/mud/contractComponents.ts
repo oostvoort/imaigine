@@ -312,5 +312,22 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    TravelComponent: (() => {
+      const tableId = new TableId("", "TravelComponent");
+      return defineComponent(
+        world,
+        {
+          status: RecsType.Number,
+          destination: RecsType.BigInt,
+          path: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }
