@@ -1,6 +1,6 @@
 {
   "storyConfig": "QmcSDoVNyHzL8JYjgJUhWyXJwtDhwrgs6YNjRJ9LkUvZBr",
-  "locations2": [
+  "locations": [
     {
       "config": "QmXAhHbjycyBsW7ubHCXB87us6WCkrJZ13i8pdA2ksHvJ4",
       "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
@@ -25,6 +25,33 @@
       "config": "QmdVbCn4CXANy7oFqvQiNi6o97bAyobML8BkxmpNG5sQQp",
       "imgHash": "QmYUiYn3sc165qKcEL8RPCFhGZuL2rubEQtarLBPabFABv",
       "id": 5
+    }
+  ],
+  "npcs": [
+    {
+      "ipfsHash": "QmNzunE6pQ9VqYUxSsPLs5vZDMVfXeV3quETtgrczkjybU",
+      "imageHash": "QmUJg5ZfHkM7TbgRcQAohYqmPzYXJ3sKvzhFMWiXBVQ9zb",
+      "locationId": 1
+    },
+    {
+      "ipfsHash": "QmaD6k6AnmVCHmdY7ro8C1Ti5xBAd2j6pRAyTf6TeVgzac",
+      "imageHash": "QmNbPRAYL33DHKwJ4LZZVGPF7PviyjJcxnZ6o6C4BhQDEL",
+      "locationId": 2
+    },
+    {
+      "ipfsHash": "QmRS7xaiz11ou9CACVfMbwMNEjpNQwLXz8KKaYh15uESxP",
+      "imageHash": "QmSAuHntNSLvohLGppRJhjTW3LbnyomFWUn9Ron6C8hU61",
+      "locationId": 3
+    },
+    {
+      "ipfsHash": "QmW4mJByMpUUXxwHmZmKqXnLDwLCpES84cmj7WZLNHXnNk",
+      "imageHash": "QmSd5kCFptDctRvyf8QMnzLkUo8yjE9EQnfP8u3ohGD7oY",
+      "locationId": 4
+    },
+    {
+      "ipfsHash": "QmRJ4BWooWTYepvZczxRtx3oZW78cPze8MEaVnC7Gwf8jx",
+      "imageHash": "QmR49GWEuRgiXS13ZtyHamtWQBWSVQxQsFBJdsysNrfsN6",
+      "locationId": 5
     }
   ]
 }

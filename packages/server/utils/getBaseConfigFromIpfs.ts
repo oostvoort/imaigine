@@ -9,7 +9,7 @@ export async function getBaseConfigFromIpfs() : Promise<BaseConfig> {
   console.info("Done getting config from ipfs")
 
   return {
-    storyConfig: config.baseConfig.storyConfig,
-    startingLocations: config.baseConfig.startingLocations
+    storyConfig: config.storyConfig,
+    startingLocations: config.startingLocations
   }
 }
