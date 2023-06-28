@@ -31,9 +31,11 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import { PLAYER_IMAGE_CHOICES } from './global/constants'
+import fs from "fs-extra"
+import { worldContract } from './lib/contract'
 
 dotenv.config()
-import fs from 'fs-extra'
+
 
 const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
   if (err) {
@@ -119,6 +121,19 @@ app.get('/mapdata', async (req: Request, res: Response) => {
   } catch (e) {
     res.sendStatus(500)
   }
+})
+
+/// @dev this is basically a test for writing into the world contract
+app.get('/winning-choice', async (req: Request, res: Response) => {
+
+  res.send(
+    {
+      result: await (await worldContract.openInteraction(
+        '0x0000000000000000000000000000000000000000000000000000000000000002',
+        '0x5000000000000000000000000000000000000000000000000000000000000003'
+      )).wait()
+    }
+  )
 })
 
 
