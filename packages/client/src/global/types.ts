@@ -40,6 +40,8 @@ export type GeneratePlayer = {
   locationId: PromiseOrValue<string> // represent bytes32
 }
 
+export type LocationParam = string | number
+
 export interface GenerateLocationProps {
   id: number
 }
