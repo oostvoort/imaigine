@@ -579,6 +579,8 @@ async function parseLoadedData(data) {
       }
     })();
 
+    console.log('pack', pack)
+
     changeMapSize();
 
     // remove href from emblems, to trigger rendering on load
