@@ -37,6 +37,7 @@ export default function Header() {
               src="/src/assets/svg/icon_map.png"
               alt="Icon"
               className={'h-[59px] w-[59px]'}
+              draggable={false}
             />
             {activeScreen === 'currentLocationScreen' ? 'World Map' : 'Story Mode'}
           </Button>

@@ -50,7 +50,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
             :
             <Button variant={button.variant} className={button.className} size={button.size}>
               <img src={button.imgSrc} alt={button.imgSrc}
-                   className={clsx([ { 'hidden': button.imgSrc === '' }, button.imgClassName ])} />
+                   className={clsx([ { 'hidden': button.imgSrc === '' }, button.imgClassName ])} draggable={false} />
               {button.title}
             </Button>
         }
