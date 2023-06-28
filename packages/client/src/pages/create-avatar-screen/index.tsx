@@ -1,6 +1,6 @@
-import React  from 'react'
+import React from 'react'
 import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
-import { GenerateLocation, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
+import { GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
@@ -334,34 +334,41 @@ export default function CreateAvatarScreen() {
             {
               step == 3 && (
                 <section className={clsx('flex flex-col gap-3')}>
-                  <p className={clsx('text-4xl text-white text-center font-jost font-bold')}>Choose your Avatar</p>
-                  <Card className={clsx('min-w-[500px] shadow-2xl')}>
-                    <CardContent className={clsx('flex w-full gap-3')}>
-                      {
-                        generatedPlayer?.imgHashes.map((avatar, index) => {
-                          const isSelectedAvatar = selectedAvatar === index
-                          return (
-                            <img
-                              key={index}
-                              src={`${import.meta.env.VITE_IPFS_URL_PREFIX}/${avatar}`}
-                              alt={avatar}
-                              className={clsx([
-                                'object-cover w-[22em] h-[26em] rounded-lg',
-                                'transition duration-500 ease-in-out cursor-pointer',
-                                `${selectedAvatar ? `${selectedAvatar === index ? 'ring-4 ring-yellow-300' : 'opacity-25'}` : ''}`,
-                                isSelectedAvatar ? 'ring-4 ring-yellow-300' : selectedAvatar === null ? 'opacity-100' : 'opacity-25',
-                              ])}
-                              onClick={() => handleSelectAvatar(index)}
-                              draggable={false}
-                            />
-                          )
-                        })
-                      }
+                  <p className={clsx('text-4xl text-white text-center font-segoeBold font-bold')}>Your Avatar</p>
+                  <Card className={clsx('min-w-[400px] shadow-2xl')}>
+                    <CardContent className={clsx('flex w-full')}>
+                      <img
+                        src={`/src/assets/avatar/avatar1.jpg`}
+                        alt={'Avatar Img'}
+                        className={clsx([
+                          'object-cover w-[22em] h-[26em] rounded-lg',
+                          'transition duration-500 ease-in-out cursor-pointer',
+                        ])}
+                        draggable={false}
+                      />
                     </CardContent>
                   </Card>
+
+                  <div className={'w-full flex justify-center mt-md'}>
+                    <Button variant={'refresh'}>
+                      <img
+                        src={`/src/assets/svg/refresh.svg`}
+                        alt={'Avatar Img'}
+                        className={clsx([
+                          'object-cover w-[22px] h-[22px]',
+                          'mr-2 cursor-pointer',
+                        ])}
+                        draggable={false}
+                      />
+                      Regenerate Avatar
+                    </Button>
+                  </div>
+
                 </section>
               )
             }
+
+
             <Button
               variant="accent"
               size="lg"
