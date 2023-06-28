@@ -14,22 +14,13 @@ function restoreDefaultEvents() {
 function clicked() {
   const el = d3.event.target;
   if (!el || !el.parentElement || !el.parentElement.parentElement) return;
-  const parent = el.parentElement;
-  const grand = parent.parentElement;
-  const great = grand.parentElement;
+
+
   const p = d3.mouse(this);
-  const i = findCell(p[0], p[1]);
 
-  if (grand.id === "burgIcons") {
-    console.log('editor', pack)
-    // Get burgLabel element
-    const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
-    window.parent.postMessage({
-      locationId: i,
-      name: burgElement.textContent
-    })
-  }
+  hook_onMapClick(d3.event.target, p)
+
 
 }
 
@@ -784,6 +775,7 @@ function changePickerSpace() {
 
 // add fogging
 function fog(id, path) {
+  console.log("OV FOG")
   if (defs.select("#fog #" + id).size()) return;
   const fadeIn = d3.transition().duration(2000).ease(d3.easeSinInOut);
   if (defs.select("#fog path").size()) {

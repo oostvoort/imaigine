@@ -50,10 +50,15 @@ const Map: React.FC<PropType> = ({ className }) => {
             }
         }
     };
+    const reloadIframe = () => {
+        if (iframeRef.current) {
+          iframeRef.current.src = iframeRef.current.src
+        }
+    };
     return (
       <div className={'w-full h-full'}>
-        {/*<button onClick={sendMessageToIframe}>Send Message to Iframe</button>*/}
-        <button onClick={callFunctionInIframe}>Call Function in Iframe</button>
+        <button onClick={callFunctionInIframe}>Call Function in Iframe</button> |
+        <button onClick={reloadIframe}>Reload Iframe</button>
         <iframe
           ref={iframeRef}
           width={'w-[inherit]'}

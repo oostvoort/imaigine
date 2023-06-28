@@ -2027,7 +2027,7 @@ function showStatistics() {
   mapId = Date.now(); // unique map id is it's creation date number
   mapHistory.push({seed, width: graphWidth, height: graphHeight, template: heightmap, created: mapId});
   INFO && console.log(stats);
-  window.parent.postMessage("FinishedLoadingMap")
+  hook_onMapLoaded()
 }
 
 const regenerateMap = debounce(async function (options) {
