@@ -5,6 +5,8 @@ import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
 import usePlayer from '@/hooks/usePlayer'
+import { activeScreen_atom } from '@/global/states'
+import { useSetAtom } from 'jotai/index'
 
 type PropType = {
   children: React.ReactNode
@@ -62,10 +64,12 @@ const menus: Array<PropType> = [
 
 export default function Header() {
   const { player } = usePlayer()
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+
   return (
     <div
       className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'opacity-80' ])}>
-      <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex', 'px-md' ])}>
+      <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between', 'px-md' ])}>
         {/*Menu Wrapper*/}
         <div className={clsx([ 'flex items-center space-x-md' ])}>
           {
@@ -76,6 +80,10 @@ export default function Header() {
             ))
           }
         </div>
+         <div className={'flex gap-x-8 px-18'}>
+           <button onClick={() => setActiveScreen('travelScreen')}>World Map</button>
+           <button onClick={() => setActiveScreen('currentLocationScreen')}>Story</button>
+         </div>
         {/*End of Menu Wrapper*/}
       </div>
     </div>

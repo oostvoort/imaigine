@@ -10,7 +10,8 @@
     "baseUrl": ".",
     "checkJs": false,
     "strict": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",
