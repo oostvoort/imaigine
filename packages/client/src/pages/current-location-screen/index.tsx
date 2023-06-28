@@ -5,6 +5,9 @@ import { ButtonWrapper, Footer } from '@/components/base/Footer'
 import { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { Button } from '@/components/base/Button'
 import SubLayout from '@/components/layouts/MainLayout/SubLayout'
+import usePlayer from '@/hooks/usePlayer'
+import { IPFS_URL_PREFIX } from '@/global/constants'
+import useLocation from '@/hooks/useLocation'
 
 
 const TARGETS = [ 'location', 'npc', 'item', 'animal' ] as const
@@ -22,24 +25,26 @@ const data = {
 }
 
 export default function CurrentLocationScreen() {
+  const { player } = usePlayer()
+  const { location } = useLocation(player.location?.value ?? undefined)
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
   const buttonOptions: Array<ButtonPropType> = [
     {
       title: 'Explore surroundings',
-      variant: 'loading',
+      variant: 'neutral',
       size: 'btnWithBgImg',
       action: () => console.log('Hello'),
     },
     {
       title: 'Follow the nearest trail',
-      variant: 'loading',
+      variant: 'neutral',
       size: 'btnWithBgImg',
       action: () => console.log('Hello'),
     },
     {
       title: 'Succumb to panic',
-      variant: 'loading',
+      variant: 'neutral',
       size: 'btnWithBgImg',
       action: () => console.log('Hello'),
     },
