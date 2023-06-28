@@ -85,7 +85,7 @@ app.use(
 
 let baseConfig: BaseConfig = {} as BaseConfig
 let storyConfig: StoryConfig = {} as StoryConfig
-let locations: Array<{ name: string, entityId: string }> = []
+let locations: Array<{ name: string, cellNumber: number }> = []
 
 app.listen(port, async () => {
   baseConfig = await getBaseConfigFromIpfs()
@@ -367,7 +367,7 @@ app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, nex
         'QmYseeJuSTUedYcsKdn4BPhqsUUebxB2V3DZGQttZ3rnm7',
         'QmTjuQDVSPTyDrLC4Ri3pLvqn7HYibW6bA7WYoSKE73MAM',
       ],
-      locationId: '0x0000000000000000000000000000000000000000000000000000000000000002',
+      locationId: '0x886b4be6a70e2eacc060d6e16947268361f95b575bec0e369c827351677ccde7',
     } as GeneratePlayerResponse,
   )
 })

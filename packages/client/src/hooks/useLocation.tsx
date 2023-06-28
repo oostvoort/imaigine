@@ -5,16 +5,30 @@ import { Entity } from "@latticexyz/recs"
 import { useMutation } from 'react-query'
 import { SERVER_API } from '@/global/constants'
 import { GeneratedLocation, GenerateLocation, GenerateLocationProps, GenerateLocationResponse } from '@/global/types'
-import { getFromIPFS } from '@/global/utils'
+import { getFromIPFS, parseCellToLocationId } from '@/global/utils'
 import { awaitStreamValue } from '@latticexyz/utils'
-import { hexZeroPad } from 'ethers/lib/utils'
+// import { hexZeroPad, keccak256, solidityPack } from 'ethers/lib/utils'
 
-export default function useLocation(locationIdParam?: Entity) {
+// const cellNumberToId = (cellNumber: number) => {
+//   return (
+//     keccak256(
+//       solidityPack(
+//         ['bytes16', 'uint256'],
+//         ['0x4c4f434154494f4e0000000000000000', cellNumber]
+//       )
+//     )
+//   )
+// }
+// INFO: already in utils named parseCellToLocationId()
+
+
+export default function useLocation(locationIdParam?: number) {
   const {
     components: {
       ConfigComponent,
       SceneComponent,
       ImageComponent,
+      InteractionTypeComponent,
     },
 
     network: {
@@ -23,17 +37,21 @@ export default function useLocation(locationIdParam?: Entity) {
     }
   } = useMUD()
 
- const [locationId, setLocationId] = React.useState<Entity>(hexZeroPad("0x21", 32) as Entity);
- React.useEffect(() => {
-  if (locationIdParam !== locationId && locationIdParam !== undefined) {
-    setLocationId(locationIdParam);
-  }
-}, [locationId, locationIdParam]);
+
+  const [locationNumber, setLocationNumber] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    if (locationIdParam !== locationNumber && locationIdParam !== undefined) {
+      setLocationNumber(locationNumber);
+    }
+  }, [locationNumber, locationIdParam]);
+
 
  const location = {
-   config: useComponentValue(ConfigComponent, locationId),
-   scene: useComponentValue(SceneComponent, locationId),
-   imgHash: useComponentValue(ImageComponent, locationId),
+   config: useComponentValue(ConfigComponent, parseCellToLocationId(locationNumber) as Entity),
+   scene: useComponentValue(SceneComponent, parseCellToLocationId(locationNumber) as Entity),
+   imgHash: useComponentValue(ImageComponent, parseCellToLocationId(locationNumber) as Entity),
+   interactionType: useComponentValue(InteractionTypeComponent, parseCellToLocationId(locationNumber) as Entity),
  }
 
   const generateLocation = useMutation<Awaited<GeneratedLocation>, Error, GenerateLocationProps>(async (data) => {
@@ -56,9 +74,10 @@ export default function useLocation(locationIdParam?: Entity) {
     mutationKey: ["generateLocation"]
   })
 
-  const createLocation = useMutation<typeof location, Error, GenerateLocation>(async (data) => {
-    const { config, imgHash, locationId } = data
-    const tx = await worldSend("createLocation", [config, imgHash, locationId])
+
+    const createLocation = useMutation<typeof location, Error, GenerateLocation>(async (data) => {
+    const { config, imgHash, locationNumber } = data
+    const tx = await worldSend("createLocation", [config, imgHash, locationNumber])
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
 
     return location
@@ -67,8 +86,8 @@ export default function useLocation(locationIdParam?: Entity) {
   })
 
   return {
-    setLocationId,
-    locationId,
+    setLocationNumber,
+    locationNumber,
     location,
     generateLocation,
     createLocation

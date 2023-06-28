@@ -103,7 +103,7 @@ contract CreationSystem is System {
   function createLocation(
     string memory config,
     string memory imgHash,
-    bytes32 locationID
+    uint256 locationNumber
   )
   public
   returns (bytes32)
@@ -111,6 +111,8 @@ contract CreationSystem is System {
     // validate input
     require(bytes(config).length > 0, "invalid config length");
     require(bytes(imgHash).length > 0, "invalid imgHash length");
+
+    bytes32 locationID = keccak256(abi.encodePacked(bytes16("LOCATION"), locationNumber));
 
     // does location exist
     require(SceneComponent.get(locationID) == false, "location already exists");

@@ -15,10 +15,12 @@ type PropType = {
 export type ButtonPropType = {
   className?: string
   variant: ButtonProps['variant']
+  size?: ButtonProps['size']
   title: string
-  imgSrc: string
-  imgAlt: string
+  imgSrc?: string
+  imgAlt?: string
   imgClassName?: string
+  action?: () => void
 }
 
 export default function DialogWidget({ children, button, isAvatar, avatar }: PropType) {
@@ -36,11 +38,13 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                   {/* Avatar */}
                   <img src={`${avatar ? `${IPFS_URL_PREFIX}/${avatar}` : 'src/assets/avatar/avatar1.jpg'}`}
                        alt="Profile"
-                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full' ])}
-                       draggable={false} />
+                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full', {'animate-pulse': !avatar} ])}
+                       draggable={false}
+                       style={{ filter: avatar ? 'none' : 'blur(10px)' }}
+                  />
                 </div>
                 {/* Karma Gauge */}
-                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-karma-gauge bg-cover bg-no-repeat' ])} />
+                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-karma-gauge bg-cover bg-no-repeat' , {'hidden': !avatar}])} />
               </div>
               {/* End ofInner Frame */}
             </div>
@@ -64,7 +68,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
           </DialogPrimitive.Close>
 
           <DialogPrimitive.Content
-            onPointerDownOutside={e => e.preventDefault()}
+            // onPointerDownOutside={e => e.preventDefault()}
             className={clsx([ 'min-h-[20%] max-h-[75%]', 'fixed z-50', 'bg-modal', 'rounded-[36px] shadow-lg', 'p-md', 'border border-option-10 !outline-0' ])}>
             {children}
           </DialogPrimitive.Content>

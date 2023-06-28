@@ -12,7 +12,7 @@ contract PostDeploy is Script {
 
   struct Location {
     string config;
-    bytes32 id;
+    uint256 id;
     string imgHash;
   }
 
