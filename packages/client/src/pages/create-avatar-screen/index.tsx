@@ -13,6 +13,7 @@ import { useAtom } from 'jotai'
 import { activeScreen_atom, currentLoader_atom } from '@/global/states'
 import useLocation from '@/hooks/useLocation'
 import { useSetAtom } from 'jotai/index'
+import useLocationInteraction from '@/hooks/useLocationInteraction'
 
 type SetupOptionType = Array<{
   label: string,
@@ -76,7 +77,9 @@ const colorPalette = [
 ]
 
 export default function CreateAvatarScreen() {
-  const { generatePlayer, createPlayer } = usePlayer()
+  const { generatePlayer, createPlayer, player } = usePlayer()
+  const { location } = useLocation(player.location?.value ?? undefined)
+  const { generateLocationInteraction, locationInteraction } = useLocationInteraction()
 
   const [ step, setStep ] = React.useState(1)
   const [ userInputs, setUserInputs ] = React.useState<GeneratePlayerProps>({
@@ -150,11 +153,29 @@ export default function CreateAvatarScreen() {
         imgHash: avatarHash,
         locationId: generatedPlayer.locationId,
       })
+      // await handleCreateInteractions()
       setActiveScreen('currentLocationScreen')
     } catch (error) {
       console.error()
     }
   }
+
+  // const handleCreateInteractions = async () => {
+  //   console.log('ENTER')
+  //   try {
+  //     await generateLocationInteraction.mutateAsync({
+  //       locationIpfsHash: "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
+  //       npcIpfsHashes: [ "QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj" ],
+  //       playerIpfsHash: "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
+  //       locationId: "0x0000000000000000000000000000000000000000000000000000000000000021",
+  //       options: {}
+  //     })
+  //   } catch (error) {
+  //     console.error('[generateLocationInteraction]', error)
+  //   }
+  //   console.log('END CATCH')
+  // }
+
 
   React.useEffect(() => {
     setUserInputs((prev: GeneratePlayerProps) => {
@@ -164,6 +185,18 @@ export default function CreateAvatarScreen() {
       }
     })
   }, [ selectedColor ])
+
+  React.useEffect(() => {
+    console.log({player})
+  }, [player])
+
+  React.useEffect(() => {
+    console.log(location)
+  }, [location])
+
+  React.useEffect(() => {
+    console.log(locationInteraction)
+  }, [locationInteraction])
 
   return (
     <React.Fragment>

@@ -48,7 +48,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
               {/* End ofInner Frame */}
             </div>
             :
-            <Button variant={button.variant} className={button.className}>
+            <Button variant={button.variant} className={button.className} size={button.size}>
               <img src={button.imgSrc} alt={button.imgSrc}
                    className={clsx([ { 'hidden': button.imgSrc === '' }, button.imgClassName ])} />
               {button.title}

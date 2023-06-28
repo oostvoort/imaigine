@@ -24,7 +24,7 @@ const buttonVariants = cva(
         good: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnGood bg-no-repeat bg-center hover:bg-btnGoodHover' ]),
         evil: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnEvil bg-no-repeat bg-center hover:bg-btnEvilHover' ]),
         modalClose: clsx(['']),
-        menu: clsx(['text-option-8 text-center text-xl', 'font-amiri']),
+        menu: clsx(['text-option-8 text-left text-xl', 'font-amiri', 'leading-8']),
         loading: clsx(['animate-pulse bg-muted text-muted'])
       },
       size: {
@@ -34,6 +34,7 @@ const buttonVariants = cva(
         xl: 'h-16 px-12 rounded-lg text-2xl',
         '2xl': 'h-20 px-12',
         'btnWithBgImg': 'w-[518px] h-[88px]',
+        'menu': 'w-[168px] h-[67px]',
       },
       isHighlighted: {
         true: 'outline outline-accent text-primary-foreground',
