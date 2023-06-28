@@ -31,13 +31,11 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import { PLAYER_IMAGE_CHOICES } from './global/constants'
-import { IWorld__factory } from "../contracts/types/ethers-contracts/factories/IWorld__factory";
-import worldsJson from "../contracts/worlds.json";
-const worlds = worldsJson as Partial<Record<string, { address: string; blockNumber?: number }>>;
+import fs from "fs-extra"
+import { worldContract } from './lib/contract'
 
 dotenv.config()
-import fs from "fs-extra"
-import { Wallet, providers } from 'ethers'
+
 
 const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
   if (err) {
@@ -127,16 +125,6 @@ app.get('/mapdata', async (req: Request, res: Response) => {
 
 /// @dev this is basically a test for writing into the world contract
 app.get('/winning-choice', async (req: Request, res: Response) => {
-  // create a signer
-  // TODO: the privateKey should come from .env
-  const signer = new Wallet(
-    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
-    // the providerURL should also come from .env or make some smart way to check the chainId?
-    new providers.JsonRpcProvider('http://127.0.0.1:8545')
-  )
-  // create a world contract object
-  // this is already in typeScript
-  const worldContract = IWorld__factory.connect(worlds['31337'].address, signer)
 
   res.send(
     {
