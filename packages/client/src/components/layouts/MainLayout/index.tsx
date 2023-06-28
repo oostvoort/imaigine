@@ -15,9 +15,9 @@ const FullScreenLayout = ({ children }: { children: React.ReactNode }) => {
   return <div className={clsx([ 'w-screen h-screen' ])}>{children}</div>
 }
 
-const ContentLayout = ({ children }: { children: React.ReactNode }) => {
+const ContentLayout = ({ children, className }: { children: React.ReactNode, className?: string }) => {
   return <div
-    className={clsx([ 'flex flex-col items-center', 'h-screen w-screen', 'px-10 pt-28', 'bg-main-bg-neutral bg-no-repeat bg-cover' ])}>
+    className={clsx([ 'flex flex-col items-center', 'h-screen w-screen', 'bg-main-bg-neutral bg-no-repeat bg-cover', `${className}` ])}>
     <Header />
     {children}
   </div>

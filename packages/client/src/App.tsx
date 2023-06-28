@@ -24,7 +24,7 @@ export const App = () => {
 
       {
         activeScreen == 'currentLocationScreen' &&
-        <Template.ContentLayout>
+        <Template.ContentLayout className={'px-10 pt-28'}>
           <CurrentLocationScreen />
         </Template.ContentLayout>
       }

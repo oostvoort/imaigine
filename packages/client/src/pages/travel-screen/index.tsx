@@ -4,10 +4,8 @@ import Map from '@/components/shared/Map'
 
 export default function TravelScreen(){
   return(
-    <SubLayout>
-      <SubLayout.MapViewLayout>
-        <Map className={'w-full h-full rounded-2xl'} />
-      </SubLayout.MapViewLayout>
-    </SubLayout>
+    <SubLayout.MapViewLayout>
+      <Map className={'w-full h-full'} />
+    </SubLayout.MapViewLayout>
   )
 }
