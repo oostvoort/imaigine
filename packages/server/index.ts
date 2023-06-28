@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 import cors from 'cors'
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import {
   BaseConfig,
   Based,
@@ -10,7 +10,12 @@ import {
   GenerateNpcResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
-  GenerateStoryProps, InteractSingleDoneProps, InteractSingleDoneResponse,
+  GenerateStoryProps, InsertHistoryLogsParams, InsertInteractionParams,
+  InsertLogProps,
+  InteractLocationProps,
+  InteractSingleDoneProps,
+  InteractSingleDoneResponse,
+  InteractSQLResult, LogBy, LogMode, LogSqlResult,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -31,8 +36,9 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import { PLAYER_IMAGE_CHOICES } from './global/constants'
-import fs from "fs-extra"
+import fs from 'fs-extra'
 import { worldContract } from './lib/contract'
+import { BigNumber } from 'ethers'
 
 dotenv.config()
 
@@ -63,7 +69,34 @@ const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
       player_log TEXT
     );
   `)
+
+      database.run(`
+    CREATE TABLE IF NOT EXISTS interaction (
+      log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      interactable_id TEXT,
+      scenario TEXT,
+      good_choice TEXT,
+      good_effect TEXT,
+      evil_choice TEXT,
+      evil_effect TEXT,
+      neutral_choice TEXT,
+      neutral_effect TEXT
+    );
+      `)
     })
+
+    database.run(`
+    CREATE TABLE IF NOT EXISTS history_logs (
+      log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      interactable_id TEXT,
+      players TEXT,
+      mode TEXT,
+      by TEXT,
+      player_log TEXT
+    );
+  `)
+
+
   }
 })
 
@@ -71,7 +104,7 @@ const app = express()
 const port = 3000
 
 
-app.use('/map', express.static(path.join(process.cwd(), "../fantasy-map-generator")));
+app.use('/map', express.static(path.join(process.cwd(), '../fantasy-map-generator')))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -102,7 +135,6 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
-
 app.get('/mapdata', async (req: Request, res: Response) => {
 
   try {
@@ -110,9 +142,9 @@ app.get('/mapdata', async (req: Request, res: Response) => {
 
     const filename = `${seed}.map`
 
-    if(fs.existsSync(filename)){
+    if (fs.existsSync(filename)) {
       res.send(fs.readFileSync(filename))
-    }else{
+    } else {
       const response = await generateMap(seed)
       res.send(response)
     }
@@ -128,14 +160,12 @@ app.get('/winning-choice', async (req: Request, res: Response) => {
 
   res.send(
     {
-      result: await (await worldContract.openInteraction(
-        '0x0000000000000000000000000000000000000000000000000000000000000002',
-      )).wait()
+      // result: await (await worldContract.openInteraction(
+      //   '0x0000000000000000000000000000000000000000000000000000000000000002',
+      // )).wait()
     }
   )
 })
-
-
 
 app.post('/api/v1/generate-story', async (req: Request, res: Response, next) => {
   const props: GenerateStoryProps = req.body
@@ -257,6 +287,19 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
 })
 
 app.post('/api/v1/interact-single-done', async (req: Request, res: Response, next) => {
+  /**
+   * playerEntity Id
+   *
+   * generate 3 choices
+   *
+   * check if have choice
+   *
+   * openInteraction
+   *
+   *
+   * */
+
+
   const props: InteractSingleDoneProps = req.body
 
   const location: Based = await getFromIpfs(props.locationIpfsHash)
@@ -269,19 +312,19 @@ app.post('/api/v1/interact-single-done', async (req: Request, res: Response, nex
       players: player.name,
       mode: 'action',
       by: player.name,
-      player_log: props.option.interaction.effect
-    };
+      player_log: props.option.interaction.effect,
+    }
 
     const insertQuery = `INSERT INTO location_history (interactable_id, players, mode, by, player_log)
-                       VALUES (?, ?, ?, ?, ?)`;
+                       VALUES (?, ?, ?, ?, ?)`
 
-    database.run(insertQuery, [insertData.interactable_id, insertData.players, insertData.mode, insertData.by, insertData.player_log], function(err) {
+    database.run(insertQuery, [ insertData.interactable_id, insertData.players, insertData.mode, insertData.by, insertData.player_log ], function (err) {
       if (err) {
-        console.error('Error inserting data:', err);
+        console.error('Error inserting data:', err)
       } else {
-        console.log('Data inserted successfully.');
+        console.log('Data inserted successfully.')
       }
-    });
+    })
   }
 
   let history = ``
@@ -313,6 +356,147 @@ app.post('/api/v1/interact-single-done', async (req: Request, res: Response, nex
   })
 
   res.send(locationInteraction as InteractSingleDoneResponse)
+})
+
+app.post('/api/v1/interact-location', async (req: Request, res: Response, next: NextFunction) => {
+  const props: InteractLocationProps = req.body
+
+  // get details of location, player and npc using ipfs
+  const location: Based = await getFromIpfs(props.locationIpfsHash)
+  const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
+  const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
+
+  // check interaction table if have existing interaction
+
+  const interactions = await fetchInteraction(props.locationEntityId)
+  console.info("- done getting interactions")
+  let history = ''
+
+  // need historylogs
+  const historyLogs = await fetchHistoryLogs(props.locationEntityId)
+  console.info("- done getting history")
+
+  if (historyLogs.length > 0) {
+    for (const historyRow of historyLogs) {
+      history += historyRow.player_log + '\n'
+    }
+  }
+
+  if(interactions !== undefined) {
+    if(interactions.length <= 0) {
+      // create one from chatgpt
+      const locationInteraction = await generateLocationInteraction({
+        storyName: storyConfig.name,
+        storySummary: storyConfig.summary,
+        locationName: location.name,
+        locationSummary: location.summary,
+        npcName: npc.name,
+        npcSummary: npc.summary,
+        playerName: player.name,
+        playerSummary: player.description,
+        locationHistory: history ? `Location History: "${history}" \n` : '',
+      })
+      console.info("- done generating scenario")
+
+      // save the one created to interaction table
+      await insertInteraction({
+        interactable_id: props.locationEntityId,
+        scenario: locationInteraction.scenario,
+        good_choice: locationInteraction.options.good.choice,
+        good_effect: locationInteraction.options.good.effect,
+        evil_choice: locationInteraction.options.evil.choice,
+        evil_effect: locationInteraction.options.evil.effect,
+        neutral_choice: locationInteraction.options.neutral.choice,
+        neutral_effect: locationInteraction.options.neutral.effect,
+      })
+      console.info("- done inserting interaction")
+
+      // return the result
+      res.send(locationInteraction)
+    } else {
+
+      // checking of choice
+      const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
+
+      if(choice.toNumber()) {
+
+        await insertHistoryLogs({
+          interactable_id: props.locationEntityId,
+          by: "player",
+          players: player.name,
+          mode: "action",
+          player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`]
+        })
+
+        console.info("- done inserting new history")
+
+        const historyLogs = await fetchHistoryLogs(props.locationEntityId)
+        console.info("- done getting history")
+
+        history = ""
+        for (const historyRow of historyLogs) {
+          history += historyRow.player_log + '\n'
+        }
+
+        console.info({ history })
+
+        const locationInteraction = await generateLocationInteraction({
+          storyName: storyConfig.name,
+          storySummary: storyConfig.summary,
+          locationName: location.name,
+          locationSummary: location.summary,
+          npcName: npc.name,
+          npcSummary: npc.summary,
+          playerName: player.name,
+          playerSummary: player.description,
+          locationHistory: history ? `Location History: "${history}" \n` : '',
+        })
+        console.info("- done generating scenario")
+
+        await insertInteraction({
+          interactable_id: props.locationEntityId,
+          scenario: locationInteraction.scenario,
+          good_choice: locationInteraction.options.good.choice,
+          good_effect: locationInteraction.options.good.effect,
+          evil_choice: locationInteraction.options.evil.choice,
+          evil_effect: locationInteraction.options.evil.effect,
+          neutral_choice: locationInteraction.options.neutral.choice,
+          neutral_effect: locationInteraction.options.neutral.effect,
+        })
+        console.info("- done inserting new interaction")
+
+        await worldContract.openInteraction(props.playerEntityId)
+
+        res.send(locationInteraction)
+      } else {
+        res.send({
+          scenario: interactions[0].scenario,
+          options: {
+            good: {
+              choice: interactions[0].good_choice,
+              effect: interactions[0].good_effect,
+            },
+            evil: {
+              choice: interactions[0].evil_choice,
+              effect: interactions[0].evil_effect,
+            },
+            neutral: {
+              choice: interactions[0].neutral_choice,
+              effect: interactions[0].neutral_effect,
+            }
+          }
+        })
+
+      }
+    }
+  } else {
+    const error = {
+      message: 'Error occurred',
+      code: 500
+    };
+
+    res.status(500).json(error);
+  }
 })
 
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
@@ -356,7 +540,6 @@ app.post('/mock/api/v1/generate-location-interaction', async (req: Request, res:
     },
   )
 })
-
 
 app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {
   res.send({
@@ -405,21 +588,6 @@ app.post('/write-history', (req, res) => {
   })
 })
 
-
-async function fetchData(selectQuery: string) {
-  return new Promise((resolve, reject) => {
-    database.all(selectQuery, (err, rows) => {
-      if (err) {
-        console.error('Error reading data:', err);
-        reject(err); // Reject the promise with the error
-      } else {
-        console.log('Data retrieved successfully');
-        resolve(rows); // Resolve the promise with the retrieved rows
-      }
-    });
-  });
-}
-
 // Read data from the history table
 app.get('/read-history', (req, res) => {
   const selectQuery = 'SELECT * FROM history'
@@ -434,3 +602,153 @@ app.get('/read-history', (req, res) => {
     }
   })
 })
+
+
+// TODO: location_history table to change table name
+async function fetchData(selectQuery: string) {
+  return new Promise((resolve, reject) => {
+    database.all(selectQuery, (err, rows) => {
+      if (err) {
+        console.error('Error reading data:', err)
+        reject(undefined) // Reject the promise with the error
+      } else {
+        console.log('Data retrieved successfully')
+        resolve(rows) // Resolve the promise with the retrieved rows
+      }
+    })
+  })
+}
+
+async function fetchInteraction(entityId: string): Promise<Array<InteractSQLResult> | undefined> {
+  const sql = `SELECT * FROM interaction WHERE interactable_id = '${entityId}' ORDER BY log_id DESC`
+  return new Promise((resolve, reject) => {
+    database.all(sql, (err, rows) => {
+      if (err) {
+        console.error('Error reading data:', err)
+        reject(undefined) // Reject the promise with the error
+      } else {
+        resolve(rows.map((interaction: InteractSQLResult) => {
+          return {
+            log_id: interaction.log_id,
+            interactable_id: interaction.interactable_id,
+            scenario: interaction.scenario,
+            good_choice: interaction.good_choice,
+            good_effect: interaction.good_effect,
+            evil_choice: interaction.evil_choice,
+            evil_effect: interaction.evil_effect,
+            neutral_choice: interaction.neutral_effect,
+            neutral_effect: interaction.neutral_effect,
+          }
+        }))
+      }
+    })
+  })
+}
+
+async function insertInteraction(insertInteractionParams: InsertInteractionParams) {
+
+  const insertQuery = `
+    INSERT INTO interaction (
+        interactable_id,
+        scenario,
+        good_choice,
+        good_effect,
+        evil_choice,
+        evil_effect,
+        neutral_choice,
+        neutral_effect
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `
+
+  database.run(insertQuery, [
+    insertInteractionParams.interactable_id,
+    insertInteractionParams.scenario,
+    insertInteractionParams.good_choice,
+    insertInteractionParams.good_effect,
+    insertInteractionParams.evil_choice,
+    insertInteractionParams.evil_effect,
+    insertInteractionParams.neutral_choice,
+    insertInteractionParams.neutral_effect,
+
+  ], function (err) {
+    if (err) {
+      console.error('Error inserting data:', err)
+    } else {
+      console.log('Data inserted successfully.')
+    }
+  })
+}
+
+
+async function fetchHistoryLogs(entityId: string): Promise<Array<LogSqlResult> | undefined> {
+  const sql = `SELECT * FROM history_logs WHERE interactable_id = '${entityId}' ORDER BY log_id ASC`
+  return new Promise((resolve, reject) => {
+    database.all(sql, (err, rows) => {
+      if (err) {
+        console.error('Error reading data:', err)
+        reject(undefined) // Reject the promise with the error
+      } else {
+        resolve(rows.map((log: LogSqlResult) => {
+          return {
+            log_id: log.log_id,
+            interactable_id: log.interactable_id,
+            players: log.players,
+            mode: log.mode,
+            by: log.by,
+            player_log: log.player_log,
+          }
+        }))
+      }
+    })
+  })
+}
+
+async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParams) {
+  /**
+   * log_id
+   * interactable_id
+   * players
+   * mode
+   * by
+   * player_log
+   * */
+
+  const insertQuery = `
+    INSERT INTO history_logs (
+        interactable_id,
+        players,
+        mode,
+        by,
+        player_log
+    )
+    VALUES (?, ?, ?, ?, ?)`
+
+  database.run(insertQuery, [
+    insertHistoryLogsParams.interactable_id,
+    insertHistoryLogsParams.players,
+    insertHistoryLogsParams.mode,
+    insertHistoryLogsParams.by,
+    insertHistoryLogsParams.player_log
+  ], function (err) {
+    if (err) {
+      console.error('Error inserting data:', err)
+    } else {
+      console.log('Data inserted successfully.')
+    }
+  })
+}
+async function insertLog(insertData: InsertLogProps) {
+  const insertQuery = `INSERT INTO location_history (interactable_id, players, mode, by, player_log)
+                       VALUES (?, ?, ?, ?, ?)`
+
+  database.run(insertQuery, [ insertData.interactable_id, insertData.players, insertData.mode, insertData.by, insertData.player_log ], function (err) {
+    if (err) {
+      console.error('Error inserting data:', err)
+    } else {
+      console.log('Data inserted successfully.')
+    }
+  })
+}
+
+

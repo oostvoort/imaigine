@@ -83,3 +83,61 @@ export interface BaseConfig {
   storyConfig: string,
   startingLocations: Array<StartingLocation>
 }
+
+export type LogMode = { mode: "action" } | {mode : "dialog"}
+export type LogBy = {by: "player"} | {by: "interactable"}
+export interface InsertLogProps {
+  interactable_id: string,
+  players: string,
+  mode: LogMode,
+  by: LogBy,
+  player_log: string
+}
+
+export interface InteractSQLResult {
+  log_id: number,
+  interactable_id: string,
+  scenario: string,
+  good_choice: string,
+  good_effect: string,
+  evil_choice: string,
+  evil_effect: string,
+  neutral_choice: string,
+  neutral_effect: string
+}
+
+export interface InsertInteractionParams {
+  interactable_id: string,
+  scenario: string,
+  good_choice: string,
+  good_effect: string,
+  evil_choice: string,
+  evil_effect: string,
+  neutral_choice: string,
+  neutral_effect: string
+}
+
+export interface LogSqlResult {
+  log_id: number,
+  interactable_id: string,
+  players: string,
+  mode: string,
+  by: string,
+  player_log: string,
+}
+
+export interface InteractLocationProps {
+  playerEntityId: string,
+  locationEntityId: string,
+  locationIpfsHash: string,
+  playerIpfsHash: string,
+  npcIpfsHash: Array<string>,
+}
+
+export interface InsertHistoryLogsParams {
+  interactable_id: string,
+  players: string,
+  mode: string,
+  by: string,
+  player_log: string
+}
