@@ -20,9 +20,15 @@ function clicked() {
   const p = d3.mouse(this);
   const i = findCell(p[0], p[1]);
 
-  if (grand.id === "burgLabels" || grand.id === "burgIcons")
-  {
-    window.parent.postMessage(`LocationClicked : ${i}`)
+  if (grand.id === "burgIcons") {
+    console.log('editor', pack)
+    // Get burgLabel element
+    const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
+
+    window.parent.postMessage({
+      locationId: i,
+      name: burgElement.textContent
+    })
   }
 
 }

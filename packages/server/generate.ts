@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 import fs from "fs-extra"
-import {loadJson, storeFile, storeJson} from './ipfs'
+// import {loadJson, storeFile, storeJson} from './ipfs'
 
 export async function generateMap(seed: number) : Promise<string>{
 

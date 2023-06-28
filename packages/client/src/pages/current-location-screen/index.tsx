@@ -8,6 +8,7 @@ import Map from '@/components/Map'
 
 export default function CurrentLocationScreen() {
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
+  const mapId = React.useId()
   return (
     <div className={clsx([
       'flex flex-col items-center',
@@ -16,7 +17,7 @@ export default function CurrentLocationScreen() {
       'bg-main-bg-neutral bg-no-repeat bg-cover',
     ])}>
       <Header />
-      <Map></Map>
+      <Map key={mapId}></Map>
       <div className={clsx([
         'flex',
         'w-full h-[820px]',

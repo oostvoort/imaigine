@@ -830,6 +830,32 @@ function addMarkerOnClick() {
   }
 }
 
+function addPlayerMarker(players) {
+  for (const player of players) {
+
+    // adding player's marker
+    const name = player.name
+    const icon = name.charAt(0)
+    const x = player.x
+    const y = player.y
+    const cell = player.cell
+    const baseMarker = {type: "player",icon: icon};
+    const marker = Markers.add({...baseMarker, x, y, cell});
+
+    // adding player's notes
+    const notesSelect = document.getElementById("notesSelect");
+    const id = `marker${marker.i}`
+    const legend = player.legend
+    const note = {id, name, legend};
+    notes.push(note);
+    notesSelect.options.add(new Option(id, id));
+
+    const markersElement = document.getElementById("markers");
+    const rescale = +markersElement.getAttribute("rescale");
+    markersElement.insertAdjacentHTML("beforeend", drawMarker(marker, rescale));
+  }
+}
+
 function configMarkersGeneration() {
   drawConfigTable();
 

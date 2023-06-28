@@ -6039,12 +6039,12 @@
     <!-- svg elements not required for map display -->
     <svg id="defElements" width="0" height="0" style="position: absolute">
       <defs>
-        <marker id="end-arrow" viewBox="0 -5 10 10" refX="6" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0,-5L10,0L0,5" fill="#000" />
-        </marker>
-        <marker id="end-arrow-small" viewBox="0 -5 10 10" refX="6" markerWidth="2" markerHeight="2" orient="auto">
-          <path d="M0,-5L10,0L0,5" fill="#555" />
-        </marker>
+<!--        <marker id="end-arrow" viewBox="0 -5 10 10" refX="6" markerWidth="7" markerHeight="7" orient="auto">-->
+<!--          <path d="M0,-5L10,0L0,5" fill="#000" />-->
+<!--        </marker>-->
+<!--        <marker id="end-arrow-small" viewBox="0 -5 10 10" refX="6" markerWidth="2" markerHeight="2" orient="auto">-->
+<!--          <path d="M0,-5L10,0L0,5" fill="#555" />-->
+<!--        </marker>-->
 
         <symbol id="icon-store" viewBox="0 0 616 512">
           <path
@@ -7919,9 +7919,11 @@
 
 
     <script>
+      // to iframe
       function helloFromParent(){
         console.log("HELLO!!")
       }
+      // from iframe
       window.addEventListener('message', (event) => {
         if (event.data === 'Hello from parent') {
           // Handle the message from the parent window
@@ -7930,6 +7932,11 @@
           document.getElementById("map").setAttribute('height', '100%');
         }
       });
+
+      document.addEventListener('DOMContentLoaded',() => {
+        console.log("onloaded")
+        window.parent.postMessage("go ahead")} )
+      // document.onload = () => {window.parent.postMessage("go ahead")}
     </script>
   </body>
 </html>

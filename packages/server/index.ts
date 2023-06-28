@@ -25,7 +25,7 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 dotenv.config()
-import fs from "fs-extra"
+import fs from 'fs-extra'
 
 const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
   if (err) {
