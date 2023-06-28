@@ -3,9 +3,9 @@ import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { useSetAtom } from 'jotai'
-import { activeScreen_atom } from '@/global/states'
+import { activeScreen_atom, SCREENS } from '@/states/global'
 
-export default function StartingScreen() {
+export default function TitleScreen() {
   const setActiveScreen = useSetAtom(activeScreen_atom)
 
   return (
@@ -26,7 +26,7 @@ export default function StartingScreen() {
             size="2xl"
             variant="accent"
             className="rounded-full px-14 mt-8 uppercase text-[#4FB800] font-jost text-xl w-[23.5em]"
-            onClick={() => setActiveScreen('createAvatarScreen')}
+            onClick={() => setActiveScreen(SCREENS.CREATE_AVATAR)}
           >
             Create New Character
           </Button>
