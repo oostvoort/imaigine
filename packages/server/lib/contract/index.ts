@@ -1,6 +1,13 @@
 import { IWorld__factory } from "../../../contracts/types/ethers-contracts/factories/IWorld__factory";
-import { providers, Wallet } from 'ethers'
+import { constants, providers, Wallet } from 'ethers'
 import worldsJson from "../../../contracts/worlds.json";
+import {
+  concat,
+  hexlify,
+  keccak256,
+  solidityPack,
+  toUtf8Bytes,
+} from 'ethers/lib/utils'
 const worlds = worldsJson as Partial<Record<string, { address: string; blockNumber?: number }>>;
 
 if (!process.env.PRIVATE_KEY) throw new Error('No private key provided')
@@ -12,6 +19,9 @@ console.info('Setting up Contract')
 console.info('JSON_RPC_URL:', JSON_RPC_URL)
 console.info('CHAIN_ID:', CHAIN_ID)
 
+const bytes = toUtf8Bytes('LOCATION')
+const LOCATION_PREFIX = hexlify(concat([bytes, constants.HashZero]).slice(0, 16))
+
 // create a signer
 export const signer = new Wallet(
   PRIVATE_KEY,
@@ -22,3 +32,13 @@ export const signer = new Wallet(
 // create a world contract object
 // this is already in typeScript
 export const worldContract = IWorld__factory.connect(worlds[CHAIN_ID].address, signer)
+
+export const convertLocationNumberToLocationId = (locationNumber: number) => {
+
+  return keccak256(
+    solidityPack(
+      ['bytes16', 'uint256'],
+      [LOCATION_PREFIX, locationNumber]
+    )
+  )
+}
