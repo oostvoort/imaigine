@@ -22,7 +22,7 @@ export const storySchema = {
 }
 
 export const locationInteractionSchema = {
-  scenario: 'In the scenario, mention how the player sees the NPC, and how the past events shaped the scenario. Do not mention choices in the scenario.',
+  scenario: 'In the scenario, how the past events shaped the scenario. Do not mention choices in the scenario.',
   goodChoice: "1 positive and benefit option that is shorten",
   evilChoice: "1 negative and harmful option that is shorten",
   neutralChoice: "1 neutral and balanced option that is shorten",
