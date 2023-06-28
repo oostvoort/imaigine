@@ -57,7 +57,7 @@ const Map: React.FC<PropType> = ({ className }) => {
           ref={iframeRef}
           width={'w-[inherit]'}
           className={className}
-          src={`http://localhost:3000/map/index.html?maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
+          src={`${document.baseURI}map/index.html?burg=75&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
           title="Map"
         />
       </div>
