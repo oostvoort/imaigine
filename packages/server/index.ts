@@ -130,7 +130,6 @@ app.get('/winning-choice', async (req: Request, res: Response) => {
     {
       result: await (await worldContract.openInteraction(
         '0x0000000000000000000000000000000000000000000000000000000000000002',
-        '0x5000000000000000000000000000000000000000000000000000000000000003'
       )).wait()
     }
   )

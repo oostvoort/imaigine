@@ -218,9 +218,9 @@ contract InteractionSystem is System {
 
   /// @notice backend sends this to allow players to choose again
   /// @param playerId is the playerId in single player mode or can be bytes(0) for multiplayer
-  /// @param interactableId is the interactable the player needs to open interaction for
-  function openInteraction(bytes32 playerId, bytes32 interactableId)
+  function openInteraction(bytes32 playerId)
   public {
+    bytes32 interactableId = InteractableComponent.get(playerId);
     InteractionType interactionType = InteractionTypeComponent.get(interactableId);
     require(interactionType != InteractionType.NOT_INTERACTABLE, "cannot open interaction for non-interactable");
     if (interactionType == InteractionType.SINGLE) {
@@ -247,6 +247,7 @@ contract InteractionSystem is System {
   public
   view
   returns(uint256) {
+
     return SingleInteractionComponent.getChoice(playerId, InteractableComponent.get(playerId));
   }
 
