@@ -36,7 +36,7 @@ const buttonVariants = cva(
         xl: 'h-16 px-12 rounded-lg text-2xl',
         '2xl': 'h-20 px-12',
         'btnWithBgImg': 'w-[518px] h-[88px]',
-        'menu': 'w-[168px] h-[67px]',
+        'menu': 'w-[170px] h-[67px] gap-x-2',
       },
       isHighlighted: {
         true: 'outline outline-accent text-primary-foreground',

@@ -1,6 +1,6 @@
 import React from 'react'
 import { clsx } from 'clsx'
-import DialogWidget, { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
+import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings'
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
@@ -8,13 +8,14 @@ import usePlayer from '@/hooks/usePlayer'
 import { activeScreen_atom } from '@/global/states'
 import { Button } from '@/components/base/Button'
 import { useAtom } from 'jotai'
+import { IPFS_URL_PREFIX } from '@/global/constants'
 
 export default function Header() {
   const { player } = usePlayer()
   const [activeScreen, setActiveScreen] = useAtom(activeScreen_atom)
 
   const handleButtonClick = () => {
-    setActiveScreen(activeScreen === 'currentLocationScreen' ? 'travelScreen' : 'currentLocationScreen');
+    setActiveScreen(activeScreen === 'currentLocationScreen' ? 'travelScreen' : 'currentLocationScreen')
   }
 
   return (
@@ -27,7 +28,7 @@ export default function Header() {
             variant: 'default',
             title: 'Profile',
             imgSrc: '',
-            imgAlt: '',
+            imgAlt: 'Avatar',
           }} isAvatar={true}>
             <Profile />
           </DialogWidget>
@@ -35,8 +36,8 @@ export default function Header() {
           <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
             <img
               src="/src/assets/svg/icon_map.png"
-              alt="Icon"
-              className={'h-[59px] w-[59px]'}
+              alt="Map/Story"
+              className={'h-[67px] w-[68px]'}
               draggable={false}
             />
             {activeScreen === 'currentLocationScreen' ? 'World Map' : 'Story Mode'}
@@ -47,8 +48,8 @@ export default function Header() {
             size: 'menu',
             title: 'History',
             imgSrc: '/src/assets/svg/history.png',
-            imgAlt: '',
-            imgClassName: 'h-[59px] w-[59px]',
+            imgAlt: 'History',
+            imgClassName: 'h-[59px] w-[71px]',
           }} isAvatar={false}>
             <History />
           </DialogWidget>
@@ -58,7 +59,7 @@ export default function Header() {
             size: 'menu',
             title: 'Settings',
             imgSrc: '/src/assets/svg/settings.png',
-            imgAlt: '',
+            imgAlt: 'Settings',
             imgClassName: 'h-[59px] w-[59px]',
           }} isAvatar={false}>
             <Settings />
