@@ -44,3 +44,20 @@ function fogCells(cells){
 function unfogCells(id){
   unfog("myFogId")
 }
+
+function helloFromParent(){
+  console.log("HELLO!!")
+}
+// from iframe
+window.addEventListener('message', (event) => {
+  if (event.data === 'Hello from parent') {
+    // Handle the message from the parent window
+    console.log('Received message:', event.data);
+
+    document.getElementById("map").setAttribute('height', '100%');
+  }
+});
+
+document.addEventListener('DOMContentLoaded',() => {
+  console.log("onloaded")
+  window.parent.postMessage("MapLoaded")} )
