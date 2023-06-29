@@ -28,15 +28,21 @@ contract InteractionSystem is MudV2Test {
   bytes32 playerId;
 
   function setUp() public override {
+//    vm.startPrank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.deal(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 1000000);
+
     super.setUp();
     world = IWorld(worldAddress);
 
     mockLocationID = world.createLocation("config", "image", 99);
-    console.logBytes32(mockLocationID);
 
     mockNPCID = world.createCharacter("config", "image", mockLocationID);
-    console.logBytes32(mockNPCID);
-    playerId = world.createPlayer("config", "image", mockLocationID);
+
+    console.log(msg.sender);
+    console.logBytes32(bytes32(uint256(uint160(msg.sender))));
+
+    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    playerId = world.createPlayer(bytes32(uint256(uint160(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683))), "config", "image", mockLocationID);
   }
 
   function testWorldExists() public {
@@ -48,7 +54,7 @@ contract InteractionSystem is MudV2Test {
     assertTrue(codeSize > 0);
   }
 
-  function xtest_revert_interactSingle() public {
+  function test_revert_interactSingle() public {
     vm.expectRevert("cannot single interact");
     world.interactSingle(mockNPCID, 1);
   }
@@ -56,8 +62,14 @@ contract InteractionSystem is MudV2Test {
   function test_interactSingle() public {
     uint256 choice = 0;
 
+    console.logBytes32(playerId);
+    console.log(msg.sender);
+
+    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
     world.interactSingle(mockLocationID, choice);
     SingleInteractionComponentData memory singleInteractionComponentData = SingleInteractionComponent.get(world, playerId, mockLocationID);
+    console.log(singleInteractionComponentData.processingTimeout);
+    console.log(singleInteractionComponentData.available);
     assertTrue(singleInteractionComponentData.available);
     assertEq(singleInteractionComponentData.choice, choice);
   }
