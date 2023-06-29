@@ -13,7 +13,6 @@ import { useAtom } from 'jotai'
 import { activeScreen_atom, currentLoader_atom, SCREENS } from '@/states/global'
 import useLocation from '@/hooks/useLocation'
 import { useSetAtom } from 'jotai/index'
-import useLocationInteraction from '@/hooks/useLocationInteraction'
 
 type SetupOptionType = Array<{
   label: string,

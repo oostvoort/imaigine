@@ -1,6 +1,6 @@
 import React from 'react'
 import { clsx } from 'clsx'
-import LocationContent from '@/components/shared/LocationContent'
+import { SkeletonParagraph } from '@/components/base/Skeleton'
 
 const SubLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -53,7 +53,8 @@ const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React
         {/*  target={summary.target}*/}
         {/*  onTarget={setIsOpen}*/}
         {/*/>*/}
-        <p className={clsx([ 'font-amiri', 'text-[30px]' ])}>{summary}</p>
+        {summary === undefined && <SkeletonParagraph />}
+        <p className={clsx([ 'font-amiri', 'text-[30px] text-[# BAC5F1]' ])}>{summary}</p>
       </div>
     </div>
   )

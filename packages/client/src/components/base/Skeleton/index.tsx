@@ -8,10 +8,20 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-muted', className)}
+      className={cn('animate-pulse', className)}
       {...props}
     />
   )
 }
 
-export { Skeleton }
+function SkeletonParagraph(){
+  return(
+    <>
+      <Skeleton className={'bg-[#485476] rounded-[4px] w-full h-[30px] mb-4'}/>
+      <Skeleton className={'bg-[#485476] rounded-[4px] w-full h-[30px] mb-4'}/>
+      <Skeleton className={'bg-[#485476] rounded-[4px] w-4/12 h-[30px] mb-4'}/>
+    </>
+  )
+}
+
+export { Skeleton, SkeletonParagraph }
