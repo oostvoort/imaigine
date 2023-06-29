@@ -24,6 +24,7 @@ POST localhost:3000/api/v1/create-player
 Content-Type: application/json
 
 {
+  "playerId": "0xc3b0acd499d7793c18b519aee79a585b823b44d70b61c8db1eed3e3690e60ce2",
   "ipfsHash": "QmWoP45qHtVC8CmzdYtUvqsLEPMvdALCJG3AyUdj3XXVBc",
   "imageIpfsHash": "QmY18HiBBcoh6GQqFzze3q7yxaLhpesX3ddQoG5Peb4rH9",
   "locationId": "0xc3b0acd499d7793c18b519aee79a585b823b44d70b61c8db1eed3e3690e60ce3"
