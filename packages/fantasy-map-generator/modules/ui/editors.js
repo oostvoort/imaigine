@@ -775,9 +775,8 @@ function changePickerSpace() {
 
 // add fogging
 function fog(id, path) {
-  console.log("OV FOG")
+  console.log("OV FOG", id)
   if (defs.select("#fog #" + id).size()) return;
-  const fadeIn = d3.transition().duration(2000).ease(d3.easeSinInOut);
   if (defs.select("#fog path").size()) {
     defs
       .select("#fog")
@@ -790,7 +789,7 @@ function fog(id, path) {
   } else {
     defs.select("#fog").append("path").attr("d", path).attr("id", id).attr("opacity", 1);
     const opacity = fogging.attr("opacity");
-    fogging.style("display", "block").attr("opacity", 0).transition(fadeIn).attr("opacity", opacity);
+    fogging.style("display", "block").attr("opacity", 0).attr("opacity", opacity);
   }
 }
 
