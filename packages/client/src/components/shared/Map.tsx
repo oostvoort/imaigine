@@ -56,7 +56,13 @@ const Map: React.FC<PropType> = ({ className }) => {
         }
     };
     return (
-      <div className={'w-full h-full'}>
+      <div className={'w-screen h-screen'}>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <button onClick={callFunctionInIframe}>Call Function in Iframe</button> |
         <button onClick={reloadIframe}>Reload Iframe</button>
         <iframe
