@@ -1,38 +1,36 @@
 import { useAtomValue } from 'jotai'
-import StartingScreen from '@/pages/starting-screen'
+import { activeScreen_atom, SCREENS } from '@/states/global'
+import TitleScreen from '@/pages/title-screen'
 import Template from '@/components/layouts/MainLayout'
 import CreateAvatarScreen from '@/pages/create-avatar-screen'
 import CurrentLocationScreen from '@/pages/current-location-screen'
-import { activeScreen_atom } from '@/global/states'
-import TravelScreen from '@/pages/travel-screen'
+import WorldMapScreen from '@/pages/world-map-screen'
 
 export const App = () => {
   const activeScreen = useAtomValue(activeScreen_atom)
   return (
     <Template>
-      {activeScreen == 'startingScreen' &&
+      {activeScreen === SCREENS.TITLE &&
         <Template.FullScreenLayout>
-          <StartingScreen />
+          <TitleScreen />
         </Template.FullScreenLayout>
       }
 
-      {activeScreen == 'createAvatarScreen' &&
+      {activeScreen === SCREENS.CREATE_AVATAR &&
         <Template.FullScreenLayout>
           <CreateAvatarScreen />
         </Template.FullScreenLayout>
       }
 
-      {
-        activeScreen == 'currentLocationScreen' &&
-        <Template.ContentLayout>
+      {activeScreen === SCREENS.CURRENT_LOCATION &&
+        <Template.ContentLayout className={'px-10 pt-28'}>
           <CurrentLocationScreen />
         </Template.ContentLayout>
       }
 
-      {
-        activeScreen == 'travelScreen' &&
+      {activeScreen === SCREENS.WORLD_MAP &&
         <Template.ContentLayout>
-          <TravelScreen />
+          <WorldMapScreen />
         </Template.ContentLayout>
       }
     </Template>

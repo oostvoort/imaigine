@@ -43,6 +43,7 @@ contract CreationSystem is System {
   }
 
   function createPlayer(
+    bytes32 playerID,
     string memory config,
     string memory imgHash,
     bytes32 locationID
@@ -53,8 +54,6 @@ contract CreationSystem is System {
     // validate input
     require(bytes(config).length > 0, "invalid config length");
     require(bytes(imgHash).length > 0, "invalid imgHash length");
-
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
     // does location exist
     require(SceneComponent.get(locationID) == true, "location does not exist");

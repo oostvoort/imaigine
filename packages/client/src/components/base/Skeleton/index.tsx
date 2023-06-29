@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/global/utils'
 import React from 'react'
 
 function Skeleton({

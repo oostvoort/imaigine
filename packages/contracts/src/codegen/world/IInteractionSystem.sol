@@ -8,7 +8,7 @@ interface IInteractionSystem {
 
   function interactMulti(bytes32 interactableId, uint256 choiceId) external returns (uint256);
 
-  function openInteraction(bytes32 playerId, bytes32 interactableId) external;
+  function openInteraction(bytes32 playerId) external;
 
   function getPlayerChoiceInSingleInteraction(bytes32 playerId) external view returns (uint256);
 
