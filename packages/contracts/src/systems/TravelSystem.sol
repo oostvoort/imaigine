@@ -34,6 +34,6 @@ contract TravelSystem is System {
   /// @dev called by the player to update the player's current location
   /// @return the current cell number the player is on
   function travel() public returns (uint256) {
-
+    return 5;
   }
 }
