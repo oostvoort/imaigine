@@ -1,6 +1,6 @@
-import React  from 'react'
+import React from 'react'
 import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
-import { GenerateLocation, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
+import { GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
@@ -10,9 +10,10 @@ import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import LoadingScreen from '@/components/shared/LoadingScreen'
 import LoadingStory from '@/components/shared/LoadingStory'
 import { useAtom } from 'jotai'
-import { activeScreen_atom, currentLoader_atom } from '@/global/states'
+import { activeScreen_atom, currentLoader_atom, SCREENS } from '@/states/global'
 import useLocation from '@/hooks/useLocation'
 import { useSetAtom } from 'jotai/index'
+import useLocationInteraction from '@/hooks/useLocationInteraction'
 
 type SetupOptionType = Array<{
   label: string,
@@ -76,7 +77,9 @@ const colorPalette = [
 ]
 
 export default function CreateAvatarScreen() {
-  const { generatePlayer, createPlayer } = usePlayer()
+  const { generatePlayer, createPlayer, player } = usePlayer()
+  const { location } = useLocation(player.location?.value ?? undefined)
+  const { generateLocationInteraction, locationInteraction } = useLocationInteraction()
 
   const [ step, setStep ] = React.useState(1)
   const [ userInputs, setUserInputs ] = React.useState<GeneratePlayerProps>({
@@ -150,11 +153,29 @@ export default function CreateAvatarScreen() {
         imgHash: avatarHash,
         locationId: generatedPlayer.locationId,
       })
+      // await handleCreateInteractions()
       setActiveScreen('currentLocationScreen')
     } catch (error) {
       console.error()
     }
   }
+
+  // const handleCreateInteractions = async () => {
+  //   console.log('ENTER')
+  //   try {
+  //     await generateLocationInteraction.mutateAsync({
+  //       locationIpfsHash: "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
+  //       npcIpfsHashes: [ "QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj" ],
+  //       playerIpfsHash: "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
+  //       locationId: "0x0000000000000000000000000000000000000000000000000000000000000021",
+  //       options: {}
+  //     })
+  //   } catch (error) {
+  //     console.error('[generateLocationInteraction]', error)
+  //   }
+  //   console.log('END CATCH')
+  // }
+
 
   React.useEffect(() => {
     setUserInputs((prev: GeneratePlayerProps) => {
@@ -164,6 +185,18 @@ export default function CreateAvatarScreen() {
       }
     })
   }, [ selectedColor ])
+
+  React.useEffect(() => {
+    console.log({player})
+  }, [player])
+
+  React.useEffect(() => {
+    console.log(location)
+  }, [location])
+
+  React.useEffect(() => {
+    console.log(locationInteraction)
+  }, [locationInteraction])
 
   return (
     <React.Fragment>
@@ -301,34 +334,41 @@ export default function CreateAvatarScreen() {
             {
               step == 3 && (
                 <section className={clsx('flex flex-col gap-3')}>
-                  <p className={clsx('text-4xl text-white text-center font-jost font-bold')}>Choose your Avatar</p>
-                  <Card className={clsx('min-w-[500px] shadow-2xl')}>
-                    <CardContent className={clsx('flex w-full gap-3')}>
-                      {
-                        generatedPlayer?.imgHashes.map((avatar, index) => {
-                          const isSelectedAvatar = selectedAvatar === index
-                          return (
-                            <img
-                              key={index}
-                              src={`${import.meta.env.VITE_IPFS_URL_PREFIX}/${avatar}`}
-                              alt={avatar}
-                              className={clsx([
-                                'object-cover w-[22em] h-[26em] rounded-lg',
-                                'transition duration-500 ease-in-out cursor-pointer',
-                                `${selectedAvatar ? `${selectedAvatar === index ? 'ring-4 ring-yellow-300' : 'opacity-25'}` : ''}`,
-                                isSelectedAvatar ? 'ring-4 ring-yellow-300' : selectedAvatar === null ? 'opacity-100' : 'opacity-25',
-                              ])}
-                              onClick={() => handleSelectAvatar(index)}
-                              draggable={false}
-                            />
-                          )
-                        })
-                      }
+                  <p className={clsx('text-4xl text-white text-center font-segoeBold font-bold')}>Your Avatar</p>
+                  <Card className={clsx('min-w-[400px] shadow-2xl')}>
+                    <CardContent className={clsx('flex w-full')}>
+                      <img
+                        src={`/src/assets/avatar/avatar1.jpg`}
+                        alt={'Avatar Img'}
+                        className={clsx([
+                          'object-cover w-[22em] h-[26em] rounded-lg',
+                          'transition duration-500 ease-in-out cursor-pointer',
+                        ])}
+                        draggable={false}
+                      />
                     </CardContent>
                   </Card>
+
+                  <div className={'w-full flex justify-center mt-md'}>
+                    <Button variant={'refresh'}>
+                      <img
+                        src={`/src/assets/svg/refresh.svg`}
+                        alt={'Avatar Img'}
+                        className={clsx([
+                          'object-cover w-[22px] h-[22px]',
+                          'mr-2 cursor-pointer',
+                        ])}
+                        draggable={false}
+                      />
+                      Regenerate Avatar
+                    </Button>
+                  </div>
+
                 </section>
               )
             }
+
+
             <Button
               variant="accent"
               size="lg"

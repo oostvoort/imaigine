@@ -38,9 +38,8 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                   {/* Avatar */}
                   <img src={`${avatar ? `${IPFS_URL_PREFIX}/${avatar}` : 'src/assets/avatar/avatar1.jpg'}`}
                        alt="Profile"
-                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full', {'animate-pulse': !avatar} ])}
+                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full'])}
                        draggable={false}
-                       style={{ filter: avatar ? 'none' : 'blur(10px)' }}
                   />
                 </div>
                 {/* Karma Gauge */}
@@ -49,9 +48,9 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
               {/* End ofInner Frame */}
             </div>
             :
-            <Button variant={button.variant} className={button.className}>
+            <Button variant={button.variant} className={button.className} size={button.size}>
               <img src={button.imgSrc} alt={button.imgSrc}
-                   className={clsx([ { 'hidden': button.imgSrc === '' }, button.imgClassName ])} />
+                   className={clsx([ { 'hidden': button.imgSrc === '' }, button.imgClassName ])} draggable={false} />
               {button.title}
             </Button>
         }

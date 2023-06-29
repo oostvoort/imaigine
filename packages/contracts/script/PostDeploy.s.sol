@@ -10,11 +10,19 @@ import { ArrayLib } from "../src/lib/ArrayLib.sol";
 contract PostDeploy is Script {
   using ArrayLib for string[];
 
+  struct NPC {
+    string imageHash;
+    string ipfsHash;
+    uint256 locationId;
+  }
+
   struct Location {
     string config;
     uint256 id;
     string imgHash;
   }
+
+  mapping(uint256 => bytes32) cellNumber;
 
   function run(address worldAddress) external {
     // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
@@ -33,13 +41,24 @@ contract PostDeploy is Script {
     world.createStory(storyConfig);
 
     // Locations
-    Location[] memory locations = abi.decode(vm.parseJson(json, ".locations2"), (Location[]));
+    Location[] memory locations = abi.decode(vm.parseJson(json, ".locations"), (Location[]));
 
     for (uint256 i=0; i<locations.length; i++) {
       bytes32 locationID = world.createLocation(
         locations[i].config,
         locations[i].imgHash,
         locations[i].id
+      );
+      cellNumber[locations[i].id] = locationID;
+    }
+
+    NPC[] memory npcs = abi.decode(vm.parseJson(json, ".npcs"), (NPC[]));
+
+    for (uint256 i = 0; i < npcs.length; i++) {
+      bytes32 npcId = world.createCharacter(
+        npcs[i].ipfsHash,
+        npcs[i].imageHash,
+        cellNumber[npcs[i].locationId]
       );
     }
 
