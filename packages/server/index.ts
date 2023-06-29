@@ -10,12 +10,15 @@ import {
   GenerateNpcResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
-  GenerateStoryProps, InsertHistoryLogsParams, InsertInteractionParams,
+  GenerateStoryProps,
+  InsertHistoryLogsParams,
+  InsertInteractionParams,
   InsertLogProps,
   InteractLocationProps,
   InteractSingleDoneProps,
   InteractSingleDoneResponse,
-  InteractSQLResult, LogBy, LogMode, LogSqlResult,
+  InteractSQLResult,
+  LogSqlResult,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -163,7 +166,7 @@ app.get('/winning-choice', async (req: Request, res: Response) => {
       // result: await (await worldContract.openInteraction(
       //   '0x0000000000000000000000000000000000000000000000000000000000000002',
       // )).wait()
-    }
+    },
   )
 })
 
@@ -185,7 +188,12 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
 
     const locationDetails = await getLocationDetails(locations, props.id)
 
-    if (locationDetails === undefined) throw new Error('Undefined Location!')
+    if (locationDetails === undefined) {
+      res.status(500).json({
+        message: `Locations are undefined!`,
+        code: 500,
+      })
+    }
 
     const location = await generateLocation({
       name: storyConfig.name,
@@ -199,11 +207,22 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
 
     const imageHash = await generateLocationImage(location.visualSummary)
 
-    res.send({
-      ipfsHash: locationIpfsHash,
-      imageHash: imageHash,
-    } as GenerateLocationResponse)
+    try {
+      await (await worldContract.createLocation(locationIpfsHash, imageHash, BigNumber.from(`${props.id}`))).wait()
 
+      res.send({
+        ipfsHash: locationIpfsHash,
+        imageHash: imageHash,
+      } as GenerateLocationResponse)
+
+    } catch (e) {
+      const error = {
+        message: `${(e.error.toString()).includes('location already exists!') ? 'Location already exists' : e.error}`,
+        code: 500,
+      }
+
+      res.status(500).json(error)
+    }
   } catch (e) {
     next(e)
   }
@@ -339,7 +358,7 @@ app.post('/api/v1/interact-single-done', async (req: Request, res: Response, nex
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     for (const historyRow of historySql) {
-      history += historyRow.player_log + '\n';
+      history += historyRow.player_log + '\n'
     }
   }
 
@@ -369,12 +388,12 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
   // check interaction table if have existing interaction
 
   const interactions = await fetchInteraction(props.locationEntityId)
-  console.info("- done getting interactions")
+  console.info('- done getting interactions')
   let history = ''
 
   // need historylogs
   const historyLogs = await fetchHistoryLogs(props.locationEntityId)
-  console.info("- done getting history")
+  console.info('- done getting history')
 
   if (historyLogs.length > 0) {
     for (const historyRow of historyLogs) {
@@ -382,8 +401,8 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
     }
   }
 
-  if(interactions !== undefined) {
-    if(interactions.length <= 0) {
+  if (interactions !== undefined) {
+    if (interactions.length <= 0) {
       // create one from chatgpt
       const locationInteraction = await generateLocationInteraction({
         storyName: storyConfig.name,
@@ -396,7 +415,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
         playerSummary: player.description,
         locationHistory: history ? `Location History: "${history}" \n` : '',
       })
-      console.info("- done generating scenario")
+      console.info('- done generating scenario')
 
       // save the one created to interaction table
       await insertInteraction({
@@ -409,7 +428,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
         neutral_choice: locationInteraction.options.neutral.choice,
         neutral_effect: locationInteraction.options.neutral.effect,
       })
-      console.info("- done inserting interaction")
+      console.info('- done inserting interaction')
 
       // return the result
       res.send(locationInteraction)
@@ -418,22 +437,22 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
       // checking of choice
       const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
 
-      if(choice.toNumber()) {
+      if (choice.toNumber()) {
 
         await insertHistoryLogs({
           interactable_id: props.locationEntityId,
-          by: "player",
+          by: 'player',
           players: player.name,
-          mode: "action",
-          player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`]
+          mode: 'action',
+          player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
         })
 
-        console.info("- done inserting new history")
+        console.info('- done inserting new history')
 
         const historyLogs = await fetchHistoryLogs(props.locationEntityId)
-        console.info("- done getting history")
+        console.info('- done getting history')
 
-        history = ""
+        history = ''
         for (const historyRow of historyLogs) {
           history += historyRow.player_log + '\n'
         }
@@ -451,7 +470,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
           playerSummary: player.description,
           locationHistory: history ? `Location History: "${history}" \n` : '',
         })
-        console.info("- done generating scenario")
+        console.info('- done generating scenario')
 
         await insertInteraction({
           interactable_id: props.locationEntityId,
@@ -463,7 +482,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
           neutral_choice: locationInteraction.options.neutral.choice,
           neutral_effect: locationInteraction.options.neutral.effect,
         })
-        console.info("- done inserting new interaction")
+        console.info('- done inserting new interaction')
 
         await worldContract.openInteraction(props.playerEntityId)
 
@@ -483,8 +502,8 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             neutral: {
               choice: interactions[0].neutral_choice,
               effect: interactions[0].neutral_effect,
-            }
-          }
+            },
+          },
         })
 
       }
@@ -492,10 +511,10 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
   } else {
     const error = {
       message: 'Error occurred',
-      code: 500
-    };
+      code: 500,
+    }
 
-    res.status(500).json(error);
+    res.status(500).json(error)
   }
 })
 
@@ -729,7 +748,7 @@ async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParam
     insertHistoryLogsParams.players,
     insertHistoryLogsParams.mode,
     insertHistoryLogsParams.by,
-    insertHistoryLogsParams.player_log
+    insertHistoryLogsParams.player_log,
   ], function (err) {
     if (err) {
       console.error('Error inserting data:', err)
@@ -738,6 +757,7 @@ async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParam
     }
   })
 }
+
 async function insertLog(insertData: InsertLogProps) {
   const insertQuery = `INSERT INTO location_history (interactable_id, players, mode, by, player_log)
                        VALUES (?, ?, ?, ?, ?)`
