@@ -655,7 +655,7 @@ async function fetchInteraction(entityId: string): Promise<Array<InteractSQLResu
             good_effect: interaction.good_effect,
             evil_choice: interaction.evil_choice,
             evil_effect: interaction.evil_effect,
-            neutral_choice: interaction.neutral_effect,
+            neutral_choice: interaction.neutral_choice,
             neutral_effect: interaction.neutral_effect,
           }
         }))
