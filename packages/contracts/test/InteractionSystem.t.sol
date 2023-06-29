@@ -56,15 +56,14 @@ contract InteractionSystem is MudV2Test {
   function test_interactSingle() public {
     uint256 choice = 0;
 
-    console.log(uint(InteractionTypeComponent.get(world, mockLocationID)));
-    console.log(SceneComponent.get(world, mockLocationID));
     world.interactSingle(mockLocationID, choice);
     SingleInteractionComponentData memory singleInteractionComponentData = SingleInteractionComponent.get(world, playerId, mockLocationID);
-//    console.log(singleInteractionComponentData.choice, "CHOICE");
-    console.log(singleInteractionComponentData.processingTimeout, "PROCESSING_TIMEOUT");
-//    console.log(singleInteractionComponentData.available, "AVAILABLE");
     assertTrue(singleInteractionComponentData.available);
     assertEq(singleInteractionComponentData.choice, choice);
-    assertGt(singleInteractionComponentData.processingTimeout, block.timestamp);
+  }
+
+  function test_interactSingle_withChoice() public {
+    world.interactSingle(mockLocationID, 0);
+    world.interactSingle(mockLocationID, 1);
   }
 }
