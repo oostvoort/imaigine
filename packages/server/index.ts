@@ -309,7 +309,7 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 
   try {
     try {
-      await (await worldContract.createPlayer(props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
+      await (await worldContract.createPlayer(props.playerId,props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
       res.send("Player Created!")
     }catch (e) {
       res.sendStatus(500).json({

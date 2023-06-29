@@ -63,7 +63,8 @@ export interface GeneratePlayerResponse {
 export interface GeneratePlayerImageProps { visualSummary: string}
 export interface GeneratePlayerImageResponse { imageIpfsHash: string}
 export interface CreatePlayerProps {
-  ipfsHash: string
+  playerId: string,
+  ipfsHash: string,
   imageIpfsHash: string,
   locationId: string
 }
