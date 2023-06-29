@@ -8,6 +8,7 @@ import SubLayout from '@/components/layouts/MainLayout/SubLayout'
 import usePlayer from '@/hooks/usePlayer'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import useLocation from '@/hooks/useLocation'
+import useLocationInteraction from '@/hooks/useLocationInteraction'
 
 
 const TARGETS = [ 'location', 'npc', 'item', 'animal' ] as const
@@ -29,31 +30,46 @@ export default function CurrentLocationScreen() {
   const { location } = useLocation(player.location?.value ?? undefined)
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
 
+  const { generateLocationInteraction, createLocationInteraction } = useLocationInteraction()
+  const isDataReady = !!player.config?.value && !!location.config?.value
+
+  React.useEffect( () => {
+    if (isDataReady) {
+      generateLocationInteraction.mutate()
+      createLocationInteraction.mutate({ choiceId: 0 })
+    }
+  }, [isDataReady])
+
+  const handleInteraction = (choiceId: number) => {
+    createLocationInteraction.mutateAsync({choiceId})
+      .then(() => generateLocationInteraction.mutate())
+  }
+
   const buttonOptions: Array<ButtonPropType> = [
     {
-      title: 'Explore surroundings',
+      title: generateLocationInteraction.data?.options.good.choice ?? 'Good',
       variant: 'neutral',
       size: 'btnWithBgImg',
-      action: () => console.log('Hello'),
+      action: () => handleInteraction(3),
     },
     {
-      title: 'Follow the nearest trail',
+      title: generateLocationInteraction.data?.options.neutral.choice ?? 'Neutral',
       variant: 'neutral',
       size: 'btnWithBgImg',
-      action: () => console.log('Hello'),
+      action: () => handleInteraction(2),
     },
     {
-      title: 'Succumb to panic',
+      title: generateLocationInteraction.data?.options.evil.choice ?? 'Evil',
       variant: 'neutral',
       size: 'btnWithBgImg',
-      action: () => console.log('Hello'),
+      action: () => handleInteraction(1),
     },
   ]
 
   return (
     <React.Fragment>
       <SubLayout>
-        <SubLayout.VisualSummaryLayout summary={data} setIsOpen={() => setIsOpen(true)}>
+        <SubLayout.VisualSummaryLayout summary={generateLocationInteraction.data?.scenario} setIsOpen={() => setIsOpen(true)}>
           <img
             src={'/src/assets/background/bg1.jpg'}
             alt={'Location'}
@@ -65,11 +81,10 @@ export default function CurrentLocationScreen() {
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
       <Footer>
-        {/*<HourglassLoader>Waiting for other players...</HourglassLoader>*/}
         <ButtonWrapper>
           {
             buttonOptions.map((btn, key) => (
-              <Button key={key} variant={btn.variant} size={btn.size}>{btn.title}</Button>
+              <Button key={key} variant={btn.variant} size={btn.size} onClick={btn.action}>{btn.title}</Button>
             ))
           }
         </ButtonWrapper>

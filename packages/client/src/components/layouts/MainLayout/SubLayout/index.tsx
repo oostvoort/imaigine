@@ -48,11 +48,12 @@ const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React
         'bg-content-bg-gray bg-no-repeat bg-cover',
         'rounded-r-2xl',
       ])}>
-        <LocationContent
-          content={summary.text}
-          target={summary.target}
-          onTarget={setIsOpen}
-        />
+        {/*<LocationContent*/}
+        {/*  content={summary.text}*/}
+        {/*  target={summary.target}*/}
+        {/*  onTarget={setIsOpen}*/}
+        {/*/>*/}
+        <p className={clsx([ 'font-amiri', 'text-[30px]' ])}>{summary}</p>
       </div>
     </div>
   )
