@@ -3,17 +3,16 @@ import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import {
   BaseConfig,
-  Based,
+  Based, CreatePlayerProps,
   GenerateLocationProps,
   GenerateLocationResponse,
   GenerateNpcProps,
-  GenerateNpcResponse,
+  GenerateNpcResponse, GeneratePlayerImageProps, GeneratePlayerImageResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
   GenerateStoryProps,
   InsertHistoryLogsParams,
   InsertInteractionParams,
-  InsertLogProps,
   InteractLocationProps,
   InteractSingleDoneProps,
   InteractSingleDoneResponse,
@@ -38,7 +37,6 @@ import { getFromIpfs } from './utils/getFromIpfs'
 import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
-import { PLAYER_IMAGE_CHOICES } from './global/constants'
 import fs from 'fs-extra'
 import { worldContract } from './lib/contract'
 import { BigNumber } from 'ethers'
@@ -247,8 +245,6 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
       summary: npc.description,
     })
 
-    // TODO: Initial message of NPC to db
-
     const imageHash = await generatePlayerImage(npc.visualSummary)
 
     res.send({
@@ -262,8 +258,6 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 
 app.post('/api/v1/generate-player', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerProps = req.body
-
-  const imageHashes: string[] = []
 
   try {
 
@@ -289,18 +283,41 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
       description: player.description,
     })
 
-    for (let i = 1; i <= PLAYER_IMAGE_CHOICES; i++) {
-      const image = await generatePlayerImage(player.visualSummary)
-      imageHashes.push(image)
-    }
-
     res.send({
       ipfsHash: playerIpfsHash,
-      imgHashes: imageHashes,
+      visualSummary: player.visualSummary,
       locationId: startingLocation.id,
     } as GeneratePlayerResponse)
 
   } catch (e) {
+    next(e)
+  }
+})
+
+app.post('/api/v1/generate-player-image', async (req: Request, res: Response, next) => {
+  const props: GeneratePlayerImageProps = req.body
+  try {
+    const imageHash = await generatePlayerImage(props.visualSummary)
+    res.send({imageIpfsHash: imageHash} as GeneratePlayerImageResponse)
+  }catch (e) {
+    next(e)
+  }
+})
+
+app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
+  const props: CreatePlayerProps = req.body
+
+  try {
+    try {
+      await (await worldContract.createPlayer(props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
+      res.send("Player Created!")
+    }catch (e) {
+      res.sendStatus(500).json({
+        message: `${e.error}`,
+        code: 500
+      })
+    }
+  }catch (e) {
     next(e)
   }
 })
@@ -563,11 +580,7 @@ app.post('/mock/api/v1/generate-location-interaction', async (req: Request, res:
 app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {
   res.send({
       ipfsHash: 'QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9',
-      imgHashes: [
-        'QmSSLuNfitVEDoda5x5DvzgydT6J8mwLjXMFrw5fq5rfJb',
-        'QmYseeJuSTUedYcsKdn4BPhqsUUebxB2V3DZGQttZ3rnm7',
-        'QmTjuQDVSPTyDrLC4Ri3pLvqn7HYibW6bA7WYoSKE73MAM',
-      ],
+      visualSummary: "Curious Elf, Feeble Strength, Clumsy Dexterity, Sturdy Constitution, Genius Intelligence, Average Charisma, Foolish Wisdom, Soft Pale Skin",
       locationId: '0x886b4be6a70e2eacc060d6e16947268361f95b575bec0e369c827351677ccde7',
     } as GeneratePlayerResponse,
   )
@@ -724,14 +737,6 @@ async function fetchHistoryLogs(entityId: string): Promise<Array<LogSqlResult> |
 }
 
 async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParams) {
-  /**
-   * log_id
-   * interactable_id
-   * players
-   * mode
-   * by
-   * player_log
-   * */
 
   const insertQuery = `
     INSERT INTO history_logs (
@@ -757,18 +762,4 @@ async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParam
     }
   })
 }
-
-async function insertLog(insertData: InsertLogProps) {
-  const insertQuery = `INSERT INTO location_history (interactable_id, players, mode, by, player_log)
-                       VALUES (?, ?, ?, ?, ?)`
-
-  database.run(insertQuery, [ insertData.interactable_id, insertData.players, insertData.mode, insertData.by, insertData.player_log ], function (err) {
-    if (err) {
-      console.error('Error inserting data:', err)
-    } else {
-      console.log('Data inserted successfully.')
-    }
-  })
-}
-
 
