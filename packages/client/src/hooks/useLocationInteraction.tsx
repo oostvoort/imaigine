@@ -7,6 +7,8 @@ import { useMUD } from '@/MUDContext'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { InteractLocationProps, InteractSingleDoneResponse } from '../../../types'
 import usePlayer from '@/hooks/usePlayer'
+import useLocation from '@/hooks/useLocation'
+import { BigNumber } from 'ethers'
 
 export default function useLocationInteraction() {
 
@@ -15,14 +17,24 @@ export default function useLocationInteraction() {
     network: {
       worldSend,
       txReduced$,
+      playerEntity,
     }
   } = useMUD()
 
   const { player } = usePlayer()
 
   const locationId = player.location?.value
+  const { location } = useLocation(player.location?.value ?? undefined)
 
-  const generateLocationInteraction = useMutation<Awaited<GenerateLocationInteractionResponse>, Error, InteractLocationProps>(async (data) => {
+  const data = {
+    playerEntityId: playerEntity,
+    locationEntityId: player.location?.value,
+    locationIpfsHash: location.config?.value,
+    playerIpfsHash: player.config?.value,
+    npcIpfsHash: ["QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj"],
+  }
+
+  const generateLocationInteraction = useMutation<Awaited<GenerateLocationInteractionResponse>, Error>(async () => {
     const response = await fetch(`${SERVER_API}/api/v1/interact-location`, {
       method: "POST",
       headers: {
@@ -40,7 +52,7 @@ export default function useLocationInteraction() {
   const createLocationInteraction = useMutation<number, Error, {choiceId: number}>(async (data) => {
     if (!locationId) throw new Error('NO LOCATION')
     const { choiceId } = data
-    const tx = await worldSend('interactSingle', [locationId, choiceId])
+    const tx = await worldSend('interactSingle', [locationId, BigNumber.from(choiceId)])
     await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
     return choiceId
   })
