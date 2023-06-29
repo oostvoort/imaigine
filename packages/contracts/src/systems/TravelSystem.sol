@@ -17,7 +17,7 @@ import { ArrayLib } from "../lib/ArrayLib.sol";
 contract TravelSystem is System {
 
   /// @dev called by the player to signal that the player would like to travel
-  /// @param locationId pertains to the cell number of the destination
+  /// @param cellNumber pertains to the cell number of the destination
   /// @return the locationId in bytes32 form
   function prepareTravel(uint256 cellNumber) public returns (bytes32) {
     bytes32 locationId = keccak256(abi.encodePacked(bytes16("LOCATION"), cellNumber));
@@ -32,7 +32,7 @@ contract TravelSystem is System {
   }
 
   /// @dev called by the player to update the player's current location
-  /// @returns the current cell number the player is on
+  /// @return the current cell number the player is on
   function travel() public returns (uint256) {
 
   }
