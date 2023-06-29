@@ -1,19 +1,19 @@
 import React from 'react'
 import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
-import { GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
 import { camelCaseToTitle } from '@/global/utils'
-import usePlayer from '@/hooks/usePlayer'
 import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import LoadingScreen from '@/components/shared/LoadingScreen'
 import LoadingStory from '@/components/shared/LoadingStory'
 import { useAtom } from 'jotai'
 import { activeScreen_atom, currentLoader_atom, SCREENS } from '@/states/global'
-import useLocation from '@/hooks/useLocation'
-import { useSetAtom } from 'jotai/index'
-import useLocationInteraction from '@/hooks/useLocationInteraction'
+import { useSetAtom } from 'jotai'
+import usePlayer from '@/hooks/v1/usePlayer'
+import { GeneratePlayerProps, GeneratePlayerResponse } from '../../../../types'
+import { IPFS_URL_PREFIX } from '@/global/constants'
+import { useMUD } from '@/MUDContext'
 
 type SetupOptionType = Array<{
   label: string,
@@ -77,9 +77,13 @@ const colorPalette = [
 ]
 
 export default function CreateAvatarScreen() {
-  const { generatePlayer, createPlayer, player } = usePlayer()
-  const { location } = useLocation(player.location?.value ?? undefined)
-  const { generateLocationInteraction, locationInteraction } = useLocationInteraction()
+  const {
+    network: {
+      playerEntity
+    },
+  } = useMUD()
+
+  const { generatePlayer, generatePlayerImage, createPlayer, player} = usePlayer()
 
   const [ step, setStep ] = React.useState(1)
   const [ userInputs, setUserInputs ] = React.useState<GeneratePlayerProps>({
@@ -93,8 +97,7 @@ export default function CreateAvatarScreen() {
   const [ selectedColor, setSelectedColor ] = React.useState(colorPalette[0].toString())
 
   const [ generatedPlayer, setGeneratedPlayer ] = React.useState<GeneratePlayerResponse | null>(null)
-  const [ selectedAvatar, setSelectedAvatar ] = React.useState<number | null>(null)
-  const [ avatarHash, setAvatarHash ] = React.useState<string>('')
+  const [ imageHashes, setImageHashes ] = React.useState<Array<string>>([])
 
   const [ isLoading, setIsLoading ] = React.useState<boolean>(false)
   const [ activeLoader, setActiveLoader ] = useAtom(currentLoader_atom)
@@ -122,60 +125,48 @@ export default function CreateAvatarScreen() {
     await handleGeneratePlayer()
   }
 
-  const handleSelectAvatar = (index: number) => {
-    if (!generatedPlayer) return
-    setSelectedAvatar(index)
-    setAvatarHash(generatedPlayer?.imgHashes[index])
-  }
-
   const handleGeneratePlayer = async () => {
     setActiveLoader('loadingAvatar')
     setIsLoading(true)
-    try {
-      const player = await generatePlayer.mutateAsync(userInputs)
+
+    const player = await generatePlayer.mutateAsync(userInputs)
+    if (player) {
       setGeneratedPlayer({
         ipfsHash: player.ipfsHash,
-        imgHashes: player.imgHashes,
+        visualSummary: player.visualSummary,
         locationId: player.locationId,
       })
-      setIsLoading(false)
-      setStep(3)
-    } catch (error) {
-      console.error('[generatePlayer]', error)
+
+      const imageHash = await generatePlayerImage.mutateAsync({ visualSummary: player.visualSummary })
+
+      if (imageHash !== undefined) {
+        setImageHashes(prevState => [...prevState, imageHash.imageIpfsHash])
+        setIsLoading(false)
+        setStep(3)
+      }
+    }
+  }
+
+  const handleGenerateImage = async (visualSummary: string) => {
+    if (player) {
+      const imageHash = await generatePlayerImage.mutateAsync({ visualSummary: visualSummary })
+      if (imageHash !== undefined) {
+        setImageHashes(prevState => [...prevState, imageHash.imageIpfsHash])
+      }
     }
   }
 
   const handleCreatePlayer = async () => {
-    try {
-      if (!generatedPlayer) return
-      await createPlayer.mutateAsync({
-        config: generatedPlayer.ipfsHash,
-        imgHash: avatarHash,
-        locationId: generatedPlayer.locationId,
-      })
-      // await handleCreateInteractions()
-      setActiveScreen('currentLocationScreen')
-    } catch (error) {
-      console.error()
-    }
+    if (!playerEntity) throw new Error('No player entity!')
+    if (!generatedPlayer) throw new Error('No generated player!')
+    if (imageHashes.length <= 0) throw new Error('No image hash!')
+    await createPlayer.mutateAsync({
+      playerId: playerEntity,
+      imageIpfsHash: imageHashes[imageHashes.length - 1],
+      locationId: generatedPlayer.locationId,
+      ipfsHash: generatedPlayer.ipfsHash
+    })
   }
-
-  // const handleCreateInteractions = async () => {
-  //   console.log('ENTER')
-  //   try {
-  //     await generateLocationInteraction.mutateAsync({
-  //       locationIpfsHash: "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
-  //       npcIpfsHashes: [ "QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj" ],
-  //       playerIpfsHash: "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
-  //       locationId: "0x0000000000000000000000000000000000000000000000000000000000000021",
-  //       options: {}
-  //     })
-  //   } catch (error) {
-  //     console.error('[generateLocationInteraction]', error)
-  //   }
-  //   console.log('END CATCH')
-  // }
-
 
   React.useEffect(() => {
     setUserInputs((prev: GeneratePlayerProps) => {
@@ -187,16 +178,10 @@ export default function CreateAvatarScreen() {
   }, [ selectedColor ])
 
   React.useEffect(() => {
-    console.log({player})
-  }, [player])
-
-  React.useEffect(() => {
-    console.log(location)
-  }, [location])
-
-  React.useEffect(() => {
-    console.log(locationInteraction)
-  }, [locationInteraction])
+    if (createPlayer.isSuccess) {
+      setActiveScreen(SCREENS.CURRENT_LOCATION)
+    }
+  }, [ createPlayer.isSuccess ])
 
   return (
     <React.Fragment>
@@ -338,7 +323,7 @@ export default function CreateAvatarScreen() {
                   <Card className={clsx('min-w-[400px] shadow-2xl')}>
                     <CardContent className={clsx('flex w-full')}>
                       <img
-                        src={`/src/assets/avatar/avatar1.jpg`}
+                        src={`${IPFS_URL_PREFIX}/${imageHashes[imageHashes.length - 1]}`}
                         alt={'Avatar Img'}
                         className={clsx([
                           'object-cover w-[22em] h-[26em] rounded-lg',
@@ -350,7 +335,9 @@ export default function CreateAvatarScreen() {
                   </Card>
 
                   <div className={'w-full flex justify-center mt-md'}>
-                    <Button variant={'refresh'}>
+                    <Button variant={'refresh'} onClick={() => {
+                      generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary)
+                    }}>
                       <img
                         src={`/src/assets/svg/refresh.svg`}
                         alt={'Avatar Img'}

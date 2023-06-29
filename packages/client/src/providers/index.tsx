@@ -1,7 +1,6 @@
 import React from 'react'
 import { MUDProvider } from '@/MUDContext'
-import { QueryClientProvider } from 'react-query'
-import { QueryClient } from 'react-query'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { Provider as JotaiProvider } from 'jotai/index'
 
 type ProviderProps = {
