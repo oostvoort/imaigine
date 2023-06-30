@@ -785,7 +785,10 @@ function fog(id, path) {
       .attr("opacity", 0)
       .attr("opacity", 1);
   } else {
-    defs.select("#fog").append("path").attr("d", path).attr("id", id).attr("opacity", 1);
+    const visibleOpacity = 1
+
+
+    defs.select("#fog").append("path").attr("d", path).attr("id", id).attr("opacity", visibleOpacity);
     const opacity = fogging.attr("opacity");
     fogging.style("display", "block").attr("opacity", 0).attr("opacity", opacity);
   }

@@ -5,7 +5,7 @@ function hook_onMapLoaded() {
   console.log('Imaigine: hook_onMapLoaded')
   window.parent.postMessage('FinishedLoadingMap')
 
-  // fogCells([ 558, 559, 560 ])
+  // revealCells([ 558, 559, 560, 481,477,476,480,561,638, 637 ])
 }
 
 /**
@@ -35,8 +35,8 @@ function hook_onMapClick(el, p) {
 
 
 
-function fogCells(cells) {
-  console.log('fogCells', cells)
+function revealCells(cells) {
+  console.log('revealCells', cells)
 
   const path =
       "M" +
@@ -48,16 +48,16 @@ function fogCells(cells) {
 
 }
 
-function unfogCells(id) {
+function hideCells(id) {
   unfog('myFogId')
 }
 
 
 // from iframe
 window.addEventListener('message', ({data}) => {
-  if(data.cmd === "fog"){
-    console.log("fog", data)
-    fogCells(data.params.cells)
+  if(data.cmd === "revealCells"){
+    console.log("revealCells", data)
+    revealCells(data.params.cells)
   }else{
     console.log("else", data)
 

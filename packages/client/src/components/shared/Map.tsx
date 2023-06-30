@@ -40,7 +40,7 @@ const Map: React.FC<PropType> = ({ className }) => {
     }
   }
 
-  const setFog = (cells: number[]) => {sendMessageToIframe({cmd: "fog", params: {cells: cells}})}
+  const setRevealedCells = (cells: number[]) => {sendMessageToIframe({cmd: "revealCells", params: {cells: cells}})}
 
   const reloadIframe = () => {
     if (iframeRef.current) {
@@ -50,7 +50,7 @@ const Map: React.FC<PropType> = ({ className }) => {
   return (
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
-      <button onClick={() => {setFog([ 558, 559, 560])}}>Fog</button>
+      <button onClick={() => {setRevealedCells([ 558, 559, 560, 481,477,476,480,561,638, 637])}}>revealCells</button>
       |
       <button onClick={reloadIframe}>Reload Iframe</button>
       <iframe
