@@ -1,63 +1,70 @@
 /**
  * Anything we want to run after the map was loaded.
  */
-function hook_onMapLoaded (){
-  console.log("Imaigine: hook_onMapLoaded")
-  window.parent.postMessage("FinishedLoadingMap")
+function hook_onMapLoaded() {
+  console.log('Imaigine: hook_onMapLoaded')
+  window.parent.postMessage('FinishedLoadingMap')
 
-  fogCells([558, 559, 560])
+  fogCells([ 558, 559, 560 ])
 }
 
 /**
  * Anything we want to run after the map was clicked.
  */
-function hook_onMapClick (el, p){
-  console.log("Imaigine: hook_onMapClick", el, p)
+function hook_onMapClick(el, p) {
+  console.log('Imaigine: hook_onMapClick', el, p)
 
-  const parent = el.parentElement;
-  const grand = parent.parentElement;
-  const great = grand.parentElement;
+  const parent = el.parentElement
+  const grand = parent.parentElement
+  const great = grand.parentElement
 
 
-  const i = findCell(p[0], p[1]);
+  const i = findCell(p[0], p[1])
 
-  if (grand.id === "burgIcons") {
+  if (grand.id === 'burgIcons') {
     console.log('editor', pack)
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
     window.parent.postMessage({
       locationId: i,
-      name: burgElement.textContent
+      name: burgElement.textContent,
     })
   }
 }
 
-function fogCells(cells){
-  console.log("fogCells", cells)
-  const getPathPoints = cells => cells.map(i => (Array.isArray(i) ? i : burg[i] ? getBurgCoords(burg[i]) : p[i]));
-  const getPath = segment => round(lineGen(getPathPoints(segment)), 1);
-  fog("myFogId", cells)
+
+
+function fogCells(cells) {
+  console.log('fogCells', cells)
+  // const getPathPoints = cells => cells.map(i => (Array.isArray(i) ? i : burg[i] ? getBurgCoords(burg[i]) : p[i]))
+  const path =
+      "M" +
+      cells
+        .map(c => getPackPolygon(+c))
+        .join("M") + "Z"
+  fog('myFogId', path)
 
 }
 
-function unfogCells(id){
-  unfog("myFogId")
+function unfogCells(id) {
+  unfog('myFogId')
 }
 
-function helloFromParent(){
-  console.log("HELLO!!")
-}
+
 // from iframe
-window.addEventListener('message', (event) => {
-  if (event.data === 'Hello from parent') {
-    // Handle the message from the parent window
-    console.log('Received message:', event.data);
+window.addEventListener('message', ({data}) => {
+  if(data.cmd === "fog"){
+    console.log("fog", data)
+    fogCells(data.params)
+  }else{
+    console.log("else", data)
 
-    document.getElementById("map").setAttribute('height', '100%');
   }
-});
 
-document.addEventListener('DOMContentLoaded',() => {
-  console.log("onloaded")
-  window.parent.postMessage("MapLoaded")} )
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('onloaded')
+  window.parent.postMessage('MapLoaded')
+})

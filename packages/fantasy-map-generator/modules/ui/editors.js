@@ -775,7 +775,6 @@ function changePickerSpace() {
 
 // add fogging
 function fog(id, path) {
-  console.log("OV FOG", id)
   if (defs.select("#fog #" + id).size()) return;
   if (defs.select("#fog path").size()) {
     defs
