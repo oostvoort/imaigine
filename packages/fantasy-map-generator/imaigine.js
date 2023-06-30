@@ -5,7 +5,7 @@ function hook_onMapLoaded() {
   console.log('Imaigine: hook_onMapLoaded')
   window.parent.postMessage('FinishedLoadingMap')
 
-  fogCells([ 558, 559, 560 ])
+  // fogCells([ 558, 559, 560 ])
 }
 
 /**
@@ -37,12 +37,13 @@ function hook_onMapClick(el, p) {
 
 function fogCells(cells) {
   console.log('fogCells', cells)
-  // const getPathPoints = cells => cells.map(i => (Array.isArray(i) ? i : burg[i] ? getBurgCoords(burg[i]) : p[i]))
+
   const path =
       "M" +
       cells
         .map(c => getPackPolygon(+c))
         .join("M") + "Z"
+
   fog('myFogId', path)
 
 }
@@ -56,15 +57,10 @@ function unfogCells(id) {
 window.addEventListener('message', ({data}) => {
   if(data.cmd === "fog"){
     console.log("fog", data)
-    fogCells(data.params)
+    fogCells(data.params.cells)
   }else{
     console.log("else", data)
 
   }
 
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('onloaded')
-  window.parent.postMessage('MapLoaded')
 })
