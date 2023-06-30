@@ -4,6 +4,40 @@ type PropType = {
   className?: string
 }
 
+
+
+const players = [
+  {
+    name: "Edward",
+    cell: 725,
+    x: 44,
+    y: 277,
+    legend: 'A brave and honorable knight known for his swordsmanship.'
+  },
+  {
+    name: "Arthur",
+    cell: 807,
+    x: 22,
+    y: 285,
+    legend: 'A skilled rogue and master of stealth and thievery.'
+  },
+  {
+    name: "Emily",
+    cell: 558,
+    x: 43,
+    y: 262,
+    legend: 'A talented wizard specializing in elemental magic.'
+  },
+  {
+    name: "Sophia",
+    cell: 519,
+    x: 254,
+    y: 249,
+    legend: 'A nimble archer with exceptional accuracy and keen eyesight.'
+  }
+]
+
+
 const Map: React.FC<PropType> = ({ className }) => {
   const mapSeed = 123
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -11,14 +45,21 @@ const Map: React.FC<PropType> = ({ className }) => {
   useEffect(() => {
 
     const handleMessage = (event: any) => {
-      // Check the origin if necessary
-      if (event.origin !== document.baseURI) return
+
+      // ignore events that are not from the same baseUri
+      if (document.baseURI.indexOf(event.origin) < 0) return
 
       // Access the message data
-      const message = event.data
+      const {cmd, params} = event.data
 
-      // Handle the message received from the iframe
-      console.log('Message received from iframe:', message)
+      if(cmd === "FinishedLoadingMap"){
+        showPlayers()
+      }else if(cmd === "MapClicked"){
+        console.log("Mapclicked", params)
+      }else{
+        console.log('Other message received from iframe:', event.data)
+
+      }
     }
 
     // Add event listener for the 'message' event
@@ -41,6 +82,7 @@ const Map: React.FC<PropType> = ({ className }) => {
   }
 
   const setRevealedCells = (cells: number[]) => {sendMessageToIframe({cmd: "revealCells", params: {cells: cells}})}
+  const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
 
   const reloadIframe = () => {
     if (iframeRef.current) {
@@ -51,8 +93,8 @@ const Map: React.FC<PropType> = ({ className }) => {
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
       <button onClick={() => {setRevealedCells([ 558, 559, 560, 481,477,476,480,561,638, 637])}}>revealCells</button>
-      |
-      <button onClick={reloadIframe}>Reload Iframe</button>
+      | <button onClick={() => {showPlayers()}}>showPlayers</button>
+      | <button onClick={reloadIframe}>Reload Iframe</button>
       <iframe
         ref={iframeRef}
         width={'w-[inherit]'}

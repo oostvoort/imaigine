@@ -3,7 +3,7 @@
  */
 function hook_onMapLoaded() {
   console.log('Imaigine: hook_onMapLoaded')
-  window.parent.postMessage('FinishedLoadingMap')
+  window.parent.postMessage({ cmd: 'FinishedLoadingMap', params: {} })
 
   // revealCells([ 558, 559, 560, 481,477,476,480,561,638, 637 ])
 }
@@ -27,22 +27,23 @@ function hook_onMapClick(el, p) {
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
     window.parent.postMessage({
-      locationId: i,
-      name: burgElement.textContent,
+      cmd: 'MapClicked', params: {
+        locationId: i,
+        name: burgElement.textContent,
+      },
     })
   }
 }
-
 
 
 function revealCells(cells) {
   console.log('revealCells', cells)
 
   const path =
-      "M" +
-      cells
-        .map(c => getPackPolygon(+c))
-        .join("M") + "Z"
+    'M' +
+    cells
+      .map(c => getPackPolygon(+c))
+      .join('M') + 'Z'
 
   fog('myFogId', path)
 
@@ -54,12 +55,15 @@ function hideCells(id) {
 
 
 // from iframe
-window.addEventListener('message', ({data}) => {
-  if(data.cmd === "revealCells"){
-    console.log("revealCells", data)
+window.addEventListener('message', ({ data }) => {
+  if (data.cmd === 'revealCells') {
+    console.log('revealCells', data)
     revealCells(data.params.cells)
-  }else{
-    console.log("else", data)
+  } else if (data.cmd === 'showPlayers') {
+    console.log('showPlayers', data)
+    addPlayerMarker(data.params.players)
+  } else {
+    console.log('else', data)
 
   }
 
@@ -75,19 +79,19 @@ function addPlayerMarker(players) {
     const x = player.x
     const y = player.y
     const cell = player.cell
-    const baseMarker = {type: "player",icon: icon};
-    const marker = Markers.add({...baseMarker, x, y, cell});
+    const baseMarker = { type: 'player', icon: icon }
+    const marker = Markers.add({ ...baseMarker, x, y, cell })
 
     // adding player's notes
-    const notesSelect = document.getElementById("notesSelect");
+    const notesSelect = document.getElementById('notesSelect')
     const id = `marker${marker.i}`
     const legend = player.legend
-    const note = {id, name, legend};
-    notes.push(note);
-    notesSelect.options.add(new Option(id, id));
+    const note = { id, name, legend }
+    notes.push(note)
+    notesSelect.options.add(new Option(id, id))
 
-    const markersElement = document.getElementById("markers");
-    const rescale = +markersElement.getAttribute("rescale");
-    markersElement.insertAdjacentHTML("beforeend", drawMarker(marker, rescale));
+    const markersElement = document.getElementById('markers')
+    const rescale = +markersElement.getAttribute('rescale')
+    markersElement.insertAdjacentHTML('beforeend', drawMarker(marker, rescale))
   }
 }
