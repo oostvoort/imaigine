@@ -784,7 +784,6 @@ function fog(id, path) {
       .attr("d", path)
       .attr("id", id)
       .attr("opacity", 0)
-      .transition(fadeIn)
       .attr("opacity", 1);
   } else {
     defs.select("#fog").append("path").attr("d", path).attr("id", id).attr("opacity", 1);
