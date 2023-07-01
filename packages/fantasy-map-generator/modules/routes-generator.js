@@ -22,6 +22,7 @@ window.Routes = (function () {
 
         // Generate the road segments needed, and use existing roads if possible.
         // restorePath writes to the cells.roads, so it "remembers"
+        // TODO: Check if the segments are only NEW (not generated for other routes)
         const segments = restorePath(b.cell, exit, "main", from);
 
         // Push the generated segments onto the paths, so they can be drawn later.
@@ -29,7 +30,10 @@ window.Routes = (function () {
       }
     }
 
-    cells.i.forEach(i => (cells.s[i] += cells.road[i] / 2)); // add roads to suitability score
+    // add roads to suitability score
+    // https://github.com/Azgaar/Fantasy-Map-Generator/wiki/Data-model#pack-object-2
+    cells.i.forEach(i => (cells.s[i] += cells.road[i] / 2));
+
     TIME && console.timeEnd("generateMainRoads");
     return paths;
   };
@@ -155,8 +159,8 @@ window.Routes = (function () {
     TIME && console.timeEnd("drawRoutes");
   };
 
-  const findNearestBurgs(cellId){
-
+  const findNearestBurgs = function (cellId){
+    console.log("findNearestBurgs")
   }
 
   const regenerate = function () {
@@ -173,19 +177,37 @@ window.Routes = (function () {
 
   // Find a land path to a specific cell (exit), to a closest road (toRoad), or to all reachable cells (null, null)
   function findLandPath(start, exit = null, toRoad = null) {
+    // Get variable for cells
     const cells = pack.cells;
+
+    // Instantiate a queue that compares on the .p object property
     const queue = new PriorityQueue({comparator: (a, b) => a.p - b.p});
+
+    // initialize cost and from
     const cost = [],
       from = [];
+
+    // start the queue with the start cell
     queue.queue({e: start, p: 0});
 
+    // Process the queue until it's empty
     while (queue.length) {
+
+      // Get the highest priority item from the queue
       const next = queue.dequeue(),
         n = next.e,
         p = next.p;
+
+      // If its allowed to stop at an existing road instead of destination
+      // and the current cell is a road, we're done and can return
       if (toRoad && cells.road[n]) return [from, n];
 
+      // Loop the neighbouring cells of the current
+      // https://github.com/Azgaar/Fantasy-Map-Generator/wiki/Data-model#grid-object
       for (const c of cells.c[n]) {
+
+        // The code below evaluates which of the neighbouring cells is the most suitable for a road
+
         if (cells.h[c] < 20) continue; // ignore water cells
         const stateChangeCost = cells.state && cells.state[c] !== cells.state[n] ? 400 : 0; // trails tend to lay within the same state
         const habitability = biomesData.habitability[cells.biome[c]];
@@ -196,12 +218,21 @@ window.Routes = (function () {
         const cellCoast = 10 + stateChangeCost + habitedCost + heightChangeCost + heightCost;
         const totalCost = p + (cells.road[c] || cells.burg[c] ? cellCoast / 3 : cellCoast);
 
+        // If the from[c] was already set (we evaluated already) or the cost is higher, continue
         if (from[c] || totalCost >= cost[c]) continue;
+
+        // Record this neighbour as a candidate
         from[c] = n;
+
+        // If c is the exit cell, we're done
         if (c === exit) return [from, exit];
+
+        // Record the current cost so we can compare later
         cost[c] = totalCost;
+
+        // Queue this neighbour cell with cost as priority for processing next
         queue.queue({e: c, p: totalCost});
-      }
+      } // for neighbouring cells
     }
     return [from, exit];
   }
