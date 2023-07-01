@@ -2,11 +2,14 @@
  * Anything we want to run after the map was loaded.
  */
 function hook_onMapLoaded() {
+  // Needed for route finding
+  window.Routes.regenerate()
+
   console.log('Imaigine: hook_onMapLoaded')
   window.parent.postMessage({ cmd: 'FinishedLoadingMap', params: {} })
-  console.log(window)
+
   // revealCells([ 558, 559, 560, 481,477,476,480,561,638, 637 ])
-  getNextTowns(558)
+  console.log('nextTowns', getNextTowns(558))
 }
 
 /**
@@ -22,8 +25,10 @@ function hook_onMapClick(el, p) {
 
   const i = findCell(p[0], p[1])
 
+  console.log("Clicked cell: ", i)
+
   if (grand.id === 'burgIcons') {
-    console.log('editor', pack)
+
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
@@ -33,6 +38,8 @@ function hook_onMapClick(el, p) {
         name: burgElement.textContent,
       },
     })
+
+    console.log(getNextTowns(i))
   }
 }
 
@@ -55,10 +62,9 @@ function hideCells(id) {
 }
 
 
+function getNextTowns(cellId) {
 
-function getNextTowns(cellId){
-    window.Routes.regenerate()
-  console.log("jaja", window.Routes.findNearestBurgs(558))
+  return window.Routes.findNearestBurgs(cellId)
 }
 
 function showPlayers(players) {
