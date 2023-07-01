@@ -8,11 +8,23 @@ window.Routes = (function () {
     if (capitals.length < 2) return []; // not enough capitals to build main roads
     const paths = []; // array to store path segments
 
+    // Outer loop of the capitals
     for (const b of capitals) {
+
+      // Retrieve potential other capitals to connect to. Feature is the landmass.
       const connect = capitals.filter(c => c.feature === b.feature && c !== b);
+
+      // Inner loop of capitals to connect with
       for (const t of connect) {
+
+        // Find the path to the other capital
         const [from, exit] = findLandPath(b.cell, t.cell, true);
+
+        // Generate the road segments needed, and use existing roads if possible.
+        // restorePath writes to the cells.roads, so it "remembers"
         const segments = restorePath(b.cell, exit, "main", from);
+
+        // Push the generated segments onto the paths, so they can be drawn later.
         segments.forEach(s => paths.push(s));
       }
     }
@@ -142,6 +154,10 @@ window.Routes = (function () {
 
     TIME && console.timeEnd("drawRoutes");
   };
+
+  const findNearestBurgs(cellId){
+
+  }
 
   const regenerate = function () {
     routes.selectAll("path").remove();
