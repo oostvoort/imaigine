@@ -4,8 +4,9 @@
 function hook_onMapLoaded() {
   console.log('Imaigine: hook_onMapLoaded')
   window.parent.postMessage({ cmd: 'FinishedLoadingMap', params: {} })
-
+  console.log(window)
   // revealCells([ 558, 559, 560, 481,477,476,480,561,638, 637 ])
+  getNextTowns(558)
 }
 
 /**
@@ -54,23 +55,14 @@ function hideCells(id) {
 }
 
 
-// from iframe
-window.addEventListener('message', ({ data }) => {
-  if (data.cmd === 'revealCells') {
-    console.log('revealCells', data)
-    revealCells(data.params.cells)
-  } else if (data.cmd === 'showPlayers') {
-    console.log('showPlayers', data)
-    addPlayerMarker(data.params.players)
-  } else {
-    console.log('else', data)
 
-  }
+function getNextTowns(cellId){
+    window.Routes.regenerate()
+  console.log("jaja", window.Routes.findNearestBurgs(558))
+}
 
-})
-
-
-function addPlayerMarker(players) {
+function showPlayers(players) {
+  console.log('showPlayers', players)
   for (const player of players) {
 
     // adding player's marker
@@ -95,3 +87,24 @@ function addPlayerMarker(players) {
     markersElement.insertAdjacentHTML('beforeend', drawMarker(marker, rescale))
   }
 }
+
+
+// from iframe
+window.addEventListener('message', ({ data }) => {
+  if (data.cmd === 'revealCells') {
+
+    revealCells(data.params.cells)
+
+  } else if (data.cmd === 'showPlayers') {
+
+    showPlayers(data.params.players)
+
+  } else if (data.cmd === 'getNextTowns') {
+
+    getNextTowns(data.params.cellId)
+
+  } else {
+    console.log('else', data)
+  }
+
+})

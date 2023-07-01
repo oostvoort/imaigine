@@ -161,21 +161,29 @@ window.Routes = (function () {
 
   const findNearestBurgs = function (cellId){
     console.log("findNearestBurgs")
+    console.log(window.Routes.main)
   }
 
   const regenerate = function () {
     routes.selectAll("path").remove();
     pack.cells.road = new Uint16Array(pack.cells.i.length);
     pack.cells.crossroad = new Uint16Array(pack.cells.i.length);
-    const main = getRoads();
-    const small = getTrails();
-    const water = getSearoutes();
-    draw(main, small, water);
+    window.Routes.main = getRoads();
+    window.Routes.small = getTrails();
+    window.Routes.water = getSearoutes();
+    draw(window.Routes.main, window.Routes.small, window.Routes.water);
   };
 
-  return {getRoads, getTrails, getSearoutes, draw, regenerate};
+  return {getRoads, getTrails, getSearoutes, draw, regenerate, findNearestBurgs};
 
-  // Find a land path to a specific cell (exit), to a closest road (toRoad), or to all reachable cells (null, null)
+
+  /**
+   * Find a land path to a specific cell (exit), to a closest road (toRoad), or to all reachable cells (null, null)
+   * @param start
+   * @param exit
+   * @param toRoad
+   * @returns {*[][]|(*[]|*)[]}
+   */
   function findLandPath(start, exit = null, toRoad = null) {
     // Get variable for cells
     const cells = pack.cells;
@@ -234,15 +242,32 @@ window.Routes = (function () {
         queue.queue({e: c, p: totalCost});
       } // for neighbouring cells
     }
+
+    // Done, return the intermediate froms and end cell
     return [from, exit];
   }
 
+
+  /**
+   * Generate the road segments needed, and use existing roads if possible.
+   * @param start starting cell
+   * @param end ending cell
+   * @param type type of cell ("main", "ocean", "trail"??)
+   * @param from array of cells with intermediate starting points (???)
+   * @returns {*[]}
+   */
   function restorePath(start, end, type, from) {
+    // Get variable for cells
     const cells = pack.cells;
-    const path = []; // to store all segments;
+
+    // initialize variable to store all segments;
+    const path = [];
+
+    // Initialize variables to hold segment and cells being processed
     let segment = [],
       current = end,
       prev = end;
+
     const score = type === "main" ? 5 : 1; // to increase road score at cell
 
     if (type === "ocean" || !cells.road[prev]) segment.push(end);

@@ -4,7 +4,7 @@
 "use strict";
 // set debug options
 const PRODUCTION = location.hostname && location.hostname !== "localhost" && location.hostname !== "127.0.0.1";
-const DEBUG = localStorage.getItem("debug");
+const DEBUG = true //localStorage.getItem("debug");
 const INFO = DEBUG || !PRODUCTION;
 const TIME = DEBUG || !PRODUCTION;
 const WARN = true;
