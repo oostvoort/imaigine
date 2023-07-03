@@ -2,7 +2,7 @@ import React from 'react'
 import { useMUD } from '@/MUDContext'
 import { useComponentValue } from "@latticexyz/react"
 import { Entity } from "@latticexyz/recs"
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { SERVER_API } from '@/global/constants'
 import {
   GeneratedLocation,

@@ -23,3 +23,4 @@ import { InteractableComponent, InteractableComponentTableId } from "./tables/In
 import { InteractionTypeComponent, InteractionTypeComponentTableId } from "./tables/InteractionTypeComponent.sol";
 import { SingleInteractionComponent, SingleInteractionComponentData, SingleInteractionComponentTableId } from "./tables/SingleInteractionComponent.sol";
 import { MultiInteractionComponent, MultiInteractionComponentData, MultiInteractionComponentTableId } from "./tables/MultiInteractionComponent.sol";
+import { TravelComponent, TravelComponentData, TravelComponentTableId } from "./tables/TravelComponent.sol";

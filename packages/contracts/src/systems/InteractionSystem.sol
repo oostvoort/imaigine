@@ -36,9 +36,6 @@ contract InteractionSystem is System {
   /// @dev returned in multiInteract when a winningChoice is not yet available
   uint256 private constant NOT_YET_AVAILABLE = 4;
 
-  /// @dev need to make this into a constant
-  int8[] private KARMA_EFFECTS = [int8(0), -5, 0, 5];
-
   /// @notice interact with an interactable that handles single interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
   /// @param choiceId is the id of the choice; 0 - will enter into the interaction, 1-3 - actual choices
@@ -290,8 +287,9 @@ contract InteractionSystem is System {
   {
     require(choiceId > 0 && choiceId < 4, "unknown choice");
     int8 karmaPoints = KarmaPointsComponent.get(playerId);
+    int8 karmaEffect = choiceId == 1 ? int8(-5) : choiceId == 3 ? int8(5) : int8(0);
 
-    KarmaPointsComponent.set(playerId, karmaPoints + KARMA_EFFECTS[choiceId]);
+    KarmaPointsComponent.set(playerId, karmaPoints + karmaEffect);
 
   }
 

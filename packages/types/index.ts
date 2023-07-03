@@ -57,7 +57,15 @@ export interface GeneratePlayerProps {
 }
 export interface GeneratePlayerResponse {
   ipfsHash: string
-  imgHashes: string[],
+  visualSummary: string,
+  locationId: string
+}
+export interface GeneratePlayerImageProps { visualSummary: string}
+export interface GeneratePlayerImageResponse { imageIpfsHash: string}
+export interface CreatePlayerProps {
+  playerId: string,
+  ipfsHash: string,
+  imageIpfsHash: string,
   locationId: string
 }
 export interface StoreToIPFS {
@@ -83,17 +91,6 @@ export interface BaseConfig {
   storyConfig: string,
   startingLocations: Array<StartingLocation>
 }
-
-export type LogMode = { mode: "action" } | {mode : "dialog"}
-export type LogBy = {by: "player"} | {by: "interactable"}
-export interface InsertLogProps {
-  interactable_id: string,
-  players: string,
-  mode: LogMode,
-  by: LogBy,
-  player_log: string
-}
-
 export interface InteractSQLResult {
   log_id: number,
   interactable_id: string,

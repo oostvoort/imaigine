@@ -4,8 +4,8 @@ export default mudConfig({
     systems: {
     },
     enums: {
-      VotingStatusType: ["NOT_ACCEPTING_VOTES", "OPEN", "CLOSED"],
-      InteractionType: ["NOT_INTERACTABLE", "SINGLE", "MULTIPLE"]
+      InteractionType: ["NOT_INTERACTABLE", "SINGLE", "MULTIPLE"],
+      TravelStatus: ["NOT_TRAVELLING", "PREPARING", "READY_TO_TRAVEL", "TRAVELLING"]
     },
     tables: {
         StoryComponent: "bool",
@@ -47,6 +47,13 @@ export default mudConfig({
             timeouts: "bytes" // abi encoded uint256 of when players will timeout
           }
         },
+        TravelComponent: {
+          schema: {
+            status: "TravelStatus",
+            destination: "uint256",
+            path: "bytes" // array of uint256 of locationIds
+          }
+        }
 
     },
     modules: [

@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { SERVER_API } from '@/global/constants'
 import { GeneratedNpc, GenerateNpc, GenerateNpcProps, GenerateNpcResponse } from '@/global/types'
 import { getFromIPFS } from '@/global/utils'

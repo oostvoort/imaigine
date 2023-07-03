@@ -1,6 +1,6 @@
 import {useMUD} from '@/MUDContext';
 import {useComponentValue} from "@latticexyz/react"
-import {useMutation} from "react-query";
+import {useMutation} from '@tanstack/react-query'
 import { SERVER_API } from '@/global/constants'
 import {awaitStreamValue} from "@latticexyz/utils";
 import { GeneratedPlayer, GeneratePlayer, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
@@ -59,7 +59,7 @@ export default function usePlayer () {
 
     const createPlayer = useMutation<typeof player, Error, GeneratePlayer>(async (data) => {
         const { config, imgHash, locationId } = data;
-        const tx = await worldSend("createPlayer", [config, imgHash, locationId])
+        const tx = await worldSend("createPlayer", [playerEntity ?? '', config, imgHash, locationId])
         await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
         return player
     }, {

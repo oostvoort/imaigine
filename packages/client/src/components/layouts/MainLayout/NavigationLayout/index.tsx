@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <div
-      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'opacity-80' ])}>
+      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-50' ])}>
       <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between', 'px-md' ])}>
         {/*Menu Wrapper*/}
         <div className={clsx([ 'flex items-center space-x-md' ])}>
@@ -28,13 +28,13 @@ export default function Header() {
             title: 'Profile',
             imgSrc: '',
             imgAlt: 'Avatar',
-          }} isAvatar={true}>
+          }} isAvatar={true} avatar={player.image && player.image.value}>
             <Profile />
           </DialogWidget>
 
           <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
             <img
-              src="/src/assets/svg/icon_map.png"
+              src={'/src/assets/svg/icon_map.png'}
               alt="Map/Story"
               className={'h-[67px] w-[68px]'}
               draggable={false}

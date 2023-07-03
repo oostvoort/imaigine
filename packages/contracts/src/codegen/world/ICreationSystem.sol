@@ -6,7 +6,12 @@ pragma solidity >=0.8.0;
 interface ICreationSystem {
   function createStory(string memory config) external returns (bytes32);
 
-  function createPlayer(string memory config, string memory imgHash, bytes32 locationID) external returns (bytes32);
+  function createPlayer(
+    bytes32 playerID,
+    string memory config,
+    string memory imgHash,
+    bytes32 locationID
+  ) external returns (bytes32);
 
   function createCharacter(string memory config, string memory imgHash, bytes32 locationID) external returns (bytes32);
 

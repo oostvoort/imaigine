@@ -16,7 +16,7 @@ export type ButtonPropType = {
   className?: string
   variant: ButtonProps['variant']
   size?: ButtonProps['size']
-  title: string
+  title?: string
   imgSrc?: string
   imgAlt?: string
   imgClassName?: string
@@ -24,6 +24,7 @@ export type ButtonPropType = {
 }
 
 export default function DialogWidget({ children, button, isAvatar, avatar }: PropType) {
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -32,18 +33,24 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
             <div className={clsx('relative flex items-center', 'h-full w-[142px]')}>
               {/* Inner Frame */}
               <div
-                className={clsx([ 'absolute -bottom-16 w-36 h-36', 'bg-avatar-inner-frame bg-cover bg-no-repeat', 'cursor-pointer' ])}>
+                className={clsx([ 'absolute -bottom-16 w-36 h-36', 'bg-avatar-inner-frame opacity-100 bg-cover bg-no-repeat', 'cursor-pointer' ])}>
                 {/* Outer Frame */}
-                <div className={clsx([ 'absolute z-50 w-36 h-36', 'bg-avatar-outer-frame bg-cover bg-no-repeat' ])}>
+                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-outer-frame bg-cover bg-no-repeat' ])}>
                   {/* Avatar */}
-                  <img src={`${avatar ? `${IPFS_URL_PREFIX}/${avatar}` : 'src/assets/avatar/avatar1.jpg'}`}
-                       alt="Profile"
-                       className={clsx([ 'absolute w-24 h-24 object-cover', 'z-50 inset-6 rounded-full'])}
-                       draggable={false}
-                  />
+                  {
+                    avatar === undefined ? <div className={'absolute bg-[#485476] inset-6 w-24 h-24 rounded-full'} />
+                      :
+                      <img src={avatar && `${IPFS_URL_PREFIX}/${avatar}`}
+                           alt="Profile"
+                           className={clsx([ 'absolute w-24 h-24 object-cover object-center', 'z-50 inset-6 rounded-full'])}
+                           draggable={false}
+                      />
+                  }
+
+
                 </div>
                 {/* Karma Gauge */}
-                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-karma-gauge bg-cover bg-no-repeat' , {'hidden': !avatar}])} />
+                <div className={clsx([ 'absolute w-36 h-36', 'bg-cover bg-no-repeat' , {'hidden': !avatar}])} />
               </div>
               {/* End ofInner Frame */}
             </div>
