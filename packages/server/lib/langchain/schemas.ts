@@ -30,3 +30,13 @@ export const locationInteractionSchema = {
   evilEffect: "new scenario if the player choose the evil choice, in 5 sentences",
   neutralEffect: "new scenario if the player choose the neutral choice, in 5 sentences",
 }
+
+export const npcInteractionSchema = {
+  response: "NPC's new response make it look like the NPC is talking",
+  goodChoice: "The player makes a positive and beneficial action based on the npc response. Provide a short response for this choice in 3 to 5 words.",
+  evilChoice: "The player makes a negative and harmful action based on the npc response. Provide a short response for this choice in 3 to 5 words.",
+  neutralChoice: "The player makes a neutral and balanced action based on the npc response. Provide a short response for this choice in 3 to 5 words.",
+  goodResponse: "The player makes a positive and beneficial response based on the npc response",
+  evilResponse: "The player makes a negative and harmful response based on the npc response",
+  neutralResponse: "The player makes a neutral and balanced response based on the npc response",
+}

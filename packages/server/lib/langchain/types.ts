@@ -41,3 +41,11 @@ export interface LocationInteractionProps {
   playerSummary: string,
   locationHistory: string
 }
+
+export interface NpcInteractionProps {
+  storyName: string,
+  storySummary: string,
+  npcName: string,
+  npcSummary: string,
+  conversationHistory: string
+}
