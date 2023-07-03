@@ -5,6 +5,7 @@ import { clsx } from 'clsx'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import { useMUD } from '@/MUDContext'
 import { GeneratePlayerResponse } from '../../../../types'
+import useNPCInteraction from '@/hooks/useNPCInteraction'
 
 export default function TestScreen() {
   const {
@@ -22,6 +23,8 @@ export default function TestScreen() {
     ipfsHash: '',
   } as GeneratePlayerResponse)
   const [ generatedImage, setGeneratedImage ] = React.useState<string>('')
+
+  const { interactNPC, createNPCInteraction } = useNPCInteraction()
 
   React.useEffect(() => {
     if (generatePlayer.isSuccess) {
@@ -46,6 +49,20 @@ export default function TestScreen() {
       console.log('createdPlayer', player)
     }
   }, [ createPlayer.isSuccess ])
+
+  React.useEffect(() => {
+    if (interactNPC.isSuccess) {
+      console.log('interactNPC', interactNPC)
+    }
+  }, [ interactNPC.isSuccess ])
+
+  React.useEffect(() => {
+    if (createNPCInteraction.isSuccess) {
+      console.log('createNPCInteraction', createNPCInteraction)
+    }
+  }, [ createNPCInteraction.isSuccess ])
+
+  console.log({player})
 
   return (
     <div className={clsx(['flex flex-col gap-8 pa-xl'])}>
@@ -79,6 +96,25 @@ export default function TestScreen() {
           })
         }}>
           Create Player
+        </Button>
+        <Button variant={'neutral'} size={'xl'} onClick={() => {
+          if (!player.config) throw new Error('No generated Player')
+          interactNPC.mutate({
+            playerIpfsHash: [`${player.config.value}`],
+            npcEntityId: '0x0000000000000000000000000000000000000000000000000000000000000002',
+            npcIpfsHash: 'QmcNgZR321oGu1QKijDpEbbad9tpxAHRJiqFL7AnvKvJrf',
+            playerEntityId: [`${playerEntity}`]
+          })
+        }}>
+          NPC Interaction
+        </Button>
+      </div>
+      <div className={'flex gap-x-3'}>
+        <Button variant={'neutral'} size={'xl'} onClick={() => createNPCInteraction.mutate({
+          choiceId: 1,
+          npcId: '0x0000000000000000000000000000000000000000000000000000000000000002',
+        })}>
+          Choice 1
         </Button>
       </div>
       <div className={'flex flex-col'}>
