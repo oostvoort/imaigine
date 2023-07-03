@@ -124,3 +124,12 @@ export const locationInteractionPropmt = `
   {locationHistory}
   Consider that the main character is {playerName} is in this location.\n
 `
+
+export const npcInteractionPrompt = `
+  Consider a world called "{storyName}". {storySummary}\n
+  Consider "{npcName}" an non player character with the following description: "{npcSummary}"\n
+  "{conversationHistory}"
+
+  Consider that the non player character (NPC) is having a conversation with the player.\n
+  Make the npc responses based on it's personality
+`

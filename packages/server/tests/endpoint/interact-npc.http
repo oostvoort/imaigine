@@ -1,0 +1,9 @@
+POST localhost:3000/api/v1/interact-npc
+Content-Type: application/json
+
+{
+  "npcIpfsHash": "QmcNgZR321oGu1QKijDpEbbad9tpxAHRJiqFL7AnvKvJrf",
+  "npcEntityId": "0x0000000000000000000000000000000000000000000000000000000000000321",
+  "playerIpfsHash": ["QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9"],
+  "playerEntityId": ["0x0000000000000000000000000000000000000000000000000000000000000021"]
+}

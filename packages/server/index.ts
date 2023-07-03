@@ -3,19 +3,22 @@ import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import {
   BaseConfig,
-  Based, CreatePlayerProps,
+  Based,
+  CreatePlayerProps,
   GenerateLocationProps,
   GenerateLocationResponse,
   GenerateNpcProps,
-  GenerateNpcResponse, GeneratePlayerImageProps, GeneratePlayerImageResponse,
+  GenerateNpcResponse,
+  GeneratePlayerImageProps,
+  GeneratePlayerImageResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
   GenerateStoryProps,
   InsertHistoryLogsParams,
   InsertInteractionParams,
   InteractLocationProps,
-  InteractSingleDoneProps,
-  InteractSingleDoneResponse,
+  InteractNpcProps,
+  InteractNpcResponse,
   InteractSQLResult,
   LogSqlResult,
   StoreToIPFS,
@@ -25,6 +28,7 @@ import {
   generateLocation,
   generateLocationInteraction,
   generateNonPlayerCharacter,
+  generateNpcInteraction,
   generatePlayerCharacter,
   generateStory,
 } from './lib/langchain'
@@ -298,8 +302,8 @@ app.post('/api/v1/generate-player-image', async (req: Request, res: Response, ne
   const props: GeneratePlayerImageProps = req.body
   try {
     const imageHash = await generatePlayerImage(props.visualSummary)
-    res.send({imageIpfsHash: imageHash} as GeneratePlayerImageResponse)
-  }catch (e) {
+    res.send({ imageIpfsHash: imageHash } as GeneratePlayerImageResponse)
+  } catch (e) {
     next(e)
   }
 })
@@ -309,15 +313,15 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 
   try {
     try {
-      await (await worldContract.createPlayer(props.playerId,props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
-      res.send("Player Created!")
-    }catch (e) {
+      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
+      res.send('Player Created!')
+    } catch (e) {
       res.sendStatus(500).json({
         message: `${e.error}`,
-        code: 500
+        code: 500,
       })
     }
-  }catch (e) {
+  } catch (e) {
     next(e)
   }
 })
@@ -463,6 +467,189 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
   }
 })
 
+app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
+  const props: InteractNpcProps = req.body
+
+  const npc: Based = await getFromIpfs(props.npcIpfsHash)
+
+  const conversations = await fetchHistoryLogs(props.npcEntityId)
+
+  let history = ''
+
+  if (conversations.length <= 0) {
+    const npcInteraction = await generateNpcInteraction({
+      storyName: storyConfig.name,
+      storySummary: storyConfig.summary,
+      npcName: npc.name,
+      npcSummary: npc.summary,
+      conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
+    })
+
+    await insertInteraction({
+      interactable_id: props.npcEntityId,
+      scenario: npcInteraction.response,
+      good_choice: npcInteraction.goodChoice,
+      good_effect: npcInteraction.goodResponse,
+      evil_choice: npcInteraction.evilChoice,
+      evil_effect: npcInteraction.evilResponse,
+      neutral_choice: npcInteraction.neutralChoice,
+      neutral_effect: npcInteraction.neutralResponse,
+    })
+    console.info('- done inserting npc interaction')
+
+    await insertHistoryLogs({
+      interactable_id: props.npcEntityId,
+      by: 'interactable',
+      players: `NPC: ${npc.name}`,
+      mode: 'dialog',
+      player_log: `${npcInteraction.response}`,
+    })
+
+    console.info('- done inserting initial conversation history')
+
+    const historyLogs = await fetchHistoryLogs(props.npcEntityId)
+
+    res.send({
+      conversationHistory: historyLogs.map((convo: any) => {
+        return {
+          logId: convo.log_id,
+          by: convo.by,
+          text: convo.player_log,
+        }
+      }),
+      option: {
+        good: {
+          goodChoise: npcInteraction.goodChoice,
+          goodResponse: npcInteraction.goodResponse,
+        },
+        evil: {
+          evilChoise: npcInteraction.evilChoice,
+          evilResponse: npcInteraction.evilResponse,
+        },
+        neutral: {
+          neutralChoise: npcInteraction.neutralChoice,
+          neutralResponse: npcInteraction.neutralResponse,
+        },
+      },
+    } as InteractNpcResponse)
+  } else {
+    const choice = await worldContract.winningChoice(props.playerEntityId[0])
+    if (choice.toNumber() === 4) {
+
+      const currentHistory = await fetchHistoryLogs(props.npcEntityId)
+      const currentInteraction = await fetchInteraction(props.npcEntityId)
+
+      res.send({
+        conversationHistory: currentHistory.map((convo: any) => {
+          return {
+            logId: convo.log_id,
+            by: convo.by,
+            text: convo.player_log,
+          }
+        }),
+        option: {
+          good: {
+            goodChoise: currentInteraction[0].good_choice,
+            goodResponse: currentInteraction[0].good_effect,
+          },
+          evil: {
+            evilChoise: currentInteraction[0].evil_choice,
+            evilResponse: currentInteraction[0].evil_effect,
+          },
+          neutral: {
+            neutralChoise: currentInteraction[0].neutral_choice,
+            neutralResponse: currentInteraction[0].neutral_effect,
+          },
+        },
+      } as InteractNpcResponse)
+
+    } else {
+
+      const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
+
+      await insertHistoryLogs({
+        interactable_id: props.npcEntityId,
+        by: 'player',
+        players: `${props.playerIpfsHash}`,
+        mode: 'dialog',
+        player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+      })
+
+      console.info('- done inserting new history')
+
+      const conversations = await fetchHistoryLogs(props.npcEntityId)
+
+      console.info('- done getting history')
+
+      conversations.forEach((item) => {
+        history += `
+            ${item.by}: ${item.player_log},
+        `
+      })
+
+      const newNpcInteraction = await generateNpcInteraction({
+        storyName: storyConfig.name,
+        storySummary: storyConfig.summary,
+        npcName: npc.name,
+        npcSummary: npc.summary,
+        conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
+      })
+
+      await insertInteraction({
+        interactable_id: props.npcEntityId,
+        scenario: newNpcInteraction.response,
+        good_choice: newNpcInteraction.goodChoice,
+        good_effect: newNpcInteraction.goodResponse,
+        evil_choice: newNpcInteraction.evilChoice,
+        evil_effect: newNpcInteraction.evilResponse,
+        neutral_choice: newNpcInteraction.neutralChoice,
+        neutral_effect: newNpcInteraction.neutralResponse,
+      })
+      console.info('- done inserting new npc interaction')
+
+      await insertHistoryLogs({
+        interactable_id: props.npcEntityId,
+        by: 'interactable',
+        players: `NPC: ${npc.name}`,
+        mode: 'dialog',
+        player_log: `${newNpcInteraction.response}`,
+      })
+
+      console.info('- done inserting new conversation')
+
+      const newConversation = await fetchHistoryLogs(props.npcEntityId)
+      const latestInteraction = await fetchInteraction(props.npcEntityId)
+
+
+      await worldContract.openInteraction(props.playerEntityId[0])
+
+      res.send({
+        conversationHistory: newConversation.map((convo: any) => {
+          return {
+            logId: convo.log_id,
+            by: convo.by,
+            text: convo.player_log,
+          }
+        }),
+        option: {
+          good: {
+            goodChoise: latestInteraction[0].good_choice,
+            goodResponse: latestInteraction[0].good_effect,
+          },
+          evil: {
+            evilChoise: latestInteraction[0].evil_choice,
+            evilResponse: latestInteraction[0].evil_effect,
+          },
+          neutral: {
+            neutralChoise: latestInteraction[0].neutral_choice,
+            neutralResponse: latestInteraction[0].neutral_effect,
+          },
+        },
+      } as InteractNpcResponse)
+    }
+  }
+})
+
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
   const props: StoreToIPFS = req.body
 
@@ -508,7 +695,7 @@ app.post('/mock/api/v1/generate-location-interaction', async (req: Request, res:
 app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {
   res.send({
       ipfsHash: 'QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9',
-      visualSummary: "Curious Elf, Feeble Strength, Clumsy Dexterity, Sturdy Constitution, Genius Intelligence, Average Charisma, Foolish Wisdom, Soft Pale Skin",
+      visualSummary: 'Curious Elf, Feeble Strength, Clumsy Dexterity, Sturdy Constitution, Genius Intelligence, Average Charisma, Foolish Wisdom, Soft Pale Skin',
       locationId: '0x886b4be6a70e2eacc060d6e16947268361f95b575bec0e369c827351677ccde7',
     } as GeneratePlayerResponse,
   )
@@ -535,86 +722,86 @@ app.post('/mock/api/v1/interact-npc', async (req: Request, res: Response, next) 
     {
       logId: 1,
       by: 'interactable',
-      text: "Welcome, traveler! How can I assist you today?"
+      text: 'Welcome, traveler! How can I assist you today?',
     },
     {
       logId: 2,
       by: 'player',
-      text: "I'm looking for a rare artifact. Do you have any?"
+      text: 'I\'m looking for a rare artifact. Do you have any?',
     },
     {
       logId: 3,
       by: 'interactable',
-      text: "Ah, indeed! We recently acquired a mysterious artifact from the depths of the forest. Would you like to see it?"
+      text: 'Ah, indeed! We recently acquired a mysterious artifact from the depths of the forest. Would you like to see it?',
     },
     {
       logId: 4,
       by: 'player',
-      text: "Yes, I would love to see it!"
+      text: 'Yes, I would love to see it!',
     },
     {
       logId: 5,
       by: 'interactable',
-      text: "Very well, follow me to the back room. It's kept safely inside a glass case."
+      text: 'Very well, follow me to the back room. It\'s kept safely inside a glass case.',
     },
     {
       logId: 6,
       by: 'player',
-      text: "Wow, it's even more impressive than I imagined!"
+      text: 'Wow, it\'s even more impressive than I imagined!',
     },
     {
       logId: 7,
       by: 'interactable',
-      text: "Indeed, it's one of the most remarkable artifacts we've ever found. Its origin is still a mystery."
+      text: 'Indeed, it\'s one of the most remarkable artifacts we\'ve ever found. Its origin is still a mystery.',
     },
     {
       logId: 8,
       by: 'player',
-      text: "How much does it cost?"
+      text: 'How much does it cost?',
     },
     {
       logId: 9,
       by: 'interactable',
-      text: "For you, my friend, I can offer a special price of 500 gold coins."
+      text: 'For you, my friend, I can offer a special price of 500 gold coins.',
     },
     {
       logId: 10,
       by: 'player',
-      text: "That's quite expensive. Can you lower the price?"
+      text: 'That\'s quite expensive. Can you lower the price?',
     },
     {
       logId: 11,
       by: 'interactable',
-      text: "I'm sorry, but that's the best I can do. The artifact is truly valuable."
+      text: 'I\'m sorry, but that\'s the best I can do. The artifact is truly valuable.',
     },
     {
       logId: 12,
       by: 'player',
-      text: "Alright, I'll take it."
+      text: 'Alright, I\'ll take it.',
     },
     {
       logId: 13,
       by: 'interactable',
-      text: "Excellent! Here you go. May it bring you great fortune on your adventures."
-    }
-  ];
+      text: 'Excellent! Here you go. May it bring you great fortune on your adventures.',
+    },
+  ]
 
   res.send({
     conversations: conversations,
     options: {
       good: {
-        choice: "Good Choice",
-        effect: "Good Effect"
+        choice: 'Good Choice',
+        effect: 'Good Effect',
       },
       evil: {
-        choice: "Evil Choice",
-        effect: "Evil Effect"
+        choice: 'Evil Choice',
+        effect: 'Evil Effect',
       },
       neutral: {
-        choice: "Neutral Choice",
-        effect: "Neutral Effect"
-      }
-    }
+        choice: 'Neutral Choice',
+        effect: 'Neutral Effect',
+      },
+    },
   })
 })
 
@@ -651,22 +838,6 @@ app.get('/read-history', (req, res) => {
     }
   })
 })
-
-
-// TODO: location_history table to change table name
-async function fetchData(selectQuery: string) {
-  return new Promise((resolve, reject) => {
-    database.all(selectQuery, (err, rows) => {
-      if (err) {
-        console.error('Error reading data:', err)
-        reject(undefined) // Reject the promise with the error
-      } else {
-        console.log('Data retrieved successfully')
-        resolve(rows) // Resolve the promise with the retrieved rows
-      }
-    })
-  })
-}
 
 async function fetchInteraction(entityId: string): Promise<Array<InteractSQLResult> | undefined> {
   const sql = `SELECT * FROM interaction WHERE interactable_id = '${entityId}' ORDER BY log_id DESC`
@@ -728,7 +899,6 @@ async function insertInteraction(insertInteractionParams: InsertInteractionParam
     }
   })
 }
-
 
 async function fetchHistoryLogs(entityId: string): Promise<Array<LogSqlResult> | undefined> {
   const sql = `SELECT * FROM history_logs WHERE interactable_id = '${entityId}' ORDER BY log_id ASC`

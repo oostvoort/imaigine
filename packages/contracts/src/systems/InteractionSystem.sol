@@ -254,6 +254,8 @@ contract InteractionSystem is System {
   public
   view
   returns(uint256) {
+    bool available = MultiInteractionComponent.getAvailable(interactableId);
+    if (available) return 4;
     bytes memory choicesBytes = MultiInteractionComponent.getChoices(interactableId);
     uint256[] memory choices = choicesBytes.decodeUint256Array();
     uint256[] memory choiceCounts = new uint256[](4);
