@@ -51,7 +51,8 @@ export default mudConfig({
           schema: {
             status: "TravelStatus",
             destination: "uint256",
-            path: "bytes" // array of uint256 of locationIds
+            path: "bytes", // array of uint256 of locationIds
+            toRevealAtDestination: "bytes" // array of cells that will reveal itself once player is in the new location
           }
         }
 
