@@ -322,78 +322,6 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
   }
 })
 
-app.post('/api/v1/interact-single-done', async (req: Request, res: Response, next) => {
-  /**
-   * playerEntity Id
-   *
-   * generate 3 choices
-   *
-   * check if have choice
-   *
-   * openInteraction
-   *
-   *
-   * */
-
-
-  const props: InteractSingleDoneProps = req.body
-
-  const location: Based = await getFromIpfs(props.locationIpfsHash)
-  const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
-  const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
-
-  if (props.option) {
-    const insertData = {
-      interactable_id: props.locationId,
-      players: player.name,
-      mode: 'action',
-      by: player.name,
-      player_log: props.option.interaction.effect,
-    }
-
-    const insertQuery = `INSERT INTO location_history (interactable_id, players, mode, by, player_log)
-                       VALUES (?, ?, ?, ?, ?)`
-
-    database.run(insertQuery, [ insertData.interactable_id, insertData.players, insertData.mode, insertData.by, insertData.player_log ], function (err) {
-      if (err) {
-        console.error('Error inserting data:', err)
-      } else {
-        console.log('Data inserted successfully.')
-      }
-    })
-  }
-
-  let history = ``
-
-  const selectQuery = `SELECT * FROM location_history WHERE interactable_id = '${props.locationId}'`
-
-  const historySql = await fetchData(selectQuery)
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (historySql.length > 0) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    for (const historyRow of historySql) {
-      history += historyRow.player_log + '\n'
-    }
-  }
-
-  const locationInteraction = await generateLocationInteraction({
-    storyName: storyConfig.name,
-    storySummary: storyConfig.summary,
-    locationName: location.name,
-    locationSummary: location.summary,
-    npcName: npc.name,
-    npcSummary: npc.summary,
-    playerName: player.name,
-    playerSummary: player.description,
-    locationHistory: history ? `Location History: "${history}" \n` : '',
-  })
-
-  res.send(locationInteraction as InteractSingleDoneResponse)
-})
-
 app.post('/api/v1/interact-location', async (req: Request, res: Response, next: NextFunction) => {
   const props: InteractLocationProps = req.body
 
@@ -598,6 +526,95 @@ app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, nex
   res.send({
     situation: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias animi asperiores consequuntur corporis illo iusto nihil sunt vero? Corporis earum eligendi excepturi explicabo laboriosam minima nostrum optio quam recusandae sed. ',
     playerHistory: 'mno345',
+  })
+})
+
+app.post('/mock/api/v1/interact-npc', async (req: Request, res: Response, next) => {
+
+  const conversations = [
+    {
+      logId: 1,
+      by: 'interactable',
+      text: "Welcome, traveler! How can I assist you today?"
+    },
+    {
+      logId: 2,
+      by: 'player',
+      text: "I'm looking for a rare artifact. Do you have any?"
+    },
+    {
+      logId: 3,
+      by: 'interactable',
+      text: "Ah, indeed! We recently acquired a mysterious artifact from the depths of the forest. Would you like to see it?"
+    },
+    {
+      logId: 4,
+      by: 'player',
+      text: "Yes, I would love to see it!"
+    },
+    {
+      logId: 5,
+      by: 'interactable',
+      text: "Very well, follow me to the back room. It's kept safely inside a glass case."
+    },
+    {
+      logId: 6,
+      by: 'player',
+      text: "Wow, it's even more impressive than I imagined!"
+    },
+    {
+      logId: 7,
+      by: 'interactable',
+      text: "Indeed, it's one of the most remarkable artifacts we've ever found. Its origin is still a mystery."
+    },
+    {
+      logId: 8,
+      by: 'player',
+      text: "How much does it cost?"
+    },
+    {
+      logId: 9,
+      by: 'interactable',
+      text: "For you, my friend, I can offer a special price of 500 gold coins."
+    },
+    {
+      logId: 10,
+      by: 'player',
+      text: "That's quite expensive. Can you lower the price?"
+    },
+    {
+      logId: 11,
+      by: 'interactable',
+      text: "I'm sorry, but that's the best I can do. The artifact is truly valuable."
+    },
+    {
+      logId: 12,
+      by: 'player',
+      text: "Alright, I'll take it."
+    },
+    {
+      logId: 13,
+      by: 'interactable',
+      text: "Excellent! Here you go. May it bring you great fortune on your adventures."
+    }
+  ];
+
+  res.send({
+    conversations: conversations,
+    options: {
+      good: {
+        choice: "Good Choice",
+        effect: "Good Effect"
+      },
+      evil: {
+        choice: "Evil Choice",
+        effect: "Evil Effect"
+      },
+      neutral: {
+        choice: "Neutral Choice",
+        effect: "Neutral Effect"
+      }
+    }
   })
 })
 
