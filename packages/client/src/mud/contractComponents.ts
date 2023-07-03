@@ -312,6 +312,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    RevealedCellsComponent: (() => {
+      const tableId = new TableId("", "RevealedCellsCom");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     TravelComponent: (() => {
       const tableId = new TableId("", "TravelComponent");
       return defineComponent(
