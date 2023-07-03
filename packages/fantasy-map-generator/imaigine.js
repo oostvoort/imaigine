@@ -39,8 +39,13 @@ function hook_onMapClick(el, p) {
       },
     })
 
-    console.log(getNextTowns(i))
+    console.log('nextTowns', getNextTowns(i))
+
+    //todo: add guard that will restrict for travel action only
+    const travel = window.Routes.findNearestPath(i)
+    if (travel) window.Routes.draw(travel)
   }
+
 }
 
 
@@ -74,8 +79,8 @@ function showPlayers(players) {
     // adding player's marker
     const name = player.name
     const icon = name.charAt(0)
-    const x = player.x
-    const y = player.y
+    const x = Math.round(pack.cells.p[player.cell][0])
+    const y = Math.round(pack.cells.p[player.cell][1])
     const cell = player.cell
     const baseMarker = { type: 'player', icon: icon }
     const marker = Markers.add({ ...baseMarker, x, y, cell })

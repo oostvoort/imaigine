@@ -9,30 +9,22 @@ type PropType = {
 const players = [
   {
     name: "Edward",
-    cell: 725,
-    x: 44,
-    y: 277,
+    cell: 5033,
     legend: 'A brave and honorable knight known for his swordsmanship.'
   },
   {
-    name: "Arthur",
-    cell: 807,
-    x: 22,
-    y: 285,
+    name: "Oliver",
+    cell: 4928,
     legend: 'A skilled rogue and master of stealth and thievery.'
   },
   {
-    name: "Emily",
-    cell: 558,
-    x: 43,
-    y: 262,
+    name: "Merlin",
+    cell: 5283,
     legend: 'A talented wizard specializing in elemental magic.'
   },
   {
-    name: "Sophia",
-    cell: 519,
-    x: 254,
-    y: 249,
+    name: "George",
+    cell: 5148,
     legend: 'A nimble archer with exceptional accuracy and keen eyesight.'
   }
 ]

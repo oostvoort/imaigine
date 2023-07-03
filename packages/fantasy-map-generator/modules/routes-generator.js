@@ -211,6 +211,22 @@ window.Routes = (function () {
 
   }
 
+  const findNearestPath = function (toCell) {
+    TIME && console.time('findPath')
+    // array to store path segments
+    const path = []
+
+    // Find the path to the other capital
+    const [ from, exit ] = findNearestLandPath(4767, toCell, true)
+
+    // Generate the road segments needed
+    const segments = getNearestPath(4767, exit, 'small', from)
+
+    // Push the generated segments onto the paths, so they can be drawn later.
+    segments.forEach(s => path.push(s))
+    return path
+  }
+
   const regenerate = function () {
     routes.selectAll('path').remove()
     pack.cells.road = new Uint16Array(pack.cells.i.length)
@@ -221,7 +237,7 @@ window.Routes = (function () {
     draw(window.Routes.main, window.Routes.small, window.Routes.water)
   }
 
-  return { getRoads, getTrails, getSearoutes, draw, regenerate, findNearestBurgs }
+  return { getRoads, getTrails, getSearoutes, draw, regenerate, findNearestBurgs, findNearestPath }
 
 
   /**
@@ -292,6 +308,95 @@ window.Routes = (function () {
 
     // Done, return the intermediate froms and end cell
     return [ from, exit ]
+  }
+
+  function findNearestLandPath(start, exit = null, toRoad = null) {
+    // Get variable for cells
+    const cells = pack.cells
+    // Instantiate a queue that compares on the .p object property
+    const queue = new PriorityQueue({ comparator: (a, b) => a.p - b.p })
+
+    // initialize cost and from
+    const cost = [],
+      from = []
+
+    // start the queue with the start cell
+    queue.queue({ e: start, p: 0 })
+
+    // Process the queue until it's empty
+    while (queue.length) {
+
+      // Get the highest priority item from the queue
+      const next = queue.dequeue(),
+        n = next.e,
+        p = next.p
+      // Loop the neighbouring cells of the current
+      // https://github.com/Azgaar/Fantasy-Map-Generator/wiki/Data-model#grid-object
+      for (const c of cells.c[n]) {
+
+        // The code below evaluates which of the neighbouring cells is the most suitable for a road
+
+        if (cells.h[c] < 20) continue // ignore water cells
+        const stateChangeCost = cells.state && cells.state[c] !== cells.state[n] ? 400 : 0 // trails tend to lay within the same state
+        const habitability = biomesData.habitability[cells.biome[c]]
+        if (!habitability) continue // avoid inhabitable cells (eg. lava, glacier)
+        const habitedCost = habitability ? Math.max(100 - habitability, 0) : 400 // routes tend to lay within populated areas
+        const heightChangeCost = Math.abs(cells.h[c] - cells.h[n]) * 10 // routes tend to avoid elevation changes
+        const heightCost = cells.h[c] > 80 ? cells.h[c] : 0 // routes tend to avoid mountainous areas
+        const cellCoast = 10 + stateChangeCost + habitedCost + heightChangeCost + heightCost
+        const totalCost = p + (cells.road[c] || cells.burg[c] ? cellCoast / 3 : cellCoast)
+
+        // If the from[c] was already set (we evaluated already) or the cost is higher, continue
+        if (from[c] || totalCost >= cost[c]) continue
+
+        // Record this neighbour as a candidate
+        from[c] = n
+
+        // If c is the exit cell, we're done
+        if (c === exit) return [ from, exit ]
+
+        // Record the current cost so we can compare later
+        cost[c] = totalCost
+
+        // Queue this neighbour cell with cost as priority for processing next
+        queue.queue({ e: c, p: totalCost })
+      } // for neighbouring cells
+    }
+
+    // Done, return the intermediate froms and end cell
+    return [ from, exit ]
+  }
+
+  /**
+   * Generate the road segments needed.
+   * @param start starting cell
+   * @param end ending cell
+   * @param type type of cell ("main", "ocean", "trail"??)
+   * @param from array of cells with intermediate starting points (???)
+   * @returns {*[]}
+   */
+  function getNearestPath(start, end, type, from) {
+    // initialize variable to store all segments;
+    const path = []
+
+    // Initialize variables to hold segment and cells being processed
+    let segment = [],
+      current = end,
+      prev = end
+
+    for (let i = 0, limit = 1000; i < limit; i++) {
+      if (!from[current]) break
+      current = from[current]
+
+      if (prev) segment.push(prev)
+      prev = null
+      segment.push(current)
+
+      if (current === start) break
+    }
+
+    if (segment.length > 1) path.push(segment)
+    return path
   }
 
 
