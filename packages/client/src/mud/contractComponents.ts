@@ -320,6 +320,7 @@ export function defineContractComponents(world: World) {
           status: RecsType.Number,
           destination: RecsType.BigInt,
           path: RecsType.String,
+          toRevealAtDestination: RecsType.String,
         },
         {
           metadata: {
