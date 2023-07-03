@@ -33,7 +33,7 @@ export default function CurrentLocationScreen() {
   const buttonOptions: Array<ButtonPropType> = [
     {
       title: generateLocationInteraction.data && generateLocationInteraction.data?.options.good.choice,
-      variant: 'neutral',
+      variant: player && player.karmaPoints !== undefined && player.karmaPoints.value <= -15 ?  'evil' : 'neutral',
       size: 'btnWithBgImg',
       action: () => handleInteraction(3),
     },

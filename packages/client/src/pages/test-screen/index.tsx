@@ -1,10 +1,10 @@
 import { Button } from '@/components/base/Button'
 import usePlayer from '@/hooks/v1/usePlayer'
 import React from 'react'
-import { GeneratePlayerResponse } from '../../../../types'
 import { clsx } from 'clsx'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import { useMUD } from '@/MUDContext'
+import { GeneratePlayerResponse } from '../../../../types'
 
 export default function TestScreen() {
   const {
@@ -26,6 +26,8 @@ export default function TestScreen() {
   React.useEffect(() => {
     if (generatePlayer.isSuccess) {
       console.log(generatePlayer.data)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       setGeneratedPlayer(generatePlayer.data)
     }
   }, [ generatePlayer.isSuccess ])
@@ -33,6 +35,8 @@ export default function TestScreen() {
   React.useEffect(() => {
     if (generatePlayerImage.isSuccess) {
       console.log(generatePlayerImage?.data?.imageIpfsHash)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       setGeneratedImage(generatePlayerImage.data.imageIpfsHash)
     }
   }, [ generatePlayerImage.isSuccess ])
