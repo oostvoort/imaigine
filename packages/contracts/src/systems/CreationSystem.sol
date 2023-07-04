@@ -16,7 +16,8 @@ import {
   AliveComponent,
   SceneComponent,
   KarmaPointsComponent,
-  InteractionTypeComponent
+  InteractionTypeComponent,
+  MultiInteractionComponent
 } from "../codegen/Tables.sol";
 
 import { InteractionType } from "../codegen/Types.sol";
@@ -92,6 +93,7 @@ contract CreationSystem is System {
     ImageComponent.set(characterID, imgHash);
     LocationComponent.set(characterID, locationID);
     InteractionTypeComponent.set(characterID, InteractionType.MULTIPLE);
+    MultiInteractionComponent.setAvailable(characterID, true);
 
     return characterID;
   }

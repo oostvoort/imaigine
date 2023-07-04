@@ -13,14 +13,19 @@ import {
   InteractionTypeComponent,
   InteractableComponent,
   SingleInteractionComponent,
-  SingleInteractionComponentData
+  SingleInteractionComponentData,
+  MultiInteractionComponent,
+  MultiInteractionComponentData
 } from "../src/codegen/Tables.sol";
 
 import {
   InteractionType
 } from "../src/codegen/Types.sol";
 
+import { ArrayLib } from "../src/lib/ArrayLib.sol";
+
 contract InteractionSystem is MudV2Test {
+  using ArrayLib for bytes32[];
   IWorld public world;
 
   bytes32 mockLocationID;
@@ -28,7 +33,6 @@ contract InteractionSystem is MudV2Test {
   bytes32 playerId;
 
   function setUp() public override {
-//    vm.startPrank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
     vm.deal(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 1000000);
 
     super.setUp();
@@ -37,9 +41,6 @@ contract InteractionSystem is MudV2Test {
     mockLocationID = world.createLocation("config", "image", 99);
 
     mockNPCID = world.createCharacter("config", "image", mockLocationID);
-
-    console.log(msg.sender);
-    console.logBytes32(bytes32(uint256(uint160(msg.sender))));
 
     vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
     playerId = world.createPlayer(bytes32(uint256(uint160(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683))), "config", "image", mockLocationID);
@@ -62,14 +63,9 @@ contract InteractionSystem is MudV2Test {
   function test_interactSingle() public {
     uint256 choice = 0;
 
-    console.logBytes32(playerId);
-    console.log(msg.sender);
-
     vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
     world.interactSingle(mockLocationID, choice);
     SingleInteractionComponentData memory singleInteractionComponentData = SingleInteractionComponent.get(world, playerId, mockLocationID);
-    console.log(singleInteractionComponentData.processingTimeout);
-    console.log(singleInteractionComponentData.available);
     assertTrue(singleInteractionComponentData.available);
     assertEq(singleInteractionComponentData.choice, choice);
   }
@@ -77,5 +73,17 @@ contract InteractionSystem is MudV2Test {
   function test_interactSingle_withChoice() public {
     world.interactSingle(mockLocationID, 0);
     world.interactSingle(mockLocationID, 1);
+  }
+
+  function test_EnterMultiInteraction() public {
+    uint256 choice = 0;
+    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    world.interactMulti(mockNPCID, choice);
+    MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(world, mockNPCID);
+
+    bytes32[] memory players = new bytes32[](0);
+    bytes32[] memory newPlayers = players.push(playerId);
+
+    assertEq(multiInteraction.players, newPlayers.encode());
   }
 }

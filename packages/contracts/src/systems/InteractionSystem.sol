@@ -141,18 +141,18 @@ contract InteractionSystem is System {
 
     if (choiceId == 0) {
       require(playerIndex == -1, "player has already entered interaction");
-      players.push(playerID);
-      choices.push(choiceId);
-      timeouts.push(block.timestamp + PROCESSING_TIMEOUT);
+      bytes32[] memory newPlayers = players.push(playerID);
+      uint256[] memory newChoices = choices.push(choiceId);
+      uint256[] memory newTimeouts = timeouts.push(block.timestamp + VOTING_TIMEOUT);
 
       MultiInteractionComponent.set(
         interactableId,
         true,
         multiInteraction.playerCount + 1,
         block.timestamp + PROCESSING_TIMEOUT,
-        players.encode(),
-        choices.encode(),
-        timeouts.encode()
+        newPlayers.encode(),
+        newChoices.encode(),
+        newTimeouts.encode()
       );
       InteractableComponent.set(playerID, interactableId);
       return NOT_YET_AVAILABLE; // early returning here
@@ -174,9 +174,9 @@ contract InteractionSystem is System {
     // remove timed out zero choices
     for (uint256 i = 0; i < multiInteraction.playerCount; i++) {
       if (choices[i] != 0 || timeouts[i] > block.timestamp)  {
-        updatedPlayers.push(players[i]);
-        updatedChoices.push(choices[i]);
-        updatedTimeouts.push(timeouts[i]);
+        updatedPlayers = updatedPlayers.push(players[i]);
+        updatedChoices = updatedChoices.push(choices[i]);
+        updatedTimeouts = updatedTimeouts.push(timeouts[i]);
         if (choices[i] != 0) nonzeroChoicesCount++;
       } else {
         // change to interact with the Location
