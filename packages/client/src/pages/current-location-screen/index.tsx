@@ -3,7 +3,7 @@ import { clsx } from 'clsx'
 import ConversationDialog from '@/components/base/Dialog/FormDialog/ConversationDialog'
 import { ButtonWrapper, Footer, HourglassLoader } from '@/components/base/Footer'
 import { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
-import { Button } from '@/components/base/Button'
+import { Button, ButtonProps } from '@/components/base/Button'
 import SubLayout from '@/components/layouts/MainLayout/SubLayout'
 import usePlayer from '@/hooks/usePlayer'
 import useLocation from '@/hooks/useLocation'
@@ -17,6 +17,21 @@ export default function CurrentLocationScreen() {
 
   const { generateLocationInteraction, createLocationInteraction } = useLocationInteraction()
   const isDataReady = !!player.config?.value && !!location.config?.value
+
+  let variant: ButtonProps['variant']
+
+  if (player && player.karmaPoints !== undefined) {
+    const karmaPoints = player.karmaPoints.value;
+    if (karmaPoints <= -15) {
+      variant = 'evil';
+    } else if (karmaPoints >= 15) {
+      variant = 'good';
+    } else {
+      variant = 'neutral';
+    }
+  } else {
+    variant = 'neutral';
+  }
 
   React.useEffect( () => {
     if (isDataReady) {
@@ -33,19 +48,19 @@ export default function CurrentLocationScreen() {
   const buttonOptions: Array<ButtonPropType> = [
     {
       title: generateLocationInteraction.data && generateLocationInteraction.data?.options.good.choice,
-      variant: player && player.karmaPoints !== undefined && player.karmaPoints.value <= -15 ?  'evil' : 'neutral',
+      variant: variant,
       size: 'btnWithBgImg',
       action: () => handleInteraction(3),
     },
     {
       title: generateLocationInteraction.data && generateLocationInteraction.data?.options.neutral.choice,
-      variant: player && player.karmaPoints !== undefined && player.karmaPoints.value <= -15 ?  'evil' : 'neutral',
+      variant: variant,
       size: 'btnWithBgImg',
       action: () => handleInteraction(2),
     },
     {
       title: generateLocationInteraction.data && generateLocationInteraction.data?.options.evil.choice,
-      variant: player && player.karmaPoints !== undefined && player.karmaPoints.value <= -15 ?  'evil' : 'neutral',
+      variant: variant,
       size: 'btnWithBgImg',
       action: () => handleInteraction(1),
     },
@@ -57,7 +72,7 @@ export default function CurrentLocationScreen() {
         <SubLayout.VisualSummaryLayout summary={generateLocationInteraction.data?.scenario}
                                        setIsOpen={() => setIsOpen(true)}>
           {
-            location.imgHash === undefined || generateLocationInteraction.data === undefined ?
+            location.imgHash === undefined  ?
               <div className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'} >
                 <div className={'border border-4 rounded-full p-10 text-center'}>
                   <img src={'src/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'}/>

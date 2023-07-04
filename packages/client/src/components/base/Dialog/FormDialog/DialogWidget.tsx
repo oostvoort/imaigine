@@ -29,14 +29,15 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
 
   const karmaPoints = player.karmaPoints?.value ?? 0
   const percentage = (Math.abs(karmaPoints) / 128).toFixed(1)
-
+console.log("percentage", percentage);
+  console.log("karmaPoints", karmaPoints);
   return (
     <Dialog>
       <DialogTrigger asChild>
         {
           isAvatar ?
             <div
-              className={'relative flex justify-center items-center overflow-hidden rounded-full w-[128px] h-[128px] mt-16'}>
+              className={'relative flex justify-center items-center overflow-hidden rounded-full w-[128px] h-[128px] mt-16 cursor-pointer'}>
               <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
                    className={'absolute z-10'} draggable={false} />
               <img src={'/src/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
@@ -44,7 +45,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
               <img
                 src={`/src/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`}
                 alt={''}
-                className={clsx([ { hidden: !avatar } ], `z-20 w-full h-[128px] absolute top-[calc(118px*${1 - Number(percentage)})]`)}
+                className={clsx([ { hidden: !avatar } , `z-20 w-full h-[128px] absolute top-[calc(118px*${1 - Number(percentage)})]`])}
                 draggable={false} />
 
               {
