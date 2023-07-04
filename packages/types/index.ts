@@ -102,7 +102,6 @@ export interface InteractSQLResult {
   neutral_choice: string,
   neutral_effect: string
 }
-
 export interface InsertInteractionParams {
   interactable_id: string,
   scenario: string,
@@ -113,7 +112,6 @@ export interface InsertInteractionParams {
   neutral_choice: string,
   neutral_effect: string
 }
-
 export interface LogSqlResult {
   log_id: number,
   interactable_id: string,
@@ -122,7 +120,6 @@ export interface LogSqlResult {
   by: string,
   player_log: string,
 }
-
 export interface InteractLocationProps {
   playerEntityId: string,
   locationEntityId: string,
@@ -130,11 +127,40 @@ export interface InteractLocationProps {
   playerIpfsHash: string,
   npcIpfsHash: Array<string>,
 }
+export interface InteractNpcProps {
+  playerEntityId: Array<string>,
+  playerIpfsHash: Array<string>,
+  npcIpfsHash: string,
+  npcEntityId: string,
+}
 
+export interface InteractNpcResponse {
+  conversationHistory: Array<Conversation>,
+  option: {
+    good: {
+      goodChoise: string,
+      goodResponse: string
+    },
+    evil: {
+      evilChoise: string,
+      evilResponse: string
+    },
+    neutral: {
+      neutralChoise: string,
+      neutralResponse: string
+    }
+  }
+}
 export interface InsertHistoryLogsParams {
   interactable_id: string,
   players: string,
   mode: string,
   by: string,
   player_log: string
+}
+
+export interface Conversation {
+  logId: number,
+  by: string,
+  text: string,
 }

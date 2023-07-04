@@ -27,3 +27,11 @@ export function parseCellToLocationId(cell: number) {
       ['0x4c4f434154494f4e0000000000000000', cell]))
   )
 }
+
+export function shuffleArray<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array
+}

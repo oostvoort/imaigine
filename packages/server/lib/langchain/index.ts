@@ -2,7 +2,7 @@ import { StructuredOutputParser } from 'langchain/output_parsers'
 import {
   locationInteractionSchema,
   locationSchema,
-  nonPlayerCharacterSchema,
+  nonPlayerCharacterSchema, npcInteractionSchema,
   playerCharacterSchema,
   storySchema,
 } from './schemas'
@@ -11,7 +11,7 @@ import { PipelinePromptTemplate } from 'langchain/prompts'
 import {
   locationInteractionPropmt,
   locationPrompt,
-  nonPlayerCharacterPrompt,
+  nonPlayerCharacterPrompt, npcInteractionPrompt,
   playerCharacterPrompt,
   storyPrompt,
 } from './templates'
@@ -20,7 +20,7 @@ import {
   Location,
   LocationInteractionProps,
   NonPlayerCharacterProps,
-  NonPlayerCharacterResponse,
+  NonPlayerCharacterResponse, NpcInteractionProps,
   PlayerCharacterProps,
 } from './types'
 import * as dotenv from 'dotenv'
@@ -156,6 +156,39 @@ export async function generateNonPlayerCharacter(npc: NonPlayerCharacterProps): 
     description: parseData.description,
     visualSummary: parseData.visualSummary,
     initialMessage: parseData.initialMessage,
+  }
+}
+
+export async function generateNpcInteraction(npcInteraction: NpcInteractionProps): Promise<{
+  response: string,
+  goodChoice: string,
+  evilChoice: string,
+  neutralChoice: string,
+  goodResponse: string,
+  evilResponse: string,
+  neutralResponse: string
+}
+> {
+  const parser = StructuredOutputParser.fromNamesAndDescriptions(npcInteractionSchema)
+
+  const formatInstruction = parser.getFormatInstructions()
+
+  const composedPrompt = await createFullPrompt(npcInteractionPrompt, formatInstruction)
+
+  const locationInteraction = await composedPrompt.format(npcInteraction)
+
+  const result = await model.call(locationInteraction)
+
+  const parseData = await parser.parse(result)
+
+  return {
+    response: parseData.response,
+    goodChoice: parseData.goodChoice,
+    evilChoice: parseData.evilChoice,
+    neutralChoice: parseData.neutralChoice,
+    goodResponse: parseData.goodResponse,
+    evilResponse: parseData.evilResponse,
+    neutralResponse: parseData.neutralResponse
   }
 }
 

@@ -312,6 +312,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    RevealedCellsComponent: (() => {
+      const tableId = new TableId("", "RevealedCellsCom");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     TravelComponent: (() => {
       const tableId = new TableId("", "TravelComponent");
       return defineComponent(
@@ -320,6 +335,7 @@ export function defineContractComponents(world: World) {
           status: RecsType.Number,
           destination: RecsType.BigInt,
           path: RecsType.String,
+          toRevealAtDestination: RecsType.String,
         },
         {
           metadata: {

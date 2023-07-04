@@ -21,9 +21,6 @@ import {
 
 import { InteractionType } from "../codegen/Types.sol";
 
-import { ArrayLib } from "../lib/ArrayLib.sol";
-import { Constants } from "../lib/Constants.sol";
-
 contract CreationSystem is System {
 
   function createStory(
