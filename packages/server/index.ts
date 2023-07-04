@@ -533,7 +533,7 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
       },
     } as InteractNpcResponse)
   } else {
-    const choice = await worldContract.winningChoice(props.playerEntityId[0])
+    const choice = await worldContract.winningChoice(props.npcEntityId)
 
     if (choice.toNumber() === 0) {
       // not yet available
