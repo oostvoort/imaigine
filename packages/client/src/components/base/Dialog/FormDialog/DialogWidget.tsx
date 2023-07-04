@@ -3,6 +3,7 @@ import { clsx } from 'clsx'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Dialog, DialogTrigger } from '@/components/base/Dialog'
 import { Button, ButtonProps } from '@/components/base/Button'
+import usePlayer from '@/hooks/usePlayer'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 
 type PropType = {
@@ -24,36 +25,35 @@ export type ButtonPropType = {
 }
 
 export default function DialogWidget({ children, button, isAvatar, avatar }: PropType) {
+  const { player } = usePlayer()
+
+  const karmaPoints = player.karmaPoints?.value ?? 0
+  const percentage = (Math.abs(karmaPoints) / 128).toFixed(1)
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         {
           isAvatar ?
-            <div className={clsx('relative flex items-center', 'h-full w-[142px]')}>
-              {/* Inner Frame */}
-              <div
-                className={clsx([ 'absolute -bottom-16 w-36 h-36', 'bg-avatar-inner-frame opacity-100 bg-cover bg-no-repeat', 'cursor-pointer' ])}>
-                {/* Outer Frame */}
-                <div className={clsx([ 'absolute w-36 h-36', 'bg-avatar-outer-frame bg-cover bg-no-repeat' ])}>
-                  {/* Avatar */}
-                  {
-                    avatar === undefined ? <div className={'absolute bg-[#485476] inset-6 w-24 h-24 rounded-full'} />
-                      :
-                      <img src={avatar && `${IPFS_URL_PREFIX}/${avatar}`}
-                           alt="Profile"
-                           className={clsx([ 'absolute w-24 h-24 object-cover object-center', 'z-50 inset-6 rounded-full'])}
-                           draggable={false}
-                      />
-                  }
+            <div
+              className={'relative flex justify-center items-center overflow-hidden rounded-full w-[128px] h-[128px] mt-16'}>
+              <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
+                   className={'absolute z-10'} draggable={false} />
+              <img src={'/src/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
+                   className={'absolute z-50'} draggable={false} />
+              <img
+                src={`/src/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`}
+                alt={''}
+                className={clsx([ { hidden: !avatar } ], `z-20 w-full h-[128px] absolute top-[calc(118px*${1 - Number(percentage)})]`)}
+                draggable={false} />
 
-
-                </div>
-                {/* Karma Gauge */}
-                <div className={clsx([ 'absolute w-36 h-36', 'bg-cover bg-no-repeat' , {'hidden': !avatar}])} />
-              </div>
-              {/* End ofInner Frame */}
+              {
+                !avatar ? <div className={'h-[94px] w-[94px] absolute animate-pulse rounded-full bg-[#485476] z-20'} /> :
+                  <img src={avatar && `${IPFS_URL_PREFIX}/${avatar}`} alt={''}
+                       className={'h-[94px] w-[94px] absolute rounded-full object-cover z-20'} draggable={false} />
+              }
             </div>
+
             :
             <Button variant={button.variant} className={button.className} size={button.size}>
               <img src={button.imgSrc} alt={button.imgSrc}

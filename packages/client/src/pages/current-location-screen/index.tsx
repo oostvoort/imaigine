@@ -39,13 +39,13 @@ export default function CurrentLocationScreen() {
     },
     {
       title: generateLocationInteraction.data && generateLocationInteraction.data?.options.neutral.choice,
-      variant: 'neutral',
+      variant: player && player.karmaPoints !== undefined && player.karmaPoints.value <= -15 ?  'evil' : 'neutral',
       size: 'btnWithBgImg',
       action: () => handleInteraction(2),
     },
     {
       title: generateLocationInteraction.data && generateLocationInteraction.data?.options.evil.choice,
-      variant: 'neutral',
+      variant: player && player.karmaPoints !== undefined && player.karmaPoints.value <= -15 ?  'evil' : 'neutral',
       size: 'btnWithBgImg',
       action: () => handleInteraction(1),
     },
