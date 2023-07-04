@@ -53,7 +53,7 @@ contract TravelSystem is System {
   /// @return the current cell number the player is on
   function travel() public returns (uint256) {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    TravelStatus status = TravelComponent.getStatus(playerId);
+    TravelStatus status = TravelComponent.getStatus(playerID);
     require(status == TravelStatus.READY_TO_TRAVEL || status == TravelStatus.TRAVELLING, "player cannot travel yet");
     return 5;
   }
