@@ -28,7 +28,6 @@ function hook_onMapClick(el, p) {
   console.log("Clicked cell: ", i)
 
   if (grand.id === 'burgIcons') {
-
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
@@ -44,17 +43,24 @@ function hook_onMapClick(el, p) {
     //todo: add guard that will restrict for travel action only
     const travel = window.Routes.findNearestPath(i)
     if (travel) window.Routes.draw(travel)
+  } else {
+    window.parent.postMessage({
+      cmd: 'ExploreMap', params: {
+        locationId: i
+      },
+    })
   }
 
 }
 
 
 function revealCells(cells) {
-  console.log('revealCells', cells)
+  //combine cells with its neighboring cells
+  const exploredCells = [...new Set(cells.flatMap(cell => [...pack.cells.c[cell], cell]))];
 
   const path =
     'M' +
-    cells
+    exploredCells
       .map(c => getPackPolygon(+c))
       .join('M') + 'Z'
 
@@ -106,9 +112,18 @@ window.addEventListener('message', ({ data }) => {
 
     revealCells(data.params.cells)
 
+  } else if (data.cmd === 'unFog') {
+
+    hideCells(data.params.id)
+
   } else if (data.cmd === 'showPlayers') {
 
     showPlayers(data.params.players)
+
+  } else if (data.cmd === 'showExploredCells') {
+
+    hideCells('myFogId')
+    revealCells(data.params.cells)
 
   } else if (data.cmd === 'getNextTowns') {
 

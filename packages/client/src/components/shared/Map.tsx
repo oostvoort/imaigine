@@ -29,6 +29,8 @@ const players = [
   }
 ]
 
+const exploredCells = [4928, 5033, 5148, 5283]
+
 
 const Map: React.FC<PropType> = ({ className }) => {
   const mapSeed = 123
@@ -46,9 +48,13 @@ const Map: React.FC<PropType> = ({ className }) => {
 
       if(cmd === "FinishedLoadingMap"){
         showPlayers()
+        showExploredCells()
       }else if(cmd === "MapClicked"){
         console.log("Mapclicked", params)
-      }else{
+      }else if(cmd === "ExploreMap"){
+        exploredCells.push(params.locationId)
+        showExploredCells()
+      } else{
         console.log('Other message received from iframe:', event.data)
 
       }
@@ -74,7 +80,9 @@ const Map: React.FC<PropType> = ({ className }) => {
   }
 
   const setRevealedCells = (cells: number[]) => {sendMessageToIframe({cmd: "revealCells", params: {cells: cells}})}
+  const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
+  const showExploredCells = () => {sendMessageToIframe({cmd: "showExploredCells", params: {cells: exploredCells}})}
 
   const reloadIframe = () => {
     if (iframeRef.current) {
@@ -84,7 +92,8 @@ const Map: React.FC<PropType> = ({ className }) => {
   return (
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
-      <button onClick={() => {setRevealedCells([ 558, 559, 560, 481,477,476,480,561,638, 637])}}>revealCells</button>
+      <button onClick={() => {setRevealedCells([ 4928, 5033, 5148, 5283])}}>revealCells</button>
+      | <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={() => {showPlayers()}}>showPlayers</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
       <iframe
