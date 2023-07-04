@@ -34,7 +34,10 @@ contract InteractionSystem is System {
   uint256 private constant PROCESSING_TIMEOUT = 1_000 * 60 * 60;
 
   /// @dev returned in multiInteract when a winningChoice is not yet available
-  uint256 private constant NOT_YET_AVAILABLE = 4;
+  uint256 private constant NOT_YET_AVAILABLE = 0;
+
+  /// @dev returned in multiInteract when players disagreed in voting
+  uint256 private constant DISAGREED_CHOICE = 4;
 
   /// @notice interact with an interactable that handles single interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
@@ -109,7 +112,7 @@ contract InteractionSystem is System {
   /// @notice interact with an interactable that handles multi interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
   /// @param choiceId is the id of the choice; 0 - will enter into the interaction, 1-3 - actual choices
-  /// @return winningChoice (0 for disagreement, 1-3 actual choice, 4 - not yet available)
+  /// @return true if  (4 for disagreement, 1-3 actual choice, 0 - not yet available)
   function interactMulti(bytes32 interactableId, uint256 choiceId)
   public
   returns (uint256)
@@ -277,7 +280,7 @@ contract InteractionSystem is System {
       if (largestChoiceCount == choiceCounts[i]) {
         if (winner == 0) winner = choiceCounts[i];
         // meaning that there were two or more largest number meaning the players disagreed
-        else return 0;
+        else return DISAGREED_CHOICE;
       }
     }
 
