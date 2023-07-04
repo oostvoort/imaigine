@@ -215,6 +215,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    MapCellComponent: (() => {
+      const tableId = new TableId("", "MapCellComponent");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     SceneComponent: (() => {
       const tableId = new TableId("", "SceneComponent");
       return defineComponent(
@@ -334,6 +349,7 @@ export function defineContractComponents(world: World) {
         {
           status: RecsType.Number,
           destination: RecsType.BigInt,
+          lastTravelledTimestamp: RecsType.BigInt,
           path: RecsType.String,
           toRevealAtDestination: RecsType.String,
         },

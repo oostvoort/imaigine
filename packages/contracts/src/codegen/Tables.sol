@@ -17,6 +17,7 @@ import { TangibleComponent, TangibleComponentTableId } from "./tables/TangibleCo
 import { CountComponent, CountComponentTableId } from "./tables/CountComponent.sol";
 import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponent.sol";
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
+import { MapCellComponent, MapCellComponentTableId } from "./tables/MapCellComponent.sol";
 import { SceneComponent, SceneComponentTableId } from "./tables/SceneComponent.sol";
 import { KarmaPointsComponent, KarmaPointsComponentTableId } from "./tables/KarmaPointsComponent.sol";
 import { InteractableComponent, InteractableComponentTableId } from "./tables/InteractableComponent.sol";

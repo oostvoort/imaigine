@@ -26,6 +26,7 @@ bytes32 constant TravelComponentTableId = _tableId;
 struct TravelComponentData {
   TravelStatus status;
   uint256 destination;
+  uint256 lastTravelledTimestamp;
   bytes path;
   bytes toRevealAtDestination;
 }
@@ -33,11 +34,12 @@ struct TravelComponentData {
 library TravelComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](4);
+    SchemaType[] memory _schema = new SchemaType[](5);
     _schema[0] = SchemaType.UINT8;
     _schema[1] = SchemaType.UINT256;
-    _schema[2] = SchemaType.BYTES;
+    _schema[2] = SchemaType.UINT256;
     _schema[3] = SchemaType.BYTES;
+    _schema[4] = SchemaType.BYTES;
 
     return SchemaLib.encode(_schema);
   }
@@ -51,11 +53,12 @@ library TravelComponent {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](4);
+    string[] memory _fieldNames = new string[](5);
     _fieldNames[0] = "status";
     _fieldNames[1] = "destination";
-    _fieldNames[2] = "path";
-    _fieldNames[3] = "toRevealAtDestination";
+    _fieldNames[2] = "lastTravelledTimestamp";
+    _fieldNames[3] = "path";
+    _fieldNames[4] = "toRevealAtDestination";
     return ("TravelComponent", _fieldNames);
   }
 
@@ -149,12 +152,49 @@ library TravelComponent {
     _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((destination)));
   }
 
+  /** Get lastTravelledTimestamp */
+  function getLastTravelledTimestamp(bytes32 key) internal view returns (uint256 lastTravelledTimestamp) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Get lastTravelledTimestamp (using the specified store) */
+  function getLastTravelledTimestamp(
+    IStore _store,
+    bytes32 key
+  ) internal view returns (uint256 lastTravelledTimestamp) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Set lastTravelledTimestamp */
+  function setLastTravelledTimestamp(bytes32 key, uint256 lastTravelledTimestamp) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((lastTravelledTimestamp)));
+  }
+
+  /** Set lastTravelledTimestamp (using the specified store) */
+  function setLastTravelledTimestamp(IStore _store, bytes32 key, uint256 lastTravelledTimestamp) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((lastTravelledTimestamp)));
+  }
+
   /** Get path */
   function getPath(bytes32 key) internal view returns (bytes memory path) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
     return (bytes(_blob));
   }
 
@@ -163,7 +203,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
     return (bytes(_blob));
   }
 
@@ -172,7 +212,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 2, bytes((path)));
+    StoreSwitch.setField(_tableId, _keyTuple, 3, bytes((path)));
   }
 
   /** Set path (using the specified store) */
@@ -180,7 +220,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 2, bytes((path)));
+    _store.setField(_tableId, _keyTuple, 3, bytes((path)));
   }
 
   /** Get the length of path */
@@ -188,7 +228,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 2, getSchema());
+    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 3, getSchema());
     return _byteLength / 1;
   }
 
@@ -197,7 +237,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 2, getSchema());
+    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 3, getSchema());
     return _byteLength / 1;
   }
 
@@ -206,7 +246,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
@@ -215,7 +255,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 2, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
@@ -224,7 +264,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
+    StoreSwitch.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
   }
 
   /** Push a slice to path (using the specified store) */
@@ -232,7 +272,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.pushToField(_tableId, _keyTuple, 2, bytes((_slice)));
+    _store.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
   }
 
   /** Pop a slice from path */
@@ -240,7 +280,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.popFromField(_tableId, _keyTuple, 2, 1);
+    StoreSwitch.popFromField(_tableId, _keyTuple, 3, 1);
   }
 
   /** Pop a slice from path (using the specified store) */
@@ -248,7 +288,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.popFromField(_tableId, _keyTuple, 2, 1);
+    _store.popFromField(_tableId, _keyTuple, 3, 1);
   }
 
   /** Update a slice of path at `_index` */
@@ -256,7 +296,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
+    StoreSwitch.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of path (using the specified store) at `_index` */
@@ -264,7 +304,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.updateInField(_tableId, _keyTuple, 2, _index * 1, bytes((_slice)));
+    _store.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
   }
 
   /** Get toRevealAtDestination */
@@ -272,7 +312,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
     return (bytes(_blob));
   }
 
@@ -284,7 +324,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
     return (bytes(_blob));
   }
 
@@ -293,7 +333,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 3, bytes((toRevealAtDestination)));
+    StoreSwitch.setField(_tableId, _keyTuple, 4, bytes((toRevealAtDestination)));
   }
 
   /** Set toRevealAtDestination (using the specified store) */
@@ -301,7 +341,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 3, bytes((toRevealAtDestination)));
+    _store.setField(_tableId, _keyTuple, 4, bytes((toRevealAtDestination)));
   }
 
   /** Get the length of toRevealAtDestination */
@@ -309,7 +349,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 3, getSchema());
+    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 4, getSchema());
     return _byteLength / 1;
   }
 
@@ -318,7 +358,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 3, getSchema());
+    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 4, getSchema());
     return _byteLength / 1;
   }
 
@@ -327,7 +367,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 4, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
@@ -340,7 +380,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 4, getSchema(), _index * 1, (_index + 1) * 1);
     return (bytes(_blob));
   }
 
@@ -349,7 +389,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
+    StoreSwitch.pushToField(_tableId, _keyTuple, 4, bytes((_slice)));
   }
 
   /** Push a slice to toRevealAtDestination (using the specified store) */
@@ -357,7 +397,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
+    _store.pushToField(_tableId, _keyTuple, 4, bytes((_slice)));
   }
 
   /** Pop a slice from toRevealAtDestination */
@@ -365,7 +405,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.popFromField(_tableId, _keyTuple, 3, 1);
+    StoreSwitch.popFromField(_tableId, _keyTuple, 4, 1);
   }
 
   /** Pop a slice from toRevealAtDestination (using the specified store) */
@@ -373,7 +413,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.popFromField(_tableId, _keyTuple, 3, 1);
+    _store.popFromField(_tableId, _keyTuple, 4, 1);
   }
 
   /** Update a slice of toRevealAtDestination at `_index` */
@@ -381,7 +421,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
+    StoreSwitch.updateInField(_tableId, _keyTuple, 4, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of toRevealAtDestination (using the specified store) at `_index` */
@@ -389,7 +429,7 @@ library TravelComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
+    _store.updateInField(_tableId, _keyTuple, 4, _index * 1, bytes((_slice)));
   }
 
   /** Get the full data */
@@ -415,10 +455,11 @@ library TravelComponent {
     bytes32 key,
     TravelStatus status,
     uint256 destination,
+    uint256 lastTravelledTimestamp,
     bytes memory path,
     bytes memory toRevealAtDestination
   ) internal {
-    bytes memory _data = encode(status, destination, path, toRevealAtDestination);
+    bytes memory _data = encode(status, destination, lastTravelledTimestamp, path, toRevealAtDestination);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -432,10 +473,11 @@ library TravelComponent {
     bytes32 key,
     TravelStatus status,
     uint256 destination,
+    uint256 lastTravelledTimestamp,
     bytes memory path,
     bytes memory toRevealAtDestination
   ) internal {
-    bytes memory _data = encode(status, destination, path, toRevealAtDestination);
+    bytes memory _data = encode(status, destination, lastTravelledTimestamp, path, toRevealAtDestination);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -445,28 +487,45 @@ library TravelComponent {
 
   /** Set the full data using the data struct */
   function set(bytes32 key, TravelComponentData memory _table) internal {
-    set(key, _table.status, _table.destination, _table.path, _table.toRevealAtDestination);
+    set(
+      key,
+      _table.status,
+      _table.destination,
+      _table.lastTravelledTimestamp,
+      _table.path,
+      _table.toRevealAtDestination
+    );
   }
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, bytes32 key, TravelComponentData memory _table) internal {
-    set(_store, key, _table.status, _table.destination, _table.path, _table.toRevealAtDestination);
+    set(
+      _store,
+      key,
+      _table.status,
+      _table.destination,
+      _table.lastTravelledTimestamp,
+      _table.path,
+      _table.toRevealAtDestination
+    );
   }
 
   /** Decode the tightly packed blob using this table's schema */
   function decode(bytes memory _blob) internal view returns (TravelComponentData memory _table) {
-    // 33 is the total byte length of static data
-    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 33));
+    // 65 is the total byte length of static data
+    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 65));
 
     _table.status = TravelStatus(uint8(Bytes.slice1(_blob, 0)));
 
     _table.destination = (uint256(Bytes.slice32(_blob, 1)));
 
+    _table.lastTravelledTimestamp = (uint256(Bytes.slice32(_blob, 33)));
+
     // Store trims the blob if dynamic fields are all empty
-    if (_blob.length > 33) {
+    if (_blob.length > 65) {
       uint256 _start;
       // skip static data length + dynamic lengths word
-      uint256 _end = 65;
+      uint256 _end = 97;
 
       _start = _end;
       _end += _encodedLengths.atIndex(0);
@@ -482,6 +541,7 @@ library TravelComponent {
   function encode(
     TravelStatus status,
     uint256 destination,
+    uint256 lastTravelledTimestamp,
     bytes memory path,
     bytes memory toRevealAtDestination
   ) internal view returns (bytes memory) {
@@ -491,7 +551,14 @@ library TravelComponent {
     PackedCounter _encodedLengths = PackedCounterLib.pack(_counters);
 
     return
-      abi.encodePacked(status, destination, _encodedLengths.unwrap(), bytes((path)), bytes((toRevealAtDestination)));
+      abi.encodePacked(
+        status,
+        destination,
+        lastTravelledTimestamp,
+        _encodedLengths.unwrap(),
+        bytes((path)),
+        bytes((toRevealAtDestination))
+      );
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

@@ -22,6 +22,7 @@ export default mudConfig({
         CountComponent: "uint256",
         PlayerComponent: "bool",
         LocationComponent: "bytes32",
+        MapCellComponent: "uint256",
         SceneComponent: "bool",
         KarmaPointsComponent: "int8",
         InteractableComponent: "bytes32",
@@ -52,6 +53,7 @@ export default mudConfig({
           schema: {
             status: "TravelStatus",
             destination: "uint256",
+            lastTravelledTimestamp: "uint256",
             path: "bytes", // array of uint256 of locationIds
             toRevealAtDestination: "bytes" // array of cells that will reveal itself once player is in the new location
           }
