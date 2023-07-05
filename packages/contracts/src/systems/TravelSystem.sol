@@ -5,12 +5,11 @@ import { System } from "@latticexyz/world/src/System.sol";
 
 import {
   SceneComponent,
-  InteractableComponent,
   TravelComponent,
   TravelComponentData,
   MapCellComponent,
   LocationComponent,
-  SceneComponent
+  RevealedCellsComponent
 } from "../codegen/Tables.sol";
 
 import { TravelStatus } from "../codegen/Types.sol";
@@ -58,13 +57,13 @@ contract TravelSystem is System {
       toRevealAtDestination.encode()
     );
 
-    uint256 revealedCells = RevealedCellsComponent.get(playerID);
+    uint256 revealedCells = RevealedCellsComponent.get(playerId);
 
     for(uint256 i = 0; i < pathCells.length; i++) {
       revealedCells.setRevealedCell(pathCells[i], true);
     }
 
-    RevealedCellsComponent.set(playerID, revealedCells);
+    RevealedCellsComponent.set(playerId, revealedCells);
   }
 
   /// @notice called by the player to update the player's current location

@@ -52,36 +52,9 @@ contract InteractionSystem is MudV2Test {
   function test_prepareTravel() public {
     vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
     bytes32 locationId = world.prepareTravel(toLocationCellNumber);
-    TravelComponentData memory travelComponentData =
+//    TravelComponentData memory travelComponentData =
 
 
     assertEq(locationId, toLocation);
-  }
-
-  function test_interactSingle() public {
-    uint256 choice = 0;
-
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
-    world.interactSingle(fromLocation, choice);
-    SingleInteractionComponentData memory singleInteractionComponentData = SingleInteractionComponent.get(world, playerId, fromLocation);
-    assertTrue(singleInteractionComponentData.available);
-    assertEq(singleInteractionComponentData.choice, choice);
-  }
-
-  function test_interactSingle_withChoice() public {
-    world.interactSingle(fromLocation, 0);
-    world.interactSingle(fromLocation, 1);
-  }
-
-  function test_EnterMultiInteraction() public {
-    uint256 choice = 0;
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
-    world.interactMulti(mockNPCID, choice);
-    MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(world, mockNPCID);
-
-    bytes32[] memory players = new bytes32[](0);
-    bytes32[] memory newPlayers = players.push(playerId);
-
-    assertEq(multiInteraction.players, newPlayers.encode());
   }
 }
