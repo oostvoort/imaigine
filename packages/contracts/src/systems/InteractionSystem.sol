@@ -63,9 +63,9 @@ contract InteractionSystem is System {
         uint256[] memory choices = multiInteraction.choices.decodeUint256Array();
         uint256[] memory timeouts = multiInteraction.timeouts.decodeUint256Array();
 
-        players.remove(uint256(playerIndex));
-        choices.remove(uint256(playerIndex));
-        timeouts.remove(uint256(playerIndex));
+        players = players.remove(uint256(playerIndex));
+        choices = choices.remove(uint256(playerIndex));
+        timeouts = timeouts.remove(uint256(playerIndex));
 
         // TODO: figure out if this is safe
         // this could cause some unintended return of stale data

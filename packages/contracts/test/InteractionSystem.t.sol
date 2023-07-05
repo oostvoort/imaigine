@@ -103,6 +103,18 @@ contract InteractionSystem is MudV2Test {
     vm.prank(PLAYER_2, PLAYER_2);
     world.interactMulti(mockNPCID, round1Choice);
     assertEq(world.winningChoice(mockNPCID), round1Choice);
+  }
 
+  function test_reinteraction() public {
+    uint256 enterChoice = 0;
+
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.interactMulti(mockNPCID, enterChoice);
+
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.interactSingle(mockLocationID, enterChoice);
+
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.interactMulti(mockNPCID, enterChoice);
   }
 }
