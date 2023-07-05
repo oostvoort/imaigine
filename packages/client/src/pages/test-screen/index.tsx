@@ -6,6 +6,7 @@ import { IPFS_URL_PREFIX } from '@/global/constants'
 import { useMUD } from '@/MUDContext'
 import { GeneratePlayerResponse } from '../../../../types'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
+import { usePlayers } from '@/hooks/v1/usePlayers'
 
 export default function TestScreen() {
   const {
@@ -13,7 +14,6 @@ export default function TestScreen() {
       playerEntity
     },
   } = useMUD();
-
 
 
   const { generatePlayer, generatePlayerImage, createPlayer, player } = usePlayer()
@@ -25,6 +25,13 @@ export default function TestScreen() {
   const [ generatedImage, setGeneratedImage ] = React.useState<string>('')
 
   const { interactNPC, createNPCInteraction } = useNPCInteraction()
+
+  const { players } = usePlayers()
+
+  // console.info({players})
+  // console.info({player})
+
+  const npcId = "0x0000000000000000000000000000000000000000000000000000000000000002"
 
   React.useEffect(() => {
     if (generatePlayer.isSuccess) {
@@ -51,18 +58,28 @@ export default function TestScreen() {
   }, [ createPlayer.isSuccess ])
 
   React.useEffect(() => {
-    if (interactNPC.isSuccess) {
-      console.log('interactNPC', interactNPC)
-    }
-  }, [ interactNPC.isSuccess ])
-
-  React.useEffect(() => {
     if (createNPCInteraction.isSuccess) {
-      console.log('createNPCInteraction', createNPCInteraction)
+      console.log('createNPCInteraction', (createNPCInteraction.data).toNumber())
+
+      if ((createNPCInteraction.data).toNumber() >= 1 && (createNPCInteraction.data).toNumber() <= 4) {
+        if (!player.config) throw new Error('No generated Player')
+        interactNPC.mutate({
+          playerIpfsHash: [`${player.config.value}`],
+          npcEntityId: npcId,
+          npcIpfsHash: 'QmcNgZR321oGu1QKijDpEbbad9tpxAHRJiqFL7AnvKvJrf',
+          playerEntityId: [`${playerEntity}`],
+        })
+      }
+
     }
   }, [ createNPCInteraction.isSuccess ])
 
-  console.log({player})
+  React.useEffect(() => {
+    if (interactNPC.isSuccess) {
+      console.log('interactNPC', interactNPC.data)
+    }
+  }, [ interactNPC.isSuccess ])
+
 
   return (
     <div className={clsx(['flex flex-col gap-8 pa-xl'])}>
@@ -119,7 +136,40 @@ export default function TestScreen() {
       </div>
       <div className={'flex flex-col'}>
         <p>{JSON.stringify(generatedPlayer)}</p>
-        <a href={`${IPFS_URL_PREFIX}/${generatedImage}`} target={'_blank'}>{generatedImage}</a>
+        {/*<a href={`${IPFS_URL_PREFIX}/${generatedImage}`} target={'_blank'}>{generatedImage}</a>*/}
+      </div>
+
+      <div className={"flex gap-2"}>
+        <p>NPC Interaction</p>
+        <Button
+          onClick={() => {
+            createNPCInteraction.mutate({ choiceId: 0, npcId })
+            if (!player.config) throw new Error('No generated Player')
+            interactNPC.mutate({
+              playerIpfsHash: [`${player.config.value}`],
+              npcEntityId: npcId,
+              npcIpfsHash: 'QmcNgZR321oGu1QKijDpEbbad9tpxAHRJiqFL7AnvKvJrf',
+              playerEntityId: [`${playerEntity}`],
+            })
+          }}
+        >
+          Enter NPC Interaction
+        </Button>
+        <Button
+          onClick={() => createNPCInteraction.mutate({ choiceId: 1, npcId })}
+        >
+          Good
+        </Button>
+        <Button
+          onClick={() => createNPCInteraction.mutate({ choiceId: 2, npcId })}
+        >
+          Evil
+        </Button>
+        <Button
+          onClick={() => createNPCInteraction.mutate({ choiceId: 3, npcId })}
+        >
+          Neutral
+        </Button>
       </div>
     </div>
   )

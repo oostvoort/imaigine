@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ce0000"/>
+      <stop offset="1" stop-color="#460505"/>
+    </linearGradient>
+  </defs>
+  <rect id="bg_karmaMeter_evil" width="120" height="120" fill="url(#linear-gradient)"/>
+</svg>
