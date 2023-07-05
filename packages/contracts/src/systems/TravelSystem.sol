@@ -17,31 +17,33 @@ import { TravelStatus } from "../codegen/Types.sol";
 
 
 import { ArrayLib } from "../lib/ArrayLib.sol";
+import { BitMapLib} from "../lib/BitMapLib.sol";
 
 contract TravelSystem is System {
 
   using ArrayLib for bytes;
   using ArrayLib for uint256[];
+  using BitMapLib for uint256;
 
   /// @dev the rate at which the player travels a cell
   uint256 private constant TRAVEL_SPEED = 1_000 * 15;
 
   /// @notice called by the player to signal that the player would like to travel
-  /// @param cellNumber pertains to the cell number of the destination
+  /// @param destination pertains to the cell number of location
   /// @return the locationId in bytes32 form
-  function prepareTravel(uint256 cellNumber) public returns (bytes32) {
+  function prepareTravel(uint256 destination) public returns (bytes32) {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    TravelComponent.set(playerID, TravelStatus.PREPARING, cellNumber, 0, new bytes(0), new bytes(0));
-    return keccak256(abi.encodePacked(bytes16("LOCATION"), cellNumber));
+    TravelComponent.set(playerID, TravelStatus.PREPARING, destination, 0, new bytes(0), new bytes(0));
+    return keccak256(abi.encodePacked(bytes16("LOCATION"), destination));
   }
 
   /// @notice called by the backend to process the player's travel
   /// @param playerId is the player that will start travelling
-  /// @param cellNumbers is a list of cells the player will travel through
+  /// @param pathCells is a list of cells the player will travel through
   /// @param toRevealAtDestination are the cells to reveal when player has arrived
   function startTravel(
     bytes32 playerId,
-    uint256[] memory cellNumbers,
+    uint256[] memory pathCells,
     uint256[] memory toRevealAtDestination
   ) public {
     TravelStatus status = TravelComponent.getStatus(playerId);
@@ -52,10 +54,17 @@ contract TravelSystem is System {
       TravelStatus.READY_TO_TRAVEL,
       travelData.destination,
       block.timestamp,
-      cellNumbers.encode(),
+      pathCells.encode(),
       toRevealAtDestination.encode()
     );
-    // TODO: reveal path cells
+
+    uint256 revealedCells = RevealedCellsComponent.get(playerID);
+
+    for(uint256 i = 0; i < pathCells.length; i++) {
+      revealedCells.setRevealedCell(pathCells[i], true);
+    }
+
+    RevealedCellsComponent.set(playerID, revealedCells);
   }
 
   /// @notice called by the player to update the player's current location
@@ -77,6 +86,9 @@ contract TravelSystem is System {
     if (cellsTravelled >= path.length) {
       bytes32 locationID = keccak256(abi.encodePacked(bytes16("LOCATION"), travelData.destination));
       require(SceneComponent.get(locationID), "location is not ready for visiting");
+
+      uint256[] memory cellsToReveal = travelData.toRevealAtDestination.decodeUint256Array();
+
       TravelComponent.set(
         playerID,
         TravelStatus.NOT_TRAVELLING,
@@ -85,10 +97,17 @@ contract TravelSystem is System {
         new bytes(0),
         new bytes(0)
       );
+
       LocationComponent.set(playerID, locationID);
       MapCellComponent.set(playerID, travelData.destination);
 
-      // TODO: reveal toRevealCellsAtDestination here
+      uint256 revealedCells = RevealedCellsComponent.get(playerID);
+
+      for(uint256 i = 0; i < cellsToReveal.length; i++) {
+        revealedCells.setRevealedCell(cellsToReveal[i], true);
+      }
+
+      RevealedCellsComponent.set(playerID, revealedCells);
 
       return travelData.destination;
     } else {

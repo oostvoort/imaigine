@@ -27,6 +27,7 @@ export default mudConfig({
         KarmaPointsComponent: "int8",
         InteractableComponent: "bytes32",
         InteractionTypeComponent: "InteractionType",
+        RevealedCellsComponent: "uint256", // will be implemented as bitmap for cells player has travelled
         SingleInteractionComponent: {
           keySchema: {
             player: "bytes32",
@@ -48,7 +49,6 @@ export default mudConfig({
             timeouts: "bytes" // abi encoded uint256 of when players will timeout
           }
         },
-        RevealedCellsComponent: "bytes", // array of uint256 of locationIds the player has visited
         TravelComponent: {
           schema: {
             status: "TravelStatus",

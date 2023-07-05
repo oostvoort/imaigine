@@ -290,6 +290,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    RevealedCellsComponent: (() => {
+      const tableId = new TableId("", "RevealedCellsCom");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
     SingleInteractionComponent: (() => {
       const tableId = new TableId("", "SingleInteractio");
       return defineComponent(
@@ -318,21 +333,6 @@ export function defineContractComponents(world: World) {
           players: RecsType.String,
           choices: RecsType.String,
           timeouts: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    RevealedCellsComponent: (() => {
-      const tableId = new TableId("", "RevealedCellsCom");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
         },
         {
           metadata: {
