@@ -25,9 +25,10 @@ function hook_onMapClick(el, p) {
 
   const i = findCell(p[0], p[1])
 
-  console.log("Clicked cell: ", i)
 
   if (grand.id === 'burgIcons') {
+    console.log("Clicked burg: ", i)
+
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
@@ -38,22 +39,30 @@ function hook_onMapClick(el, p) {
       },
     })
 
-    console.log('nextTowns', getNextTowns(i))
-
-    //todo: add guard that will restrict for travel action only
-    const travel = window.Routes.findNearestPath(i)
-    if (travel) window.Routes.draw(travel)
-  } else {
     window.parent.postMessage({
       cmd: 'ExploreMap', params: {
         locationId: i
       },
     })
+
+    console.log('nextTowns', getNextTowns(i))
+    // Find the nearest path
+    const nearestPath = window.Routes.findNearestPath(i)
+    // nearestPath[0].reverse().forEach(moveMarker);
+
+    // if (travel) window.Routes.draw(travel)
   }
 
 }
-
-
+function moveMarker(item, index) {
+  setTimeout(() => {
+    showPlayers([{
+      name: "Edward",
+      cell: item,
+      legend: 'A brave and honorable knight known for his swordsmanship.'
+    }])
+  }, index * 1000);
+}
 function revealCells(cells) {
   //combine cells with its neighboring cells
   const exploredCells = [...new Set(cells.flatMap(cell => [...pack.cells.c[cell], cell]))];
@@ -79,7 +88,6 @@ function getNextTowns(cellId) {
 }
 
 function showPlayers(players) {
-  console.log('showPlayers', players)
   for (const player of players) {
 
     // adding player's marker
