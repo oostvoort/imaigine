@@ -13,9 +13,9 @@ export default function useNPCInteraction() {
       MultiInteractionComponent
     },
     network: {
+      worldContract,
       txReduced$,
       worldSend,
-      playerEntity
     },
   } = useMUD();
 
@@ -48,13 +48,12 @@ export default function useNPCInteraction() {
     },
   })
 
-  const createNPCInteraction = useMutation<number, Error, {choiceId: number, npcId: string}>(async (data) => {
+  const createNPCInteraction = useMutation<any, Error, {choiceId: number, npcId: string}>(async (data) => {
     const { choiceId, npcId } = data
-    const tx = await worldSend('interactMulti', [npcId, BigNumber.from(choiceId)])
+    const tx = await worldSend('interactMulti', [npcId, BigNumber.from(`${choiceId}`)])
     await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
-    return choiceId
+    return worldContract.winningChoice(npcId)
   })
-
 
   return { interactNPC, createNPCInteraction }
 }

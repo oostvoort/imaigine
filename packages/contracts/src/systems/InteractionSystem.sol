@@ -34,7 +34,10 @@ contract InteractionSystem is System {
   uint256 private constant PROCESSING_TIMEOUT = 1_000 * 60 * 60;
 
   /// @dev returned in multiInteract when a winningChoice is not yet available
-  uint256 private constant NOT_YET_AVAILABLE = 4;
+  uint256 private constant NOT_YET_AVAILABLE = 0;
+
+  /// @dev returned in multiInteract when players disagreed in voting
+  uint256 private constant DISAGREED_CHOICE = 4;
 
   /// @notice interact with an interactable that handles single interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
@@ -109,7 +112,7 @@ contract InteractionSystem is System {
   /// @notice interact with an interactable that handles multi interaction
   /// @param interactableId is the id of the interactable the player wants to interact with
   /// @param choiceId is the id of the choice; 0 - will enter into the interaction, 1-3 - actual choices
-  /// @return winningChoice (0 for disagreement, 1-3 actual choice, 4 - not yet available)
+  /// @return true if  (4 for disagreement, 1-3 actual choice, 0 - not yet available)
   function interactMulti(bytes32 interactableId, uint256 choiceId)
   public
   returns (uint256)
@@ -141,18 +144,18 @@ contract InteractionSystem is System {
 
     if (choiceId == 0) {
       require(playerIndex == -1, "player has already entered interaction");
-      players.push(playerID);
-      choices.push(choiceId);
-      timeouts.push(block.timestamp + PROCESSING_TIMEOUT);
+      bytes32[] memory newPlayers = players.push(playerID);
+      uint256[] memory newChoices = choices.push(choiceId);
+      uint256[] memory newTimeouts = timeouts.push(block.timestamp + VOTING_TIMEOUT);
 
       MultiInteractionComponent.set(
         interactableId,
         true,
         multiInteraction.playerCount + 1,
         block.timestamp + PROCESSING_TIMEOUT,
-        players.encode(),
-        choices.encode(),
-        timeouts.encode()
+        newPlayers.encode(),
+        newChoices.encode(),
+        newTimeouts.encode()
       );
       InteractableComponent.set(playerID, interactableId);
       return NOT_YET_AVAILABLE; // early returning here
@@ -174,9 +177,9 @@ contract InteractionSystem is System {
     // remove timed out zero choices
     for (uint256 i = 0; i < multiInteraction.playerCount; i++) {
       if (choices[i] != 0 || timeouts[i] > block.timestamp)  {
-        updatedPlayers.push(players[i]);
-        updatedChoices.push(choices[i]);
-        updatedTimeouts.push(timeouts[i]);
+        updatedPlayers = updatedPlayers.push(players[i]);
+        updatedChoices = updatedChoices.push(choices[i]);
+        updatedTimeouts = updatedTimeouts.push(timeouts[i]);
         if (choices[i] != 0) nonzeroChoicesCount++;
       } else {
         // change to interact with the Location
@@ -277,7 +280,7 @@ contract InteractionSystem is System {
       if (largestChoiceCount == choiceCounts[i]) {
         if (winner == 0) winner = choiceCounts[i];
         // meaning that there were two or more largest number meaning the players disagreed
-        else return 0;
+        else return DISAGREED_CHOICE;
       }
     }
 

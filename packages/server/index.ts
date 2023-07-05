@@ -533,14 +533,16 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
       },
     } as InteractNpcResponse)
   } else {
-    const choice = await worldContract.winningChoice(props.playerEntityId[0])
-    if (choice.toNumber() === 4) {
+    const choice = await worldContract.winningChoice(props.npcEntityId)
 
-      const currentHistory = await fetchHistoryLogs(props.npcEntityId)
-      const currentInteraction = await fetchInteraction(props.npcEntityId)
+    if (choice.toNumber() === 0) {
+      // not yet available
+      // return conversation and history
+      const historyLogs = await fetchHistoryLogs(props.npcEntityId)
+      const interaction = await fetchInteraction(props.npcEntityId)
 
       res.send({
-        conversationHistory: currentHistory.map((convo: any) => {
+        conversationHistory: historyLogs.map((convo: any) => {
           return {
             logId: convo.log_id,
             by: convo.by,
@@ -549,21 +551,23 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
         }),
         option: {
           good: {
-            goodChoise: currentInteraction[0].good_choice,
-            goodResponse: currentInteraction[0].good_effect,
+            goodChoise: interaction[0].good_choice,
+            goodResponse: interaction[0].good_effect,
           },
           evil: {
-            evilChoise: currentInteraction[0].evil_choice,
-            evilResponse: currentInteraction[0].evil_effect,
+            evilChoise: interaction[0].evil_choice,
+            evilResponse: interaction[0].evil_effect,
           },
           neutral: {
-            neutralChoise: currentInteraction[0].neutral_choice,
-            neutralResponse: currentInteraction[0].neutral_effect,
+            neutralChoise: interaction[0].neutral_choice,
+            neutralResponse: interaction[0].neutral_effect,
           },
         },
       } as InteractNpcResponse)
 
-    } else {
+    } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
+      // choosing between 1 to 3
+      // call here the interaction
 
       const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
 
@@ -620,7 +624,6 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
       const newConversation = await fetchHistoryLogs(props.npcEntityId)
       const latestInteraction = await fetchInteraction(props.npcEntityId)
 
-
       await worldContract.openInteraction(props.playerEntityId[0])
 
       res.send({
@@ -646,6 +649,12 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
           },
         },
       } as InteractNpcResponse)
+
+    } else {
+      res.sendStatus(500).json({
+        message: `Error on choice ${choice}`,
+        code: 500,
+      })
     }
   }
 })

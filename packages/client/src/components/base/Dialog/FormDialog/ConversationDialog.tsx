@@ -5,6 +5,11 @@ import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayout'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/base/Avatar'
+import useNPCInteraction from '@/hooks/useNPCInteraction'
+import { useMUD } from '@/MUDContext'
+import usePlayer from '@/hooks/v1/usePlayer'
+import { npcConversation_atom } from '@/states/global'
+import { useSetAtom } from 'jotai'
 
 const players = [
   {
@@ -28,12 +33,52 @@ type PropType = {
   isOpen?: boolean,
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
   fetchedUrl?: string
+  conversations?: any
 }
 export default function ConversationDialog({
   isOpen,
   setOpen,
   fetchedUrl = '/src/assets/background/bg1.jpg',
+  conversations,
 }: PropType) {
+  const { createNPCInteraction, interactNPC } = useNPCInteraction()
+  const { player } = usePlayer()
+  const {
+    network: {
+      playerEntity,
+    },
+  } = useMUD()
+
+  const setNPCConversation = useSetAtom(npcConversation_atom)
+
+  const npcId = '0x0000000000000000000000000000000000000000000000000000000000000002'
+  React.useEffect(() => {
+    if (createNPCInteraction.isSuccess) {
+      if ((createNPCInteraction.data).toNumber() >= 1 && (createNPCInteraction.data).toNumber() <= 3) {
+        if (!player.config) throw new Error('No generated Player')
+        interactNPC.mutate({
+          playerIpfsHash: [ `${player.config.value}` ],
+          npcEntityId: npcId,
+          npcIpfsHash: 'QmcNgZR321oGu1QKijDpEbbad9tpxAHRJiqFL7AnvKvJrf',
+          playerEntityId: [ `${playerEntity}` ],
+        })
+      }
+    }
+  }, [ createNPCInteraction.isSuccess ])
+
+
+  React.useEffect(() => {
+    if (interactNPC.isSuccess) {
+      if (interactNPC.data !== undefined) {
+        setNPCConversation({
+          conversationHistory: interactNPC.data.conversationHistory,
+          option: interactNPC.data.option
+        })
+      }
+    }
+  }, [interactNPC.isSuccess])
+
+
   return (
     <Dialog open={isOpen} onOpenChange={() => null}>
       <DialogPrimitive.Portal
@@ -48,25 +93,25 @@ export default function ConversationDialog({
           </DialogPrimitive.Close>
 
           {/*IF MULTIPLAYER*/}
-          <div className={clsx([ 'text-4xl absolute left-[4.5%] top-24', 'my-lg' ])}>
-            <div className={clsx([ 'h-[75%]', 'flex flex-col' ])}>
-              {
-                players.map((player, key) => (
-                  <div key={key} className={'relative flex items-center z-10  justify-center my-sm border rounded-full w-[128px] h-[128px] border border-2 border-accent'}>
-                    <Avatar className={'h-full w-full'}>
-                      <AvatarImage src={player.imgSrc} alt={'Avatar Image'}/>
-                      <AvatarFallback>{player.avatarFallBack}</AvatarFallback>
-                    </Avatar>
-                    <span className={'absolute -bottom-4 rounded-md py-0.5 px-1.5 bg-[#000000A8] text-[14px] leading-[32px] font-segoe tracking-[0.28]'}>{player.avatarName}</span>
+          {/*<div className={clsx([ 'text-4xl absolute left-[4.5%] top-24', 'my-lg' ])}>*/}
+          {/*  <div className={clsx([ 'h-[75%]', 'flex flex-col' ])}>*/}
+          {/*    {*/}
+          {/*      players.map((player, key) => (*/}
+          {/*        <div key={key} className={'relative flex items-center z-10  justify-center my-sm border rounded-full w-[128px] h-[128px] border border-2 border-accent'}>*/}
+          {/*          <Avatar className={'h-full w-full'}>*/}
+          {/*            <AvatarImage src={player.imgSrc} alt={'Avatar Image'}/>*/}
+          {/*            <AvatarFallback>{player.avatarFallBack}</AvatarFallback>*/}
+          {/*          </Avatar>*/}
+          {/*          <span className={'absolute -bottom-4 rounded-md py-0.5 px-1.5 bg-[#000000A8] text-[14px] leading-[32px] font-segoe tracking-[0.28]'}>{player.avatarName}</span>*/}
 
-                    <div className={'absolute -right-[15%] z-10 flex justify-center items-center  rounded-full h-11 w-11 bg-red-400 bg-accent'}>
-                      <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'rotate-180'}/>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+          {/*          <div className={'absolute -right-[15%] z-10 flex justify-center items-center  rounded-full h-11 w-11 bg-red-400 bg-accent'}>*/}
+          {/*            <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'rotate-180'}/>*/}
+          {/*          </div>*/}
+          {/*        </div>*/}
+          {/*      ))*/}
+          {/*    }*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
 
           <DialogPrimitive.Content
@@ -99,23 +144,40 @@ export default function ConversationDialog({
                 </p>
 
                 <ConversationLayout>
-                  <ConversationLayout.TypingBubble authorIcon={'/src/assets/avatar/avatar1.jpg'} />
-
-                  <ConversationLayout.ReceiverBubble authorName={'Eleanor the Dryad'} authorIcon={'/src/assets/avatar/avatar1.jpg'} text={'Yes, I am Eleanor. And who might you be?'} />
-                  <ConversationLayout.SenderBubble text={'Excuse me, are you Eleanor? I\'ve heard great things about you.'} />
-
-                  <ConversationLayout.ReceiverBubble authorName={'Eleanor the Dryad'} authorIcon={'/src/assets/avatar/avatar1.jpg'} text={'Yes, I am Eleanor. And who might you be?'} />
-                  <ConversationLayout.SenderBubble text={'Excuse me, are you Eleanor? I\'ve heard great things about you.'} />
-
-                  <ConversationLayout.ReceiverBubble authorName={'Eleanor the Dryad'} authorIcon={'/src/assets/avatar/avatar1.jpg'} text={'Yes, I am Eleanor. And who might you be?'} />
-                  <ConversationLayout.SenderBubble text={'Excuse me, are you Eleanor? I\'ve heard great things about you.'} />
-
-                  <ConversationLayout.ReceiverBubble authorName={'Eleanor the Dryad'} authorIcon={'/src/assets/avatar/avatar1.jpg'} text={'Yes, I am Eleanor. And who might you be?'} />
-                  <ConversationLayout.SenderBubble text={'Excuse me, are you Eleanor? I\'ve heard great things about you.'} />
+                  {
+                    createNPCInteraction.data?.toNumber() === 4 &&
+                    <p className={clsx('text-3xl font-amiri tracking-wide text-center')}>
+                      Eleanor vanished into thin air.
+                    </p>
+                  }
+                  {
+                    interactNPC.isLoading && <ConversationLayout.TypingBubble authorIcon={'/src/assets/avatar/avatar1.jpg'} />
+                  }
+                  {
+                    conversations?.conversationHistory?.map((conversation: any) => {
+                      if (conversation.by === 'interactable') {
+                        return (
+                          <ConversationLayout.ReceiverBubble
+                            key={conversation.logId}
+                            authorName={'Eleanor the Dryad'}
+                            authorIcon={'/src/assets/avatar/avatar1.jpg'}
+                            text={conversation.text}
+                          />
+                        )
+                      } else if (conversation.by === 'player') {
+                        return (
+                          <ConversationLayout.SenderBubble
+                            key={conversation.logId}
+                            text={conversation.text}
+                          />
+                        )
+                      } else {
+                        return null
+                      }
+                    })
+                  }
                 </ConversationLayout>
               </div>
-
-
             </section>
           </DialogPrimitive.Content>
 
@@ -123,20 +185,43 @@ export default function ConversationDialog({
             'absolute bottom-8 w-full',
           ])}>
             <div className={'flex justify-center'}>
-              {/*<p className={clsx('text-3xl font-amiri tracking-wide')}>*/}
-              {/*  Waiting for Eleanor the Dryad!*/}
-              {/*</p>*/}
-              <div className={clsx('flex gap-x-3')}>
-                <Button variant={'neutral'} size={'btnWithBgImg'}>
-                  Share Name
-                </Button>
-                <Button variant={'neutral'} size={'btnWithBgImg'}>
-                  Politely decline
-                </Button>
-                <Button variant={'neutral'} size={'btnWithBgImg'}>
-                  Give a false name
-                </Button>
-              </div>
+              {
+                interactNPC.isLoading ? (
+                  <p className={clsx('text-3xl font-amiri tracking-wide')}>
+                    Waiting for Eleanor the Dryad!
+                  </p>
+                ) : (
+                  conversations.option && (
+                    <div className={clsx('flex gap-x-3')}>
+                      <Button
+                        variant={'neutral'}
+                        size={'btnWithBgImg'}
+                        onClick={() => createNPCInteraction.mutate({ choiceId: 1, npcId })}
+                      >
+                        {conversations.option.evil.evilChoise}
+                      </Button>
+                      <Button
+                        variant={'neutral'}
+                        size={'btnWithBgImg'}
+                        onClick={() => {
+                          createNPCInteraction.mutate({ choiceId: 2, npcId })
+                        }}
+                      >
+                        {conversations.option.good.goodChoise}
+                      </Button>
+                      <Button
+                        variant={'neutral'}
+                        size={'btnWithBgImg'}
+                        onClick={() => {
+                          createNPCInteraction.mutate({ choiceId: 3, npcId })
+                        }}
+                      >
+                        {conversations.option.neutral.neutralChoise}
+                      </Button>
+                    </div>
+                  )
+                )
+              }
             </div>
           </section>
         </DialogPrimitive.Overlay>
