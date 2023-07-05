@@ -4,30 +4,13 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayout'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/base/Avatar'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { useMUD } from '@/MUDContext'
 import usePlayer from '@/hooks/v1/usePlayer'
-import { npcConversation_atom } from '@/states/global'
-import { useSetAtom } from 'jotai'
-
-const players = [
-  {
-    imgSrc: '/src/assets/avatar/avatar1.jpg',
-    avatarName: 'You',
-    avatarFallBack: 'OV',
-  },
-  {
-    imgSrc: '/src/assets/avatar/avatar2.jpg',
-    avatarName: 'Melchior',
-    avatarFallBack: 'OV',
-  },
-  {
-    imgSrc: '/src/assets/avatar/avatar3.jpg',
-    avatarName: 'Geneva',
-    avatarFallBack: 'OV',
-  },
-]
+import { currentNPC_atom, npcConversation_atom } from '@/states/global'
+import { useAtomValue, useSetAtom } from 'jotai'
+import useLocationInteraction from '@/hooks/useLocationInteraction'
+import { IPFS_URL_PREFIX } from '@/global/constants'
 
 type PropType = {
   isOpen?: boolean,
@@ -42,6 +25,7 @@ export default function ConversationDialog({
   conversations,
 }: PropType) {
   const { createNPCInteraction, interactNPC } = useNPCInteraction()
+  const { createLocationInteraction } = useLocationInteraction()
   const { player } = usePlayer()
   const {
     network: {
@@ -50,16 +34,16 @@ export default function ConversationDialog({
   } = useMUD()
 
   const setNPCConversation = useSetAtom(npcConversation_atom)
+  const currentNPC = useAtomValue(currentNPC_atom)
 
-  const npcId = '0x0000000000000000000000000000000000000000000000000000000000000002'
   React.useEffect(() => {
     if (createNPCInteraction.isSuccess) {
       if ((createNPCInteraction.data).toNumber() >= 1 && (createNPCInteraction.data).toNumber() <= 3) {
         if (!player.config) throw new Error('No generated Player')
         interactNPC.mutate({
           playerIpfsHash: [ `${player.config.value}` ],
-          npcEntityId: npcId,
-          npcIpfsHash: 'QmcNgZR321oGu1QKijDpEbbad9tpxAHRJiqFL7AnvKvJrf',
+          npcEntityId: currentNPC.npcId,
+          npcIpfsHash: currentNPC.config.value,
           playerEntityId: [ `${playerEntity}` ],
         })
       }
@@ -78,6 +62,16 @@ export default function ConversationDialog({
     }
   }, [interactNPC.isSuccess])
 
+  const handleCloseInteraction = () => {
+    createLocationInteraction.mutate({ choiceId: 0, })
+  }
+
+  React.useEffect(() => {
+    if (createLocationInteraction.isSuccess) {
+      console.log({createLocationInteraction})
+    }
+  }, [createLocationInteraction.isSuccess])
+
 
   return (
     <Dialog open={isOpen} onOpenChange={() => null}>
@@ -88,7 +82,13 @@ export default function ConversationDialog({
           className={clsx([ 'fixed inset-0 bg-cover bg-no-repeat flex items-start justify-center  duration-[3000ms] delay-1000 ease-in-out' ])}>
           <div className={'backdrop-blur h-screen w-screen'} />
 
-          <DialogPrimitive.Close className={'absolute right-4 top-4 p-1'} onClick={() => setOpen && setOpen(false)}>
+          <DialogPrimitive.Close
+            className={'absolute right-4 top-4 p-1'}
+            onClick={() => {
+              handleCloseInteraction()
+              setOpen && setOpen(false)
+            }}
+          >
             <img src={'/src/assets/svg/close.svg'} alt={'Close Icon'} />
           </DialogPrimitive.Close>
 
@@ -129,8 +129,8 @@ export default function ConversationDialog({
             ])}>
               <div className={clsx('w-4/12')}>
                 <img
-                  src={'/src/assets/avatar/avatar3.jpg'}
-                  alt={'RPG 40 Image'}
+                  src={`${currentNPC ? `${IPFS_URL_PREFIX}/${currentNPC.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                  alt={'NPC Image'}
                   className="w-full h-full rounded rounded-xl object-cover"
                 />
               </div>
@@ -139,10 +139,6 @@ export default function ConversationDialog({
                 'w-8/12 h-full',
                 'flex flex-col items-center',
               ])}>
-                <p className={clsx('text-3xl font-amiri')}>
-                  Alice: approaches Eleanor with a smile
-                </p>
-
                 <ConversationLayout>
                   {
                     createNPCInteraction.data?.toNumber() === 4 &&
@@ -151,7 +147,7 @@ export default function ConversationDialog({
                     </p>
                   }
                   {
-                    interactNPC.isLoading && <ConversationLayout.TypingBubble authorIcon={'/src/assets/avatar/avatar1.jpg'} />
+                    interactNPC.isLoading && <ConversationLayout.TypingBubble authorIcon={`${currentNPC ? `${IPFS_URL_PREFIX}/${currentNPC.image}` : '/src/assets/avatar/avatar1.jpg'}`} />
                   }
                   {
                     conversations?.conversationHistory?.map((conversation: any) => {
@@ -159,8 +155,8 @@ export default function ConversationDialog({
                         return (
                           <ConversationLayout.ReceiverBubble
                             key={conversation.logId}
-                            authorName={'Eleanor the Dryad'}
-                            authorIcon={'/src/assets/avatar/avatar1.jpg'}
+                            authorName={currentNPC.config.name ?? 'NPC Name'}
+                            authorIcon={`${currentNPC ? `${IPFS_URL_PREFIX}/${currentNPC.image}` : '/src/assets/avatar/avatar1.jpg'}`}
                             text={conversation.text}
                           />
                         )
@@ -196,7 +192,7 @@ export default function ConversationDialog({
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => createNPCInteraction.mutate({ choiceId: 1, npcId })}
+                        onClick={() => createNPCInteraction.mutate({ choiceId: 1, npcId: currentNPC.npcId })}
                       >
                         {conversations.option.evil.evilChoise}
                       </Button>
@@ -204,7 +200,7 @@ export default function ConversationDialog({
                         variant={'neutral'}
                         size={'btnWithBgImg'}
                         onClick={() => {
-                          createNPCInteraction.mutate({ choiceId: 2, npcId })
+                          createNPCInteraction.mutate({ choiceId: 2, npcId: currentNPC.npcId })
                         }}
                       >
                         {conversations.option.good.goodChoise}
@@ -213,7 +209,7 @@ export default function ConversationDialog({
                         variant={'neutral'}
                         size={'btnWithBgImg'}
                         onClick={() => {
-                          createNPCInteraction.mutate({ choiceId: 3, npcId })
+                          createNPCInteraction.mutate({ choiceId: 3, npcId: currentNPC.npcId })
                         }}
                       >
                         {conversations.option.neutral.neutralChoise}
