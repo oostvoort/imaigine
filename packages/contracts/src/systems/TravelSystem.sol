@@ -37,6 +37,7 @@ contract TravelSystem is System {
   }
 
   /// @notice called by the backend to process the player's travel
+  /// @dev will not check toRevealAtDestination because at some point this could be empty
   /// @param playerId is the player that will start travelling
   /// @param pathCells is a list of cells the player will travel through
   /// @param toRevealAtDestination are the cells to reveal when player has arrived
@@ -45,6 +46,7 @@ contract TravelSystem is System {
     uint256[] memory pathCells,
     uint256[] memory toRevealAtDestination
   ) public {
+    require(pathCells.length > 0, "must have path");
     TravelStatus status = TravelComponent.getStatus(playerId);
     require(status == TravelStatus.PREPARING, "player is not preparing to travel");
     TravelComponentData memory travelData = TravelComponent.get(playerId);
