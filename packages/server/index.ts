@@ -251,12 +251,19 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 
     const imageHash = await generatePlayerImage(npc.visualSummary)
 
+    console.info("writing npc to contract...")
+    const id = await (await worldContract.createCharacter(npcIpfsHash, imageHash, props.locationId)).wait()
+    console.info(id)
+
     res.send({
       ipfsHash: npcIpfsHash,
       imageHash: imageHash,
     } as GenerateNpcResponse)
   } catch (e) {
-    next(e)
+    res.sendStatus(500).json({
+      message: `Error: ${e.error}`,
+      code: 500,
+    })
   }
 })
 

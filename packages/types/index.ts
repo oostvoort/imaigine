@@ -22,16 +22,6 @@ export interface InteractionOption {
   choice: string,
   effect: string
 }
-export interface InteractSingleDoneProps {
-  locationIpfsHash: string,
-  locationId: string,
-  playerIpfsHash: string,
-  npcIpfsHash: string,
-  option?: {
-    scenario: string,
-    interaction: InteractionOption
-  }
-}
 export interface InteractSingleDoneResponse {
   scenario: string,
   options: {
@@ -42,6 +32,7 @@ export interface InteractSingleDoneResponse {
 }
 export interface GenerateNpcProps {
   locationIpfsHash: string,
+  locationId: string
 }
 export interface GenerateNpcResponse {
   ipfsHash: string,
