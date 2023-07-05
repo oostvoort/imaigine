@@ -28,16 +28,17 @@ contract InteractionSystem is MudV2Test {
 
   IWorld public world;
 
-  bytes32 fromLocation;
-  bytes32 toLocation;
-  bytes32 playerId;
-  uint256 toLocationCellNumber = 100;
-  bytes32 zeroBytes = keccak256(abi.encodePacked(new bytes(0)));
+  bytes32 private fromLocation;
+  bytes32 private toLocation;
+  bytes32 private playerId;
+  uint256 private toLocationCellNumber = 100;
+  bytes32 private zeroBytes = keccak256(abi.encodePacked(new bytes(0)));
+  address private constant PLAYER_1 = address(1);
 
   uint256 private constant TRAVEL_SPEED = 1_000 * 15;
 
   function setUp() public override {
-    vm.deal(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 1000000);
+    vm.deal(PLAYER_1, 1000000);
 
     super.setUp();
     world = IWorld(worldAddress);
@@ -45,8 +46,8 @@ contract InteractionSystem is MudV2Test {
     fromLocation = world.createLocation("config", "image", 99);
     toLocation = keccak256(abi.encodePacked(bytes16("LOCATION"), toLocationCellNumber));
 
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
-    playerId = world.createPlayer(bytes32(uint256(uint160(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683))), "config", "image", fromLocation);
+    vm.prank(PLAYER_1, PLAYER_1);
+    playerId = world.createPlayer(bytes32(uint256(uint160(PLAYER_1))), "config", "image", fromLocation);
   }
 
   function testWorldExists() public {
@@ -59,7 +60,7 @@ contract InteractionSystem is MudV2Test {
   }
 
   function test_prepareTravel() public {
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     bytes32 locationId = world.prepareTravel(toLocationCellNumber);
     TravelComponentData memory travelComponentData = TravelComponent.get(world, playerId);
     assertEq(locationId, toLocation);
@@ -78,7 +79,7 @@ contract InteractionSystem is MudV2Test {
   }
 
   function test_startTravel() public {
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.prepareTravel(toLocationCellNumber);
 
     uint256[] memory pathCells = new uint256[](2);
@@ -105,7 +106,7 @@ contract InteractionSystem is MudV2Test {
     vm.expectRevert("player cannot travel yet");
     world.travel();
 
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.prepareTravel(toLocationCellNumber);
 
     uint256[] memory pathCells = new uint256[](2);
@@ -121,19 +122,19 @@ contract InteractionSystem is MudV2Test {
 
     uint256 newTimestamp = block.timestamp + TRAVEL_SPEED;
     vm.warp(newTimestamp);
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.travel();
 
     newTimestamp += TRAVEL_SPEED;
     vm.warp(newTimestamp);
     vm.expectRevert("location is not ready for visiting");
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.travel();
   }
 
   function test_travel() public {
     world.createLocation("config", "image", toLocationCellNumber);
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.prepareTravel(toLocationCellNumber);
 
     uint256[] memory pathCells = new uint256[](2);
@@ -150,7 +151,7 @@ contract InteractionSystem is MudV2Test {
 
     uint256 newTimestamp = block.timestamp + TRAVEL_SPEED;
     vm.warp(newTimestamp);
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.travel();
 
     uint256[] memory newPathCells = new uint256[](1);
@@ -169,7 +170,7 @@ contract InteractionSystem is MudV2Test {
 
     newTimestamp += TRAVEL_SPEED;
     vm.warp(newTimestamp);
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.travel();
 
     travelComponentData = TravelComponent.get(world, playerId);

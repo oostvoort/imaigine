@@ -205,9 +205,8 @@ contract InteractionSystem is System {
 
     uint256 winner = winningChoice(interactableId);
 
-    // if the winningChoice is 0, the players disagreed
     // TODO: figure out if karma points should be hit when disagreement has occurred
-    if (winner == 0) return NOT_YET_AVAILABLE;
+    if (winner == DISAGREED_CHOICE) return DISAGREED_CHOICE;
 
     for (uint256 i = 0; i < updatedPlayerCount; i++) {
       changeKarma(updatedPlayers[i], winner);
@@ -258,7 +257,7 @@ contract InteractionSystem is System {
   view
   returns(uint256) {
     bool available = MultiInteractionComponent.getAvailable(interactableId);
-    if (available) return 4;
+    if (available) return NOT_YET_AVAILABLE;
     bytes memory choicesBytes = MultiInteractionComponent.getChoices(interactableId);
     uint256[] memory choices = choicesBytes.decodeUint256Array();
     uint256[] memory choiceCounts = new uint256[](4);
@@ -278,7 +277,7 @@ contract InteractionSystem is System {
     uint256 winner = 0;
     for (uint256 i = 0; i < choiceCounts.length; i++) {
       if (largestChoiceCount == choiceCounts[i]) {
-        if (winner == 0) winner = choiceCounts[i];
+        if (winner == 0) winner = i;
         // meaning that there were two or more largest number meaning the players disagreed
         else return DISAGREED_CHOICE;
       }
@@ -290,7 +289,7 @@ contract InteractionSystem is System {
   function changeKarma(bytes32 playerId, uint256 choiceId)
   private
   {
-    require(choiceId > 0 && choiceId < 4, "unknown choice");
+    require(choiceId > 0 && choiceId < 4, "unhandled change in karma: unknown choice");
     int8 karmaPoints = KarmaPointsComponent.get(playerId);
     int8 karmaEffect = choiceId == 1 ? int8(-5) : choiceId == 3 ? int8(5) : int8(0);
 

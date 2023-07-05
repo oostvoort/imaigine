@@ -28,22 +28,24 @@ contract InteractionSystem is MudV2Test {
   using ArrayLib for bytes32[];
   IWorld public world;
 
-  bytes32 mockLocationID;
-  bytes32 mockNPCID;
-  bytes32 playerId;
+  bytes32 private mockLocationID;
+  bytes32 private mockNPCID;
+  bytes32 private player1Id;
+  bytes32 private player2Id;
+  address private constant PLAYER_1 = address(1);
+  address private constant PLAYER_2 = address(2);
 
   function setUp() public override {
-    vm.deal(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 1000000);
+    vm.deal(PLAYER_1, 1000000);
+    vm.deal(PLAYER_2, 1000000);
 
     super.setUp();
     world = IWorld(worldAddress);
 
     mockLocationID = world.createLocation("config", "image", 99);
-
     mockNPCID = world.createCharacter("config", "image", mockLocationID);
-
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
-    playerId = world.createPlayer(bytes32(uint256(uint160(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683))), "config", "image", mockLocationID);
+    player1Id = world.createPlayer(bytes32(uint256(uint160(PLAYER_1))), "config", "image", mockLocationID);
+    player2Id = world.createPlayer(bytes32(uint256(uint160(PLAYER_2))), "config", "image", mockLocationID);
   }
 
   function testWorldExists() public {
@@ -63,9 +65,9 @@ contract InteractionSystem is MudV2Test {
   function test_interactSingle() public {
     uint256 choice = 0;
 
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
+    vm.prank(PLAYER_1, PLAYER_1);
     world.interactSingle(mockLocationID, choice);
-    SingleInteractionComponentData memory singleInteractionComponentData = SingleInteractionComponent.get(world, playerId, mockLocationID);
+    SingleInteractionComponentData memory singleInteractionComponentData = SingleInteractionComponent.get(world, player1Id, mockLocationID);
     assertTrue(singleInteractionComponentData.available);
     assertEq(singleInteractionComponentData.choice, choice);
   }
@@ -76,14 +78,31 @@ contract InteractionSystem is MudV2Test {
   }
 
   function test_EnterMultiInteraction() public {
-    uint256 choice = 0;
-    vm.prank(0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683, 0xC67c60cD6d82Fcb2fC6a9a58eA62F80443E32683);
-    world.interactMulti(mockNPCID, choice);
+    uint256 enterChoice = 0;
+    uint256 round1Choice = 3;
+
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.interactMulti(mockNPCID, enterChoice);
     MultiInteractionComponentData memory multiInteraction = MultiInteractionComponent.get(world, mockNPCID);
 
     bytes32[] memory players = new bytes32[](0);
-    bytes32[] memory newPlayers = players.push(playerId);
+    bytes32[] memory newPlayers = players.push(player1Id);
 
     assertEq(multiInteraction.players, newPlayers.encode());
+
+    vm.prank(PLAYER_2, PLAYER_2);
+    world.interactMulti(mockNPCID, enterChoice);
+
+    multiInteraction = MultiInteractionComponent.get(world, mockNPCID);
+    newPlayers = newPlayers.push(player2Id);
+
+    assertEq(multiInteraction.players, newPlayers.encode());
+
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.interactMulti(mockNPCID, round1Choice);
+    vm.prank(PLAYER_2, PLAYER_2);
+    world.interactMulti(mockNPCID, round1Choice);
+    assertEq(world.winningChoice(mockNPCID), round1Choice);
+
   }
 }
