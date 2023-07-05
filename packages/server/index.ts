@@ -251,12 +251,20 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 
     const imageHash = await generatePlayerImage(npc.visualSummary)
 
+    console.info("writing npc to contract...")
+
+    await (await worldContract.createCharacter(npcIpfsHash, imageHash, props.locationId)).wait()
+
     res.send({
       ipfsHash: npcIpfsHash,
       imageHash: imageHash,
     } as GenerateNpcResponse)
   } catch (e) {
-    next(e)
+    console.info(e.message)
+    res.sendStatus(500).json({
+      message: `Error: ${e.message}`,
+      code: 500,
+    })
   }
 })
 
@@ -294,7 +302,11 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     } as GeneratePlayerResponse)
 
   } catch (e) {
-    next(e)
+    console.info(`Error: ${e}`)
+    res.sendStatus(500).json({
+      message: `Error: ${e.message}`,
+      code: 500,
+    })
   }
 })
 
@@ -304,7 +316,10 @@ app.post('/api/v1/generate-player-image', async (req: Request, res: Response, ne
     const imageHash = await generatePlayerImage(props.visualSummary)
     res.send({ imageIpfsHash: imageHash } as GeneratePlayerImageResponse)
   } catch (e) {
-    next(e)
+    res.sendStatus(500).json({
+      message: `Error: ${e.message}`,
+      code: 500,
+    })
   }
 })
 
@@ -313,11 +328,12 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 
   try {
     try {
+      console.info("Writing player to contract...")
       await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
       res.send('Player Created!')
     } catch (e) {
       res.sendStatus(500).json({
-        message: `${e.error}`,
+        message: `${e.message}`,
         code: 500,
       })
     }
@@ -329,85 +345,31 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 app.post('/api/v1/interact-location', async (req: Request, res: Response, next: NextFunction) => {
   const props: InteractLocationProps = req.body
 
-  // get details of location, player and npc using ipfs
-  const location: Based = await getFromIpfs(props.locationIpfsHash)
-  const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
-  const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
+  try {
+    // get details of location, player and npc using ipfs
+    const location: Based = await getFromIpfs(props.locationIpfsHash)
+    const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
+    const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
 
-  // check interaction table if have existing interaction
+    // check interaction table if have existing interaction
 
-  const interactions = await fetchInteraction(props.locationEntityId)
-  console.info('- done getting interactions')
-  let history = ''
+    const interactions = await fetchInteraction(props.locationEntityId)
+    console.info('- done getting interactions')
+    let history = ''
 
-  // need historylogs
-  const historyLogs = await fetchHistoryLogs(props.locationEntityId)
-  console.info('- done getting history')
+    // need historylogs
+    const historyLogs = await fetchHistoryLogs(props.locationEntityId)
+    console.info('- done getting history')
 
-  if (historyLogs.length > 0) {
-    for (const historyRow of historyLogs) {
-      history += historyRow.player_log + '\n'
+    if (historyLogs.length > 0) {
+      for (const historyRow of historyLogs) {
+        history += historyRow.player_log + '\n'
+      }
     }
-  }
 
-  if (interactions !== undefined) {
-    if (interactions.length <= 0) {
-      // create one from chatgpt
-      const locationInteraction = await generateLocationInteraction({
-        storyName: storyConfig.name,
-        storySummary: storyConfig.summary,
-        locationName: location.name,
-        locationSummary: location.summary,
-        npcName: npc.name,
-        npcSummary: npc.summary,
-        playerName: player.name,
-        playerSummary: player.description,
-        locationHistory: history ? `Location History: "${history}" \n` : '',
-      })
-      console.info('- done generating scenario')
-
-      // save the one created to interaction table
-      await insertInteraction({
-        interactable_id: props.locationEntityId,
-        scenario: locationInteraction.scenario,
-        good_choice: locationInteraction.options.good.choice,
-        good_effect: locationInteraction.options.good.effect,
-        evil_choice: locationInteraction.options.evil.choice,
-        evil_effect: locationInteraction.options.evil.effect,
-        neutral_choice: locationInteraction.options.neutral.choice,
-        neutral_effect: locationInteraction.options.neutral.effect,
-      })
-      console.info('- done inserting interaction')
-
-      // return the result
-      res.send(locationInteraction)
-    } else {
-
-      // checking of choice
-      const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
-
-      if (choice.toNumber()) {
-
-        await insertHistoryLogs({
-          interactable_id: props.locationEntityId,
-          by: 'player',
-          players: player.name,
-          mode: 'action',
-          player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
-        })
-
-        console.info('- done inserting new history')
-
-        const historyLogs = await fetchHistoryLogs(props.locationEntityId)
-        console.info('- done getting history')
-
-        history = ''
-        for (const historyRow of historyLogs) {
-          history += historyRow.player_log + '\n'
-        }
-
-        console.info({ history })
-
+    if (interactions !== undefined) {
+      if (interactions.length <= 0) {
+        // create one from chatgpt
         const locationInteraction = await generateLocationInteraction({
           storyName: storyConfig.name,
           storySummary: storyConfig.summary,
@@ -421,6 +383,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
         })
         console.info('- done generating scenario')
 
+        // save the one created to interaction table
         await insertInteraction({
           interactable_id: props.locationEntityId,
           scenario: locationInteraction.scenario,
@@ -431,115 +394,145 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
           neutral_choice: locationInteraction.options.neutral.choice,
           neutral_effect: locationInteraction.options.neutral.effect,
         })
-        console.info('- done inserting new interaction')
+        console.info('- done inserting interaction')
 
-        await worldContract.openInteraction(props.playerEntityId)
-
+        // return the result
         res.send(locationInteraction)
       } else {
-        res.send({
-          scenario: interactions[0].scenario,
-          options: {
-            good: {
-              choice: interactions[0].good_choice,
-              effect: interactions[0].good_effect,
-            },
-            evil: {
-              choice: interactions[0].evil_choice,
-              effect: interactions[0].evil_effect,
-            },
-            neutral: {
-              choice: interactions[0].neutral_choice,
-              effect: interactions[0].neutral_effect,
-            },
-          },
-        })
 
+        // checking of choice
+        const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
+
+        if (choice.toNumber()) {
+
+          await insertHistoryLogs({
+            interactable_id: props.locationEntityId,
+            by: 'player',
+            players: player.name,
+            mode: 'action',
+            player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+          })
+
+          console.info('- done inserting new history')
+
+          const historyLogs = await fetchHistoryLogs(props.locationEntityId)
+          console.info('- done getting history')
+
+          history = ''
+          for (const historyRow of historyLogs) {
+            history += historyRow.player_log + '\n'
+          }
+
+          console.info({ history })
+
+          const locationInteraction = await generateLocationInteraction({
+            storyName: storyConfig.name,
+            storySummary: storyConfig.summary,
+            locationName: location.name,
+            locationSummary: location.summary,
+            npcName: npc.name,
+            npcSummary: npc.summary,
+            playerName: player.name,
+            playerSummary: player.description,
+            locationHistory: history ? `Location History: "${history}" \n` : '',
+          })
+          console.info('- done generating scenario')
+
+          await insertInteraction({
+            interactable_id: props.locationEntityId,
+            scenario: locationInteraction.scenario,
+            good_choice: locationInteraction.options.good.choice,
+            good_effect: locationInteraction.options.good.effect,
+            evil_choice: locationInteraction.options.evil.choice,
+            evil_effect: locationInteraction.options.evil.effect,
+            neutral_choice: locationInteraction.options.neutral.choice,
+            neutral_effect: locationInteraction.options.neutral.effect,
+          })
+          console.info('- done inserting new interaction')
+
+          await worldContract.openInteraction(props.playerEntityId)
+
+          res.send(locationInteraction)
+        } else {
+          res.send({
+            scenario: interactions[0].scenario,
+            options: {
+              good: {
+                choice: interactions[0].good_choice,
+                effect: interactions[0].good_effect,
+              },
+              evil: {
+                choice: interactions[0].evil_choice,
+                effect: interactions[0].evil_effect,
+              },
+              neutral: {
+                choice: interactions[0].neutral_choice,
+                effect: interactions[0].neutral_effect,
+              },
+            },
+          })
+
+        }
       }
-    }
-  } else {
-    const error = {
-      message: 'Error occurred',
-      code: 500,
-    }
+    } else {
+      const error = {
+        message: 'Error occurred',
+        code: 500,
+      }
 
-    res.status(500).json(error)
+      res.status(500).json(error)
+    }
+  } catch (e) {
+    console.info(e.message)
+    res.sendStatus(500).json({
+      message: `Error: ${e.message}`,
+      code: 500,
+    })
   }
 })
 
 app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
   const props: InteractNpcProps = req.body
 
-  const npc: Based = await getFromIpfs(props.npcIpfsHash)
+  try {
+    const npc: Based = await getFromIpfs(props.npcIpfsHash)
 
-  const conversations = await fetchHistoryLogs(props.npcEntityId)
+    const conversations = await fetchHistoryLogs(props.npcEntityId)
 
-  let history = ''
+    let history = ''
 
-  if (conversations.length <= 0) {
-    const npcInteraction = await generateNpcInteraction({
-      storyName: storyConfig.name,
-      storySummary: storyConfig.summary,
-      npcName: npc.name,
-      npcSummary: npc.summary,
-      conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
-    })
+    if (conversations.length <= 0) {
+      const npcInteraction = await generateNpcInteraction({
+        storyName: storyConfig.name,
+        storySummary: storyConfig.summary,
+        npcName: npc.name,
+        npcSummary: npc.summary,
+        conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
+      })
 
-    await insertInteraction({
-      interactable_id: props.npcEntityId,
-      scenario: npcInteraction.response,
-      good_choice: npcInteraction.goodChoice,
-      good_effect: npcInteraction.goodResponse,
-      evil_choice: npcInteraction.evilChoice,
-      evil_effect: npcInteraction.evilResponse,
-      neutral_choice: npcInteraction.neutralChoice,
-      neutral_effect: npcInteraction.neutralResponse,
-    })
-    console.info('- done inserting npc interaction')
+      await insertInteraction({
+        interactable_id: props.npcEntityId,
+        scenario: npcInteraction.response,
+        good_choice: npcInteraction.goodChoice,
+        good_effect: npcInteraction.goodResponse,
+        evil_choice: npcInteraction.evilChoice,
+        evil_effect: npcInteraction.evilResponse,
+        neutral_choice: npcInteraction.neutralChoice,
+        neutral_effect: npcInteraction.neutralResponse,
+      })
+      console.info('- done inserting npc interaction')
 
-    await insertHistoryLogs({
-      interactable_id: props.npcEntityId,
-      by: 'interactable',
-      players: `NPC: ${npc.name}`,
-      mode: 'dialog',
-      player_log: `${npcInteraction.response}`,
-    })
+      await insertHistoryLogs({
+        interactable_id: props.npcEntityId,
+        by: 'interactable',
+        players: `NPC: ${npc.name}`,
+        mode: 'dialog',
+        player_log: `${npcInteraction.response}`,
+      })
 
-    console.info('- done inserting initial conversation history')
+      console.info('- done inserting initial conversation history')
 
-    const historyLogs = await fetchHistoryLogs(props.npcEntityId)
-
-    res.send({
-      conversationHistory: historyLogs.map((convo: any) => {
-        return {
-          logId: convo.log_id,
-          by: convo.by,
-          text: convo.player_log,
-        }
-      }),
-      option: {
-        good: {
-          goodChoise: npcInteraction.goodChoice,
-          goodResponse: npcInteraction.goodResponse,
-        },
-        evil: {
-          evilChoise: npcInteraction.evilChoice,
-          evilResponse: npcInteraction.evilResponse,
-        },
-        neutral: {
-          neutralChoise: npcInteraction.neutralChoice,
-          neutralResponse: npcInteraction.neutralResponse,
-        },
-      },
-    } as InteractNpcResponse)
-  } else {
-    const choice = await worldContract.winningChoice(props.npcEntityId)
-
-    if (choice.toNumber() === 0) {
-      // not yet available
-      // return conversation and history
       const historyLogs = await fetchHistoryLogs(props.npcEntityId)
-      const interaction = await fetchInteraction(props.npcEntityId)
 
       res.send({
         conversationHistory: historyLogs.map((convo: any) => {
@@ -551,111 +544,150 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
         }),
         option: {
           good: {
-            goodChoise: interaction[0].good_choice,
-            goodResponse: interaction[0].good_effect,
+            goodChoise: npcInteraction.goodChoice,
+            goodResponse: npcInteraction.goodResponse,
           },
           evil: {
-            evilChoise: interaction[0].evil_choice,
-            evilResponse: interaction[0].evil_effect,
+            evilChoise: npcInteraction.evilChoice,
+            evilResponse: npcInteraction.evilResponse,
           },
           neutral: {
-            neutralChoise: interaction[0].neutral_choice,
-            neutralResponse: interaction[0].neutral_effect,
+            neutralChoise: npcInteraction.neutralChoice,
+            neutralResponse: npcInteraction.neutralResponse,
           },
         },
       } as InteractNpcResponse)
+    } else {
+      const choice = await worldContract.winningChoice(props.npcEntityId)
 
-    } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
-      // choosing between 1 to 3
-      // call here the interaction
+      if (choice.toNumber() === 0) {
+        // not yet available
+        // return conversation and history
+        const historyLogs = await fetchHistoryLogs(props.npcEntityId)
+        const interaction = await fetchInteraction(props.npcEntityId)
 
-      const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
+        res.send({
+          conversationHistory: historyLogs.map((convo: any) => {
+            return {
+              logId: convo.log_id,
+              by: convo.by,
+              text: convo.player_log,
+            }
+          }),
+          option: {
+            good: {
+              goodChoise: interaction[0].good_choice,
+              goodResponse: interaction[0].good_effect,
+            },
+            evil: {
+              evilChoise: interaction[0].evil_choice,
+              evilResponse: interaction[0].evil_effect,
+            },
+            neutral: {
+              neutralChoise: interaction[0].neutral_choice,
+              neutralResponse: interaction[0].neutral_effect,
+            },
+          },
+        } as InteractNpcResponse)
 
-      await insertHistoryLogs({
-        interactable_id: props.npcEntityId,
-        by: 'player',
-        players: `${props.playerIpfsHash}`,
-        mode: 'dialog',
-        player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
-      })
+      } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
+        // choosing between 1 to 3
+        // call here the interaction
 
-      console.info('- done inserting new history')
+        const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
 
-      const conversations = await fetchHistoryLogs(props.npcEntityId)
+        await insertHistoryLogs({
+          interactable_id: props.npcEntityId,
+          by: 'player',
+          players: `${props.playerIpfsHash}`,
+          mode: 'dialog',
+          player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+        })
 
-      console.info('- done getting history')
+        console.info('- done inserting new history')
 
-      conversations.forEach((item) => {
-        history += `
+        const conversations = await fetchHistoryLogs(props.npcEntityId)
+
+        console.info('- done getting history')
+
+        conversations.forEach((item) => {
+          history += `
             ${item.by}: ${item.player_log},
         `
-      })
+        })
 
-      const newNpcInteraction = await generateNpcInteraction({
-        storyName: storyConfig.name,
-        storySummary: storyConfig.summary,
-        npcName: npc.name,
-        npcSummary: npc.summary,
-        conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
-      })
+        const newNpcInteraction = await generateNpcInteraction({
+          storyName: storyConfig.name,
+          storySummary: storyConfig.summary,
+          npcName: npc.name,
+          npcSummary: npc.summary,
+          conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
+        })
 
-      await insertInteraction({
-        interactable_id: props.npcEntityId,
-        scenario: newNpcInteraction.response,
-        good_choice: newNpcInteraction.goodChoice,
-        good_effect: newNpcInteraction.goodResponse,
-        evil_choice: newNpcInteraction.evilChoice,
-        evil_effect: newNpcInteraction.evilResponse,
-        neutral_choice: newNpcInteraction.neutralChoice,
-        neutral_effect: newNpcInteraction.neutralResponse,
-      })
-      console.info('- done inserting new npc interaction')
+        await insertInteraction({
+          interactable_id: props.npcEntityId,
+          scenario: newNpcInteraction.response,
+          good_choice: newNpcInteraction.goodChoice,
+          good_effect: newNpcInteraction.goodResponse,
+          evil_choice: newNpcInteraction.evilChoice,
+          evil_effect: newNpcInteraction.evilResponse,
+          neutral_choice: newNpcInteraction.neutralChoice,
+          neutral_effect: newNpcInteraction.neutralResponse,
+        })
+        console.info('- done inserting new npc interaction')
 
-      await insertHistoryLogs({
-        interactable_id: props.npcEntityId,
-        by: 'interactable',
-        players: `NPC: ${npc.name}`,
-        mode: 'dialog',
-        player_log: `${newNpcInteraction.response}`,
-      })
+        await insertHistoryLogs({
+          interactable_id: props.npcEntityId,
+          by: 'interactable',
+          players: `NPC: ${npc.name}`,
+          mode: 'dialog',
+          player_log: `${newNpcInteraction.response}`,
+        })
 
-      console.info('- done inserting new conversation')
+        console.info('- done inserting new conversation')
 
-      const newConversation = await fetchHistoryLogs(props.npcEntityId)
-      const latestInteraction = await fetchInteraction(props.npcEntityId)
+        const newConversation = await fetchHistoryLogs(props.npcEntityId)
+        const latestInteraction = await fetchInteraction(props.npcEntityId)
 
-      await worldContract.openInteraction(props.playerEntityId[0])
+        await worldContract.openInteraction(props.playerEntityId[0])
 
-      res.send({
-        conversationHistory: newConversation.map((convo: any) => {
-          return {
-            logId: convo.log_id,
-            by: convo.by,
-            text: convo.player_log,
-          }
-        }),
-        option: {
-          good: {
-            goodChoise: latestInteraction[0].good_choice,
-            goodResponse: latestInteraction[0].good_effect,
+        res.send({
+          conversationHistory: newConversation.map((convo: any) => {
+            return {
+              logId: convo.log_id,
+              by: convo.by,
+              text: convo.player_log,
+            }
+          }),
+          option: {
+            good: {
+              goodChoise: latestInteraction[0].good_choice,
+              goodResponse: latestInteraction[0].good_effect,
+            },
+            evil: {
+              evilChoise: latestInteraction[0].evil_choice,
+              evilResponse: latestInteraction[0].evil_effect,
+            },
+            neutral: {
+              neutralChoise: latestInteraction[0].neutral_choice,
+              neutralResponse: latestInteraction[0].neutral_effect,
+            },
           },
-          evil: {
-            evilChoise: latestInteraction[0].evil_choice,
-            evilResponse: latestInteraction[0].evil_effect,
-          },
-          neutral: {
-            neutralChoise: latestInteraction[0].neutral_choice,
-            neutralResponse: latestInteraction[0].neutral_effect,
-          },
-        },
-      } as InteractNpcResponse)
+        } as InteractNpcResponse)
 
-    } else {
-      res.sendStatus(500).json({
-        message: `Error on choice ${choice}`,
-        code: 500,
-      })
+      } else {
+        res.sendStatus(500).json({
+          message: `Error on choice ${choice}`,
+          code: 500,
+        })
+      }
     }
+  } catch (e) {
+    console.info(e.message)
+    res.sendStatus(500).json({
+      message: `Error: ${e.message}`,
+      code: 500,
+    })
   }
 })
 
