@@ -17,3 +17,4 @@ export const currentLoader_atom = atom<
 >('loadingAvatar')
 
 export const npcConversation_atom = atom<InteractNpcResponse>({} as InteractNpcResponse)
+export const currentNPC_atom = atom<any>({} as any)
