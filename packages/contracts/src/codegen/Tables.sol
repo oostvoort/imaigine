@@ -17,11 +17,12 @@ import { TangibleComponent, TangibleComponentTableId } from "./tables/TangibleCo
 import { CountComponent, CountComponentTableId } from "./tables/CountComponent.sol";
 import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponent.sol";
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
+import { MapCellComponent, MapCellComponentTableId } from "./tables/MapCellComponent.sol";
 import { SceneComponent, SceneComponentTableId } from "./tables/SceneComponent.sol";
 import { KarmaPointsComponent, KarmaPointsComponentTableId } from "./tables/KarmaPointsComponent.sol";
 import { InteractableComponent, InteractableComponentTableId } from "./tables/InteractableComponent.sol";
 import { InteractionTypeComponent, InteractionTypeComponentTableId } from "./tables/InteractionTypeComponent.sol";
+import { RevealedCellsComponent, RevealedCellsComponentTableId } from "./tables/RevealedCellsComponent.sol";
 import { SingleInteractionComponent, SingleInteractionComponentData, SingleInteractionComponentTableId } from "./tables/SingleInteractionComponent.sol";
 import { MultiInteractionComponent, MultiInteractionComponentData, MultiInteractionComponentTableId } from "./tables/MultiInteractionComponent.sol";
-import { RevealedCellsComponent, RevealedCellsComponentTableId } from "./tables/RevealedCellsComponent.sol";
 import { TravelComponent, TravelComponentData, TravelComponentTableId } from "./tables/TravelComponent.sol";

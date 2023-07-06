@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <div
-      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-50' ])}>
+      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark'])}>
       <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between', 'px-md' ])}>
         {/*Menu Wrapper*/}
         <div className={clsx([ 'flex items-center space-x-md' ])}>

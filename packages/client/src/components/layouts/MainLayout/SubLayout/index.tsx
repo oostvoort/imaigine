@@ -49,13 +49,27 @@ const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React
         'bg-content-bg-gray bg-no-repeat bg-cover',
         'rounded-r-2xl',
       ])}>
-        <LocationContent
-          content={summary.text}
-          target={summary.target}
-          onTarget={setIsOpen}
-        />
-        {/*{summary === undefined && <SkeletonParagraph />}*/}
-        {/*<p className={clsx([ 'font-amiri', 'text-[30px] text-[# BAC5F1]' ])}>{summary}</p>*/}
+        {/*<LocationContent*/}
+        {/*  content={summary.text}*/}
+        {/*  target={summary.target}*/}
+        {/*  onTarget={setIsOpen}*/}
+        {/*/>*/}
+        {
+          summary.scenario === undefined ? (
+            <SkeletonParagraph />
+          ) : (
+            <div className={clsx([
+              'text-[30px] text-[#BAC5F1]',
+              'font-amiri',
+            ])}>
+              <p>{summary.scenario}</p>
+              <p className={clsx('mt-8')}>
+                Nearby NPC: <span className={clsx('cursor-pointer text-[#24E1FF]')} onClick={setIsOpen}>{summary.npc.name}</span>
+              </p>
+            </div>
+          )
+        }
+
       </div>
     </div>
   )

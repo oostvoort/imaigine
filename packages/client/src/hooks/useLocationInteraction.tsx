@@ -9,6 +9,7 @@ import { InteractLocationProps, InteractSingleDoneResponse } from '../../../type
 import usePlayer from '@/hooks/usePlayer'
 import useLocation from '@/hooks/useLocation'
 import { BigNumber } from 'ethers'
+import { useGetNpc } from '@/hooks/v1/useGetNpc'
 
 export default function useLocationInteraction() {
 
@@ -25,13 +26,14 @@ export default function useLocationInteraction() {
 
   const locationId = player.location?.value
   const { location } = useLocation(player.location?.value ?? undefined)
+  const npc = useGetNpc(player && player.location ? player.location.value : undefined)
 
   const data = {
     playerEntityId: playerEntity,
     locationEntityId: player.location?.value,
     locationIpfsHash: location.config?.value,
     playerIpfsHash: player.config?.value,
-    npcIpfsHash: ["QmTRrFXceHyPo1nSxeFUBC14rZw8cQ4V8caDoAQ6cA1Bvj"],
+    npcIpfsHash: npc?.data?.map(res => res.config.value),
   }
 
   const generateLocationInteraction = useMutation<Awaited<GenerateLocationInteractionResponse>, Error>(async () => {

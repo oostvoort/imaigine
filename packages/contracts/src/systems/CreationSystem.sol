@@ -17,7 +17,8 @@ import {
   SceneComponent,
   KarmaPointsComponent,
   InteractionTypeComponent,
-  MultiInteractionComponent
+  MultiInteractionComponent,
+  MapCellComponent
 } from "../codegen/Tables.sol";
 
 import { InteractionType } from "../codegen/Types.sol";
@@ -94,6 +95,7 @@ contract CreationSystem is System {
     LocationComponent.set(characterID, locationID);
     InteractionTypeComponent.set(characterID, InteractionType.MULTIPLE);
     MultiInteractionComponent.setAvailable(characterID, true);
+    MapCellComponent.set(characterID, MapCellComponent.get(locationID));
 
     return characterID;
   }
@@ -119,6 +121,7 @@ contract CreationSystem is System {
     SceneComponent.set(locationID, true);
     ImageComponent.set(locationID, imgHash);
     InteractionTypeComponent.set(locationID, InteractionType.SINGLE);
+    MapCellComponent.set(locationID, locationNumber);
 
     return locationID;
   }
