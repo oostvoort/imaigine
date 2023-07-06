@@ -14,16 +14,13 @@ function restoreDefaultEvents() {
 function clicked() {
   const el = d3.event.target;
   if (!el || !el.parentElement || !el.parentElement.parentElement) return;
-  const parent = el.parentElement;
-  const grand = parent.parentElement;
-  const great = grand.parentElement;
-  const p = d3.mouse(this);
-  const i = findCell(p[0], p[1]);
 
-  if (grand.id === "burgLabels" || grand.id === "burgIcons")
-  {
-    window.parent.postMessage(`LocationClicked : ${i}`)
-  }
+
+  const p = d3.mouse(this);
+
+
+  hook_onMapClick(d3.event.target, p)
+
 
 }
 
@@ -779,7 +776,6 @@ function changePickerSpace() {
 // add fogging
 function fog(id, path) {
   if (defs.select("#fog #" + id).size()) return;
-  const fadeIn = d3.transition().duration(2000).ease(d3.easeSinInOut);
   if (defs.select("#fog path").size()) {
     defs
       .select("#fog")
@@ -787,12 +783,14 @@ function fog(id, path) {
       .attr("d", path)
       .attr("id", id)
       .attr("opacity", 0)
-      .transition(fadeIn)
       .attr("opacity", 1);
   } else {
-    defs.select("#fog").append("path").attr("d", path).attr("id", id).attr("opacity", 1);
+    const visibleOpacity = 1
+
+
+    defs.select("#fog").append("path").attr("d", path).attr("id", id).attr("opacity", visibleOpacity);
     const opacity = fogging.attr("opacity");
-    fogging.style("display", "block").attr("opacity", 0).transition(fadeIn).attr("opacity", opacity);
+    fogging.style("display", "block").attr("opacity", 0).attr("opacity", opacity);
   }
 }
 

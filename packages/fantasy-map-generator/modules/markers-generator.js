@@ -22,7 +22,7 @@ window.Markers = (function () {
     */
     // prettier-ignore
     return [
-      {type: "volcanoes", icon: "🌋", dx: 52, px: 13, min: 10, each: 500, multiplier: 1, list: listVolcanoes, add: addVolcano},
+      {type: "volcanoes", icon: "🌋", dx: 52, px: 13, min: 10, each: 100, multiplier: 1, list: listVolcanoes, add: addVolcano},
       {type: "hot-springs", icon: "♨️", dy: 52, min: 30, each: 1200, multiplier: 1, list: listHotSprings, add: addHotSpring},
       {type: "water-sources", icon: "💧", min: 1, each: 1000, multiplier: 1, list: listWaterSources, add: addWaterSource},
       {type: "mines", icon: "⛏️", dx: 48, px: 13, min: 1, each: 15, multiplier: 1, list: listMines, add: addMine},
@@ -104,15 +104,12 @@ window.Markers = (function () {
 
   function generateTypes() {
     TIME && console.time("addMarkers");
-
     config.forEach(({type, icon, dx, dy, px, min, each, multiplier, list, add}) => {
       if (multiplier === 0) return;
-
       let candidates = Array.from(list(pack));
       let quantity = getQuantity(candidates, min, each, multiplier);
       // uncomment for debugging:
       // console.info(`${icon} ${type}: each ${each} of ${candidates.length}, min ${min} candidates. Got ${quantity}`);
-
       while (quantity && candidates.length) {
         const [cell] = extractAnyElement(candidates);
         const marker = addMarker({icon, type, dx, dy, px}, {cell});
@@ -149,6 +146,7 @@ window.Markers = (function () {
   }
 
   function addMarker(base, marker) {
+    console.log('goes here!')
     const i = last(pack.markers)?.i + 1 || 0;
     const [x, y] = getMarkerCoordinates(marker.cell);
     marker = {...base, x, y, ...marker, i};
