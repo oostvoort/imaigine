@@ -119,7 +119,7 @@ export default function CurrentLocationScreen() {
           }}
         >
             {
-              location.imgHash === undefined || generateLocationInteraction.data === undefined ?
+              location.imgHash === undefined ?
                 <div className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'} >
                   <div className={'border border-4 rounded-full p-10 text-center'}>
                     <img src={'src/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'}/>
@@ -140,7 +140,7 @@ export default function CurrentLocationScreen() {
       <Footer>
         {
           generateLocationInteraction.isLoading || generateLocationInteraction.data === undefined ?
-            <HourglassLoader>Loading Resources...</HourglassLoader>
+            <HourglassLoader>Loading...</HourglassLoader>
             :
             <ButtonWrapper>
               {
