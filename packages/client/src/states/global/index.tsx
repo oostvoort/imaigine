@@ -6,6 +6,7 @@ export enum SCREENS {
   CREATE_AVATAR,
   CURRENT_LOCATION,
   WORLD_MAP,
+  TRAVELLING,
   TEST
 }
 
@@ -17,4 +18,5 @@ export const currentLoader_atom = atom<
 >('loadingAvatar')
 
 export const npcConversation_atom = atom<InteractNpcResponse>({} as InteractNpcResponse)
-export const currentNPC_atom = atom<any>({} as any)
+
+export const currentLocation_atom = atom<any>({} as any)

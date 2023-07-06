@@ -7,7 +7,7 @@ import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayo
 import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { useMUD } from '@/MUDContext'
 import usePlayer from '@/hooks/v1/usePlayer'
-import { currentNPC_atom, npcConversation_atom } from '@/states/global'
+import { currentLocation_atom, npcConversation_atom } from '@/states/global'
 import { useAtomValue, useSetAtom } from 'jotai'
 import useLocationInteraction from '@/hooks/useLocationInteraction'
 import { IPFS_URL_PREFIX } from '@/global/constants'
@@ -15,13 +15,11 @@ import { IPFS_URL_PREFIX } from '@/global/constants'
 type PropType = {
   isOpen?: boolean,
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
-  fetchedUrl?: string
   conversations?: any
 }
 export default function ConversationDialog({
   isOpen,
   setOpen,
-  fetchedUrl = '/src/assets/background/bg1.jpg',
   conversations,
 }: PropType) {
   const { createNPCInteraction, interactNPC } = useNPCInteraction()
@@ -34,28 +32,42 @@ export default function ConversationDialog({
   } = useMUD()
 
   const setNPCConversation = useSetAtom(npcConversation_atom)
-  const currentNPC = useAtomValue(currentNPC_atom)
+  const currentLocation = useAtomValue(currentLocation_atom)
+
+  const handlePlayerResponse = (choiceId: number ,response: string) => {
+    createNPCInteraction.mutate({ choiceId: choiceId, npcId: currentLocation.npc.npcId })
+    setNPCConversation(prevConversation => ({
+      ...prevConversation,
+      conversationHistory: [
+        {
+          logId: prevConversation.conversationHistory.length + 2,
+          by: 'player',
+          text: response
+        },
+        ...prevConversation.conversationHistory,
+      ]
+    }))
+  }
 
   React.useEffect(() => {
     if (createNPCInteraction.isSuccess) {
       if ((createNPCInteraction.data).toNumber() >= 1 && (createNPCInteraction.data).toNumber() <= 3) {
         if (!player.config) throw new Error('No generated Player')
         interactNPC.mutate({
-          playerIpfsHash: [ `${player.config.value}` ],
-          npcEntityId: currentNPC.npcId,
-          npcIpfsHash: currentNPC.config.value,
+          playerIpfsHash: [`${player.config.value}`],
+          npcEntityId: currentLocation.npc.npcId,
+          npcIpfsHash: currentLocation.npc.config.value,
           playerEntityId: [ `${playerEntity}` ],
         })
       }
     }
   }, [ createNPCInteraction.isSuccess ])
 
-
   React.useEffect(() => {
     if (interactNPC.isSuccess) {
       if (interactNPC.data !== undefined) {
         setNPCConversation({
-          conversationHistory: interactNPC.data.conversationHistory,
+          conversationHistory: interactNPC.data.conversationHistory.reverse(),
           option: interactNPC.data.option
         })
       }
@@ -78,8 +90,14 @@ export default function ConversationDialog({
       <DialogPrimitive.Portal
         className={'fixed inset-0 z-50  flex items-start justify-center relative'}>
         <DialogPrimitive.Overlay
-          style={{ backgroundImage: `url(${fetchedUrl})` }}
-          className={clsx([ 'fixed inset-0 bg-cover bg-no-repeat flex items-start justify-center  duration-[3000ms] delay-1000 ease-in-out' ])}>
+          style={{ backgroundImage: `url(${currentLocation.image ? `${IPFS_URL_PREFIX}/${currentLocation.image}` : '/src/assets/background/bg1.jpg' })` }}
+          className={clsx([
+            'fixed inset-0',
+            'flex items-start justify-center',
+            'bg-cover bg-no-repeat',
+            'duration-[3000ms] delay-1000 ease-in-out',
+          ])}
+        >
           <div className={'backdrop-blur h-screen w-screen'} />
 
           <DialogPrimitive.Close
@@ -129,7 +147,7 @@ export default function ConversationDialog({
             ])}>
               <div className={clsx('w-4/12')}>
                 <img
-                  src={`${currentNPC ? `${IPFS_URL_PREFIX}/${currentNPC.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                  src={`${currentLocation.npc ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/src/assets/avatar/avatar1.jpg'}`}
                   alt={'NPC Image'}
                   className="w-full h-full rounded rounded-xl object-cover"
                 />
@@ -143,11 +161,15 @@ export default function ConversationDialog({
                   {
                     createNPCInteraction.data?.toNumber() === 4 &&
                     <p className={clsx('text-3xl font-amiri tracking-wide text-center')}>
-                      Eleanor vanished into thin air.
+                      {currentLocation.npc.config.name} vanished into thin air.
                     </p>
                   }
                   {
-                    interactNPC.isLoading && <ConversationLayout.TypingBubble authorIcon={`${currentNPC ? `${IPFS_URL_PREFIX}/${currentNPC.image}` : '/src/assets/avatar/avatar1.jpg'}`} />
+                    interactNPC.isLoading && (
+                      <ConversationLayout.TypingBubble
+                        authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                      />
+                    )
                   }
                   {
                     conversations?.conversationHistory?.map((conversation: any) => {
@@ -155,8 +177,8 @@ export default function ConversationDialog({
                         return (
                           <ConversationLayout.ReceiverBubble
                             key={conversation.logId}
-                            authorName={currentNPC.config.name ?? 'NPC Name'}
-                            authorIcon={`${currentNPC ? `${IPFS_URL_PREFIX}/${currentNPC.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                            authorName={currentLocation.npc.config.name ?? 'NPC Name'}
+                            authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/src/assets/avatar/avatar1.jpg'}`}
                             text={conversation.text}
                           />
                         )
@@ -184,7 +206,7 @@ export default function ConversationDialog({
               {
                 interactNPC.isLoading ? (
                   <p className={clsx('text-3xl font-amiri tracking-wide')}>
-                    Waiting for Eleanor the Dryad!
+                    Waiting for {currentLocation.npc.config.name}
                   </p>
                 ) : (
                   conversations.option && (
@@ -192,25 +214,21 @@ export default function ConversationDialog({
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => createNPCInteraction.mutate({ choiceId: 1, npcId: currentNPC.npcId })}
+                        onClick={() => handlePlayerResponse(1, conversations.option.evil.evilChoise)}
                       >
                         {conversations.option.evil.evilChoise}
                       </Button>
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => {
-                          createNPCInteraction.mutate({ choiceId: 2, npcId: currentNPC.npcId })
-                        }}
+                        onClick={() => handlePlayerResponse(2, conversations.option.good.goodChoise)}
                       >
                         {conversations.option.good.goodChoise}
                       </Button>
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => {
-                          createNPCInteraction.mutate({ choiceId: 3, npcId: currentNPC.npcId })
-                        }}
+                        onClick={() => handlePlayerResponse(3, conversations.option.neutral.neutralChoise)}
                       >
                         {conversations.option.neutral.neutralChoise}
                       </Button>

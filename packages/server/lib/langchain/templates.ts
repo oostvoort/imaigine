@@ -133,3 +133,10 @@ export const npcInteractionPrompt = `
   Consider that the non player character (NPC) is having a conversation with the player.\n
   Make the npc responses based on it's personality
 `
+export const travelPrompt = `
+  Consider the following location\n
+  {locations}\n
+  Generate a travel story of the player like your telling a story,
+  where the first location mention is where the player is
+  and the last location is the destination of the player and the other locations in the middle is the route the player takes.
+`
