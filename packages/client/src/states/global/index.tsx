@@ -6,10 +6,11 @@ export enum SCREENS {
   CREATE_AVATAR,
   CURRENT_LOCATION,
   WORLD_MAP,
+  TRAVELLING,
   TEST
 }
 
-export const activeScreen_atom = atom<number>(SCREENS.CREATE_AVATAR)
+export const activeScreen_atom = atom<number>(SCREENS.TITLE)
 
 export const currentLoader_atom = atom<
   'loadingAvatar' |

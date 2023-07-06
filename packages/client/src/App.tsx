@@ -1,5 +1,4 @@
-import { useAtomValue } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
+import { SCREENS } from '@/states/global'
 import TitleScreen from '@/pages/title-screen'
 import Template from '@/components/layouts/MainLayout'
 import CreateAvatarScreen from '@/pages/create-avatar-screen'
@@ -9,9 +8,8 @@ import TestScreen from '@/pages/test-screen'
 import useGameState from '@/hooks/useGameState'
 
 export const App = () => {
-  const gameState = useGameState()
-  console.log({ gameState })
-  const activeScreen = useAtomValue(activeScreen_atom)
+  const activeScreen = useGameState()
+  console.log({activeScreen})
   return (
     <Template>
       {activeScreen === SCREENS.TITLE &&

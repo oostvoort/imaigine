@@ -20,6 +20,7 @@ export default function usePlayer() {
       ImageComponent,
       LocationComponent,
       KarmaPointsComponent,
+      TravelComponent
     },
 
     network: {
@@ -35,6 +36,7 @@ export default function usePlayer() {
     image: useComponentValue(ImageComponent, playerEntity),
     location: useComponentValue(LocationComponent, playerEntity),
     karmaPoints: useComponentValue(KarmaPointsComponent, playerEntity),
+    travel: useComponentValue(TravelComponent, playerEntity)
   }
 
   const generatePlayer = useMutation({
