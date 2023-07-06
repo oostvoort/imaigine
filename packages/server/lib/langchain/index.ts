@@ -4,7 +4,7 @@ import {
   locationSchema,
   nonPlayerCharacterSchema, npcInteractionSchema,
   playerCharacterSchema,
-  storySchema,
+  storySchema, travelSchema,
 } from './schemas'
 import { OpenAI, PromptTemplate } from 'langchain'
 import { PipelinePromptTemplate } from 'langchain/prompts'
@@ -13,7 +13,7 @@ import {
   locationPrompt,
   nonPlayerCharacterPrompt, npcInteractionPrompt,
   playerCharacterPrompt,
-  storyPrompt,
+  storyPrompt, travelPrompt,
 } from './templates'
 import {
   Based,
@@ -28,7 +28,7 @@ import {
   GenerateStoryProps,
   GenerateStoryResponse,
   InteractSingleDoneResponse,
-  Story,
+  Story, TravelLocationAttributes,
 } from 'types'
 
 dotenv.config()
@@ -212,6 +212,21 @@ export async function generatePlayerCharacter(player: PlayerCharacterProps): Pro
   }
 }
 
+export async function generateTravel(locations: string) {
+  const parser = StructuredOutputParser.fromNamesAndDescriptions(travelSchema)
+
+  const formatInstruction = parser.getFormatInstructions()
+
+  const composedPrompt = await createFullPrompt(travelPrompt, formatInstruction)
+
+  const travel = await composedPrompt.format({locations: locations})
+
+  const result = await model.call(travel)
+
+  const parseData = await parser.parse(result)
+
+  return parseData.travelStory
+}
 
 
 

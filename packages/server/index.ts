@@ -13,7 +13,7 @@ import {
   GeneratePlayerImageResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
-  GenerateStoryProps,
+  GenerateStoryProps, GenerateTravelProps, GenerateTravelResponse,
   InsertHistoryLogsParams,
   InsertInteractionParams,
   InteractLocationProps,
@@ -30,7 +30,7 @@ import {
   generateNonPlayerCharacter,
   generateNpcInteraction,
   generatePlayerCharacter,
-  generateStory,
+  generateStory, generateTravel,
 } from './lib/langchain'
 import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { getRandomLocation } from './utils/getRandomLocation'
@@ -42,7 +42,7 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
-import { worldContract } from './lib/contract'
+import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
 import { BigNumber } from 'ethers'
 
 dotenv.config()
@@ -688,6 +688,91 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
       message: `Error: ${e.message}`,
       code: 500,
     })
+  }
+})
+
+app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) => {
+  const props: GenerateTravelProps = req.body
+
+  try {
+    const playerCurrentLocationId = await getPlayerLocation(props.playerEntityId)
+    const playerDestinationLocationId = await getPlayerDestination(props.playerEntityId)
+
+    const route = {
+      routes: [1 ,2 , 3, 4, 5],
+      toRevealAtDestination: [6, 7, 8, 9, 10]
+    }
+
+    await startTravel(props.playerEntityId, route.routes, route.toRevealAtDestination)
+    let locationDetails = ``
+
+    const locations = [
+      {
+        locationName: 'Kleabok',
+        latitude: '2° 20′ 24″ S',
+        longitude: '12° 23′ 44″ W',
+        type: 'land',
+        precipitation: '200mm',
+        river: 'no rivers',
+        elevation: '13 ft',
+        depth: '0 ft',
+        temperature: '66°F',
+        biome: 'Savanna',
+      },
+      {
+        locationName: 'Brid',
+        latitude: '2° 28′ 44″ S',
+        longitude: '12° 15′ 0″ W',
+        type: 'land',
+        precipitation: '400mm',
+        river: 'no rivers',
+        elevation: '30 ft',
+        depth: '0 ft',
+        temperature: '66°F',
+        biome: 'Savanna',
+      },
+      {
+        locationName: 'Gob',
+        latitude: '2° 47′ 43″ S',
+        longitude: '12° 6′ 15″ W',
+        type: 'land',
+        precipitation: '200mm',
+        river: 'no rivers',
+        elevation: '52 ft',
+        depth: '0 ft',
+        temperature: '66°F',
+        biome: 'Savanna',
+      },
+      {
+        locationName: 'Gaxi',
+        latitude: '3° 23′ 34″ S',
+        longitude: '11° 48′ 45″ W',
+        type: 'land',
+        precipitation: '0mm',
+        river: 'no rivers',
+        elevation: '161 ft',
+        depth: '0 ft',
+        temperature: '66°F',
+        biome: 'Hot desert',
+      }
+    ]
+
+    locations.forEach((location) => {
+      locationDetails += `
+            ${location.locationName} is located in a ${location.biome} biome with a latitude of ${location.latitude} and longitube of ${location.longitude} a type of ${location.type}
+            precipitation in this location is ${location.precipitation} the are ${location.river}. ${location.locationName} has a elevation of ${location.elevation},
+            dept of ${location.depth} and a temperature of ${location.temperature}\n\n
+        `
+    })
+
+    const travelStory = await generateTravel(locationDetails)
+
+    res.send({
+      travelStory: travelStory
+    } as GenerateTravelResponse)
+
+  } catch (e) {
+    next(e)
   }
 })
 
