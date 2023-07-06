@@ -44,9 +44,15 @@ import { generateMap } from './generate'
 import fs from 'fs-extra'
 import { worldContract } from './lib/contract'
 import { BigNumber } from 'ethers'
+import { launchAndNavigateMap } from './utils/getMap'
 
 dotenv.config()
 
+declare global {
+  interface Window {
+      findNearestPath: (a: number, b: number) => number[]
+  }
+}
 
 const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
   if (err) {
@@ -142,6 +148,8 @@ app.use((err, req, res, next) => {
 
 app.get('/mapdata', async (req: Request, res: Response) => {
 
+  console.info('TEst')
+
   try {
     const seed = parseInt(<string>req.query.seed)
 
@@ -159,6 +167,22 @@ app.get('/mapdata', async (req: Request, res: Response) => {
     res.sendStatus(500)
   }
 })
+
+app.get('/get-route', async (req: Request, res: Response) => {
+  const seed = 927;
+  try {
+    const page = await launchAndNavigateMap(seed)
+    // Access the function on the page
+    const result = await page.evaluate(() => {
+      // Call the function on the page and return the result
+      return window.findNearestPath(813,987);
+    });
+    res.send(result);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+});
+
 
 /// @dev this is basically a test for writing into the world contract
 app.get('/winning-choice', async (req: Request, res: Response) => {
