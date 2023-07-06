@@ -56,7 +56,6 @@ window.Routes = (function () {
           // build trail from the first burg on island
           // to the farthest one on the same island or the closest road
           const farthest = d3.scan(isle, (a, c) => (c.y - b.y) ** 2 + (c.x - b.x) ** 2 - ((a.y - b.y) ** 2 + (a.x - b.x) ** 2))
-          console.log('farthest', farthest)
           const to = isle[farthest].cell
           if (cells.road[to]) return
           const [ from, exit ] = findLandPath(b.cell, to, true)

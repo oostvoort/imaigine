@@ -53,8 +53,6 @@ function moveMarker(item, index) {
   }, index * 1000);
 }
 function revealCells(currentLocation, exploredCells) {
-  console.log('player location', currentLocation)
-  console.log('explored cells', exploredCells)
   let newExploredCells = [...exploredCells]
   let nearestBurgPath = []
   let toRevealCells = []
@@ -69,7 +67,6 @@ function revealCells(currentLocation, exploredCells) {
   for (const burg of newExploredCells) {
     if (burg !== currentLocation) {
       const paths = findNearestPath(currentLocation, burg)
-      console.log(burg, paths)
       if (paths.length > 0) {
         nearestBurgPath = [...nearestBurgPath, ...paths[0]]
       }
@@ -78,7 +75,6 @@ function revealCells(currentLocation, exploredCells) {
 
   // Combined all cells for path reveal
   toRevealCells = [...new Set(newExploredCells.flatMap(cell => [...nearestBurgPath, cell]))];
-  console.log('to reveal', toRevealCells)
 
   const path =
     'M' +
