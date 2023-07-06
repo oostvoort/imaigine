@@ -12,7 +12,7 @@ import { IPFS_URL_PREFIX } from '@/global/constants'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { useMUD } from '@/MUDContext'
 import { useAtom, useSetAtom } from 'jotai'
-import { currentNPC_atom, npcConversation_atom } from '@/states/global'
+import { currentLocation_atom, npcConversation_atom } from '@/states/global'
 import { useGetNpc } from '@/hooks/v1/useGetNpc'
 
 export default function CurrentLocationScreen() {
@@ -32,8 +32,9 @@ export default function CurrentLocationScreen() {
 
   const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
   const [npcConversation, setNPCConversation] = useAtom(npcConversation_atom)
-  const setCurrentNPC = useSetAtom(currentNPC_atom)
+  const setCurrentLocation = useSetAtom(currentLocation_atom)
 
+  // TODO: wrap in a memo since its only a checker for the three data below
   const isDataReady = !!player.config?.value && !!location.config?.value && !!npc.data
 
   const locationDetails = {
@@ -84,8 +85,14 @@ export default function CurrentLocationScreen() {
     if (isDataReady) {
       generateLocationInteraction.mutate()
       createLocationInteraction.mutate({ choiceId: 0 })
+
       if (!npc.data) throw new Error('There is no NPC yet')
-      setCurrentNPC(npc.data[0])
+      setCurrentLocation({
+        name: '',
+        summary: '',
+        image: location.imgHash?.value,
+        npc: { ...npc.data[0] }
+      })
     }
   }, [isDataReady])
 
