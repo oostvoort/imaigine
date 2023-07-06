@@ -9,7 +9,6 @@ function hook_onMapLoaded() {
   window.parent.postMessage({ cmd: 'FinishedLoadingMap', params: {} })
 
   // revealCells([ 558, 559, 560, 481,477,476,480,561,638, 637 ])
-  console.log('nextTowns', getNextTowns(558))
 }
 
 /**
@@ -22,37 +21,27 @@ function hook_onMapClick(el, p) {
   const grand = parent.parentElement
   const great = grand.parentElement
 
-
   const i = findCell(p[0], p[1])
-
 
   if (grand.id === 'burgIcons') {
     console.log("Clicked burg: ", i)
+    if (pack.cells.burg[i] <= 0) return // check if cellId has burg
 
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
+    // Post message when Burg clicked
     window.parent.postMessage({
-      cmd: 'MapClicked', params: {
+      cmd: 'BurgClicked', params: {
         locationId: i,
         name: burgElement.textContent,
       },
     })
-
-    window.parent.postMessage({
-      cmd: 'ExploreMap', params: {
-        locationId: i
-      },
-    })
-
-    console.log('nextTowns', getNextTowns(i))
-    // Find the nearest path
-    const nearestPath = window.Routes.findNearestPath(i)
-    // nearestPath[0].reverse().forEach(moveMarker);
-
-    // if (travel) window.Routes.draw(travel)
   }
 
+}
+function findNearestPath(currenLocation, cellId) {
+  return window.Routes.findNearestPath(currenLocation, cellId)
 }
 function moveMarker(item, index) {
   setTimeout(() => {
@@ -63,28 +52,49 @@ function moveMarker(item, index) {
     }])
   }, index * 1000);
 }
-function revealCells(cells) {
-  //combine cells with its neighboring cells
-  const exploredCells = [...new Set(cells.flatMap(cell => [...pack.cells.c[cell], cell]))];
+function revealCells(currentLocation, exploredCells) {
+  console.log('player location', currentLocation)
+  console.log('explored cells', exploredCells)
+  let newExploredCells = [...exploredCells]
+  let nearestBurgPath = []
+  let toRevealCells = []
+
+  // Find the nearest burg for each cells
+  for (const c of exploredCells) {
+    const burg = getNextTown(c, exploredCells) // get the nearest unexplored burg
+    newExploredCells.push(burg.cell)  // push the nearest unexplored burg into newExploredCells
+  }
+
+  // Get the nearest path of nearest burg from player's current location
+  for (const burg of newExploredCells) {
+    if (burg !== currentLocation) {
+      const paths = findNearestPath(currentLocation, burg)
+      console.log(burg, paths)
+      if (paths.length > 0) {
+        nearestBurgPath = [...nearestBurgPath, ...paths[0]]
+      }
+    }
+  }
+
+  // Combined all cells for path reveal
+  toRevealCells = [...new Set(newExploredCells.flatMap(cell => [...nearestBurgPath, cell]))];
+  console.log('to reveal', toRevealCells)
 
   const path =
     'M' +
-    exploredCells
+    toRevealCells
       .map(c => getPackPolygon(+c))
       .join('M') + 'Z'
 
   fog('myFogId', path)
-
 }
 
 function hideCells(id) {
   unfog('myFogId')
 }
 
-
-function getNextTowns(cellId) {
-
-  return window.Routes.findNearestBurgs(cellId)
+function getNextTown(cellId, exploredCells) {
+  return window.Routes.findNearestBurgs(cellId, exploredCells)
 }
 
 function showPlayers(players) {
@@ -113,12 +123,11 @@ function showPlayers(players) {
   }
 }
 
-
 // from iframe
 window.addEventListener('message', ({ data }) => {
   if (data.cmd === 'revealCells') {
 
-    revealCells(data.params.cells)
+    revealCells(5033, data.params.cells)
 
   } else if (data.cmd === 'unFog') {
 
@@ -131,7 +140,7 @@ window.addEventListener('message', ({ data }) => {
   } else if (data.cmd === 'showExploredCells') {
 
     hideCells('myFogId')
-    revealCells(data.params.cells)
+    revealCells(data.params.player.cell, data.params.cells)
 
   } else if (data.cmd === 'getNextTowns') {
 

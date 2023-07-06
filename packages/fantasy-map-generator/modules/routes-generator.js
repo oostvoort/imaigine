@@ -56,6 +56,7 @@ window.Routes = (function () {
           // build trail from the first burg on island
           // to the farthest one on the same island or the closest road
           const farthest = d3.scan(isle, (a, c) => (c.y - b.y) ** 2 + (c.x - b.x) ** 2 - ((a.y - b.y) ** 2 + (a.x - b.x) ** 2))
+          console.log('farthest', farthest)
           const to = isle[farthest].cell
           if (cells.road[to]) return
           const [ from, exit ] = findLandPath(b.cell, to, true)
@@ -158,69 +159,36 @@ window.Routes = (function () {
 
     TIME && console.timeEnd('drawRoutes')
   }
-
-  const findNearestBurgs = function (cellId) {
-
+  const findNearestBurgs = function (cellId, exploredCells) {
     const cells = pack.cells
-    // const burgs = pack.burgs.filter(b => b.i && !b.removed)
 
-    const roadType = cells.road[cellId]
+    if (cells.burg[cellId] <= 0) return // check if cellId has burg
 
-    // Bail if the chosen cell is not on a road
-    if (!roadType) {
-      // TODO it would be nice to travel offroad..
-      console.error('For now we don\'t support traveling outside of roads')
-      return []
+    const burgs = pack.burgs.filter(b => b.i && !b.removed)
+    const selectedBurg = burgs.filter(c => c.cell === cellId)
+    if (selectedBurg.length > 0) {
+      // Filters out selected and explored burg
+      return burgs.filter(c => c.cell !== selectedBurg[0].cell && !exploredCells.includes(c.cell))
+        .reduce((nearest, current) => {
+            const distance = (current.y - selectedBurg[0].y) ** 2 + (current.x - selectedBurg[0].x) ** 2;
+            return distance < nearest.distance ? { burg: current, distance } : nearest;
+        }, { burg: null, distance: Infinity })
+        .burg
+    } else {
+      return null
     }
-
-    // Scan main roads
-    for (const road of window.Routes.main) {
-      let foundCell = false
-      let connectedBurgs = [undefined, undefined]
-
-      // Scan cells of main road
-      for (let i = 0; i < road.length; i++) {
-
-        // Current cell
-        const cell = road[i]
-
-        // Register whether we found the cell (to stop scanning other roads later)
-        if(!foundCell) foundCell = (road[i] === cellId)
-
-
-        if(
-          cells.burg[cell] > 0      // this cell is a burg
-          && road[i] !== cellId   // and it's not the one we're evaluating
-        ){
-
-          if(!foundCell){       // If we have not found the cell yet, it goes on the left
-            connectedBurgs[0] = cell
-          } else{               // Otherwise, on the right
-            connectedBurgs[1] = cell
-          }
-        }
-
-        if (
-          foundCell             // We must have found the cell
-          && (connectedBurgs[1] || i === road.length-1) // And the right burg, or reached the end
-        ) {
-          return connectedBurgs
-        }
-      }
-    }
-
   }
 
-  const findNearestPath = function (toCell) {
+  const findNearestPath = function (currentLocation,toCell) {
     TIME && console.time('findPath')
     // array to store path segments
     const path = []
 
     // Find the path to the other capital
-    const [ from, exit ] = findNearestLandPath(4767, toCell, true)
+    const [ from, exit ] = findNearestLandPath(currentLocation, toCell, true)
 
     // Generate the road segments needed
-    const segments = getNearestPath(4767, exit, 'small', from)
+    const segments = getNearestPath(currentLocation, exit, 'small', from)
 
     // Push the generated segments onto the paths, so they can be drawn later.
     segments.forEach(s => path.push(s))

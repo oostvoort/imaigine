@@ -9,27 +9,32 @@ type PropType = {
 const players = [
   {
     name: "Edward",
-    cell: 5033,
+    cell: 4874,
     legend: 'A brave and honorable knight known for his swordsmanship.'
   },
-  {
-    name: "Oliver",
-    cell: 4928,
-    legend: 'A skilled rogue and master of stealth and thievery.'
-  },
-  {
-    name: "Merlin",
-    cell: 5283,
-    legend: 'A talented wizard specializing in elemental magic.'
-  },
-  {
-    name: "George",
-    cell: 5148,
-    legend: 'A nimble archer with exceptional accuracy and keen eyesight.'
-  }
+  // {
+  //   name: "Oliver",
+  //   cell: 4928,
+  //   legend: 'A skilled rogue and master of stealth and thievery.'
+  // },
+  // {
+  //   name: "Merlin",
+  //   cell: 5283,
+  //   legend: 'A talented wizard specializing in elemental magic.'
+  // },
+  // {
+  //   name: "George",
+  //   cell: 5148,
+  //   legend: 'A nimble archer with exceptional accuracy and keen eyesight.'
+  // }
 ]
 
-const exploredCells = [4928, 5033, 5148, 5283]
+const player = {
+  name: "Edward",
+  cell: 4874,
+  legend: 'A brave and honorable knight known for his swordsmanship.'
+}
+const exploredCells = [4874]
 
 
 const Map: React.FC<PropType> = ({ className }) => {
@@ -49,12 +54,14 @@ const Map: React.FC<PropType> = ({ className }) => {
       if(cmd === "FinishedLoadingMap"){
         showPlayers()
         showExploredCells()
-      }else if(cmd === "MapClicked"){
-        console.log("Mapclicked", params)
-      }else if(cmd === "ExploreMap"){
-        exploredCells.push(params.locationId)
+      } else if(cmd === "BurgClicked"){
+        console.log("BurgClicked", params)
+        player.cell = params.locationId
+        if (!exploredCells.includes(params.locationId)) {
+          exploredCells.push(params.locationId)
+        }
         showExploredCells()
-      } else{
+      }else{
         console.log('Other message received from iframe:', event.data)
 
       }
@@ -82,7 +89,7 @@ const Map: React.FC<PropType> = ({ className }) => {
   const setRevealedCells = (cells: number[]) => {sendMessageToIframe({cmd: "revealCells", params: {cells: cells}})}
   const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showExploredCells = () => {sendMessageToIframe({cmd: "showExploredCells", params: {cells: exploredCells}})}
+  const showExploredCells = () => {sendMessageToIframe({cmd: "showExploredCells", params: {player: player, cells: exploredCells}})}
 
   const reloadIframe = () => {
     if (iframeRef.current) {
@@ -92,7 +99,7 @@ const Map: React.FC<PropType> = ({ className }) => {
   return (
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
-      <button onClick={() => {setRevealedCells([ 4928, 5033, 5148, 5283])}}>revealCells</button>
+      <button onClick={() => {setRevealedCells([ 4928, 4874, 5148, 5283])}}>revealCells</button>
       | <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={() => {showPlayers()}}>showPlayers</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
