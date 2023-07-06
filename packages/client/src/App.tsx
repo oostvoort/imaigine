@@ -6,8 +6,11 @@ import CreateAvatarScreen from '@/pages/create-avatar-screen'
 import CurrentLocationScreen from '@/pages/current-location-screen'
 import WorldMapScreen from '@/pages/world-map-screen'
 import TestScreen from '@/pages/test-screen'
+import useGameState from '@/hooks/useGameState'
 
 export const App = () => {
+  const gameState = useGameState()
+  console.log({ gameState })
   const activeScreen = useAtomValue(activeScreen_atom)
   return (
     <Template>
