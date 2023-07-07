@@ -17,8 +17,7 @@ import {
   InteractLocationProps,
   InteractNpcProps,
   InteractNpcResponse,
-  InteractSQLResult,
-  LogSqlResult, RouteObject,
+  RouteObject,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -39,7 +38,12 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
-import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
+import {
+  getPlayerDestination,
+  getPlayerLocation,
+  startTravel,
+  worldContract,
+} from './lib/contract'
 import { BigNumber } from 'ethers'
 import { getRoute } from './utils/getMap'
 import {
@@ -805,92 +809,8 @@ app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, nex
 })
 
 app.post('/mock/api/v1/interact-npc', async (req: Request, res: Response, next) => {
-
-  const conversations = [
-    {
-      logId: 1,
-      by: 'interactable',
-      text: 'Welcome, traveler! How can I assist you today?',
-    },
-    {
-      logId: 2,
-      by: 'player',
-      text: 'I\'m looking for a rare artifact. Do you have any?',
-    },
-    {
-      logId: 3,
-      by: 'interactable',
-      text: 'Ah, indeed! We recently acquired a mysterious artifact from the depths of the forest. Would you like to see it?',
-    },
-    {
-      logId: 4,
-      by: 'player',
-      text: 'Yes, I would love to see it!',
-    },
-    {
-      logId: 5,
-      by: 'interactable',
-      text: 'Very well, follow me to the back room. It\'s kept safely inside a glass case.',
-    },
-    {
-      logId: 6,
-      by: 'player',
-      text: 'Wow, it\'s even more impressive than I imagined!',
-    },
-    {
-      logId: 7,
-      by: 'interactable',
-      text: 'Indeed, it\'s one of the most remarkable artifacts we\'ve ever found. Its origin is still a mystery.',
-    },
-    {
-      logId: 8,
-      by: 'player',
-      text: 'How much does it cost?',
-    },
-    {
-      logId: 9,
-      by: 'interactable',
-      text: 'For you, my friend, I can offer a special price of 500 gold coins.',
-    },
-    {
-      logId: 10,
-      by: 'player',
-      text: 'That\'s quite expensive. Can you lower the price?',
-    },
-    {
-      logId: 11,
-      by: 'interactable',
-      text: 'I\'m sorry, but that\'s the best I can do. The artifact is truly valuable.',
-    },
-    {
-      logId: 12,
-      by: 'player',
-      text: 'Alright, I\'ll take it.',
-    },
-    {
-      logId: 13,
-      by: 'interactable',
-      text: 'Excellent! Here you go. May it bring you great fortune on your adventures.',
-    },
-  ]
-
-  res.send({
-    conversations: conversations,
-    options: {
-      good: {
-        choice: 'Good Choice',
-        effect: 'Good Effect',
-      },
-      evil: {
-        choice: 'Evil Choice',
-        effect: 'Evil Effect',
-      },
-      neutral: {
-        choice: 'Neutral Choice',
-        effect: 'Neutral Effect',
-      },
-    },
-  })
+  const props: InteractNpcProps = req.body
+  res.send(await generateMockNpcInteraction(props))
 })
 
 
