@@ -17,6 +17,7 @@ import {
   InteractLocationProps,
   InteractNpcProps,
   InteractNpcResponse,
+  RouteObject,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -37,9 +38,14 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
-import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
+import {
+  getPlayerDestination,
+  getPlayerLocation,
+  startTravel,
+  worldContract,
+} from './lib/contract'
 import { BigNumber } from 'ethers'
-import { launchAndNavigateMap } from './utils/getMap'
+import { getRoute } from './utils/getMap'
 import {
   generateMockLocationInteraction,
   generateMockNpcInteraction,
@@ -52,7 +58,9 @@ dotenv.config()
 
 declare global {
   interface Window {
-      findNearestPath: (a: number, b: number) => number[]
+      findNearestPath: (from: number, to: number) => [number[]],
+      getCellInfo: (cell: number) => RouteObject,
+      getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[]
   }
 }
 
@@ -93,9 +101,7 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
-app.get('/mapdata', async (req: Request, res: Response) => {
-
-  console.info('TEst')
+app.get('/mapdata', async (req: Request, res: Response, next) => {
 
   try {
     const seed = parseInt(<string>req.query.seed)
@@ -111,23 +117,21 @@ app.get('/mapdata', async (req: Request, res: Response) => {
 
 
   } catch (e) {
-    res.sendStatus(500)
+    console.info(e)
+    next(e)
   }
 })
 
 app.get('/get-route', async (req: Request, res: Response) => {
   const seed = 927;
   try {
-    const page = await launchAndNavigateMap(seed)
-    // Access the function on the page
-    const result = await page.evaluate(() => {
-      // Call the function on the page and return the result
-      return window.findNearestPath(813,987);
-    });
+    const result = await getRoute(seed, '', 813, 653)
     res.send(result);
   } catch (e) {
     res.status(500).send(e.message);
   }
+
+
 });
 
 app.post('/api/v1/generate-story', async (req: Request, res: Response, next) => {
@@ -176,12 +180,7 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
       } as GenerateLocationResponse)
 
     } catch (e) {
-      const error = {
-        message: `${(e.error.toString()).includes('location already exists!') ? 'Location already exists' : e.error}`,
-        code: 500,
-      }
-
-      res.status(500).json(error)
+      next(e)
     }
   } catch (e) {
     next(e)
@@ -219,10 +218,7 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
     } as GenerateNpcResponse)
   } catch (e) {
     console.info(e.message)
-    res.sendStatus(500).json({
-      message: `Error: ${e.message}`,
-      code: 500,
-    })
+    next(e)
   }
 })
 
@@ -267,10 +263,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
 
     } catch (e) {
       console.info(`Error: ${e}`)
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -285,10 +278,7 @@ app.post('/api/v1/generate-player-image', async (req: Request, res: Response, ne
       const imageHash = await generatePlayerImage(props.visualSummary)
       res.send({ imageIpfsHash: imageHash } as GeneratePlayerImageResponse)
     } catch (e) {
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -302,10 +292,7 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
       await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
       res.send('Player Created!')
     } catch (e) {
-      res.sendStatus(500).json({
-        message: `${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   } catch (e) {
     next(e)
@@ -452,10 +439,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
       }
     } catch (e) {
       console.info(e.message)
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -652,10 +636,7 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
       }
     } catch (e) {
       console.info(e.message)
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -806,92 +787,8 @@ app.post('/mock/api/v1/generate-travel', async (req: Request, res: Response, nex
 })
 
 app.post('/mock/api/v1/interact-npc', async (req: Request, res: Response, next) => {
-
-  const conversations = [
-    {
-      logId: 1,
-      by: 'interactable',
-      text: 'Welcome, traveler! How can I assist you today?',
-    },
-    {
-      logId: 2,
-      by: 'player',
-      text: 'I\'m looking for a rare artifact. Do you have any?',
-    },
-    {
-      logId: 3,
-      by: 'interactable',
-      text: 'Ah, indeed! We recently acquired a mysterious artifact from the depths of the forest. Would you like to see it?',
-    },
-    {
-      logId: 4,
-      by: 'player',
-      text: 'Yes, I would love to see it!',
-    },
-    {
-      logId: 5,
-      by: 'interactable',
-      text: 'Very well, follow me to the back room. It\'s kept safely inside a glass case.',
-    },
-    {
-      logId: 6,
-      by: 'player',
-      text: 'Wow, it\'s even more impressive than I imagined!',
-    },
-    {
-      logId: 7,
-      by: 'interactable',
-      text: 'Indeed, it\'s one of the most remarkable artifacts we\'ve ever found. Its origin is still a mystery.',
-    },
-    {
-      logId: 8,
-      by: 'player',
-      text: 'How much does it cost?',
-    },
-    {
-      logId: 9,
-      by: 'interactable',
-      text: 'For you, my friend, I can offer a special price of 500 gold coins.',
-    },
-    {
-      logId: 10,
-      by: 'player',
-      text: 'That\'s quite expensive. Can you lower the price?',
-    },
-    {
-      logId: 11,
-      by: 'interactable',
-      text: 'I\'m sorry, but that\'s the best I can do. The artifact is truly valuable.',
-    },
-    {
-      logId: 12,
-      by: 'player',
-      text: 'Alright, I\'ll take it.',
-    },
-    {
-      logId: 13,
-      by: 'interactable',
-      text: 'Excellent! Here you go. May it bring you great fortune on your adventures.',
-    },
-  ]
-
-  res.send({
-    conversations: conversations,
-    options: {
-      good: {
-        choice: 'Good Choice',
-        effect: 'Good Effect',
-      },
-      evil: {
-        choice: 'Evil Choice',
-        effect: 'Evil Effect',
-      },
-      neutral: {
-        choice: 'Neutral Choice',
-        effect: 'Neutral Effect',
-      },
-    },
-  })
+  const props: InteractNpcProps = req.body
+  res.send(await generateMockNpcInteraction(props))
 })
 
 

@@ -273,6 +273,44 @@ function updateCellInfo(point, i, g) {
   infoBiome.innerHTML = biomesData.name[cells.biome[i]];
 }
 
+function getCellInfo(cellId) {
+  const cells = pack.cells
+  const point = cells.p[cellId]
+  const g = cells.g[cellId]
+  const i = cellId
+  const x = rn(point[0])
+  const y = rn(point[1])
+  const f = cells.f[i];
+
+  return {
+    cell: cellId,
+    latitude: toDMS(getLatitude(y, 4), "lat"),
+    longitude: toDMS(getLongitude(x, 4), "lon"),
+    area: cells.area[i] ? si(getArea(cells.area[i])) + " " + getAreaUnit() : "n/a",
+    type: f ? pack.features[f].group + " (" + f + ")" : "n/a",
+    precipitation: cells.h[i] >= 20 ? getFriendlyPrecipitation(i) : "n/a",
+    river: cells.h[i] >= 20 && cells.r[i] ? getRiverInfo(cells.r[i]) : "no",
+    population: getFriendlyPopulation(i),
+    elevation: getElevation(pack.features[f], pack.cells.h[i]),
+    depth: getDepth(pack.features[f], point),
+    temperature: convertTemperature(grid.cells.temp[g]),
+    biome: biomesData.name[cells.biome[i]],
+    state: cells.h[i] >= 20
+      ? cells.state[i]
+        ? `${pack.states[cells.state[i]].fullName} (${cells.state[i]})`
+        : "neutral lands (0)"
+      : "no",
+    province: cells.province[i]
+      ? `${pack.provinces[cells.province[i]].fullName} (${cells.province[i]})`
+      : "no",
+    culture: cells.culture[i] ? `${pack.cultures[cells.culture[i]].name} (${cells.culture[i]})` : "no",
+    religion: cells.religion[i]
+      ? `${pack.religions[cells.religion[i]].name} (${cells.religion[i]})`
+      : "no",
+    burg: cells.burg[i] ? pack.burgs[cells.burg[i]].name + " (" + cells.burg[i] + ")" : "no"
+  }
+}
+
 // convert coordinate to DMS format
 function toDMS(coord, c) {
   const degrees = Math.floor(Math.abs(coord));

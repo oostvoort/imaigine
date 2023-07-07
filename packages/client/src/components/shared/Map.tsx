@@ -31,10 +31,11 @@ const players = [
 
 const player = {
   name: "Edward",
-  cell: 4874,
-  legend: 'A brave and honorable knight known for his swordsmanship.'
+  cell: 813,
+  legend: 'A brave and honorable knight known for his swordsmanship.',
+  markerId: ''
 }
-const exploredCells = [4874]
+const exploredCells = [813, 653]
 
 
 const Map: React.FC<PropType> = ({ className }) => {

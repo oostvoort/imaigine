@@ -1,5 +1,5 @@
 import { IWorld__factory } from "../../../contracts/types/ethers-contracts/factories/IWorld__factory";
-import { constants, providers, Wallet } from 'ethers'
+import { BigNumber, constants, ethers, providers, Wallet } from 'ethers'
 import worldsJson from "../../../contracts/worlds.json";
 import {
   concat,
@@ -40,6 +40,7 @@ const createComponentTableId = (name: string) => hexlify(
 const CONFIG_COMPONENT_TABLE_ID = createComponentTableId('ConfigComponent')
 const MAP_CELL_COMPONENT_TABLE_ID = createComponentTableId('MapCellComponent')
 const TRAVEL_COMPONENT_TABLE_ID = createComponentTableId('TravelComponent')
+const REVEALED_CELLS_TABLE_ID = createComponentTableId('RevealedCells')
 
 // create a signer
 export const signer = new Wallet(
@@ -79,4 +80,24 @@ export const getPlayerDestination = (playerEntityId: string) : Promise<number> =
 
 export const startTravel = async (playerEntityId: string, route: number[], toRevealDestination: number[]) => {
   await worldContract.startTravel(playerEntityId, route, toRevealDestination)
+}
+export const getPlayerRevealedCells = async (playEntityId: string) => {
+  const revealedCells = await worldContract.getField(REVEALED_CELLS_TABLE_ID, [playEntityId], 0)
+  const [bitMap] = ethers.utils.defaultAbiCoder.decode(
+    ['uint256[]'], revealedCells
+  ) as [BigNumber[]]
+  const playerRevealedCells: number[] = []
+  if (!bitMap.length) return playerRevealedCells
+  for (let i = 0; i < bitMap.length; i++) {
+    for (let j = (i * 1024); j < (i + 1) * 1024 && !bitMap[i].eq(0); j++) {
+      const arrayRow = Math.round(j / 1024)
+      const arrayColumn = j % 1024;
+      const currentBit = bitMap[arrayRow]
+      const shiftedRight = currentBit.shr(arrayColumn).and(1)
+      if (!shiftedRight.eq(0)) {
+        playerRevealedCells.push(j)
+      }
+    }
+  }
+  return playerRevealedCells
 }

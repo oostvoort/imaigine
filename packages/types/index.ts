@@ -174,3 +174,23 @@ export interface TravelLocationAttributes {
   temperature: string,
   biome: string,
 }
+
+export interface RouteObject {
+  cell: number,
+  latitude: string,
+  longitude: string,
+  area: string,
+  type: string,
+  precipitation: string,
+  river: string,
+  population: string,
+  elevation: string,
+  depth: string,
+  temperature: string,
+  biome: string,
+  state: string,
+  province: string,
+  culture: string,
+  religion: string,
+  burg: string
+}

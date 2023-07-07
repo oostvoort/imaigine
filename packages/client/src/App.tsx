@@ -6,7 +6,7 @@ import CurrentLocationScreen from '@/pages/current-location-screen'
 import WorldMapScreen from '@/pages/world-map-screen'
 import TestScreen from '@/pages/test-screen'
 import useGameState from '@/hooks/useGameState'
-import { useMap } from '@/hooks/v1/useMap'
+import TravellingScreen from '@/pages/travelling-screen'
 import MinigameScreen from '@/pages/minigame-screen'
 
 export const App = () => {
@@ -34,6 +34,12 @@ export const App = () => {
       {activeScreen === SCREENS.WORLD_MAP &&
         <Template.ContentLayout>
           <WorldMapScreen />
+        </Template.ContentLayout>
+      }
+
+      {activeScreen === SCREENS.TRAVELLING &&
+        <Template.ContentLayout className={'px-10 pt-28'}>
+          <TravellingScreen />
         </Template.ContentLayout>
       }
 

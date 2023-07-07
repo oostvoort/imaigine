@@ -1,50 +1,19 @@
 import { useMUD } from '@/MUDContext'
 import { useEntityQuery, useRows } from '@latticexyz/react'
 import { Has, Entity } from '@latticexyz/recs'
-import React from 'react'
+import React, { useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
-
-const EMPTY_ARRAY = [0, 0, 0, 0]
-
-// function isCellRevealed(uint256 self, uint256 bitIndex) internal pure returns (bool) {
-//   return (self >> bitIndex) & 1 != 0;
-
-const LAST_CELL_NUMBER = 4096
-
-
-const FAKE_CONFIG = [
-  {
-    name: 'Anna Sorokin',
-    legend: 'Anna Sorokin likes pie'
-  },
-  {
-    name: 'Elias',
-    legend: 'Some sort of straight dude'
-  },
-  {
-    name: 'Taylor Swift',
-    legend: 'For the ERAS CONCERT'
-  },
-  {
-    name: 'Denise',
-    legend: 'A cute knight'
-  }
-]
-
-
-const randomConfigGenerator = () => {
-  return FAKE_CONFIG[Math.floor(Math.random() * FAKE_CONFIG.length)]
-}
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { getFromIPFS } from '@/global/utils'
+import { awaitStreamValue } from '@latticexyz/utils'
 
 const getRevealedCells = (bitMap: BigNumber[]) => {
-  console.log('input', bitMap)
   const revealedCells: number[] = []
   if (!bitMap.length) return revealedCells
-  console.log(bitMap)
   for (let i = 0; i < bitMap.length; i++) {
     for (let j = (i * 1024); j < (i + 1) * 1024 && !bitMap[i].eq(0); j++) {
-      const arrayRow = Math.round(j / 256)
-      const arrayColumn = j % 256;
+      const arrayRow = Math.round(j / 1024)
+      const arrayColumn = j % 1024;
       const currentBit = bitMap[arrayRow]
       const shiftedRight = currentBit.shr(arrayColumn).and(1)
       if (!shiftedRight.eq(0)) {
@@ -59,12 +28,16 @@ export const useMap = () => {
   const {
     network: {
       storeCache,
-      playerEntity
+      playerEntity,
+      worldSend,
+      txReduced$
     },
     components: {
       PlayerComponent
     },
   } = useMUD()
+
+  const [configIpfs, setConfigIpfs] = useState<Record<string, {name: string, summary: string}>>({})
 
   const playerEntities = useEntityQuery([
     Has(PlayerComponent)
@@ -72,6 +45,37 @@ export const useMap = () => {
 
   const configs = useRows(storeCache, { table: 'ConfigComponent' })
     .filter(({key}) => playerEntities.includes(key.key as Entity))
+
+  useQuery({
+    queryKey: ['queryConfigIpfs', configs],
+    queryFn: async () => {
+      const toFetch = configs
+        .filter(({key}) => !configIpfs[key.key])
+        .map(config => getFromIPFS(config.value.value)
+          .then(async (result) => {
+              const json = await result.json()
+              setConfigIpfs(prevConfigIpfs => {
+              if (prevConfigIpfs[config.key.key]) return prevConfigIpfs
+              return {
+                ...prevConfigIpfs,
+                [config.key.key]: json
+              }
+            })
+          }))
+      return await Promise.all(toFetch)
+    },
+    enabled: !!configs.length
+  })
+
+  const travel = useMutation(async () => {
+    const tx = await worldSend('travel', [])
+    await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
+  })
+
+  const prepareTravel = useMutation(async ({toLocation}: {toLocation: number}) => {
+    const tx = await worldSend('prepareTravel', [toLocation])
+    await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
+  })
 
   const mapCells = useRows(storeCache, { table: 'MapCellComponent' })
     .filter(({key}) => playerEntities.includes(key.key as Entity))
@@ -82,23 +86,27 @@ export const useMap = () => {
   const players = playerEntities.map((entityId) => {
     const mapCell: bigint = mapCells.find(mapCell => mapCell.key.key === entityId)?.value.value ?? BigInt(0)
     const revealedCellInBytes = revealedCells.find(revealedCell => revealedCell.key.key === entityId)?.value.value
-    const decodedRevealedCellInBytes = (revealedCellInBytes ? ethers.utils.defaultAbiCoder.decode(
+    const [decodedRevealedCellInBytes] = (revealedCellInBytes ? ethers.utils.defaultAbiCoder.decode(
       ['uint256[]'],
         revealedCellInBytes
-    ) : []) as BigNumber[]
-    const config = randomConfigGenerator()
+    ) : [[]]) as [BigNumber[]]
 
     return {
       entityId,
-      name: config.name,
-      legend: config.legend,
+      name: configIpfs[entityId]?.name ?? 'Loading Name',
+      legend: configIpfs[entityId]?.summary ?? 'Loading Legend',
       config: configs.find(config => config.key.key === entityId)?.value.value ?? '',
-      mapCell: Number(mapCell),
-      revealedCell: [1, 2, 3, 4]
+      cell: Number(mapCell),
+      revealedCell: getRevealedCells(decodedRevealedCellInBytes)
     }
   })
 
   return {
-    players
+    functions: {
+      travel,
+      prepareTravel
+    },
+    players,
+    myPlayer: players.find(player => player.entityId === playerEntity)
   }
 }
