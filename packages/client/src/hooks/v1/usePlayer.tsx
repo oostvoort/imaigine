@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { SERVER_API } from '@/global/constants'
+import { IS_MOCK, SERVER_API } from '@/global/constants'
 import {
   CreatePlayerProps,
   GeneratePlayerImageProps,
@@ -49,7 +49,7 @@ export default function usePlayer() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(variables),
+          body: JSON.stringify({ ...variables, mock: IS_MOCK}),
         });
 
         const data = await response.json()
@@ -82,7 +82,7 @@ export default function usePlayer() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(variables),
+          body: JSON.stringify({ ...variables, mock: IS_MOCK}),
         });
 
         const data = await response.json()

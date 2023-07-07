@@ -45,6 +45,7 @@ import fs from 'fs-extra'
 import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
 import { BigNumber } from 'ethers'
 import { launchAndNavigateMap } from './utils/getMap'
+import { generateMockLocationInteraction, generateMockPlayer, generateMockPlayerImage } from './lib/mock'
 
 dotenv.config()
 
@@ -294,56 +295,69 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 
 app.post('/api/v1/generate-player', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerProps = req.body
+  console.log({props})
 
-  try {
+  if(props.mock) {
+    console.info('redirected to mocking data')
+    res.send(generateMockPlayer())
+  }
+  else{
+    console.info('generating player')
+    try {
 
-    const startingLocation = getRandomLocation(baseConfig.startingLocations)
+      const startingLocation = getRandomLocation(baseConfig.startingLocations)
 
-    const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
+      const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
 
-    const player = await generatePlayerCharacter({
-      storyName: storyConfig.name,
-      storyDescription: storyConfig.summary,
-      locationName: startingLocationDetails.name,
-      locationDescription: startingLocationDetails.summary,
-      ageGroup: props.ageGroup,
-      bodyType: props.bodyType,
-      race: props.race,
-      favColor: props.favColor,
-      genderIdentity: props.genderIdentity,
-      skinColor: props.skinColor,
-    })
+      const player = await generatePlayerCharacter({
+        storyName: storyConfig.name,
+        storyDescription: storyConfig.summary,
+        locationName: startingLocationDetails.name,
+        locationDescription: startingLocationDetails.summary,
+        ageGroup: props.ageGroup,
+        bodyType: props.bodyType,
+        race: props.race,
+        favColor: props.favColor,
+        genderIdentity: props.genderIdentity,
+        skinColor: props.skinColor,
+      })
 
-    const playerIpfsHash = await storeJson({
-      name: player.name,
-      description: player.description,
-    })
+      const playerIpfsHash = await storeJson({
+        name: player.name,
+        description: player.description,
+      })
 
-    res.send({
-      ipfsHash: playerIpfsHash,
-      visualSummary: player.visualSummary,
-      locationId: startingLocation.id,
-    } as GeneratePlayerResponse)
+      res.send({
+        ipfsHash: playerIpfsHash,
+        visualSummary: player.visualSummary,
+        locationId: startingLocation.id,
+      } as GeneratePlayerResponse)
 
-  } catch (e) {
-    console.info(`Error: ${e}`)
-    res.sendStatus(500).json({
-      message: `Error: ${e.message}`,
-      code: 500,
-    })
+    } catch (e) {
+      console.info(`Error: ${e}`)
+      res.sendStatus(500).json({
+        message: `Error: ${e.message}`,
+        code: 500,
+      })
+    }
   }
 })
 
 app.post('/api/v1/generate-player-image', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerImageProps = req.body
-  try {
-    const imageHash = await generatePlayerImage(props.visualSummary)
-    res.send({ imageIpfsHash: imageHash } as GeneratePlayerImageResponse)
-  } catch (e) {
-    res.sendStatus(500).json({
-      message: `Error: ${e.message}`,
-      code: 500,
-    })
+
+  if(props.mock) {
+    res.send(generateMockPlayerImage())
+  } else {
+    try {
+      const imageHash = await generatePlayerImage(props.visualSummary)
+      res.send({ imageIpfsHash: imageHash } as GeneratePlayerImageResponse)
+    } catch (e) {
+      res.sendStatus(500).json({
+        message: `Error: ${e.message}`,
+        code: 500,
+      })
+    }
   }
 })
 
@@ -369,86 +383,34 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 app.post('/api/v1/interact-location', async (req: Request, res: Response, next: NextFunction) => {
   const props: InteractLocationProps = req.body
 
-  try {
-    // get details of location, player and npc using ipfs
-    const location: Based = await getFromIpfs(props.locationIpfsHash)
-    const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
-    const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
+  if(props.mock) res.send(await generateMockLocationInteraction(props.playerEntityId))
+  else {
+    try {
+      // get details of location, player and npc using ipfs
+      const location: Based = await getFromIpfs(props.locationIpfsHash)
+      const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
+      const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
 
-    // check interaction table if have existing interaction
+      // check interaction table if have existing interaction
 
-    const interactions = await fetchInteraction(props.locationEntityId)
-    console.info('- done getting interactions')
-    let history = ''
+      const interactions = await fetchInteraction(props.locationEntityId)
+      console.info('- done getting interactions')
+      let history = ''
 
-    // need historylogs
-    const historyLogs = await fetchHistoryLogs(props.locationEntityId)
-    console.info('- done getting history')
+      // need historylogs
+      const historyLogs = await fetchHistoryLogs(props.locationEntityId)
+      console.info('- done getting history')
 
-    if (historyLogs.length > 0) {
-      for (const historyRow of historyLogs) {
-        history += historyRow.player_log + '\n'
+      if (historyLogs.length > 0) {
+        for (const historyRow of historyLogs) {
+          history += historyRow.player_log + '\n'
+        }
       }
-    }
 
-    if (interactions !== undefined) {
-      if (interactions.length <= 0) {
-        // create one from chatgpt
-        const locationInteraction = await generateLocationInteraction({
-          storyName: storyConfig.name,
-          storySummary: storyConfig.summary,
-          locationName: location.name,
-          locationSummary: location.summary,
-          npcName: npc.name,
-          npcSummary: npc.summary,
-          playerName: player.name,
-          playerSummary: player.description,
-          locationHistory: history ? `Location History: "${history}" \n` : '',
-        })
-        console.info('- done generating scenario')
+      if (interactions !== undefined) {
+        if (interactions.length <= 0) {
 
-        // save the one created to interaction table
-        await insertInteraction({
-          interactable_id: props.locationEntityId,
-          scenario: locationInteraction.scenario,
-          good_choice: locationInteraction.options.good.choice,
-          good_effect: locationInteraction.options.good.effect,
-          evil_choice: locationInteraction.options.evil.choice,
-          evil_effect: locationInteraction.options.evil.effect,
-          neutral_choice: locationInteraction.options.neutral.choice,
-          neutral_effect: locationInteraction.options.neutral.effect,
-        })
-        console.info('- done inserting interaction')
-
-        // return the result
-        res.send(locationInteraction)
-      } else {
-
-        // checking of choice
-        const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
-
-        if (choice.toNumber()) {
-
-          await insertHistoryLogs({
-            interactable_id: props.locationEntityId,
-            by: 'player',
-            players: player.name,
-            mode: 'action',
-            player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
-          })
-
-          console.info('- done inserting new history')
-
-          const historyLogs = await fetchHistoryLogs(props.locationEntityId)
-          console.info('- done getting history')
-
-          history = ''
-          for (const historyRow of historyLogs) {
-            history += historyRow.player_log + '\n'
-          }
-
-          console.info({ history })
-
+          // create one from chatgpt
           const locationInteraction = await generateLocationInteraction({
             storyName: storyConfig.name,
             storySummary: storyConfig.summary,
@@ -462,6 +424,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
           })
           console.info('- done generating scenario')
 
+          // save the one created to interaction table
           await insertInteraction({
             interactable_id: props.locationEntityId,
             scenario: locationInteraction.scenario,
@@ -472,46 +435,96 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             neutral_choice: locationInteraction.options.neutral.choice,
             neutral_effect: locationInteraction.options.neutral.effect,
           })
-          console.info('- done inserting new interaction')
+          console.info('- done inserting interaction')
 
-          await worldContract.openInteraction(props.playerEntityId)
-
+          // return the result
           res.send(locationInteraction)
         } else {
-          res.send({
-            scenario: interactions[0].scenario,
-            options: {
-              good: {
-                choice: interactions[0].good_choice,
-                effect: interactions[0].good_effect,
-              },
-              evil: {
-                choice: interactions[0].evil_choice,
-                effect: interactions[0].evil_effect,
-              },
-              neutral: {
-                choice: interactions[0].neutral_choice,
-                effect: interactions[0].neutral_effect,
-              },
-            },
-          })
 
+          // checking of choice
+          const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
+
+          if (choice.toNumber()) {
+
+            await insertHistoryLogs({
+              interactable_id: props.locationEntityId,
+              by: 'player',
+              players: player.name,
+              mode: 'action',
+              player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+            })
+
+            console.info('- done inserting new history')
+
+            const historyLogs = await fetchHistoryLogs(props.locationEntityId)
+            console.info('- done getting history')
+
+            history = ''
+            for (const historyRow of historyLogs) {
+              history += historyRow.player_log + '\n'
+            }
+
+            console.info({ history })
+
+            const locationInteraction = await generateLocationInteraction({
+              storyName: storyConfig.name,
+              storySummary: storyConfig.summary,
+              locationName: location.name,
+              locationSummary: location.summary,
+              npcName: npc.name,
+              npcSummary: npc.summary,
+              playerName: player.name,
+              playerSummary: player.description,
+              locationHistory: history ? `Location History: "${history}" \n` : '',
+            })
+            console.info('- done generating scenario')
+
+            await insertInteraction({
+              interactable_id: props.locationEntityId,
+              scenario: locationInteraction.scenario,
+              good_choice: locationInteraction.options.good.choice,
+              good_effect: locationInteraction.options.good.effect,
+              evil_choice: locationInteraction.options.evil.choice,
+              evil_effect: locationInteraction.options.evil.effect,
+              neutral_choice: locationInteraction.options.neutral.choice,
+              neutral_effect: locationInteraction.options.neutral.effect,
+            })
+            console.info('- done inserting new interaction')
+
+            await worldContract.openInteraction(props.playerEntityId)
+
+            res.send(locationInteraction)
+          } else {
+            res.send({
+              scenario: interactions[0].scenario,
+              options: {
+                good: {
+                  choice: interactions[0].good_choice,
+                  effect: interactions[0].good_effect,
+                },
+                evil: {
+                  choice: interactions[0].evil_choice,
+                  effect: interactions[0].evil_effect,
+                },
+                neutral: {
+                  choice: interactions[0].neutral_choice,
+                  effect: interactions[0].neutral_effect,
+                },
+              },
+            })
+
+          }
         }
+      } else {
+        throw new Error('Error occurred')
       }
-    } else {
-      const error = {
-        message: 'Error occurred',
+    } catch (e) {
+      console.info(e.message)
+      res.sendStatus(500).json({
+        message: `Error: ${e.message}`,
         code: 500,
-      }
-
-      res.status(500).json(error)
+      })
     }
-  } catch (e) {
-    console.info(e.message)
-    res.sendStatus(500).json({
-      message: `Error: ${e.message}`,
-      code: 500,
-    })
   }
 })
 
@@ -700,10 +713,7 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
         } as InteractNpcResponse)
 
       } else {
-        res.sendStatus(500).json({
-          message: `Error on choice ${choice}`,
-          code: 500,
-        })
+        throw new Error(`Error on choice ${choice}`)
       }
     }
   } catch (e) {
@@ -829,26 +839,20 @@ app.post('/mock/api/v1/generate-location', async (req: Request, res: Response, n
   } as GenerateLocationResponse)
 })
 
-app.post('/mock/api/v1/generate-location-interaction', async (req: Request, res: Response, next) => {
-  res.send(
-    {
-      scenario: 'Ariana Shadowheart had arrived in the beautiful oasis of Eternal Springs, where the magical creatures and natural beauty was enough to take her breath away. She came to the city to find an old friend, Lirio, who had grown up in the city. Upon finding them, they excitedly recounted stories of their childhood adventures and the many perils of Eternal Springs. Ariana was enchanted by the stories and could feel the vibrant energy of its culture. She was offered three choices of how she might proceed: she could join a group of adventurers to explore the hidden tombs and seek out ancient artifacts, hunt for riches within the lush jungles of the city, or help the city by working in its commerce industries.',
-      options: {
-        'good': 'Explore the hidden tombs',
-        'evil': 'Hunt for riches in the jungle',
-        'neutral': 'Work in commerce industries',
-      },
-    },
-  )
+
+
+app.post('/mock/api/v1/interact-location', async (req: Request, res: Response, next) => {
+  const props: InteractLocationProps = req.body
+  res.send(await generateMockLocationInteraction(props.playerEntityId))
+
 })
 
 app.post('/mock/api/v1/generate-player', async (req: Request, res: Response, next) => {
-  res.send({
-      ipfsHash: 'QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9',
-      visualSummary: 'Curious Elf, Feeble Strength, Clumsy Dexterity, Sturdy Constitution, Genius Intelligence, Average Charisma, Foolish Wisdom, Soft Pale Skin',
-      locationId: '0x886b4be6a70e2eacc060d6e16947268361f95b575bec0e369c827351677ccde7',
-    } as GeneratePlayerResponse,
-  )
+  res.send(generateMockPlayer())
+})
+
+app.post('/mock/api/v1/generate-player-image', async (req, res, next) => {
+  res.send(generateMockPlayerImage())
 })
 
 app.post('/mock/api/v1/generate-npc', async (req: Request, res: Response, next) => {
