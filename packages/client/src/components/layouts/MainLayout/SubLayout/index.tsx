@@ -27,7 +27,7 @@ const MapViewLayout = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React.ReactNode, summary: any, setIsOpen: () => void}) => {
+const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React.ReactNode, summary?: any, setIsOpen?: () => void}) => {
   return (
     <div
       className={clsx([
@@ -69,7 +69,14 @@ const VisualSummaryLayout = ({ children, summary, setIsOpen }: { children: React
             </div>
           )
         }
-
+        {/*<p className={'text-option-11 text-[30px] font-amiri'}>*/}
+        {/*  Alice, guided by whispers of the Mystic Forest, embarked on a treacherous trek to the towering Everpeak Mountains.*/}
+        {/*  She navigated dense foliage, encountered mystical creatures, and sought shelter in a hidden cave. The air*/}
+        {/*  grew colder as she ascended, but her spirit burned with determination. Finally, she emerged at the*/}
+        {/*  mountain&apos;s summit, greeted by breathtaking vistas and a newfound sense of accomplishment. The journey had*/}
+        {/*  tested her resilience, but it had also awakened her inner strength. With a renewed spirit, Alice stood ready*/}
+        {/*  to face the challenges awaiting her in the rugged wilderness of Everpeak.*/}
+        {/*</p>*/}
       </div>
     </div>
   )
