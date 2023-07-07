@@ -27,15 +27,19 @@ const toBytes16 = (str: string) => {
 
 const LOCATION_PREFIX = toBytes16('LOCATION')
 
-const CONFIG_COMPONENT_TABLE_ID = hexlify(
+const createComponentTableId = (name: string) => hexlify(
   concat([
     solidityPack(
       ['bytes16', 'bytes16'],
-      [toBytes16(''), toBytes16('ConfigComponent')]
+      [toBytes16(''), toBytes16(name)]
     ),
     constants.HashZero
   ]).slice(0, 32)
 )
+
+const CONFIG_COMPONENT_TABLE_ID = createComponentTableId('ConfigComponent')
+const MAP_CELL_COMPONENT_TABLE_ID = createComponentTableId('MapCellComponent')
+const TRAVEL_COMPONENT_TABLE_ID = createComponentTableId('TravelComponent')
 
 // create a signer
 export const signer = new Wallet(
@@ -64,22 +68,15 @@ export const getConfig = async (id: string) => {
     .then((value) => toUtf8String(value))
 }
 
-// TODO: Implement contract functionality
 export const getPlayerLocation = (playerEntityId: string): Promise<number> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(1);
-    }, 1000);
-  });
+  return worldContract.getField(MAP_CELL_COMPONENT_TABLE_ID, [playerEntityId], 0)
+    .then((value) => Number(value))
 };
 export const getPlayerDestination = (playerEntityId: string) : Promise<number> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(1);
-    }, 1000);
-  });
+  return worldContract.getField(TRAVEL_COMPONENT_TABLE_ID, [playerEntityId], 1)
+    .then((value) => Number(value))
 }
 
-export const startTravel = (playerEntityId: string, route: number[], toRevealDestination: number[]) => {
-  console.info("Travel ...")
+export const startTravel = async (playerEntityId: string, route: number[], toRevealDestination: number[]) => {
+  await worldContract.startTravel(playerEntityId, route, toRevealDestination)
 }
