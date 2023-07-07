@@ -122,6 +122,24 @@ const RANDOM_DIALOG = [
     goodResponse: 'Sure. Why not?',
     evilResponse: 'No, I don\'t like you',
     neutralResponse: 'Sorry. My cat\'s dog got sick. How about we reschedule.'
+  },
+  {
+    response: 'How\'s the weather?',
+    goodChoice: 'Converse mindlessly',
+    evilChoice: 'Don\'t respond',
+    neutralChoice: 'Try to talk about something else',
+    goodResponse: 'It\'s been great surfing weather. I love the way the sea meets the sky.',
+    evilResponse: '...',
+    neutralResponse: 'I like pie!'
+  },
+  {
+    response: 'Did you hear about Joanna?',
+    goodChoice: 'Don\'t gossip',
+    evilChoice: 'Gossip with the intention of destroying Joanna',
+    neutralChoice: 'Shake head',
+    goodResponse: 'I don\'t think it\'s right to talk about her in this manner',
+    evilResponse: 'It feels so good to know that finally she\'s showing her beard. Oops...you weren\'t supposed to know that',
+    neutralResponse: 'Not, really.'
   }
 ]
 
