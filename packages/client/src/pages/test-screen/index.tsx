@@ -6,7 +6,7 @@ import { IPFS_URL_PREFIX } from '@/global/constants'
 import { useMUD } from '@/MUDContext'
 import { GeneratePlayerResponse } from '../../../../types'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
-import { usePlayers } from '@/hooks/v1/usePlayers'
+import { useMap } from '@/hooks/v1/useMap'
 
 export default function TestScreen() {
   const {
@@ -26,7 +26,7 @@ export default function TestScreen() {
 
   const { interactNPC, createNPCInteraction } = useNPCInteraction()
 
-  const { players } = usePlayers()
+  const { players } = useMap()
 
   // console.info({players})
   // console.info({player})

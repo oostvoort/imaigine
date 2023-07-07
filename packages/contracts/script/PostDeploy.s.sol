@@ -60,6 +60,20 @@ contract PostDeploy is Script {
         npcs[i].imageHash,
         cellNumber[npcs[i].locationId]
       );
+
+      // TODO: remove this after
+      bytes32 playerId = world.createPlayer(
+        bytes32(
+          uint256(
+            uint160(
+              72 + i
+            )
+          )
+        ),
+        npcs[i].ipfsHash,
+        npcs[i].imageHash,
+        cellNumber[npcs[i].locationId]
+      );
     }
 
     vm.stopBroadcast();

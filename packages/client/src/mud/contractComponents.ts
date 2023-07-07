@@ -290,12 +290,12 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    RevealedCellsComponent: (() => {
-      const tableId = new TableId("", "RevealedCellsCom");
+    RevealedCells: (() => {
+      const tableId = new TableId("", "RevealedCells");
       return defineComponent(
         world,
         {
-          value: RecsType.BigInt,
+          value: RecsType.String,
         },
         {
           metadata: {

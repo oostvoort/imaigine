@@ -27,7 +27,7 @@ export default mudConfig({
         KarmaPointsComponent: "int8",
         InteractableComponent: "bytes32",
         InteractionTypeComponent: "InteractionType",
-        RevealedCellsComponent: "uint256", // will be implemented as bitmap for cells player has travelled
+        RevealedCells: "bytes", // will be implemented as bitmap for cells player has travelled
         SingleInteractionComponent: {
           keySchema: {
             player: "bytes32",
