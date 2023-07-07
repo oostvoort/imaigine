@@ -33,8 +33,6 @@ export default function useNPCInteraction() {
 
         const data = await response.json()
 
-        console.log({data})
-
         return {
           conversationHistory: data.conversationHistory,
           option: data.option,
