@@ -14,8 +14,8 @@ import { BattleStatus } from "../codegen/Types.sol";
 contract MinigameSystem is System {
 
     struct HashOptionsValue {
-        string memory key;
-        string memory data;
+        string key;
+        string data;
         uint256 timestamp;
     }
 
@@ -61,11 +61,7 @@ contract MinigameSystem is System {
             opponent: opponentId,
             status: BattleStatus.IN_BATTLE,
             option: "",
-            hashSalt: HashOptionsValue({
-                key: "",
-                data: "",
-                timestamp: 0
-            })
+            hashSalt: ""
         }));
 
         BattleQueueComponent.deleteRecord(locationId);
@@ -97,17 +93,17 @@ contract MinigameSystem is System {
     }
 
 
-    // TODO
+    // TODO NOT FINISHED
     function lockInBetting(bytes32 playerId, bytes32 locationId, string[] memory _hashsalt) public {
         require(_hashsalt.length == 3, "invalid hash salt");
         require(BattleComponent.get(playerId, locationId).status == BattleStatus.IN_BATTLE, "player doesn't exist in the match");
 
-        HashOptionsValue memory value = HashOptionsValue({
-            key : _hashsalt[0],
-            data : _hashsalt[1],
-            timestamp : _hashsalt[2]
-        });
+//        HashOptionsValue memory value = HashOptionsValue({
+//            key : _hashsalt[0],
+//            data : _hashsalt[1],
+//            timestamp : _hashsalt[2]
+//        });
 
-        BattleComponent.pushHashSalt(playerId, locationId, value);
+//        BattleComponent.pushHashSalt(playerId, locationId, value);
     }
 }

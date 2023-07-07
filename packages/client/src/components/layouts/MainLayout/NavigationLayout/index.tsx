@@ -9,15 +9,33 @@ import { activeScreen_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
 import { useAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
+import useQueue from '@/hooks/minigame/useQueue'
+import { Entity } from '@latticexyz/recs'
 
 export default function Header() {
   const { player } = usePlayer()
+  const { setLocationEntity, setQueue } = useQueue()
   const [, setActiveScreen] = useAtom(activeScreen_atom)
 
   const activeScreen = useGameState()
 
+  React.useEffect(() => {
+      setLocationEntity("0x0000000000000000000000000000000000000000000000000000000000000002" as Entity)
+  }, [])
+
   const handleButtonClick = () => {
     setActiveScreen(activeScreen === SCREENS.CURRENT_LOCATION ? SCREENS.WORLD_MAP : SCREENS.CURRENT_LOCATION)
+  }
+
+  const handleButtonClickOnStartBattle = async () => {
+      try {
+        await setQueue.mutateAsync({
+          playerId: "0x0000000000000000000000000000000000000000000000000000000000000005",
+          locationId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+        })
+      } catch (e) {
+          console.log( e )
+      }
   }
 
   return (
@@ -71,7 +89,12 @@ export default function Header() {
         </div>
         {/*End of Menu Wrapper*/}
 
-        <Button variant={'outline'}>START BATTLE</Button>
+        <Button
+            variant={'outline'}
+            onClick={handleButtonClickOnStartBattle}
+        >
+          START BATTLE
+        </Button>
       </div>
 
 

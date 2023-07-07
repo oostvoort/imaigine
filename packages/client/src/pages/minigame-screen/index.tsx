@@ -2,8 +2,27 @@ import React from 'react'
 import { clsx } from 'clsx'
 import { Card } from '@/components/base/Card'
 import { Button } from '@/components/base/Button'
+import useQueue from '@/hooks/minigame/useQueue'
+import { Entity } from '@latticexyz/recs'
 
 export default function MinigameScreen(){
+  const { battleQueue, setLocationEntity } = useQueue()
+
+  const [isInsideBattle, setIsInsideBattle] = React.useState(false)
+
+  React.useEffect(() => {
+      setLocationEntity("0x0000000000000000000000000000000000000000000000000000000000000002" as Entity)
+  }, [])
+
+  React.useEffect(() => {
+    if (battleQueue) {
+      console.log("BATTLE QUEUE", battleQueue)
+      if (battleQueue.playerId?.playerId) {
+        setIsInsideBattle(true)
+      }
+    }
+  }, [battleQueue])
+
   return(
     <React.Fragment>
       <div className={clsx(['max-w-[1920px] mx-auto max-h-[1080px] h-full w-full', 'overflow-hidden', 'relative flex justify-center items-center'])}>
@@ -57,10 +76,12 @@ export default function MinigameScreen(){
             <div className={clsx(['w-full h-full text-center', 'flex-1', 'relative'])}>
               <img src={'/src/assets/minigame/img_battle_chair.png'} alt={'Chair Icon'} className={clsx('absolute left-[50%] top-[39%] -translate-y-1/2 -translate-x-1/2 w-[740px] h-auto')}/>
 
-              <div className={clsx(['bg-lining bg-cover h-[64px] w-[980px] z-10 flex items-center justify-center gap-3', 'absolute mx-auto left-[50%] top-1/2 -translate-y-2/4 -translate-x-1/2'])}>
-                <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'animate-custom-spin h-[30px] w-[18px]'} />
-                <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other player</p>
-              </div>
+              {
+                isInsideBattle ?  <div className={clsx(['bg-lining bg-cover h-[64px] w-[980px] z-10 flex items-center justify-center gap-3', 'absolute mx-auto left-[50%] top-1/2 -translate-y-2/4 -translate-x-1/2'])}>
+                  <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'animate-custom-spin h-[30px] w-[18px]'} />
+                  <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other player</p>
+                </div> : null
+              }
 
               <img src={'/src/assets/minigame/img_battle_table.png'} alt={'Chair Icon'} className={'absolute left-[50%] bottom-[14%] translate-y-1/2 -translate-x-1/2 w-[965px] h-auto'}/>
             </div>
