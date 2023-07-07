@@ -26,3 +26,5 @@ import { RevealedCellsComponent, RevealedCellsComponentTableId } from "./tables/
 import { SingleInteractionComponent, SingleInteractionComponentData, SingleInteractionComponentTableId } from "./tables/SingleInteractionComponent.sol";
 import { MultiInteractionComponent, MultiInteractionComponentData, MultiInteractionComponentTableId } from "./tables/MultiInteractionComponent.sol";
 import { TravelComponent, TravelComponentData, TravelComponentTableId } from "./tables/TravelComponent.sol";
+import { BattleQueueComponent, BattleQueueComponentTableId } from "./tables/BattleQueueComponent.sol";
+import { BattleComponent, BattleComponentData, BattleComponentTableId } from "./tables/BattleComponent.sol";

@@ -5,7 +5,9 @@ export default mudConfig({
     },
     enums: {
       InteractionType: ["NOT_INTERACTABLE", "SINGLE", "MULTIPLE"],
-      TravelStatus: ["NOT_TRAVELLING", "PREPARING", "READY_TO_TRAVEL", "TRAVELLING"]
+      TravelStatus: ["NOT_TRAVELLING", "PREPARING", "READY_TO_TRAVEL", "TRAVELLING"],
+      BattleStatus: ["NOT_IN_BATTLE", "IN_BATTLE", "DONE_SELECTING"],
+      BattleOptions: ["Sword", "Scroll", "Potion"],
     },
     tables: {
         StoryComponent: "bool",
@@ -58,7 +60,26 @@ export default mudConfig({
             toRevealAtDestination: "bytes" // array of cells that will reveal itself once player is in the new location
           }
         },
-
+        BattleQueueComponent: {
+          keySchema: {
+            locationId: "bytes32",
+          },
+          schema: {
+            playerId: "bytes32",
+          }
+        },
+        BattleComponent: {
+          keySchema: {
+            playerId: "bytes32",
+            locationId: "bytes32",
+          },
+          schema: {
+            opponent: "bytes32",
+            option: "bytes32",
+            status: "BattleStatus",
+            hashSalt: "string",
+          }
+        }
     },
     modules: [
         {

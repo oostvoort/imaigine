@@ -1,12 +1,16 @@
 import { Button } from '@/components/base/Button'
 import usePlayer from '@/hooks/v1/usePlayer'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { clsx } from 'clsx'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import { useMUD } from '@/MUDContext'
 import { GeneratePlayerResponse } from '../../../../types'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { usePlayers } from '@/hooks/v1/usePlayers'
+import useQueue from '@/hooks/minigame/useQueue'
+import { Entity } from '@latticexyz/recs'
+import useBattle from '@/hooks/minigame/useBattle'
+import useBetting from '@/hooks/minigame/useBetting'
 
 export default function TestScreen() {
   const {
@@ -27,6 +31,68 @@ export default function TestScreen() {
   const { interactNPC, createNPCInteraction } = useNPCInteraction()
 
   const { players } = usePlayers()
+
+
+  // BATTLE QUEUE TESTING
+  const { battleQueue, setQueue, setLocationEntity } = useQueue()
+
+  useEffect(() => {
+    setLocationEntity("0x0000000000000000000000000000000000000000000000000000000000000002" as Entity)
+  }, [])
+
+  useEffect(() => {
+    if (battleQueue) {
+      console.log("BATTLE QUEUE: ", battleQueue)
+    }
+  }, [battleQueue])
+
+  const onCreateBattleQueue = async () => {
+    try {
+      await setQueue.mutateAsync({
+        playerId: "0x0000000000000000000000000000000000000000000000000000000000000005",
+        locationId: '0x0000000000000000000000000000000000000000000000000000000000000002',
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  // BATTLE QUEUE TESTING
+
+  // BATTLE MATCH TESTING
+  const { playerId, locationId, setMatch, match } = useBattle()
+
+  useEffect(() => {
+      if (match) {
+        console.log("BATTLE MATCH: ", match)
+      }
+  }, [match])
+
+  const onCreateBattle = async () => {
+      try {
+          await setMatch.mutateAsync({
+              playerId: playerId,
+              locationId: locationId,
+              opponentId: '0x0000000000000000000000000000000000000000000000000000000000000009',
+          })
+      } catch (error) {
+          console.error(error)
+      }
+  }
+  // BATTLE MATCH TESTING
+
+  // BATTLE BETTING START TESTING
+  const { OnClickOptions, setBetting, hashOptions } = useBetting()
+
+  const onCreateBetting = async () => {
+    await setBetting.mutateAsync({
+      playerId: '0x0000000000000000000000000000000000000000000000000000000000000005',
+      locationId: '0x0000000000000000000000000000000000000000000000000000000000000002',
+      hashOption: hashOptions
+    })
+  }
+
+  // BATTLE BETTING START TESTING
+
 
   // console.info({players})
   // console.info({player})
@@ -170,6 +236,26 @@ export default function TestScreen() {
         >
           Neutral
         </Button>
+        <button
+          onClick={onCreateBattleQueue}
+        >
+          Start Battle
+        </button>
+        <button
+          onClick={onCreateBattle}
+        >
+          Start Match
+        </button>
+        <button
+          onClick={() => OnClickOptions("Sword")}
+        >
+          CHOOSE OPTIONS
+        </button>
+        <button
+          onClick={() => onCreateBetting()}
+        >
+          BET
+        </button>
       </div>
     </div>
   )

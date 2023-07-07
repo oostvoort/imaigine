@@ -14,3 +14,15 @@ enum TravelStatus {
   READY_TO_TRAVEL,
   TRAVELLING
 }
+
+enum BattleStatus {
+  NOT_IN_BATTLE,
+  IN_BATTLE,
+  DONE_SELECTING
+}
+
+enum BattleOptions {
+  Sword,
+  Scroll,
+  Potion
+}

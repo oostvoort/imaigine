@@ -9,6 +9,7 @@
     "dev": "wait-port localhost:8545 && vite",
     "preview": "vite preview",
     "test": "tsc --noEmit",
+    "test:minigame": "jest --config ./jest.config.ts --runInBand",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

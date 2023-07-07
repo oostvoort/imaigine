@@ -361,5 +361,38 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    BattleQueueComponent: (() => {
+      const tableId = new TableId("", "BattleQueueCompo");
+      return defineComponent(
+        world,
+        {
+          playerId: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    BattleComponent: (() => {
+      const tableId = new TableId("", "BattleComponent");
+      return defineComponent(
+        world,
+        {
+          opponent: RecsType.String,
+          option: RecsType.String,
+          status: RecsType.Number,
+          hashSalt: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }
