@@ -214,21 +214,21 @@ export default function ConversationDialog({
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => handlePlayerResponse(1, conversations.option.evil.evilChoise)}
+                        onClick={() => handlePlayerResponse(1, conversations.option.evil.evilResponse)}
                       >
                         {conversations.option.evil.evilChoise}
                       </Button>
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => handlePlayerResponse(2, conversations.option.good.goodChoise)}
+                        onClick={() => handlePlayerResponse(2, conversations.option.good.goodResponse)}
                       >
                         {conversations.option.good.goodChoise}
                       </Button>
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={() => handlePlayerResponse(3, conversations.option.neutral.neutralChoise)}
+                        onClick={() => handlePlayerResponse(3, conversations.option.neutral.neutralResponse)}
                       >
                         {conversations.option.neutral.neutralChoise}
                       </Button>
