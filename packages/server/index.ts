@@ -125,7 +125,7 @@ app.get('/mapdata', async (req: Request, res: Response, next) => {
 app.get('/get-route', async (req: Request, res: Response) => {
   const seed = 927;
   try {
-    const result = await getRoute(seed, 813, 653)
+    const result = await getRoute(seed, '', 813, 653)
     res.send(result);
   } catch (e) {
     res.status(500).send(e.message);
