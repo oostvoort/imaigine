@@ -17,6 +17,8 @@ import {
   InteractLocationProps,
   InteractNpcProps,
   InteractNpcResponse,
+  InteractSQLResult,
+  LogSqlResult, RouteObject,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -39,7 +41,7 @@ import { generateMap } from './generate'
 import fs from 'fs-extra'
 import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
 import { BigNumber } from 'ethers'
-import { launchAndNavigateMap } from './utils/getMap'
+import { getRoute } from './utils/getMap'
 import {
   generateMockLocationInteraction,
   generateMockNpcInteraction,
@@ -52,7 +54,9 @@ dotenv.config()
 
 declare global {
   interface Window {
-      findNearestPath: (a: number, b: number) => number[]
+      findNearestPath: (from: number, to: number) => [number[]],
+      getCellInfo: (cell: number) => RouteObject,
+      getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[]
   }
 }
 
@@ -95,8 +99,6 @@ app.use((err, req, res, next) => {
 
 app.get('/mapdata', async (req: Request, res: Response) => {
 
-  console.info('TEst')
-
   try {
     const seed = parseInt(<string>req.query.seed)
 
@@ -118,16 +120,13 @@ app.get('/mapdata', async (req: Request, res: Response) => {
 app.get('/get-route', async (req: Request, res: Response) => {
   const seed = 927;
   try {
-    const page = await launchAndNavigateMap(seed)
-    // Access the function on the page
-    const result = await page.evaluate(() => {
-      // Call the function on the page and return the result
-      return window.findNearestPath(813,987);
-    });
+    const result = await getRoute(seed, 813, 653)
     res.send(result);
   } catch (e) {
     res.status(500).send(e.message);
   }
+
+
 });
 
 app.post('/api/v1/generate-story', async (req: Request, res: Response, next) => {

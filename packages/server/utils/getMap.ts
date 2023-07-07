@@ -1,4 +1,6 @@
-import puppeteer, { Page } from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer'
+import { RouteObject } from 'types'
+
 export async function launchAndNavigateMap(seed: number): Promise<Page> {
   const browser = await puppeteer.launch({ headless: true });
   const page: Page = await browser.newPage();
@@ -10,4 +12,29 @@ export async function launchAndNavigateMap(seed: number): Promise<Page> {
 
 async function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+export async function getRoute(mapSeed: number, from: number, to: number) {
+  const exploredCells = [813] //todo fetch explored cell in contract
+  const page = await launchAndNavigateMap(mapSeed)
+  // Access the function on the page
+  return await page.evaluate((exploredCells: number[], from: number, to: number) => {
+    const routeData: RouteObject[] = []
+
+    // Call the function on the page to find the nearest path
+    const paths = window.findNearestPath(from, to)
+
+    for (const path of paths[0]) {
+      const pathInfo = window.getCellInfo(path)
+      routeData.push(pathInfo)
+    }
+
+    // Call the function on the page to get "to reveal cell"
+    const toRevealAtDestination = window.getToRevealCells(from, exploredCells)
+
+    return {
+      routeData,
+      toRevealAtDestination
+    }
+  }, exploredCells, from, to)
 }
