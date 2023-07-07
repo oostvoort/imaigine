@@ -9,8 +9,7 @@ const useGameState = () => {
 
   if (!player.player || activeScreen === SCREENS.WORLD_MAP) return activeScreen
   else if (player.travel?.status ?? 0 > 1) return SCREENS.TRAVELLING
-    //Todo: change this again
-  else return SCREENS.MINIGAME
+  else return SCREENS.CURRENT_LOCATION
 }
 
 export default useGameState
