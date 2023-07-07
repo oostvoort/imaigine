@@ -7,12 +7,9 @@ import WorldMapScreen from '@/pages/world-map-screen'
 import TestScreen from '@/pages/test-screen'
 import useGameState from '@/hooks/useGameState'
 import TravellingScreen from '@/pages/travelling-screen'
-import { useMap } from '@/hooks/v1/useMap'
 
 export const App = () => {
   const activeScreen = useGameState()
-  const { players } = useMap()
-  console.log({players})
   return (
     <Template>
       {activeScreen === SCREENS.TITLE &&

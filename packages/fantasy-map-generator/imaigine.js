@@ -7,8 +7,6 @@ function hook_onMapLoaded() {
 
   console.log('Imaigine: hook_onMapLoaded')
   window.parent.postMessage({ cmd: 'FinishedLoadingMap', params: {} })
-
-  // revealCells([ 558, 559, 560, 481,477,476,480,561,638, 637 ])
 }
 
 /**
@@ -16,6 +14,7 @@ function hook_onMapLoaded() {
  */
 function hook_onMapClick(el, p) {
   console.log('Imaigine: hook_onMapClick', el, p)
+  console.log('pack', pack)
 
   const parent = el.parentElement
   const grand = parent.parentElement
@@ -26,7 +25,8 @@ function hook_onMapClick(el, p) {
   if (grand.id === 'burgIcons') {
     console.log("Clicked burg: ", i)
     if (pack.cells.burg[i] <= 0) return // check if cellId has burg
-
+    const reveal = getToRevealCells(813, [813,987])
+    console.log('reveal', reveal)
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
@@ -43,19 +43,14 @@ function hook_onMapClick(el, p) {
 function findNearestPath(currenLocation, cellId) {
   return window.Routes.findNearestPath(currenLocation, cellId)
 }
-function moveMarker(item, index) {
-  setTimeout(() => {
-    showPlayers([{
-      name: "Edward",
-      cell: item,
-      legend: 'A brave and honorable knight known for his swordsmanship.'
-    }])
-  }, index * 1000);
+
+function getCellInfo(cellId) {
+ return  window.Routes.getCellInfo(cellId)
 }
-function revealCells(currentLocation, exploredCells) {
-  let newExploredCells = [...exploredCells]
+
+function getToRevealCells(currentLocation, exploredCells) {
+  let newExploredCells = []
   let nearestBurgPath = []
-  let toRevealCells = []
 
   // Find the nearest burg for each cells
   for (const c of exploredCells) {
@@ -73,9 +68,10 @@ function revealCells(currentLocation, exploredCells) {
     }
   }
 
-  // Combined all cells for path reveal
-  toRevealCells = [...new Set(newExploredCells.flatMap(cell => [...nearestBurgPath, cell]))];
-
+ // Combine nearest burg and path, then remove explored cell
+ return [...new Set([...nearestBurgPath, ...newExploredCells].filter(cell => !exploredCells.includes(cell)))]
+}
+function revealCells(toRevealCells) {
   const path =
     'M' +
     toRevealCells
@@ -123,7 +119,7 @@ function showPlayers(players) {
 window.addEventListener('message', ({ data }) => {
   if (data.cmd === 'revealCells') {
 
-    revealCells(5033, data.params.cells)
+    revealCells(data.params.cells)
 
   } else if (data.cmd === 'unFog') {
 
@@ -134,9 +130,9 @@ window.addEventListener('message', ({ data }) => {
     showPlayers(data.params.players)
 
   } else if (data.cmd === 'showExploredCells') {
-
+    const toReveal = getToRevealCells(data.params.player.cell, data.params.cells)
     hideCells('myFogId')
-    revealCells(data.params.player.cell, data.params.cells)
+    revealCells([...data.params.cells, ...toReveal])
 
   } else if (data.cmd === 'getNextTowns') {
 

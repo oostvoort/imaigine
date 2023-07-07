@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { SERVER_API } from '@/global/constants'
+import { IS_MOCK, SERVER_API } from '@/global/constants'
 import {
   GenerateLocationInteractionResponse,
 } from '@/global/types'
@@ -42,7 +42,7 @@ export default function useLocationInteraction() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, mock: IS_MOCK}),
     })
 
     return await response.json() as InteractSingleDoneResponse

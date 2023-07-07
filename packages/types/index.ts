@@ -1,3 +1,6 @@
+export interface Dev {
+  mock?: boolean
+}
 export interface Story {
   name: string,
   description: string
@@ -11,7 +14,7 @@ export interface GenerateStoryResponse {
   name: string,
   description: string
 }
-export interface GenerateLocationProps {
+export interface GenerateLocationProps extends Dev {
   id: number,
 }
 export interface GenerateLocationResponse {
@@ -30,7 +33,7 @@ export interface InteractSingleDoneResponse {
     neutral: InteractionOption
   }
 }
-export interface GenerateNpcProps {
+export interface GenerateNpcProps extends Dev {
   locationIpfsHash: string,
   locationId: string
 }
@@ -38,7 +41,7 @@ export interface GenerateNpcResponse {
   ipfsHash: string,
   imageHash: string,
 }
-export interface GeneratePlayerProps {
+export interface GeneratePlayerProps extends Dev {
   ageGroup: string,
   genderIdentity: string,
   race: string,
@@ -51,9 +54,9 @@ export interface GeneratePlayerResponse {
   visualSummary: string,
   locationId: string
 }
-export interface GeneratePlayerImageProps { visualSummary: string}
+export interface GeneratePlayerImageProps extends Dev { visualSummary: string}
 export interface GeneratePlayerImageResponse { imageIpfsHash: string}
-export interface CreatePlayerProps {
+export interface CreatePlayerProps extends Dev {
   playerId: string,
   ipfsHash: string,
   imageIpfsHash: string,
@@ -111,14 +114,14 @@ export interface LogSqlResult {
   by: string,
   player_log: string,
 }
-export interface InteractLocationProps {
+export interface InteractLocationProps extends Dev {
   playerEntityId: string,
   locationEntityId: string,
   locationIpfsHash: string,
   playerIpfsHash: string,
   npcIpfsHash: Array<string>,
 }
-export interface InteractNpcProps {
+export interface InteractNpcProps extends Dev {
   playerEntityId: Array<string>,
   playerIpfsHash: Array<string>,
   npcIpfsHash: string,
@@ -170,4 +173,24 @@ export interface TravelLocationAttributes {
   depth: string,
   temperature: string,
   biome: string,
+}
+
+export interface RouteObject {
+  cell: number,
+  latitude: string,
+  longitude: string,
+  area: string,
+  type: string,
+  precipitation: string,
+  river: string,
+  population: string,
+  elevation: string,
+  depth: string,
+  temperature: string,
+  biome: string,
+  state: string,
+  province: string,
+  culture: string,
+  religion: string,
+  burg: string
 }
