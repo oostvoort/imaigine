@@ -64,6 +64,13 @@ contract MinigameSystem is System {
             hashSalt: ""
         }));
 
+        BattleComponent.set(opponentId, locationId, BattleComponentData({
+            opponent: playerId,
+            status: BattleStatus.IN_BATTLE,
+            option: "",
+            hashSalt: ""
+        }));
+
         BattleQueueComponent.deleteRecord(locationId);
 
         return BattleComponent.get(playerId, locationId);

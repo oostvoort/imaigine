@@ -11,16 +11,20 @@ import { useAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
 import useQueue from '@/hooks/minigame/useQueue'
 import { Entity } from '@latticexyz/recs'
+import useBattle from '@/hooks/minigame/useBattle'
 
 export default function Header() {
   const { player } = usePlayer()
-  const { setLocationEntity, setQueue } = useQueue()
-  const [, setActiveScreen] = useAtom(activeScreen_atom)
+  const { setLocationEntity, setQueue, battleQueue } = useQueue()
+  const { setPlayerId, setLocationId, setMatch } = useBattle()
+  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
 
   const activeScreen = useGameState()
 
+  //Todo: change this to dynamic value
   React.useEffect(() => {
-      setLocationEntity("0x0000000000000000000000000000000000000000000000000000000000000002" as Entity)
+    setLocationEntity('0x0000000000000000000000000000000000000000000000000000000000000002' as Entity)
+    setLocationId('0x0000000000000000000000000000000000000000000000000000000000000002' as Entity)
   }, [])
 
   const handleButtonClick = () => {
@@ -29,12 +33,26 @@ export default function Header() {
 
   const handleButtonClickOnStartBattle = async () => {
       try {
-        await setQueue.mutateAsync({
-          playerId: "0x0000000000000000000000000000000000000000000000000000000000000005",
-          locationId: "0x0000000000000000000000000000000000000000000000000000000000000002",
-        })
+        //initial queing
+        if (battleQueue.playerId == undefined) {
+          await setQueue.mutateAsync({
+            playerId: player.id as Entity,
+            locationId: '0x0000000000000000000000000000000000000000000000000000000000000002' as Entity,
+          })
+          setActiveScreen(SCREENS.MINIGAME)
+        }
+
+        //Set match to the player queing
+        if (battleQueue.playerId?.playerId && battleQueue.playerId?.playerId != player.id) {
+          setPlayerId(player.id)
+
+          await setMatch.mutateAsync({
+            opponentId: battleQueue.playerId?.playerId as Entity,
+          })
+          setActiveScreen(SCREENS.MINIGAME)
+        }
       } catch (e) {
-          console.log( e )
+        console.error(e)
       }
   }
 

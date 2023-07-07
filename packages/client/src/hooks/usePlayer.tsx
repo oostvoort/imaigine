@@ -5,6 +5,8 @@ import { SERVER_API } from '@/global/constants'
 import {awaitStreamValue} from "@latticexyz/utils";
 import { GeneratedPlayer, GeneratePlayer, GeneratePlayerProps, GeneratePlayerResponse } from '@/global/types'
 import { getFromIPFS } from '@/global/utils'
+import { useState } from 'react'
+import { Entity } from '@latticexyz/recs'
 
 
 export default function usePlayer () {
@@ -26,7 +28,13 @@ export default function usePlayer () {
         },
     } = useMUD();
 
+    const [customPlayerId, setCustomPlayerId] = useState<Entity>()
+
+    const getPlayerImage = useComponentValue(ImageComponent, customPlayerId)
+    const getPlayerConfig = useComponentValue(ConfigComponent, customPlayerId)
+
     const player = {
+        id: playerEntity,
         player: useComponentValue(PlayerComponent, playerEntity),
         config: useComponentValue(ConfigComponent, playerEntity),
         character: useComponentValue(CharacterComponent, playerEntity),
@@ -70,5 +78,10 @@ export default function usePlayer () {
         player,
         generatePlayer,
         createPlayer,
+        setCustomPlayerId,
+        getPlayerImage,
+        getPlayerConfig
     }
 }
+
+
