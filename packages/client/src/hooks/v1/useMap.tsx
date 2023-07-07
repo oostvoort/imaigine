@@ -3,8 +3,9 @@ import { useEntityQuery, useRows } from '@latticexyz/react'
 import { Has, Entity } from '@latticexyz/recs'
 import React, { useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { getFromIPFS } from '@/global/utils'
+import { awaitStreamValue } from '@latticexyz/utils'
 
 const getRevealedCells = (bitMap: BigNumber[]) => {
   const revealedCells: number[] = []
@@ -27,7 +28,9 @@ export const useMap = () => {
   const {
     network: {
       storeCache,
-      playerEntity
+      playerEntity,
+      worldSend,
+      txReduced$
     },
     components: {
       PlayerComponent
@@ -64,6 +67,16 @@ export const useMap = () => {
     enabled: !!configs.length
   })
 
+  const travel = useMutation(async () => {
+    const tx = await worldSend('travel', [])
+    await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
+  })
+
+  const prepareTravel = useMutation(async ({toLocation}: {toLocation: number}) => {
+    const tx = await worldSend('prepareTravel', [toLocation])
+    await awaitStreamValue(txReduced$ , (txHash) => txHash === tx.hash)
+  })
+
   const mapCells = useRows(storeCache, { table: 'MapCellComponent' })
     .filter(({key}) => playerEntities.includes(key.key as Entity))
 
@@ -89,6 +102,10 @@ export const useMap = () => {
   })
 
   return {
+    functions: {
+      travel,
+      prepareTravel
+    },
     players,
     myPlayer: players.find(player => player.entityId === playerEntity)
   }
