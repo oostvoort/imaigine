@@ -14,13 +14,9 @@ import {
   GeneratePlayerProps,
   GeneratePlayerResponse,
   GenerateStoryProps, GenerateTravelProps, GenerateTravelResponse,
-  InsertHistoryLogsParams,
-  InsertInteractionParams,
   InteractLocationProps,
   InteractNpcProps,
   InteractNpcResponse,
-  InteractSQLResult,
-  LogSqlResult,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -35,7 +31,6 @@ import {
 import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { getRandomLocation } from './utils/getRandomLocation'
 import { storeJson } from './lib/ipfs'
-import sqlite3 from 'sqlite3'
 import { getBaseConfigFromIpfs } from './utils/getBaseConfigFromIpfs'
 import { getFromIpfs } from './utils/getFromIpfs'
 import { getLocationDetails, getLocationList } from './utils/getLocationList'
@@ -135,19 +130,6 @@ app.get('/get-route', async (req: Request, res: Response) => {
   }
 });
 
-
-/// @dev this is basically a test for writing into the world contract
-app.get('/winning-choice', async (req: Request, res: Response) => {
-
-  res.send(
-    {
-      // result: await (await worldContract.openInteraction(
-      //   '0x0000000000000000000000000000000000000000000000000000000000000002',
-      // )).wait()
-    },
-  )
-})
-
 app.post('/api/v1/generate-story', async (req: Request, res: Response, next) => {
   const props: GenerateStoryProps = req.body
 
@@ -246,7 +228,6 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 
 app.post('/api/v1/generate-player', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerProps = req.body
-  console.log({props})
 
   if(props.mock) {
     console.info('redirected to mocking data')
