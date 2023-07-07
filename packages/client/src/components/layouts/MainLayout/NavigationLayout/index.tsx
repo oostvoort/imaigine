@@ -8,10 +8,13 @@ import usePlayer from '@/hooks/usePlayer'
 import { activeScreen_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
 import { useAtom } from 'jotai'
+import useGameState from '@/hooks/useGameState'
 
 export default function Header() {
   const { player } = usePlayer()
-  const [activeScreen, setActiveScreen] = useAtom(activeScreen_atom)
+  const [, setActiveScreen] = useAtom(activeScreen_atom)
+
+  const activeScreen = useGameState()
 
   const handleButtonClick = () => {
     setActiveScreen(activeScreen === SCREENS.CURRENT_LOCATION ? SCREENS.WORLD_MAP : SCREENS.CURRENT_LOCATION)

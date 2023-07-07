@@ -29,6 +29,7 @@ export default function usePlayer() {
   } = useMUD();
 
   const player = {
+    id: playerEntity,
     player: useComponentValue(PlayerComponent, playerEntity),
     config: useComponentValue(ConfigComponent, playerEntity),
     character: useComponentValue(CharacterComponent, playerEntity),
