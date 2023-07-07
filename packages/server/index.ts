@@ -97,7 +97,7 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
-app.get('/mapdata', async (req: Request, res: Response) => {
+app.get('/mapdata', async (req: Request, res: Response, next) => {
 
   try {
     const seed = parseInt(<string>req.query.seed)
@@ -113,7 +113,8 @@ app.get('/mapdata', async (req: Request, res: Response) => {
 
 
   } catch (e) {
-    res.sendStatus(500)
+    console.info(e)
+    next(e)
   }
 })
 
@@ -175,12 +176,7 @@ app.post('/api/v1/generate-location', async (req: Request, res: Response, next) 
       } as GenerateLocationResponse)
 
     } catch (e) {
-      const error = {
-        message: `${(e.error.toString()).includes('location already exists!') ? 'Location already exists' : e.error}`,
-        code: 500,
-      }
-
-      res.status(500).json(error)
+      next(e)
     }
   } catch (e) {
     next(e)
@@ -218,10 +214,7 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
     } as GenerateNpcResponse)
   } catch (e) {
     console.info(e.message)
-    res.sendStatus(500).json({
-      message: `Error: ${e.message}`,
-      code: 500,
-    })
+    next(e)
   }
 })
 
@@ -266,10 +259,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
 
     } catch (e) {
       console.info(`Error: ${e}`)
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -284,10 +274,7 @@ app.post('/api/v1/generate-player-image', async (req: Request, res: Response, ne
       const imageHash = await generatePlayerImage(props.visualSummary)
       res.send({ imageIpfsHash: imageHash } as GeneratePlayerImageResponse)
     } catch (e) {
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -301,10 +288,7 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
       await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
       res.send('Player Created!')
     } catch (e) {
-      res.sendStatus(500).json({
-        message: `${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   } catch (e) {
     next(e)
@@ -451,10 +435,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
       }
     } catch (e) {
       console.info(e.message)
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
@@ -651,10 +632,7 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
       }
     } catch (e) {
       console.info(e.message)
-      res.sendStatus(500).json({
-        message: `Error: ${e.message}`,
-        code: 500,
-      })
+      next(e)
     }
   }
 })
