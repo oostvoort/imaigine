@@ -1,0 +1,6 @@
+POST localhost:3000/api/v1/generate-travel
+Content-Type: application/json
+
+{
+
+}

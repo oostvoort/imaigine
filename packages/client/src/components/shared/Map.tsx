@@ -38,7 +38,7 @@ const exploredCells = [4874]
 
 
 const Map: React.FC<PropType> = ({ className }) => {
-  const mapSeed = 123
+  const mapSeed = 927
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
