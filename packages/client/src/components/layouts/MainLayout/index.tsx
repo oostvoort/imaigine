@@ -2,6 +2,9 @@ import React from 'react'
 import { clsx } from 'clsx'
 import Header from '@/components/layouts/MainLayout/NavigationLayout'
 import ConversationLayout from '@/components/layouts/MainLayout/ConversationLayout'
+import { IPFS_URL_PREFIX } from '@/global/constants'
+import { useAtomValue } from 'jotai/index'
+import { currentLocation_atom } from '@/states/global'
 
 const Template = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -23,8 +26,37 @@ const ContentLayout = ({ children, className }: { children: React.ReactNode, cla
   </div>
 }
 
+const MinigameLayout = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+  const currentLocation = useAtomValue(currentLocation_atom)
+
+  const minigameLayoutRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    if(minigameLayoutRef.current){
+      if(currentLocation.image){
+        minigameLayoutRef.current.style.backgroundImage = `url(${IPFS_URL_PREFIX}/${currentLocation.image})`
+      }else{
+        minigameLayoutRef.current.style.backgroundImage = `url('/src/assets/background/bg1.jpg')`
+      }
+    }
+  }, [currentLocation.image])
+
+  return (
+    <React.Fragment>
+      <div
+        ref={minigameLayoutRef}
+        className={clsx(['flex items-center', 'h-screen w-screen', 'bg-no-repeat bg-cover', 'relative', className ])}>
+        <div className={'absolute h-full w-full backdrop-blur inset-0 '} />
+        <Header />
+        {children}
+      </div>
+    </React.Fragment>
+  )
+}
+
 export default Template
 Template.Template = Template
 Template.FullScreenLayout = FullScreenLayout
 Template.ContentLayout = ContentLayout
 Template.ConversationLayout = ConversationLayout
+Template.MinigameLayout = MinigameLayout

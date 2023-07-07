@@ -22,8 +22,8 @@ export default function Header() {
 
   return (
     <div
-      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark'])}>
-      <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between', 'px-md' ])}>
+      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80'])}>
+      <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between items-center', 'px-md' ])}>
         {/*Menu Wrapper*/}
         <div className={clsx([ 'flex items-center space-x-md' ])}>
           <DialogWidget  button={{
@@ -67,9 +67,14 @@ export default function Header() {
             <Settings />
           </DialogWidget>
 
+
         </div>
         {/*End of Menu Wrapper*/}
+
+        <Button variant={'outline'}>START BATTLE</Button>
       </div>
+
+
     </div>
   )
 }

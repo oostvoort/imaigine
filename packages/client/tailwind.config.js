@@ -30,6 +30,7 @@ export default {
       "btnEvil": "url('src/assets/background/btn_evil.png')",
       "btnEvilHover": "url('src/assets/background/btn_evil_hover.png')",
       "modal": "url('src/assets/background/bg_gray.jpg')",
+      "lining": "url('src/assets/minigame/bg_lining.svg')"
     },
     container: {
       center: true,
@@ -59,6 +60,7 @@ export default {
         'option-12': "hsl(var(--option-12))",
         'option-13': "hsl(var(--option-13))",
         'option-14': "hsl(var(--option-14))",
+        dangerAccent: "hsl(var(--dangerAccent))",
         night: "hsl(var(--night))",
         'conversation-receiver': {
           DEFAULT: "hsl(var(--conversation-receiver))",

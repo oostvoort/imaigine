@@ -27,7 +27,7 @@ const buttonVariants = cva(
         menu: clsx(['text-option-8 text-left text-xl', 'font-amiri', 'leading-8']),
         loading: clsx(['animate-pulse bg-muted text-muted']),
         refresh: clsx(['p-3 ', 'font-segoe', 'text-[14px] leading-8 text-option-11']),
-
+        icon: ''
       },
       size: {
         sm: 'h-9 px-3 rounded-md text-sm',
@@ -37,6 +37,7 @@ const buttonVariants = cva(
         '2xl': 'h-20 px-12',
         'btnWithBgImg': 'w-[518px] h-[88px]',
         'menu': 'w-[170px] h-[67px] gap-x-2',
+        'icon': 'w-[24px] h-[24px]'
       },
       isHighlighted: {
         true: 'outline outline-accent text-primary-foreground',

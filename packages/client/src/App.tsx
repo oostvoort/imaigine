@@ -7,6 +7,7 @@ import WorldMapScreen from '@/pages/world-map-screen'
 import TestScreen from '@/pages/test-screen'
 import useGameState from '@/hooks/useGameState'
 import { useMap } from '@/hooks/v1/useMap'
+import MinigameScreen from '@/pages/minigame-screen'
 
 export const App = () => {
   const activeScreen = useGameState()
@@ -40,6 +41,12 @@ export const App = () => {
         <Template.FullScreenLayout>
           <TestScreen />
         </Template.FullScreenLayout>
+      }
+
+      {activeScreen === SCREENS.MINIGAME &&
+        <Template.MinigameLayout>
+          <MinigameScreen />
+        </Template.MinigameLayout>
       }
     </Template>
   )
