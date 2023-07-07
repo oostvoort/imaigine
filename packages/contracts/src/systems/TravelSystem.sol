@@ -9,7 +9,7 @@ import {
   TravelComponentData,
   MapCellComponent,
   LocationComponent,
-  RevealedCellsComponent
+  RevealedCells
 } from "../codegen/Tables.sol";
 
 import { TravelStatus } from "../codegen/Types.sol";
@@ -22,7 +22,7 @@ contract TravelSystem is System {
 
   using ArrayLib for bytes;
   using ArrayLib for uint256[];
-  using BitMapLib for uint256;
+  using BitMapLib for uint256[];
 
   /// @dev the rate at which the player travels a cell
   uint256 private constant TRAVEL_SPEED = 1_000 * 15;
@@ -59,13 +59,13 @@ contract TravelSystem is System {
       toRevealAtDestination.encode()
     );
 
-    uint256 revealedCells = RevealedCellsComponent.get(playerId);
+    uint256[] memory revealedCells = (RevealedCells.get(playerId)).decodeUint256Array();
 
     for(uint256 i = 0; i < pathCells.length; i++) {
       revealedCells.setRevealedCell(pathCells[i], true);
     }
 
-    RevealedCellsComponent.set(playerId, revealedCells);
+    RevealedCells.set(playerId, revealedCells.encode());
   }
 
   /// @notice called by the player to update the player's current location
@@ -102,13 +102,13 @@ contract TravelSystem is System {
       LocationComponent.set(playerID, locationID);
       MapCellComponent.set(playerID, travelData.destination);
 
-      uint256 revealedCells = RevealedCellsComponent.get(playerID);
+      uint256[] memory revealedCells = (RevealedCells.get(playerID)).decodeUint256Array();
 
       for(uint256 i = 0; i < cellsToReveal.length; i++) {
         revealedCells.setRevealedCell(cellsToReveal[i], true);
       }
 
-      RevealedCellsComponent.set(playerID, revealedCells);
+      RevealedCells.set(playerID, revealedCells.encode());
 
       return travelData.destination;
     } else {

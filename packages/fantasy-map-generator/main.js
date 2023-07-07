@@ -4,7 +4,7 @@
 "use strict";
 // set debug options
 const PRODUCTION = location.hostname && location.hostname !== "localhost" && location.hostname !== "127.0.0.1";
-const DEBUG = localStorage.getItem("debug");
+const DEBUG = true //localStorage.getItem("debug");
 const INFO = DEBUG || !PRODUCTION;
 const TIME = DEBUG || !PRODUCTION;
 const WARN = true;
@@ -261,6 +261,7 @@ async function checkLoadParameters() {
 
   // of there is a valid maplink, try to load .map file from URL
   if (params.get("maplink")) {
+
     WARN && console.warn("Load map from URL");
     const maplink = params.get("maplink");
     const pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
@@ -275,6 +276,7 @@ async function checkLoadParameters() {
 
   // if there is a seed (user of MFCG provided), generate map for it
   if (params.get("seed")) {
+
     WARN && console.warn("Generate map for seed");
     await generateMapOnLoad();
     return;
@@ -2025,6 +2027,7 @@ function showStatistics() {
   mapId = Date.now(); // unique map id is it's creation date number
   mapHistory.push({seed, width: graphWidth, height: graphHeight, template: heightmap, created: mapId});
   INFO && console.log(stats);
+  hook_onMapLoaded()
 }
 
 const regenerateMap = debounce(async function (options) {

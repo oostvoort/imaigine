@@ -18,12 +18,19 @@ import {
   KarmaPointsComponent,
   InteractionTypeComponent,
   MultiInteractionComponent,
-  MapCellComponent
+  MapCellComponent,
+  RevealedCells
 } from "../codegen/Tables.sol";
 
 import { InteractionType } from "../codegen/Types.sol";
 
+import { BitMapLib} from "../lib/BitMapLib.sol";
+import { ArrayLib } from "../lib/ArrayLib.sol";
+
 contract CreationSystem is System {
+
+  using BitMapLib for uint256[];
+  using ArrayLib for uint256[];
 
   function createStory(
     string memory config
@@ -68,6 +75,13 @@ contract CreationSystem is System {
     LocationComponent.set(playerID, locationID);
     KarmaPointsComponent.set(playerID, 0);
 
+    MapCellComponent.set(playerID, MapCellComponent.get(locationID));
+
+    // TODO reveal other nearby cells
+    uint256[] memory revealedCells = new uint256[](4);
+    revealedCells.setRevealedCell(MapCellComponent.get(locationID), true);
+    RevealedCells.set(playerID, revealedCells.encode());
+
     return playerID;
   }
 
@@ -95,7 +109,6 @@ contract CreationSystem is System {
     LocationComponent.set(characterID, locationID);
     InteractionTypeComponent.set(characterID, InteractionType.MULTIPLE);
     MultiInteractionComponent.setAvailable(characterID, true);
-    MapCellComponent.set(characterID, MapCellComponent.get(locationID));
 
     return characterID;
   }

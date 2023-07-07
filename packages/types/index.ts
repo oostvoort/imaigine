@@ -124,7 +124,6 @@ export interface InteractNpcProps {
   npcIpfsHash: string,
   npcEntityId: string,
 }
-
 export interface InteractNpcResponse {
   conversationHistory: Array<Conversation>,
   option: {
@@ -149,9 +148,26 @@ export interface InsertHistoryLogsParams {
   by: string,
   player_log: string
 }
-
 export interface Conversation {
   logId: number,
   by: string,
   text: string,
+}
+export interface GenerateTravelProps {
+  playerEntityId: string
+}
+export interface GenerateTravelResponse {
+  travelStory: string
+}
+export interface TravelLocationAttributes {
+  locationName: string,
+  latitude: string,
+  longitude: string,
+  type: string,
+  precipitation: string,
+  river: string,
+  elevation: string,
+  depth: string,
+  temperature: string,
+  biome: string,
 }

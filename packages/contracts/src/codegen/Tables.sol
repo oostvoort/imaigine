@@ -22,7 +22,7 @@ import { SceneComponent, SceneComponentTableId } from "./tables/SceneComponent.s
 import { KarmaPointsComponent, KarmaPointsComponentTableId } from "./tables/KarmaPointsComponent.sol";
 import { InteractableComponent, InteractableComponentTableId } from "./tables/InteractableComponent.sol";
 import { InteractionTypeComponent, InteractionTypeComponentTableId } from "./tables/InteractionTypeComponent.sol";
-import { RevealedCellsComponent, RevealedCellsComponentTableId } from "./tables/RevealedCellsComponent.sol";
+import { RevealedCells, RevealedCellsTableId } from "./tables/RevealedCells.sol";
 import { SingleInteractionComponent, SingleInteractionComponentData, SingleInteractionComponentTableId } from "./tables/SingleInteractionComponent.sol";
 import { MultiInteractionComponent, MultiInteractionComponentData, MultiInteractionComponentTableId } from "./tables/MultiInteractionComponent.sol";
 import { TravelComponent, TravelComponentData, TravelComponentTableId } from "./tables/TravelComponent.sol";

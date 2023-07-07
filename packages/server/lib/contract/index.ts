@@ -63,3 +63,23 @@ export const getConfig = async (id: string) => {
   return worldContract.getField(CONFIG_COMPONENT_TABLE_ID, [id], 0)
     .then((value) => toUtf8String(value))
 }
+
+// TODO: Implement contract functionality
+export const getPlayerLocation = (playerEntityId: string): Promise<number> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(1);
+    }, 1000);
+  });
+};
+export const getPlayerDestination = (playerEntityId: string) : Promise<number> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(1);
+    }, 1000);
+  });
+}
+
+export const startTravel = (playerEntityId: string, route: number[], toRevealDestination: number[]) => {
+  console.info("Travel ...")
+}

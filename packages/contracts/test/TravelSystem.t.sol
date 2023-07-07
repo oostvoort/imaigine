@@ -11,7 +11,7 @@ import {
   TravelComponent,
   TravelComponentData,
   MapCellComponent,
-  RevealedCellsComponent
+  RevealedCells
 } from "../src/codegen/Tables.sol";
 
 import {
@@ -24,7 +24,7 @@ import { BitMapLib } from "../src/lib/BitMapLib.sol";
 contract InteractionSystem is MudV2Test {
   using ArrayLib for bytes;
   using ArrayLib for uint256[];
-  using BitMapLib for uint256;
+  using BitMapLib for uint256[];
 
   IWorld public world;
 
@@ -181,12 +181,12 @@ contract InteractionSystem is MudV2Test {
     assertEq(zeroBytes, keccak256(abi.encodePacked(travelComponentData.path)));
     assertEq(zeroBytes, keccak256(abi.encodePacked(travelComponentData.toRevealAtDestination)));
 
-    uint256 revealedCells = 0;
+    uint256[] memory revealedCells = new uint256[](4);
 
     for(uint256 i = 0; i < toRevealAtDestination.length; i++) {
       revealedCells.setRevealedCell(toRevealAtDestination[i], true);
     }
 
-    assertEq(RevealedCellsComponent.get(world, playerId), revealedCells);
+    assertEq(RevealedCells.get(world, playerId), revealedCells.encode());
   }
 }
