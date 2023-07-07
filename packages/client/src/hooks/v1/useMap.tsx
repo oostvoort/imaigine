@@ -27,6 +27,7 @@ export const useMap = () => {
   const {
     network: {
       storeCache,
+      playerEntity
     },
     components: {
       PlayerComponent
@@ -82,12 +83,13 @@ export const useMap = () => {
       name: configIpfs[entityId]?.name ?? 'Loading Name',
       legend: configIpfs[entityId]?.summary ?? 'Loading Legend',
       config: configs.find(config => config.key.key === entityId)?.value.value ?? '',
-      mapCell: Number(mapCell),
+      cell: Number(mapCell),
       revealedCell: getRevealedCells(decodedRevealedCellInBytes)
     }
   })
 
   return {
-    players
+    players,
+    myPlayer: players.find(player => player.entityId === playerEntity)
   }
 }
