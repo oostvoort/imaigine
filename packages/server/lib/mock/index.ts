@@ -1,5 +1,8 @@
 // PLAYER
 import { worldContract } from '../contract'
+import { getFromIpfs } from '../../utils/getFromIpfs'
+import { Based, InteractNpcProps } from 'types'
+import { fetchHistoryLogs, fetchInteraction, insertHistoryLogs, insertInteraction } from '../db'
 
 export const generateMockPlayer = () => {
   return {
@@ -90,4 +93,207 @@ export const generateMockLocationInteraction = async (playerEntityId: string) =>
 
   if (choice.toNumber()) await worldContract.openInteraction(playerEntityId)
   return RANDOM_SCENARIOS[Math.floor(Math.random() * RANDOM_SCENARIOS.length)]
+}
+
+const RANDOM_DIALOG = [
+  {
+    response: 'Cats are very overrated. I think you should adopt a dog',
+    goodChoice: 'Think about it',
+    evilChoice: 'Tell him/her to shut up',
+    neutralChoice: 'Just nod',
+    goodResponse: 'Okay. I\'ll think about it',
+    evilResponse: 'Shut up!',
+    neutralResponse: 'Okay my dude.'
+  },
+  {
+    response: 'Maybe you should think about who to target first. I suggest going after Margaret.',
+    goodChoice: 'Defend Margaret',
+    evilChoice: 'Plan to kill Margaret',
+    neutralChoice: 'Simply look on',
+    goodResponse: 'Killing is wrong. We should always try to not kill.',
+    evilResponse: 'That is exactly what I was thinking. Let\'s try to kill her together.',
+    neutralResponse: 'What?'
+  },
+  {
+    response: 'Let\'s go to the beach together.',
+    goodChoice: 'Agree to go',
+    evilChoice: 'Disagree vehemently',
+    neutralChoice: 'Say you\'re too busy',
+    goodResponse: 'Sure. Why not?',
+    evilResponse: 'No, I don\'t like you',
+    neutralResponse: 'Sorry. My cat\'s dog got sick. How about we reschedule.'
+  }
+]
+
+export const generateMockNpcInteraction = async (props: InteractNpcProps) => {
+    const npc: Based = await getFromIpfs(props.npcIpfsHash)
+    const conversations = await fetchHistoryLogs(props.npcEntityId)
+    let history = ''
+
+    if (conversations.length <= 0) {
+      const npcInteraction = RANDOM_DIALOG[Math.floor(Math.random() * RANDOM_DIALOG.length)]
+
+      await insertInteraction({
+        interactable_id: props.npcEntityId,
+        scenario: npcInteraction.response,
+        good_choice: npcInteraction.goodChoice,
+        good_effect: npcInteraction.goodResponse,
+        evil_choice: npcInteraction.evilChoice,
+        evil_effect: npcInteraction.evilResponse,
+        neutral_choice: npcInteraction.neutralChoice,
+        neutral_effect: npcInteraction.neutralResponse,
+      })
+      console.info('- done inserting npc interaction')
+
+      await insertHistoryLogs({
+        interactable_id: props.npcEntityId,
+        by: 'interactable',
+        players: `NPC: ${npc.name}`,
+        mode: 'dialog',
+        player_log: `${npcInteraction.response}`,
+      })
+
+      console.info('- done inserting initial conversation history')
+
+      const historyLogs = await fetchHistoryLogs(props.npcEntityId)
+
+      return {
+        conversationHistory: historyLogs.map((convo: any) => {
+          return {
+            logId: convo.log_id,
+            by: convo.by,
+            text: convo.player_log,
+          }
+        }),
+        option: {
+          good: {
+            goodChoise: npcInteraction.goodChoice,
+            goodResponse: npcInteraction.goodResponse,
+          },
+          evil: {
+            evilChoise: npcInteraction.evilChoice,
+            evilResponse: npcInteraction.evilResponse,
+          },
+          neutral: {
+            neutralChoise: npcInteraction.neutralChoice,
+            neutralResponse: npcInteraction.neutralResponse,
+          },
+        },
+      }
+    } else {
+      const choice = await worldContract.winningChoice(props.npcEntityId)
+
+      if (choice.toNumber() === 0) {
+        // not yet available
+        // return conversation and history
+        const historyLogs = await fetchHistoryLogs(props.npcEntityId)
+        const interaction = await fetchInteraction(props.npcEntityId)
+
+        return {
+          conversationHistory: historyLogs.map((convo: any) => {
+            return {
+              logId: convo.log_id,
+              by: convo.by,
+              text: convo.player_log,
+            }
+          }),
+          option: {
+            good: {
+              goodChoise: interaction[0].good_choice,
+              goodResponse: interaction[0].good_effect,
+            },
+            evil: {
+              evilChoise: interaction[0].evil_choice,
+              evilResponse: interaction[0].evil_effect,
+            },
+            neutral: {
+              neutralChoise: interaction[0].neutral_choice,
+              neutralResponse: interaction[0].neutral_effect,
+            },
+          },
+        }
+
+      } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
+        // choosing between 1 to 3
+        // call here the interaction
+
+        const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
+
+        await insertHistoryLogs({
+          interactable_id: props.npcEntityId,
+          by: 'player',
+          players: `${props.playerIpfsHash}`,
+          mode: 'dialog',
+          player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+        })
+
+        console.info('- done inserting new history')
+
+        const conversations = await fetchHistoryLogs(props.npcEntityId)
+
+        console.info('- done getting history')
+
+        conversations.forEach((item) => {
+          history += `
+            ${item.by}: ${item.player_log},
+        `
+        })
+
+        const newNpcInteraction = RANDOM_DIALOG[Math.floor(Math.random() * RANDOM_DIALOG.length)]
+
+        await insertInteraction({
+          interactable_id: props.npcEntityId,
+          scenario: newNpcInteraction.response,
+          good_choice: newNpcInteraction.goodChoice,
+          good_effect: newNpcInteraction.goodResponse,
+          evil_choice: newNpcInteraction.evilChoice,
+          evil_effect: newNpcInteraction.evilResponse,
+          neutral_choice: newNpcInteraction.neutralChoice,
+          neutral_effect: newNpcInteraction.neutralResponse,
+        })
+        console.info('- done inserting new npc interaction')
+
+        await insertHistoryLogs({
+          interactable_id: props.npcEntityId,
+          by: 'interactable',
+          players: `NPC: ${npc.name}`,
+          mode: 'dialog',
+          player_log: `${newNpcInteraction.response}`,
+        })
+
+        console.info('- done inserting new conversation')
+
+        const newConversation = await fetchHistoryLogs(props.npcEntityId)
+        const latestInteraction = await fetchInteraction(props.npcEntityId)
+
+        await worldContract.openInteraction(props.playerEntityId[0])
+
+        return {
+          conversationHistory: newConversation.map((convo: any) => {
+            return {
+              logId: convo.log_id,
+              by: convo.by,
+              text: convo.player_log,
+            }
+          }),
+          option: {
+            good: {
+              goodChoise: latestInteraction[0].good_choice,
+              goodResponse: latestInteraction[0].good_effect,
+            },
+            evil: {
+              evilChoise: latestInteraction[0].evil_choice,
+              evilResponse: latestInteraction[0].evil_effect,
+            },
+            neutral: {
+              neutralChoise: latestInteraction[0].neutral_choice,
+              neutralResponse: latestInteraction[0].neutral_effect,
+            },
+          },
+        }
+
+      } else {
+        throw new Error(`Error on choice ${choice}`)
+      }
+    }
 }

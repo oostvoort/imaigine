@@ -45,7 +45,13 @@ import fs from 'fs-extra'
 import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
 import { BigNumber } from 'ethers'
 import { launchAndNavigateMap } from './utils/getMap'
-import { generateMockLocationInteraction, generateMockPlayer, generateMockPlayerImage } from './lib/mock'
+import {
+  generateMockLocationInteraction,
+  generateMockNpcInteraction,
+  generateMockPlayer,
+  generateMockPlayerImage,
+} from './lib/mock'
+import { fetchHistoryLogs, fetchInteraction, insertHistoryLogs, insertInteraction } from './lib/db'
 
 dotenv.config()
 
@@ -55,62 +61,7 @@ declare global {
   }
 }
 
-const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
-  if (err) {
-    console.error(err.message)
-    throw err
-  } else {
-    // Create the "history" and "location_history" tables
-    database.serialize(() => {
-      database.run(`
-    CREATE TABLE IF NOT EXISTS history (
-      id INTEGER PRIMARY KEY,
-      counterpart TEXT,
-      players TEXT,
-      log TEXT
-    );
-  `)
 
-      database.run(`
-    CREATE TABLE IF NOT EXISTS location_history (
-      log_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      interactable_id TEXT,
-      players TEXT,
-      mode TEXT,
-      by TEXT,
-      player_log TEXT
-    );
-  `)
-
-      database.run(`
-    CREATE TABLE IF NOT EXISTS interaction (
-      log_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      interactable_id TEXT,
-      scenario TEXT,
-      good_choice TEXT,
-      good_effect TEXT,
-      evil_choice TEXT,
-      evil_effect TEXT,
-      neutral_choice TEXT,
-      neutral_effect TEXT
-    );
-      `)
-    })
-
-    database.run(`
-    CREATE TABLE IF NOT EXISTS history_logs (
-      log_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      interactable_id TEXT,
-      players TEXT,
-      mode TEXT,
-      by TEXT,
-      player_log TEXT
-    );
-  `)
-
-
-  }
-})
 
 const app = express()
 const port = 3000
@@ -531,77 +482,47 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
 app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
   const props: InteractNpcProps = req.body
 
-  try {
-    const npc: Based = await getFromIpfs(props.npcIpfsHash)
+  if(props.mock) res.send(await generateMockNpcInteraction(props))
+  else {
+    try {
+      const npc: Based = await getFromIpfs(props.npcIpfsHash)
 
-    const conversations = await fetchHistoryLogs(props.npcEntityId)
+      const conversations = await fetchHistoryLogs(props.npcEntityId)
 
-    let history = ''
+      let history = ''
 
-    if (conversations.length <= 0) {
-      const npcInteraction = await generateNpcInteraction({
-        storyName: storyConfig.name,
-        storySummary: storyConfig.summary,
-        npcName: npc.name,
-        npcSummary: npc.summary,
-        conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
-      })
+      if (conversations.length <= 0) {
+        const npcInteraction = await generateNpcInteraction({
+          storyName: storyConfig.name,
+          storySummary: storyConfig.summary,
+          npcName: npc.name,
+          npcSummary: npc.summary,
+          conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
+        })
 
-      await insertInteraction({
-        interactable_id: props.npcEntityId,
-        scenario: npcInteraction.response,
-        good_choice: npcInteraction.goodChoice,
-        good_effect: npcInteraction.goodResponse,
-        evil_choice: npcInteraction.evilChoice,
-        evil_effect: npcInteraction.evilResponse,
-        neutral_choice: npcInteraction.neutralChoice,
-        neutral_effect: npcInteraction.neutralResponse,
-      })
-      console.info('- done inserting npc interaction')
+        await insertInteraction({
+          interactable_id: props.npcEntityId,
+          scenario: npcInteraction.response,
+          good_choice: npcInteraction.goodChoice,
+          good_effect: npcInteraction.goodResponse,
+          evil_choice: npcInteraction.evilChoice,
+          evil_effect: npcInteraction.evilResponse,
+          neutral_choice: npcInteraction.neutralChoice,
+          neutral_effect: npcInteraction.neutralResponse,
+        })
+        console.info('- done inserting npc interaction')
 
-      await insertHistoryLogs({
-        interactable_id: props.npcEntityId,
-        by: 'interactable',
-        players: `NPC: ${npc.name}`,
-        mode: 'dialog',
-        player_log: `${npcInteraction.response}`,
-      })
+        await insertHistoryLogs({
+          interactable_id: props.npcEntityId,
+          by: 'interactable',
+          players: `NPC: ${npc.name}`,
+          mode: 'dialog',
+          player_log: `${npcInteraction.response}`,
+        })
 
-      console.info('- done inserting initial conversation history')
+        console.info('- done inserting initial conversation history')
 
-      const historyLogs = await fetchHistoryLogs(props.npcEntityId)
-
-      res.send({
-        conversationHistory: historyLogs.map((convo: any) => {
-          return {
-            logId: convo.log_id,
-            by: convo.by,
-            text: convo.player_log,
-          }
-        }),
-        option: {
-          good: {
-            goodChoise: npcInteraction.goodChoice,
-            goodResponse: npcInteraction.goodResponse,
-          },
-          evil: {
-            evilChoise: npcInteraction.evilChoice,
-            evilResponse: npcInteraction.evilResponse,
-          },
-          neutral: {
-            neutralChoise: npcInteraction.neutralChoice,
-            neutralResponse: npcInteraction.neutralResponse,
-          },
-        },
-      } as InteractNpcResponse)
-    } else {
-      const choice = await worldContract.winningChoice(props.npcEntityId)
-
-      if (choice.toNumber() === 0) {
-        // not yet available
-        // return conversation and history
         const historyLogs = await fetchHistoryLogs(props.npcEntityId)
-        const interaction = await fetchInteraction(props.npcEntityId)
 
         res.send({
           conversationHistory: historyLogs.map((convo: any) => {
@@ -613,115 +534,148 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
           }),
           option: {
             good: {
-              goodChoise: interaction[0].good_choice,
-              goodResponse: interaction[0].good_effect,
+              goodChoise: npcInteraction.goodChoice,
+              goodResponse: npcInteraction.goodResponse,
             },
             evil: {
-              evilChoise: interaction[0].evil_choice,
-              evilResponse: interaction[0].evil_effect,
+              evilChoise: npcInteraction.evilChoice,
+              evilResponse: npcInteraction.evilResponse,
             },
             neutral: {
-              neutralChoise: interaction[0].neutral_choice,
-              neutralResponse: interaction[0].neutral_effect,
+              neutralChoise: npcInteraction.neutralChoice,
+              neutralResponse: npcInteraction.neutralResponse,
             },
           },
         } as InteractNpcResponse)
+      } else {
+        const choice = await worldContract.winningChoice(props.npcEntityId)
 
-      } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
-        // choosing between 1 to 3
-        // call here the interaction
+        if (choice.toNumber() === 0) {
+          // not yet available
+          // return conversation and history
+          const historyLogs = await fetchHistoryLogs(props.npcEntityId)
+          const interaction = await fetchInteraction(props.npcEntityId)
 
-        const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
+          res.send({
+            conversationHistory: historyLogs.map((convo: any) => {
+              return {
+                logId: convo.log_id,
+                by: convo.by,
+                text: convo.player_log,
+              }
+            }),
+            option: {
+              good: {
+                goodChoise: interaction[0].good_choice,
+                goodResponse: interaction[0].good_effect,
+              },
+              evil: {
+                evilChoise: interaction[0].evil_choice,
+                evilResponse: interaction[0].evil_effect,
+              },
+              neutral: {
+                neutralChoise: interaction[0].neutral_choice,
+                neutralResponse: interaction[0].neutral_effect,
+              },
+            },
+          } as InteractNpcResponse)
 
-        await insertHistoryLogs({
-          interactable_id: props.npcEntityId,
-          by: 'player',
-          players: `${props.playerIpfsHash}`,
-          mode: 'dialog',
-          player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
-        })
+        } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
+          // choosing between 1 to 3
+          // call here the interaction
 
-        console.info('- done inserting new history')
+          const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
 
-        const conversations = await fetchHistoryLogs(props.npcEntityId)
+          await insertHistoryLogs({
+            interactable_id: props.npcEntityId,
+            by: 'player',
+            players: `${props.playerIpfsHash}`,
+            mode: 'dialog',
+            player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+          })
 
-        console.info('- done getting history')
+          console.info('- done inserting new history')
 
-        conversations.forEach((item) => {
-          history += `
+          const conversations = await fetchHistoryLogs(props.npcEntityId)
+
+          console.info('- done getting history')
+
+          conversations.forEach((item) => {
+            history += `
             ${item.by}: ${item.player_log},
         `
-        })
+          })
 
-        const newNpcInteraction = await generateNpcInteraction({
-          storyName: storyConfig.name,
-          storySummary: storyConfig.summary,
-          npcName: npc.name,
-          npcSummary: npc.summary,
-          conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
-        })
+          const newNpcInteraction = await generateNpcInteraction({
+            storyName: storyConfig.name,
+            storySummary: storyConfig.summary,
+            npcName: npc.name,
+            npcSummary: npc.summary,
+            conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
+          })
 
-        await insertInteraction({
-          interactable_id: props.npcEntityId,
-          scenario: newNpcInteraction.response,
-          good_choice: newNpcInteraction.goodChoice,
-          good_effect: newNpcInteraction.goodResponse,
-          evil_choice: newNpcInteraction.evilChoice,
-          evil_effect: newNpcInteraction.evilResponse,
-          neutral_choice: newNpcInteraction.neutralChoice,
-          neutral_effect: newNpcInteraction.neutralResponse,
-        })
-        console.info('- done inserting new npc interaction')
+          await insertInteraction({
+            interactable_id: props.npcEntityId,
+            scenario: newNpcInteraction.response,
+            good_choice: newNpcInteraction.goodChoice,
+            good_effect: newNpcInteraction.goodResponse,
+            evil_choice: newNpcInteraction.evilChoice,
+            evil_effect: newNpcInteraction.evilResponse,
+            neutral_choice: newNpcInteraction.neutralChoice,
+            neutral_effect: newNpcInteraction.neutralResponse,
+          })
+          console.info('- done inserting new npc interaction')
 
-        await insertHistoryLogs({
-          interactable_id: props.npcEntityId,
-          by: 'interactable',
-          players: `NPC: ${npc.name}`,
-          mode: 'dialog',
-          player_log: `${newNpcInteraction.response}`,
-        })
+          await insertHistoryLogs({
+            interactable_id: props.npcEntityId,
+            by: 'interactable',
+            players: `NPC: ${npc.name}`,
+            mode: 'dialog',
+            player_log: `${newNpcInteraction.response}`,
+          })
 
-        console.info('- done inserting new conversation')
+          console.info('- done inserting new conversation')
 
-        const newConversation = await fetchHistoryLogs(props.npcEntityId)
-        const latestInteraction = await fetchInteraction(props.npcEntityId)
+          const newConversation = await fetchHistoryLogs(props.npcEntityId)
+          const latestInteraction = await fetchInteraction(props.npcEntityId)
 
-        await worldContract.openInteraction(props.playerEntityId[0])
+          await worldContract.openInteraction(props.playerEntityId[0])
 
-        res.send({
-          conversationHistory: newConversation.map((convo: any) => {
-            return {
-              logId: convo.log_id,
-              by: convo.by,
-              text: convo.player_log,
-            }
-          }),
-          option: {
-            good: {
-              goodChoise: latestInteraction[0].good_choice,
-              goodResponse: latestInteraction[0].good_effect,
+          res.send({
+            conversationHistory: newConversation.map((convo: any) => {
+              return {
+                logId: convo.log_id,
+                by: convo.by,
+                text: convo.player_log,
+              }
+            }),
+            option: {
+              good: {
+                goodChoise: latestInteraction[0].good_choice,
+                goodResponse: latestInteraction[0].good_effect,
+              },
+              evil: {
+                evilChoise: latestInteraction[0].evil_choice,
+                evilResponse: latestInteraction[0].evil_effect,
+              },
+              neutral: {
+                neutralChoise: latestInteraction[0].neutral_choice,
+                neutralResponse: latestInteraction[0].neutral_effect,
+              },
             },
-            evil: {
-              evilChoise: latestInteraction[0].evil_choice,
-              evilResponse: latestInteraction[0].evil_effect,
-            },
-            neutral: {
-              neutralChoise: latestInteraction[0].neutral_choice,
-              neutralResponse: latestInteraction[0].neutral_effect,
-            },
-          },
-        } as InteractNpcResponse)
+          } as InteractNpcResponse)
 
-      } else {
-        throw new Error(`Error on choice ${choice}`)
+        } else {
+          throw new Error(`Error on choice ${choice}`)
+        }
       }
+    } catch (e) {
+      console.info(e.message)
+      res.sendStatus(500).json({
+        message: `Error: ${e.message}`,
+        code: 500,
+      })
     }
-  } catch (e) {
-    console.info(e.message)
-    res.sendStatus(500).json({
-      message: `Error: ${e.message}`,
-      code: 500,
-    })
   }
 })
 
@@ -959,148 +913,5 @@ app.post('/mock/api/v1/interact-npc', async (req: Request, res: Response, next) 
   })
 })
 
-// Write data to the history table
-app.post('/write-history', (req, res) => {
-  const counterpart = req.body.counterpart
-  const players = req.body.players
-  const log = req.body.log
 
-  const insertQuery = 'INSERT INTO history (counterpart, players, log) VALUES (?, ?, ?)'
-
-  database.run(insertQuery, [ counterpart, players, log ], function (err) {
-    if (err) {
-      console.error('Error inserting data:', err)
-      res.status(500).send('Error inserting data')
-    } else {
-      console.log('Data inserted successfully')
-      res.status(200).send('Data inserted successfully')
-    }
-  })
-})
-
-// Read data from the history table
-app.get('/read-history', (req, res) => {
-  const selectQuery = 'SELECT * FROM history'
-
-  database.all(selectQuery, (err, rows) => {
-    if (err) {
-      console.error('Error reading data:', err)
-      res.status(500).send('Error reading data')
-    } else {
-      console.log('Data retrieved successfully')
-      res.status(200).json(rows)
-    }
-  })
-})
-
-async function fetchInteraction(entityId: string): Promise<Array<InteractSQLResult> | undefined> {
-  const sql = `SELECT * FROM interaction WHERE interactable_id = '${entityId}' ORDER BY log_id DESC`
-  return new Promise((resolve, reject) => {
-    database.all(sql, (err, rows) => {
-      if (err) {
-        console.error('Error reading data:', err)
-        reject(undefined) // Reject the promise with the error
-      } else {
-        resolve(rows.map((interaction: InteractSQLResult) => {
-          return {
-            log_id: interaction.log_id,
-            interactable_id: interaction.interactable_id,
-            scenario: interaction.scenario,
-            good_choice: interaction.good_choice,
-            good_effect: interaction.good_effect,
-            evil_choice: interaction.evil_choice,
-            evil_effect: interaction.evil_effect,
-            neutral_choice: interaction.neutral_choice,
-            neutral_effect: interaction.neutral_effect,
-          }
-        }))
-      }
-    })
-  })
-}
-
-async function insertInteraction(insertInteractionParams: InsertInteractionParams) {
-
-  const insertQuery = `
-    INSERT INTO interaction (
-        interactable_id,
-        scenario,
-        good_choice,
-        good_effect,
-        evil_choice,
-        evil_effect,
-        neutral_choice,
-        neutral_effect
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `
-
-  database.run(insertQuery, [
-    insertInteractionParams.interactable_id,
-    insertInteractionParams.scenario,
-    insertInteractionParams.good_choice,
-    insertInteractionParams.good_effect,
-    insertInteractionParams.evil_choice,
-    insertInteractionParams.evil_effect,
-    insertInteractionParams.neutral_choice,
-    insertInteractionParams.neutral_effect,
-
-  ], function (err) {
-    if (err) {
-      console.error('Error inserting data:', err)
-    } else {
-      console.log('Data inserted successfully.')
-    }
-  })
-}
-
-async function fetchHistoryLogs(entityId: string): Promise<Array<LogSqlResult> | undefined> {
-  const sql = `SELECT * FROM history_logs WHERE interactable_id = '${entityId}' ORDER BY log_id ASC`
-  return new Promise((resolve, reject) => {
-    database.all(sql, (err, rows) => {
-      if (err) {
-        console.error('Error reading data:', err)
-        reject(undefined) // Reject the promise with the error
-      } else {
-        resolve(rows.map((log: LogSqlResult) => {
-          return {
-            log_id: log.log_id,
-            interactable_id: log.interactable_id,
-            players: log.players,
-            mode: log.mode,
-            by: log.by,
-            player_log: log.player_log,
-          }
-        }))
-      }
-    })
-  })
-}
-
-async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParams) {
-
-  const insertQuery = `
-    INSERT INTO history_logs (
-        interactable_id,
-        players,
-        mode,
-        by,
-        player_log
-    )
-    VALUES (?, ?, ?, ?, ?)`
-
-  database.run(insertQuery, [
-    insertHistoryLogsParams.interactable_id,
-    insertHistoryLogsParams.players,
-    insertHistoryLogsParams.mode,
-    insertHistoryLogsParams.by,
-    insertHistoryLogsParams.player_log,
-  ], function (err) {
-    if (err) {
-      console.error('Error inserting data:', err)
-    } else {
-      console.log('Data inserted successfully.')
-    }
-  })
-}
 

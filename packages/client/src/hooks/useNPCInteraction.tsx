@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { SERVER_API } from '@/global/constants'
+import { IS_MOCK, SERVER_API } from '@/global/constants'
 import { shuffleArray } from '@/global/utils'
 import { useMUD } from '@/MUDContext'
 import { InteractNpcProps, InteractNpcResponse } from '../../../types'
@@ -28,10 +28,12 @@ export default function useNPCInteraction() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(variables),
+          body: JSON.stringify({ ...variables, mock: IS_MOCK }),
         })
 
         const data = await response.json()
+
+        console.log({data})
 
         return {
           conversationHistory: data.conversationHistory,
