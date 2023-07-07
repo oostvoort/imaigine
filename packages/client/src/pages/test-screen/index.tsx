@@ -7,6 +7,12 @@ import { useMUD } from '@/MUDContext'
 import { GeneratePlayerResponse } from '../../../../types'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { useMap } from '@/hooks/v1/useMap'
+import useBetting from '@/hooks/minigame/useBetting'
+import useQueue from '@/hooks/minigame/useQueue'
+import { Entity } from '@latticexyz/recs'
+import useBattle from '@/hooks/minigame/useBattle'
+import { useAtom } from 'jotai'
+import { hash_options_value } from '@/states/minigame'
 
 export default function TestScreen() {
   const {
@@ -80,6 +86,74 @@ export default function TestScreen() {
     }
   }, [ interactNPC.isSuccess ])
 
+  //// MINIGAME TESTING
+  const { battleQueue, setQueue, setLocationEntity } = useQueue()
+
+  React.useEffect(() => {
+      setLocationEntity("0x0000000000000000000000000000000000000000000000000000000000000002" as Entity)
+  }, [])
+
+  React.useEffect(() => {
+    if (battleQueue) {
+      console.log("BATTLEQUEUE", battleQueue)
+    }
+  }, [ battleQueue ])
+
+  const onClickEnterGame = async () => {
+    try {
+      await setQueue.mutateAsync({
+        playerId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+        locationId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+      })
+    } catch (e) {
+        console.log("Error: ", e )
+    }
+  }
+
+
+  const { setPlayerId, setLocationId, setMatch, match, playerId, locationId } = useBattle()
+
+  React.useEffect(() => {
+      setPlayerId("0x0000000000000000000000000000000000000000000000000000000000000005" as Entity)
+      setLocationId("0x0000000000000000000000000000000000000000000000000000000000000002" as Entity)
+  }, [])
+
+  React.useEffect(() => {
+      if (match) {
+        console.log("MATCH", match)
+      }
+  }, [match])
+
+  const onClickEnterMatch = async () => {
+      try {
+       await setMatch.mutateAsync({
+         opponentId: "0x0000000000000000000000000000000000000000000000000000000000000009"
+       })
+      } catch (e) {
+          console.log("Error: ", e )
+      }
+  }
+
+  const { OnClickOptions, setBetting  } = useBetting()
+  const [hashValue] = useAtom(hash_options_value)
+
+  const onClickBetting = async () => {
+    try {
+      await setBetting.mutateAsync({
+        playerId: playerId as string,
+        locationId: locationId as string,
+      })
+    } catch (e) {
+        console.log("Error: ", e )
+    }
+  }
+
+  React.useEffect(() => {
+      if (hashValue) {
+        console.log("HASHVALUE", hashValue)
+      }
+  }, [hashValue])
+  //// MINIGAME TESTING
 
   return (
     <div className={clsx(['flex flex-col gap-8 pa-xl'])}>
@@ -170,6 +244,28 @@ export default function TestScreen() {
         >
           Neutral
         </Button>
+      </div>
+      <div className={"flex gap-2"}>
+        <button
+          onClick={onClickEnterGame}
+        >
+          Enter Battle
+        </button>
+        <button
+          onClick={onClickEnterMatch}
+        >
+          Enter Match
+        </button>
+        <button
+          onClick={() => OnClickOptions("Swords")}
+        >
+          Select Options
+        </button>
+        <button
+          onClick={onClickBetting}
+        >
+          Fire Betting Lock IN
+        </button>
       </div>
     </div>
   )
