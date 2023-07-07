@@ -11,6 +11,31 @@ const EMPTY_ARRAY = [0, 0, 0, 0]
 
 const LAST_CELL_NUMBER = 4096
 
+
+const FAKE_CONFIG = [
+  {
+    name: 'Anna Sorokin',
+    legend: 'Anna Sorokin likes pie'
+  },
+  {
+    name: 'Elias',
+    legend: 'Some sort of straight dude'
+  },
+  {
+    name: 'Taylor Swift',
+    legend: 'For the ERAS CONCERT'
+  },
+  {
+    name: 'Denise',
+    legend: 'A cute knight'
+  }
+]
+
+
+const randomConfigGenerator = () => {
+  return FAKE_CONFIG[Math.floor(Math.random() * FAKE_CONFIG.length)]
+}
+
 const getRevealedCells = (bitMap: BigNumber[]) => {
   console.log('input', bitMap)
   const revealedCells: number[] = []
@@ -33,7 +58,8 @@ const getRevealedCells = (bitMap: BigNumber[]) => {
 export const useMap = () => {
   const {
     network: {
-      storeCache
+      storeCache,
+      playerEntity
     },
     components: {
       PlayerComponent
@@ -53,24 +79,24 @@ export const useMap = () => {
   const revealedCells = useRows(storeCache, { table: 'RevealedCells' })
     .filter(({key}) => playerEntities.includes(key.key as Entity))
 
-  const players = playerEntities.map(playerEntity => {
-    const mapCell: bigint = mapCells.find(mapCell => mapCell.key.key === playerEntity)?.value.value ?? BigInt(0)
-    const revealedCellInBytes = revealedCells.find(revealedCell => revealedCell.key.key === playerEntity)?.value.value
+  const players = playerEntities.map((entityId) => {
+    const mapCell: bigint = mapCells.find(mapCell => mapCell.key.key === entityId)?.value.value ?? BigInt(0)
+    const revealedCellInBytes = revealedCells.find(revealedCell => revealedCell.key.key === entityId)?.value.value
     const decodedRevealedCellInBytes = (revealedCellInBytes ? ethers.utils.defaultAbiCoder.decode(
       ['uint256[]'],
         revealedCellInBytes
     ) : []) as BigNumber[]
+    const config = randomConfigGenerator()
 
     return {
-      entityId: playerEntity,
-      config: configs.find(config => config.key.key === playerEntity)?.value.value ?? '',
+      entityId,
+      name: config.name,
+      legend: config.legend,
+      config: configs.find(config => config.key.key === entityId)?.value.value ?? '',
       mapCell: Number(mapCell),
-      revealedCell: decodedRevealedCellInBytes.length ? getRevealedCells(decodedRevealedCellInBytes) : []
+      revealedCell: [1, 2, 3, 4]
     }
   })
-
-
-  console.log(players)
 
   return {
     players
