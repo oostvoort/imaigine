@@ -5,6 +5,10 @@ import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { PromiseOrValue } from 'contracts/types/ethers-contracts/common'
 import { LOCKINTYPES } from '@/hooks/minigame/types/battle'
+import { useState } from 'react'
+import { utils } from 'ethers'
+import { useAtom } from 'jotai'
+import { hash_options_set_value } from '@/states/minigame'
 
 export default function useBattle(playerId: Entity) {
   const {
@@ -17,17 +21,32 @@ export default function useBattle(playerId: Entity) {
     }
   } = useMUD()
 
+  const [, setHashAtom] = useAtom(hash_options_set_value)
+
+  const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
+
   const battleData = {
     battle: useComponentValue(BattleComponent, playerId),
   }
 
+  const onSelectOptions = (options: string) => {
+    const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
+    const data = utils.keccak256(utils.toUtf8Bytes(options))
+    const timestamp = new Date().getTime()
+
+    const hashOptions = utils.solidityKeccak256(["string", "string", "uint256"], [key, data, timestamp])
+
+    setBattleOption(hashOptions)
+    setHashAtom({ key, data, timestamp })
+  }
+
   const setBattle = useMutation({
     mutationKey: ["setBattle"],
-    mutationFn: async (options: PromiseOrValue<string>) => {
+    mutationFn: async () => {
 
-      if (options == undefined) throw new Error("Requested options is empty")
+      if (battleOption == undefined) throw new Error("Requested options is empty")
 
-      const tx = await worldSend('battle', [options])
+      const tx = await worldSend('battle', [battleOption])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return battleData
     }
@@ -50,6 +69,7 @@ export default function useBattle(playerId: Entity) {
   return {
     battleData,
     setBattle,
-    lockIn
+    lockIn,
+    onSelectOptions
   }
 }
