@@ -8,7 +8,7 @@ export const generateMockPlayer = () => {
   return {
     ipfsHash: 'QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9',
     visualSummary: 'Curious Elf, Feeble Strength, Clumsy Dexterity, Sturdy Constitution, Genius Intelligence, Average Charisma, Foolish Wisdom, Soft Pale Skin',
-    locationId: '0x5b3fcd39522558e0c435d694c2a3e891b15253046043a36baef66738099e2802'
+    locationId: '0x5050b8f8ad0565317ac83af0ace172433e2c59b55222906fe5696c7a3ed63cfa'
   }
 }
 
