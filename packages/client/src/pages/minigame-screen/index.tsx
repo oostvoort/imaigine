@@ -2,58 +2,40 @@ import React from 'react'
 import { clsx } from 'clsx'
 import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
 import { Button } from '@/components/base/Button'
-import useQueue from '@/hooks/minigame/useQueue'
-import { Entity } from '@latticexyz/recs'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import usePlayer from '@/hooks/usePlayer'
-import useBattle from '@/hooks/minigame/useBattle'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
-// import { getFromIPFS } from '@/global/utils'
+import usePlay from '@/hooks/minigame/usePlay'
+import { Entity } from '@latticexyz/recs'
+import useBattle from '@/hooks/minigame/useBattle'
+import { getFromIPFS } from '@/global/utils'
+import { useQuery } from '@tanstack/react-query'
 
 export default function MinigameScreen() {
-  const { player, setCustomPlayerId, getPlayerImage } = usePlayer()
-  const { battleQueue, setLocationEntity } = useQueue()
-  const { setPlayerId, setLocationId, match } = useBattle()
-  const [ isInsideBattle, setIsInsideBattle ] = React.useState(false)
+  const { player, getPlayerConfig, getPlayerImage, setCustomPlayerId } = usePlayer()
+  const { playdata } = usePlay(player.location?.value as Entity)
+  const { battleData } = useBattle(player.id as Entity)
+
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
-
-  // const playerData = React.useMemo(async () => {
-  //   if (getPlayerConfig) {
-  //     const data = await (await (getFromIPFS(getPlayerConfig.value as string))).json()
-  //     return {
-  //       name: data.name
-  //     }
-  //   }
-  // }, [ getPlayerConfig ])
-
-
-  //Todo: change this to dynamic value
+  console.log('battleData', battleData)
   React.useEffect(() => {
-    setLocationEntity('0x0000000000000000000000000000000000000000000000000000000000000002' as Entity)
-    setLocationId('0x0000000000000000000000000000000000000000000000000000000000000002' as Entity)
-  }, [])
+    setCustomPlayerId(battleData.battle?.opponent as Entity)
+  }, [ battleData ])
 
-  React.useEffect(() => {
-    if (battleQueue) {
-      if (battleQueue.playerId?.playerId) {
-        setIsInsideBattle(true)
+  const opponentInformation = useQuery({
+    queryKey: [ 'opponent-information', getPlayerConfig ],
+    queryFn: async () => {
+      if (getPlayerConfig) {
+        const data = await (await getFromIPFS(getPlayerConfig.value as string)).json()
+        return {
+          image: getPlayerImage?.value,
+          name: data.name,
+          description: data.description,
+        }
       }
-    }
-  }, [ battleQueue ])
-
-  React.useEffect(() => {
-    if (match) {
-      if (match.battle !== undefined) {
-        setIsInsideBattle(false)
-        setCustomPlayerId(match.battle.value.opponent as Entity)
-      }
-    }
-  }, [ match ])
-
-  React.useEffect(() => {
-    setPlayerId(player.id)
-  }, [ player ])
+    },
+  })
 
   const weapons = [
     {
@@ -92,8 +74,12 @@ export default function MinigameScreen() {
                   <CardTimer />
 
                   <div className={clsx([ 'mt-lg mb-md h-full', 'flex flex-col justify-between' ])}>
-                    <PlayerScoreBoard imgSrc={''} />
-                    <PlayerScoreBoard imgSrc={`${IPFS_URL_PREFIX}/${player.image?.value}`} />
+                    <PlayerScoreBoard
+                      name={opponentInformation.data ? opponentInformation.data.name : '???'}
+                      imgSrc={opponentInformation.data ? `${IPFS_URL_PREFIX}/${opponentInformation.data.image}` : ''} />
+
+                    <PlayerScoreBoard
+                      imgSrc={player.image?.value ? `${IPFS_URL_PREFIX}/${player.image.value}` : ''} name={'YOU'} />
                   </div>
                   {/*End of Player Wrapper*/}
                 </div>
@@ -123,25 +109,29 @@ export default function MinigameScreen() {
                    draggable={false} />
 
               {/*Waiting for opponent*/}
-              <Template.MinigameLayout.WaitingForOpponent className={'hidden'}>
+              <Template.MinigameLayout.WaitingForOpponent className={''}>
                 {
-                  isInsideBattle ? <div
-                    className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                    <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                         className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
-                    <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other player</p>
-                  </div> : null
+                  battleData.battle?.opponent === player.id ?
+                    <div
+                      className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                      <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                           className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
+                      <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other player</p>
+
+                      {/*Note*/}
+                      <div
+                        className={clsx([ 'bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
+                        <p
+                          className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
+                          THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
+                          MAP FOR
+                          INCOMING PLAYERS.
+                        </p>
+                      </div>
+                    </div> : null
                 }
 
-                {/*Note*/}
-                <div
-                  className={clsx([ 'bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
-                  <p
-                    className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
-                    THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR MAP FOR
-                    INCOMING PLAYERS.
-                  </p>
-                </div>
+
               </Template.MinigameLayout.WaitingForOpponent>
 
               {/*Choosing Weapon*/}
