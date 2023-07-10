@@ -17,7 +17,8 @@ import {
   InteractLocationProps,
   InteractNpcProps,
   InteractNpcResponse,
-  RouteObject,
+  InteractSQLResult,
+  LogSqlResult, RouteObject,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -39,6 +40,8 @@ import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
 import {
+  calculateRevealedCells,
+  convertLocationNumberToLocationId,
   getPlayerDestination,
   getPlayerLocation,
   startTravel,
@@ -53,14 +56,15 @@ import {
   generateMockPlayerImage,
 } from './lib/mock'
 import { fetchHistoryLogs, fetchInteraction, insertHistoryLogs, insertInteraction } from './lib/db'
+import { removeParentheses } from './utils/removeParentheses'
 
 dotenv.config()
 
 declare global {
   interface Window {
-      findNearestPath: (from: number, to: number) => [number[]],
-      getCellInfo: (cell: number) => RouteObject,
-      getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[]
+    findNearestPath: (from: number, to: number) => [ number[] ],
+    getCellInfo: (cell: number) => RouteObject,
+    getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[]
   }
 }
 
@@ -101,6 +105,16 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
+app.post('/generate-location-id', async (req, res, next) => {
+  const props: { cellNumber: number } = req.body
+  try {
+    const locationId = convertLocationNumberToLocationId(props.cellNumber)
+    res.send({result: locationId})
+  } catch (e) {
+    res.status(500).send(e.toString())
+  }
+})
+
 app.get('/mapdata', async (req: Request, res: Response, next) => {
 
   try {
@@ -122,17 +136,26 @@ app.get('/mapdata', async (req: Request, res: Response, next) => {
   }
 })
 
-app.get('/get-route', async (req: Request, res: Response) => {
-  const seed = 927;
+app.post('/get-revealed-cells', (req, res) => {
+  const props: { revealedCells: string} = req.body
   try {
-    const result = await getRoute(seed, '', 813, 653)
-    res.send(result);
+    const revealedCells = calculateRevealedCells(props.revealedCells)
+    res.send({ revealedCells })
   } catch (e) {
-    res.status(500).send(e.message);
+    res.status(500).send(e.toString())
+  }
+})
+
+app.get('/get-route', async (req: Request, res: Response) => {
+  const seed = 927
+  try {
+    const result = await getRoute(seed, "1",813, 653)
+    res.send(result)
+  } catch (e) {
+    res.status(500).send(e.message)
   }
 
-
-});
+})
 
 app.post('/api/v1/generate-story', async (req: Request, res: Response, next) => {
   const props: GenerateStoryProps = req.body
@@ -305,9 +328,8 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
   if(props.mock) res.send(await generateMockLocationInteraction(props.playerEntityId))
   else {
     try {
-      // get details of location, player and npc using ipfs
+      // get details of location and player using ipfs
       const location: Based = await getFromIpfs(props.locationIpfsHash)
-      const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
       const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
 
       // check interaction table if have existing interaction
@@ -335,8 +357,6 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             storySummary: storyConfig.summary,
             locationName: location.name,
             locationSummary: location.summary,
-            npcName: npc.name,
-            npcSummary: npc.summary,
             playerName: player.name,
             playerSummary: player.description,
             locationHistory: history ? `Location History: "${history}" \n` : '',
@@ -383,15 +403,11 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
               history += historyRow.player_log + '\n'
             }
 
-            console.info({ history })
-
             const locationInteraction = await generateLocationInteraction({
               storyName: storyConfig.name,
               storySummary: storyConfig.summary,
               locationName: location.name,
               locationSummary: location.summary,
-              npcName: npc.name,
-              npcSummary: npc.summary,
               playerName: player.name,
               playerSummary: player.description,
               locationHistory: history ? `Location History: "${history}" \n` : '',
@@ -645,77 +661,31 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
   const props: GenerateTravelProps = req.body
 
   try {
+
     const playerCurrentLocationId = await getPlayerLocation(props.playerEntityId)
     const playerDestinationLocationId = await getPlayerDestination(props.playerEntityId)
 
-    const route = {
-      routes: [1 ,2 , 3, 4, 5],
-      toRevealAtDestination: [6, 7, 8, 9, 10]
-    }
+    console.info("- getting route ...")
+    const data = await getRoute(927, props.playerEntityId, playerCurrentLocationId, playerDestinationLocationId)
+    console.info("- done getting route")
 
-    await startTravel(props.playerEntityId, route.routes, route.toRevealAtDestination)
+    await startTravel(props.playerEntityId, data.routeData.map(route => route.cell), data.toRevealAtDestination)
+
     let locationDetails = ``
 
-    const locations = [
-      {
-        locationName: 'Kleabok',
-        latitude: '2° 20′ 24″ S',
-        longitude: '12° 23′ 44″ W',
-        type: 'land',
-        precipitation: '200mm',
-        river: 'no rivers',
-        elevation: '13 ft',
-        depth: '0 ft',
-        temperature: '66°F',
-        biome: 'Savanna',
-      },
-      {
-        locationName: 'Brid',
-        latitude: '2° 28′ 44″ S',
-        longitude: '12° 15′ 0″ W',
-        type: 'land',
-        precipitation: '400mm',
-        river: 'no rivers',
-        elevation: '30 ft',
-        depth: '0 ft',
-        temperature: '66°F',
-        biome: 'Savanna',
-      },
-      {
-        locationName: 'Gob',
-        latitude: '2° 47′ 43″ S',
-        longitude: '12° 6′ 15″ W',
-        type: 'land',
-        precipitation: '200mm',
-        river: 'no rivers',
-        elevation: '52 ft',
-        depth: '0 ft',
-        temperature: '66°F',
-        biome: 'Savanna',
-      },
-      {
-        locationName: 'Gaxi',
-        latitude: '3° 23′ 34″ S',
-        longitude: '11° 48′ 45″ W',
-        type: 'land',
-        precipitation: '0mm',
-        river: 'no rivers',
-        elevation: '161 ft',
-        depth: '0 ft',
-        temperature: '66°F',
-        biome: 'Hot desert',
-      }
-    ]
-
-    locations.forEach((location) => {
+    data.routeData.forEach((location) => {
       locationDetails += `
-            ${location.locationName} is located in a ${location.biome} biome with a latitude of ${location.latitude} and longitube of ${location.longitude} a type of ${location.type}
-            precipitation in this location is ${location.precipitation} the are ${location.river}. ${location.locationName} has a elevation of ${location.elevation},
-            dept of ${location.depth} and a temperature of ${location.temperature}\n\n
-        `
+        ${location.burg === "no" ? '' : `Location name: ${removeParentheses(location.burg)}`}
+        This location is on the state of ${removeParentheses(location.state)} in the province of ${removeParentheses(location.province)} culture here is ${removeParentheses(location.culture)} and religion of ${removeParentheses(location.religion)}.
+        This location is on a ${location.biome} with a latitude of ${location.latitude} and longitube of ${location.longitude} a type of ${removeParentheses(location.type)}.
+        Precipitation in this location is ${location.precipitation} the are ${location.river === "no" ? 'no rivers' : 'rivers'}. A elevation of ${removeParentheses(location.elevation)},
+        dept of ${location.depth} and a temperature of ${location.temperature}.\n
+            `
     })
 
+    console.info("- generating travel ...")
     const travelStory = await generateTravel(locationDetails)
+    console.info("- done generating travel")
 
     res.send({
       travelStory: travelStory

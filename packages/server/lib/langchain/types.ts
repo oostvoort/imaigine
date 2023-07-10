@@ -35,8 +35,6 @@ export interface LocationInteractionProps {
   storySummary: string,
   locationName: string,
   locationSummary: string,
-  npcName: string,
-  npcSummary: string,
   playerName: string,
   playerSummary: string,
   locationHistory: string

@@ -1,0 +1,6 @@
+POST {{host}}/generate-location-id
+Content-Type: application/json
+
+{
+  "cellNumber": 1808
+}
