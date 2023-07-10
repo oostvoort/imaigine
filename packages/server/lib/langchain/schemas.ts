@@ -1,3 +1,6 @@
+import { z } from "zod"
+
+
 export const locationSchema = {
   name: 'the name of the location',
   description: 'the generated description',
@@ -42,5 +45,21 @@ export const npcInteractionSchema = {
 }
 
 export const travelSchema = {
-  travelStory: 'the generated travel story of the player in 2 to 3 paragraphs, Dont be specific on the location details like the numbers, be more descriptive and creative to it. Dont mention any name of a character'
+  travelStory: 'the travel story of the player like your telling a story in 2 to 3 paragraphs'
 }
+
+export const npcInteractionZodSchema = z.object({
+  response: z.string().describe("the npc response"),
+  good: z.object({
+    choice: z.string().describe("the player good choice"),
+    response: z.string().describe("the player say to the npc in a good manner")
+  }),
+  evil: z.object({
+    choice: z.string().describe("the player negative choice"),
+    response: z.string().describe("the player say to the npc in a negative manner")
+  }),
+  neutral: z.object({
+    choice: z.string().describe("the player neutral choice"),
+    response: z.string().describe("the player say to the npc in a neutral manner")
+  })
+})
