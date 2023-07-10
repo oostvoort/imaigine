@@ -405,6 +405,7 @@ export function defineContractComponents(world: World) {
           winnerOption: RecsType.Number,
           loser: RecsType.String,
           loserOption: RecsType.Number,
+          draw: RecsType.Boolean,
         },
         {
           metadata: {
@@ -416,6 +417,21 @@ export function defineContractComponents(world: World) {
     })(),
     BattleHistoryCounter: (() => {
       const tableId = new TableId("", "BattleHistoryCou");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    BattlePointsComponent: (() => {
+      const tableId = new TableId("", "BattlePointsComp");
       return defineComponent(
         world,
         {

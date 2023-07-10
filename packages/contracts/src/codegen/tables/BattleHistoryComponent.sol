@@ -28,16 +28,18 @@ struct BattleHistoryComponentData {
   BattleOptions winnerOption;
   bytes32 loser;
   BattleOptions loserOption;
+  bool draw;
 }
 
 library BattleHistoryComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](4);
+    SchemaType[] memory _schema = new SchemaType[](5);
     _schema[0] = SchemaType.BYTES32;
     _schema[1] = SchemaType.UINT8;
     _schema[2] = SchemaType.BYTES32;
     _schema[3] = SchemaType.UINT8;
+    _schema[4] = SchemaType.BOOL;
 
     return SchemaLib.encode(_schema);
   }
@@ -51,11 +53,12 @@ library BattleHistoryComponent {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](4);
+    string[] memory _fieldNames = new string[](5);
     _fieldNames[0] = "winner";
     _fieldNames[1] = "winnerOption";
     _fieldNames[2] = "loser";
     _fieldNames[3] = "loserOption";
+    _fieldNames[4] = "draw";
     return ("BattleHistoryComponent", _fieldNames);
   }
 
@@ -217,6 +220,40 @@ library BattleHistoryComponent {
     _store.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(loserOption)));
   }
 
+  /** Get draw */
+  function getDraw(uint256 id) internal view returns (bool draw) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
+    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+  }
+
+  /** Get draw (using the specified store) */
+  function getDraw(IStore _store, uint256 id) internal view returns (bool draw) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
+    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+  }
+
+  /** Set draw */
+  function setDraw(uint256 id, bool draw) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((draw)));
+  }
+
+  /** Set draw (using the specified store) */
+  function setDraw(IStore _store, uint256 id, bool draw) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((draw)));
+  }
+
   /** Get the full data */
   function get(uint256 id) internal view returns (BattleHistoryComponentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
@@ -241,9 +278,10 @@ library BattleHistoryComponent {
     bytes32 winner,
     BattleOptions winnerOption,
     bytes32 loser,
-    BattleOptions loserOption
+    BattleOptions loserOption,
+    bool draw
   ) internal {
-    bytes memory _data = encode(winner, winnerOption, loser, loserOption);
+    bytes memory _data = encode(winner, winnerOption, loser, loserOption, draw);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -258,9 +296,10 @@ library BattleHistoryComponent {
     bytes32 winner,
     BattleOptions winnerOption,
     bytes32 loser,
-    BattleOptions loserOption
+    BattleOptions loserOption,
+    bool draw
   ) internal {
-    bytes memory _data = encode(winner, winnerOption, loser, loserOption);
+    bytes memory _data = encode(winner, winnerOption, loser, loserOption, draw);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -270,12 +309,12 @@ library BattleHistoryComponent {
 
   /** Set the full data using the data struct */
   function set(uint256 id, BattleHistoryComponentData memory _table) internal {
-    set(id, _table.winner, _table.winnerOption, _table.loser, _table.loserOption);
+    set(id, _table.winner, _table.winnerOption, _table.loser, _table.loserOption, _table.draw);
   }
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, uint256 id, BattleHistoryComponentData memory _table) internal {
-    set(_store, id, _table.winner, _table.winnerOption, _table.loser, _table.loserOption);
+    set(_store, id, _table.winner, _table.winnerOption, _table.loser, _table.loserOption, _table.draw);
   }
 
   /** Decode the tightly packed blob using this table's schema */
@@ -287,6 +326,8 @@ library BattleHistoryComponent {
     _table.loser = (Bytes.slice32(_blob, 33));
 
     _table.loserOption = BattleOptions(uint8(Bytes.slice1(_blob, 65)));
+
+    _table.draw = (_toBool(uint8(Bytes.slice1(_blob, 66))));
   }
 
   /** Tightly pack full data using this table's schema */
@@ -294,9 +335,10 @@ library BattleHistoryComponent {
     bytes32 winner,
     BattleOptions winnerOption,
     bytes32 loser,
-    BattleOptions loserOption
+    BattleOptions loserOption,
+    bool draw
   ) internal view returns (bytes memory) {
-    return abi.encodePacked(winner, winnerOption, loser, loserOption);
+    return abi.encodePacked(winner, winnerOption, loser, loserOption, draw);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
@@ -319,5 +361,11 @@ library BattleHistoryComponent {
     _keyTuple[0] = bytes32(uint256(id));
 
     _store.deleteRecord(_tableId, _keyTuple);
+  }
+}
+
+function _toBool(uint8 value) pure returns (bool result) {
+  assembly {
+    result := value
   }
 }
