@@ -39,7 +39,12 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
-import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
+import {
+  convertLocationNumberToLocationId,
+  getPlayerDestination,
+  getPlayerLocation,
+  startTravel,
+  worldContract} from './lib/contract'
 import { BigNumber } from 'ethers'
 import { getRoute } from './utils/getMap'
 import {
@@ -98,6 +103,16 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!')
 })
 
+app.post('/generate-location-id', async (req, res, next) => {
+  const props: { cellNumber: number } = req.body
+  try {
+    const locationId = convertLocationNumberToLocationId(props.cellNumber)
+    res.send({result: locationId})
+  } catch (e) {
+    res.status(500).send(e.toString())
+  }
+})
+
 app.get('/mapdata', async (req: Request, res: Response, next) => {
 
   try {
@@ -127,7 +142,13 @@ app.get('/get-route', async (req: Request, res: Response) => {
   } catch (e) {
     res.status(500).send(e.message)
   }
-
+const locations = {
+  Zhir: 2207,
+  Side: 3003,
+  Grirkrun: 2500,
+  Zrald: 3171,
+  Sierhod: 1808
+}
 
 })
 

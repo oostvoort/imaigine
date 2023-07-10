@@ -3,14 +3,33 @@ Content-Type: application/json
 
 {
   "json": {
-    "name": "Xelva",
-    "summary": "Xelva is an ancient and mysterious fantasy world, populated by elves, orcs, and humans. It has two moons, one of which is often shrouded in mist and bathed in a kaleidoscope of soft and colorful light. Xelva’s technology varies from primitive magic to aetherpunk – a mix of modern and arcane technology. Its currency circulates around gold, and it has seven beautiful continents, each with its own culture and stories.But Xelva is a world at war; between the Demon King and The Church, battles rage daily. It is said that the church is blessed by a powerful angel, and that the Demon King is partnered with a powerful force of darkness. Whatever the truth may be, Xelva is a place full of adventure and mystery, ready to be explored. Visitors to Xelva can expect to discover ancient caves, enchanted jungles, and hidden tombs filled with treasure. They will see magnificent monuments soaring high into the sky, and perhaps even witness one of the legendary battles between the Demon King and The Church. Magical creatures dwell within dense forests, untold secrets await to be unraveled, and riches exist for those brave enough to seek them. Xelva awaits adventurers, ready to explore and discover its wonders. ",
-    "theme": "fantasy",
-    "currency": "gold",
-    "races": [
-      "elves",
-      "orcs",
-      "humans"
+    "storyConfig": "QmcSDoVNyHzL8JYjgJUhWyXJwtDhwrgs6YNjRJ9LkUvZBr",
+    "startingLocations": [
+      {
+        "config": "QmXAhHbjycyBsW7ubHCXB87us6WCkrJZ13i8pdA2ksHvJ4",
+        "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
+        "id": "0x01d07bf849d8bc0b9f6bba4ecb1f6137666c77ed849cb8c70b417bf1eae4059c"
+      },
+      {
+        "config": "QmWQ8MwBxi5tAeU1eXr9ShdmhgMpDoC7EwsCoxux6D9wR8",
+        "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp",
+        "id": "0x4f24a4a2b0b469462829c8fe81e46552b5cb8eb771b95312f9e0c11d876085f3"
+      },
+      {
+        "config": "QmPxCqxw7gMxuPBGMyGUu2vFfpZj9izc535cr1VEYZmfyL",
+        "imgHash": "QmUfpCvGbsUpvii5ZDPiVDZS59ZYKW6YueJ5dt3xzobeSR",
+        "id": "0x63f852840f776564b7253d6cff7904802166059abc3389d9f84cd6afe6e799bd"
+      },
+      {
+        "config": "Qme6wbUb55gxbzdfZXXHEv4MjZ2uyy9MdTBp59KiusvtYP",
+        "imgHash": "QmVtteVD3KV9LpAoY6vmLxDCkfGwrmcXsf1Kh89KKaGKyk",
+        "id": "0x466ee3e0de3a970e977fab5fd7b96a0c4bb8bcd2a414d8c3bf0d7a405c1a3f2d"
+      },
+      {
+        "config": "QmdVbCn4CXANy7oFqvQiNi6o97bAyobML8BkxmpNG5sQQp",
+        "imgHash": "QmYUiYn3sc165qKcEL8RPCFhGZuL2rubEQtarLBPabFABv",
+        "id": "0x5050b8f8ad0565317ac83af0ace172433e2c59b55222906fe5696c7a3ed63cfa"
+      }
     ]
   }
 }

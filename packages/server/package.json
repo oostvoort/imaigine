@@ -23,7 +23,8 @@
     "sqlite": "^4.2.1",
     "sqlite3": "^5.1.6",
     "ts-node": "^10.9.1",
-    "types": "workspace:*"
+    "types": "workspace:*",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
