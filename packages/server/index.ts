@@ -154,13 +154,6 @@ app.get('/get-route', async (req: Request, res: Response) => {
   } catch (e) {
     res.status(500).send(e.message)
   }
-const locations = {
-  Zhir: 2207,
-  Side: 3003,
-  Grirkrun: 2500,
-  Zrald: 3171,
-  Sierhod: 1808
-}
 
 })
 

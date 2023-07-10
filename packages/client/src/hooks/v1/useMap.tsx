@@ -22,7 +22,6 @@ const getRevealedCells = (bitMap: BigNumber[]) => {
     const arrayRow = Math.floor(i / BIT_SIZE)
     const arrayColumn = i % BIT_SIZE;
     const currentBit = bitMap[arrayRow]
-    console.log(currentBit, i, arrayRow, arrayColumn)
     const shiftedRight = currentBit.shr(arrayColumn).and(1)
     if (!shiftedRight.eq(0)) {
       revealedCells.push(i)
@@ -44,7 +43,7 @@ export const useMap = () => {
     },
   } = useMUD()
 
-  const [configIpfs, setConfigIpfs] = useState<Record<string, {name: string, summary: string}>>({})
+  const [configIpfs, setConfigIpfs] = useState<Record<string, {name: string, description: string}>>({})
 
   const playerEntities = useEntityQuery([
     Has(PlayerComponent)
@@ -101,16 +100,24 @@ export const useMap = () => {
     return {
       entityId,
       name: configIpfs[entityId]?.name ?? 'Loading Name',
-      legend: configIpfs[entityId]?.summary ?? 'Loading Legend',
+      legend: configIpfs[entityId]?.description ?? 'Loading Legend',
       config: configs.find(config => config.key.key === entityId)?.value.value ?? '',
       cell: Number(mapCell),
       revealedCell: getRevealedCells(decodedRevealedCellInBytes)
     }
   })
 
-  const status = !playerEntities.length || (
-    playerEntities.length && mapCells.length && configs.length && revealedCells.length
+  const status = (
+    playerEntities.length &&
+    mapCells.length &&
+    configs.length &&
+    revealedCells.length
   ) ? Status.COMPLETE : Status.LOADING
+
+  const myPlayer = players.find(player => player.entityId === playerEntity)
+
+  console.log({myPlayer})
+
 
   return {
     functions: {
@@ -120,7 +127,13 @@ export const useMap = () => {
     status,
     isLoading: status === Status.LOADING,
     isComplete: status === Status.COMPLETE,
+    isMyPlayerComplete:
+      myPlayer?.name !== 'Loading Name' &&
+      myPlayer?.legend !== 'Loading Legend' &&
+      myPlayer?.config !== '' &&
+      myPlayer.cell !== 0 &&
+      myPlayer?.revealedCell?.length > 0,
     players,
-    myPlayer: players.find(player => player.entityId === playerEntity)
+    myPlayer
   }
 }
