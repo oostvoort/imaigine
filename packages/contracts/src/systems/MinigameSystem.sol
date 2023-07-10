@@ -40,10 +40,6 @@ contract MinigameSystem is System {
   function battle(bytes32 hashedOption) public {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
     bytes32 opponent = BattleComponent.getOpponent(playerID);
-    require(
-      BattleComponent.getStatus(opponent) != BattleStatus.DONE_SELECTING,
-      "can no longer change selection"
-    );
     BattleComponent.setHashedOption(playerID, hashedOption);
     BattleComponent.setStatus(playerID, BattleStatus.DONE_SELECTING);
     BattleComponent.setTimestamp(playerID, block.timestamp);
@@ -53,7 +49,12 @@ contract MinigameSystem is System {
   /// @param hashSalt was the salt used to hash the option
   /// @param option is the actual option the player gave
   function lockIn(string memory hashSalt, BattleOptions option) public {
-//    bytes32 opponent = BattleComponent.getOpponent(playerID);
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    bytes32 opponent = BattleComponent.getOpponent(playerID);
+    BattleStatus opponentStatus = BattleComponent.getStatus(opponent);
+    if (opponentStatus == BattleStatus.DONE_SELECTING) {
+
+    }
   }
 
   /// @notice called by the player to leave rps
