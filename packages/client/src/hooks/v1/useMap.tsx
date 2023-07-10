@@ -10,6 +10,11 @@ import { awaitStreamValue } from '@latticexyz/utils'
 const BIT_SIZE = 256
 const BIT_LENGTH = 16
 
+enum Status {
+  LOADING,
+  COMPLETE
+}
+
 const getRevealedCells = (bitMap: BigNumber[]) => {
   const revealedCells: number[] = []
   if (!bitMap.length) return revealedCells
@@ -103,11 +108,18 @@ export const useMap = () => {
     }
   })
 
+  const status = !playerEntities.length || (
+    playerEntities.length && mapCells.length && configs.length && revealedCells.length
+  ) ? Status.COMPLETE : Status.LOADING
+
   return {
     functions: {
       travel,
       prepareTravel
     },
+    status,
+    isLoading: status === Status.LOADING,
+    isComplete: status === Status.COMPLETE,
     players,
     myPlayer: players.find(player => player.entityId === playerEntity)
   }
