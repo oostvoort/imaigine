@@ -13,12 +13,13 @@ import {
   GeneratePlayerImageResponse,
   GeneratePlayerProps,
   GeneratePlayerResponse,
-  GenerateStoryProps, GenerateTravelProps, GenerateTravelResponse,
+  GenerateStoryProps,
+  GenerateTravelProps,
+  GenerateTravelResponse,
   InteractLocationProps,
   InteractNpcProps,
   InteractNpcResponse,
-  InteractSQLResult, LocationObject,
-  LogSqlResult, RouteObject,
+  RouteObject,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
@@ -28,7 +29,8 @@ import {
   generateNonPlayerCharacter,
   generateNpcInteraction,
   generatePlayerCharacter,
-  generateStory, generateTravel,
+  generateStory,
+  generateTravel, summarizeText,
 } from './lib/langchain'
 import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { getRandomLocation } from './utils/getRandomLocation'
@@ -40,7 +42,6 @@ import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
 import {
-  calculateRevealedCells,
   convertLocationNumberToLocationId,
   getPlayerDestination,
   getPlayerLocation,
@@ -48,7 +49,7 @@ import {
   worldContract,
 } from './lib/contract'
 import { BigNumber } from 'ethers'
-import { getLocations, getRoute } from './utils/getMap'
+import { getRoute } from './utils/getMap'
 import {
   generateMockLocationInteraction,
   generateMockNpcInteraction,
@@ -64,11 +65,9 @@ declare global {
   interface Window {
     findNearestPath: (from: number, to: number) => [ number[] ],
     getCellInfo: (cell: number) => RouteObject,
-    getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[],
-    getAllBurg:() => LocationObject[]
+    getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[]
   }
 }
-
 
 
 const app = express()
@@ -110,7 +109,7 @@ app.post('/generate-location-id', async (req, res, next) => {
   const props: { cellNumber: number } = req.body
   try {
     const locationId = convertLocationNumberToLocationId(props.cellNumber)
-    res.send({result: locationId})
+    res.send({ result: locationId })
   } catch (e) {
     res.status(500).send(e.toString())
   }
@@ -137,34 +136,20 @@ app.get('/mapdata', async (req: Request, res: Response, next) => {
   }
 })
 
-app.post('/get-revealed-cells', (req, res) => {
-  const props: { revealedCells: string} = req.body
-  try {
-    const revealedCells = calculateRevealedCells(props.revealedCells)
-    res.send({ revealedCells })
-  } catch (e) {
-    res.status(500).send(e.toString())
-  }
-})
-
 app.get('/get-route', async (req: Request, res: Response) => {
-  const seed = 962218354
+  const seed = 927
   try {
-    const result = await getRoute(seed, "1",813, 653)
+    const result = await getRoute(seed, '1', 813, 653)
     res.send(result)
   } catch (e) {
     res.status(500).send(e.message)
   }
-
-})
-
-app.get('/get-locations', async (req: Request, res: Response) => {
-  const seed = 962218354
-  try {
-    const result = await getLocations(seed)
-    res.send(result)
-  } catch (e) {
-    res.status(500).send(e.message)
+  const locations = {
+    Zhir: 2207,
+    Side: 3003,
+    Grirkrun: 2500,
+    Zrald: 3171,
+    Sierhod: 1808,
   }
 
 })
@@ -243,7 +228,7 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 
     const imageHash = await generatePlayerImage(npc.visualSummary)
 
-    console.info("writing npc to contract...")
+    console.info('writing npc to contract...')
 
     await (await worldContract.createCharacter(npcIpfsHash, imageHash, props.locationId)).wait()
 
@@ -260,11 +245,10 @@ app.post('/api/v1/generate-npc', async (req: Request, res: Response, next) => {
 app.post('/api/v1/generate-player', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerProps = req.body
 
-  if(props.mock) {
+  if (props.mock) {
     console.info('redirected to mocking data')
     res.send(generateMockPlayer())
-  }
-  else{
+  } else {
     console.info('generating player')
     try {
 
@@ -306,7 +290,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
 app.post('/api/v1/generate-player-image', async (req: Request, res: Response, next) => {
   const props: GeneratePlayerImageProps = req.body
 
-  if(props.mock) {
+  if (props.mock) {
     res.send(generateMockPlayerImage())
   } else {
     try {
@@ -323,7 +307,7 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 
   try {
     try {
-      console.info("Writing player to contract...")
+      console.info('Writing player to contract...')
       await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
       res.send('Player Created!')
     } catch (e) {
@@ -337,7 +321,7 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 app.post('/api/v1/interact-location', async (req: Request, res: Response, next: NextFunction) => {
   const props: InteractLocationProps = req.body
 
-  if(props.mock) res.send(await generateMockLocationInteraction(props.playerEntityId))
+  if (props.mock) res.send(await generateMockLocationInteraction(props.playerEntityId))
   else {
     try {
       // get details of location and player using ipfs
@@ -475,7 +459,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
 app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
   const props: InteractNpcProps = req.body
 
-  if(props.mock) res.send(await generateMockNpcInteraction(props))
+  if (props.mock) res.send(await generateMockNpcInteraction(props))
   else {
     try {
       const npc: Based = await getFromIpfs(props.npcIpfsHash)
@@ -593,11 +577,40 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
 
           console.info('- done getting history')
 
-          conversations.forEach((item) => {
-            history += `
+          if (conversations.length > 15) {
+            let lastConversation = ''
+            let toBeSummarize = ''
+
+            const lastConversationArray = conversations.slice(-4)
+            const toBeSummarizeArray = conversations.slice(0, conversations.length - 4)
+
+            lastConversationArray.forEach((item) => {
+              lastConversation += `
+            ${item.by}: ${item.player_log},`
+            })
+
+            toBeSummarizeArray.forEach((item) => {
+              toBeSummarize += `
+            ${item.by}: ${item.player_log},`
+            })
+
+            const summarizedConversation = await summarizeText(toBeSummarize)
+
+
+            history = `
+              ${summarizedConversation}\n
+              ${lastConversation}
+            `
+
+            console.info({ summarizedConversation })
+
+          }else {
+            conversations.forEach((item) => {
+              history += `
             ${item.by}: ${item.player_log},
         `
-          })
+            })
+          }
 
           const newNpcInteraction = await generateNpcInteraction({
             storyName: storyConfig.name,
@@ -677,9 +690,9 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
     const playerCurrentLocationId = await getPlayerLocation(props.playerEntityId)
     const playerDestinationLocationId = await getPlayerDestination(props.playerEntityId)
 
-    console.info("- getting route ...")
+    console.info('- getting route ...')
     const data = await getRoute(927, props.playerEntityId, playerCurrentLocationId, playerDestinationLocationId)
-    console.info("- done getting route")
+    console.info('- done getting route')
 
     await startTravel(props.playerEntityId, data.routeData.map(route => route.cell), data.toRevealAtDestination)
 
@@ -687,20 +700,20 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
 
     data.routeData.forEach((location) => {
       locationDetails += `
-        ${location.burg === "no" ? '' : `Location name: ${removeParentheses(location.burg)}`}
+        ${location.burg === 'no' ? '' : `Location name: ${removeParentheses(location.burg)}`}
         This location is on the state of ${removeParentheses(location.state)} in the province of ${removeParentheses(location.province)} culture here is ${removeParentheses(location.culture)} and religion of ${removeParentheses(location.religion)}.
         This location is on a ${location.biome} with a latitude of ${location.latitude} and longitube of ${location.longitude} a type of ${removeParentheses(location.type)}.
-        Precipitation in this location is ${location.precipitation} the are ${location.river === "no" ? 'no rivers' : 'rivers'}. A elevation of ${removeParentheses(location.elevation)},
+        Precipitation in this location is ${location.precipitation} the are ${location.river === 'no' ? 'no rivers' : 'rivers'}. A elevation of ${removeParentheses(location.elevation)},
         dept of ${location.depth} and a temperature of ${location.temperature}.\n
             `
     })
 
-    console.info("- generating travel ...")
+    console.info('- generating travel ...')
     const travelStory = await generateTravel(locationDetails)
-    console.info("- done generating travel")
+    console.info('- done generating travel')
 
     res.send({
-      travelStory: travelStory
+      travelStory: travelStory,
     } as GenerateTravelResponse)
 
   } catch (e) {
@@ -736,7 +749,6 @@ app.post('/mock/api/v1/generate-location', async (req: Request, res: Response, n
     imageHash: 'QmRUkLidYCU1SULZ9A7xMnydC11Um5syAScjFSUDmeEJoQ',
   } as GenerateLocationResponse)
 })
-
 
 
 app.post('/mock/api/v1/interact-location', async (req: Request, res: Response, next) => {
