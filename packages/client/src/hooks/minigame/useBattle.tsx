@@ -1,5 +1,5 @@
 import { useMUD } from '@/MUDContext'
-import { Entity } from '@latticexyz/recs'
+import { Entity, Type } from '@latticexyz/recs'
 import { useComponentValue } from "@latticexyz/react"
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
@@ -14,10 +14,15 @@ export default function useBattle(playerId: Entity) {
   const {
     components: {
       BattleComponent,
+      BattlePointsComponent,
+      PlayerComponent,
+      ConfigComponent,
+      ImageComponent,
+      LocationComponent
     },
     network: {
       worldSend,
-      txReduced$
+      txReduced$,
     }
   } = useMUD()
 
@@ -27,6 +32,24 @@ export default function useBattle(playerId: Entity) {
 
   const battleData = {
     battle: useComponentValue(BattleComponent, playerId),
+  }
+
+  const playerInfo = {
+    id: playerId,
+    player: useComponentValue(PlayerComponent, playerId),
+    config: useComponentValue(ConfigComponent, playerId),
+    image: useComponentValue(ImageComponent, playerId),
+    location: useComponentValue(LocationComponent, playerId),
+    battlePoints: useComponentValue(BattlePointsComponent, playerId, 0)
+  }
+
+  const opponentInfo = {
+    id: battleData.battle?.opponent,
+    player: useComponentValue(PlayerComponent, battleData.battle?.opponent as Entity),
+    config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
+    image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
+    location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
+    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, 0)
   }
 
   /**
@@ -97,6 +120,8 @@ export default function useBattle(playerId: Entity) {
     battleData,
     setBattle,
     lockIn,
-    onSelectOptions
+    onSelectOptions,
+    playerInfo,
+    opponentInfo
   }
 }
