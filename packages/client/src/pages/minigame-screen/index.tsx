@@ -13,12 +13,13 @@ import { getFromIPFS } from '@/global/utils'
 import { useQuery } from '@tanstack/react-query'
 
 export default function MinigameScreen() {
-  const { player, getPlayerConfig, getPlayerImage, setCustomPlayerId } = usePlayer()
+  const { player, getPlayerConfig, getPlayerImage, getPlayerBattlePoints, setCustomPlayerId } = usePlayer()
   const { playdata } = usePlay(player.location?.value as Entity)
   const { battleData } = useBattle(player.id as Entity)
 
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
-  console.log('battleData', battleData)
+  console.log("player", player);
+
   React.useEffect(() => {
     setCustomPlayerId(battleData.battle?.opponent as Entity)
   }, [ battleData ])
@@ -34,6 +35,8 @@ export default function MinigameScreen() {
           description: data.description,
         }
       }
+
+      return {}
     },
   })
 
@@ -111,14 +114,19 @@ export default function MinigameScreen() {
               {/*Waiting for opponent*/}
               <Template.MinigameLayout.WaitingForOpponent className={''}>
                 {
-                  battleData.battle?.opponent === player.id ?
-                    <div
-                      className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                      <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                           className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
-                      <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other player</p>
+                  battleData.battle === undefined ?
+                    <React.Fragment>
+                      <div
+                        className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                        <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                             className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
+                        <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other
+                          player</p>
 
-                      {/*Note*/}
+                        {/*Note*/}
+
+                      </div>
+
                       <div
                         className={clsx([ 'bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
                         <p
@@ -128,7 +136,9 @@ export default function MinigameScreen() {
                           INCOMING PLAYERS.
                         </p>
                       </div>
-                    </div> : null
+                    </React.Fragment>
+
+                    : null
                 }
 
 
