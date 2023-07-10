@@ -382,9 +382,44 @@ export function defineContractComponents(world: World) {
         world,
         {
           opponent: RecsType.String,
-          option: RecsType.String,
+          option: RecsType.Number,
+          hashedOption: RecsType.String,
           status: RecsType.Number,
+          timestamp: RecsType.BigInt,
           hashSalt: RecsType.String,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    BattleHistoryComponent: (() => {
+      const tableId = new TableId("", "BattleHistoryCom");
+      return defineComponent(
+        world,
+        {
+          winner: RecsType.String,
+          winnerOption: RecsType.Number,
+          loser: RecsType.String,
+          loserOption: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    BattleHistoryCounter: (() => {
+      const tableId = new TableId("", "BattleHistoryCou");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
         },
         {
           metadata: {

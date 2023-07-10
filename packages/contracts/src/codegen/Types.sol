@@ -22,6 +22,7 @@ enum BattleStatus {
 }
 
 enum BattleOptions {
+  NONE,
   Sword,
   Scroll,
   Potion
