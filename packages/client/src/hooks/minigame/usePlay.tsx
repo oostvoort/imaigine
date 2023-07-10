@@ -29,7 +29,7 @@ export default function usePlay(locationId: Entity) {
     const play = useMutation({
     mutationKey: ["play"],
     mutationFn: async () => {
-      if (playdata.opponent === playerEntity) return playdata
+      if (playdata.opponent?.playerId === playerEntity) return playdata
 
       const tx = await worldSend('play', [])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
