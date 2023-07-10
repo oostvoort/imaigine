@@ -394,5 +394,38 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    BattleHistoryComponent: (() => {
+      const tableId = new TableId("", "BattleHistoryCom");
+      return defineComponent(
+        world,
+        {
+          winner: RecsType.String,
+          winnerOption: RecsType.Number,
+          loser: RecsType.String,
+          loserOption: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
+    BattleHistoryCounter: (() => {
+      const tableId = new TableId("", "BattleHistoryCou");
+      return defineComponent(
+        world,
+        {
+          value: RecsType.BigInt,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }
