@@ -1,46 +1,17 @@
 import React, { useEffect, useRef } from 'react'
+import { useMap } from '@/hooks/v1/useMap'
 
 type PropType = {
   className?: string
 }
-
-
-
-const players = [
-  {
-    name: "Edward",
-    cell: 4874,
-    legend: 'A brave and honorable knight known for his swordsmanship.'
-  },
-  // {
-  //   name: "Oliver",
-  //   cell: 4928,
-  //   legend: 'A skilled rogue and master of stealth and thievery.'
-  // },
-  // {
-  //   name: "Merlin",
-  //   cell: 5283,
-  //   legend: 'A talented wizard specializing in elemental magic.'
-  // },
-  // {
-  //   name: "George",
-  //   cell: 5148,
-  //   legend: 'A nimble archer with exceptional accuracy and keen eyesight.'
-  // }
-]
-
-const player = {
-  name: "Edward",
-  cell: 813,
-  legend: 'A brave and honorable knight known for his swordsmanship.',
-  markerId: ''
-}
-const exploredCells = [813, 653]
-
-
 const Map: React.FC<PropType> = ({ className }) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const { players, myPlayer, isMyPlayerComplete} = useMap()
+
+  // console.log('isMyPlayerComplete', isMyPlayerComplete)
+  // console.log('myPlayer', myPlayer)
+  // console.log('players', players)
 
   useEffect(() => {
 
@@ -53,15 +24,17 @@ const Map: React.FC<PropType> = ({ className }) => {
       const {cmd, params} = event.data
 
       if(cmd === "FinishedLoadingMap"){
-        showPlayers()
-        showExploredCells()
+          showPlayers()
+          showMyPlayer()
       } else if(cmd === "BurgClicked"){
         console.log("BurgClicked", params)
-        player.cell = params.locationId
-        if (!exploredCells.includes(params.locationId)) {
-          exploredCells.push(params.locationId)
-        }
-        showExploredCells()
+        prepareTravel.mutate(params.locationId)
+
+        // player.cell = params.locationId
+        // if (!exploredCells.includes(params.locationId)) {
+        //   exploredCells.push(params.locationId)
+        // }
+        // showExploredCells()
       }else{
         console.log('Other message received from iframe:', event.data)
 
@@ -77,6 +50,7 @@ const Map: React.FC<PropType> = ({ className }) => {
     }
   }, [])
 
+
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
       const iframeWindow = iframeRef.current.contentWindow
@@ -87,10 +61,9 @@ const Map: React.FC<PropType> = ({ className }) => {
     }
   }
 
-  const setRevealedCells = (cells: number[]) => {sendMessageToIframe({cmd: "revealCells", params: {cells: cells}})}
   const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showExploredCells = () => {sendMessageToIframe({cmd: "showExploredCells", params: {player: player, cells: exploredCells}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
 
   const reloadIframe = () => {
     if (iframeRef.current) {
@@ -98,21 +71,24 @@ const Map: React.FC<PropType> = ({ className }) => {
     }
   }
 
-  console.log('mapSeed', mapSeed)
-  return (
+  return(
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
-      <button onClick={() => {setRevealedCells([ 4928, 4874, 5148, 5283])}}>revealCells</button>
-      | <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
-      | <button onClick={() => {showPlayers()}}>showPlayers</button>
+      <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
-      <iframe
-        ref={iframeRef}
-        width={'w-[inherit]'}
-        className={className}
-        src={`${document.baseURI}map/index.html?maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
-        title="Map"
-      />
+      {
+        ( isMyPlayerComplete) ? (
+          <iframe
+            ref={iframeRef}
+            width={'w-[inherit]'}
+            className={className}
+            src={`${document.baseURI}map/index.html?cell=${myPlayer?.cell}&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
+            title="Map"
+          />
+        ): (
+          <>Loading</>
+        )
+      }
     </div>
   )
 }

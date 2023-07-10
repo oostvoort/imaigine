@@ -115,13 +115,24 @@ function showPlayers(players) {
   }
 }
 
+function getAllBurg() {
+  const locations = []
+
+  for(const burg of pack.burgs){
+    if (Object.keys(burg).length !== 0){
+      locations.push({
+        "cellNumber" : burg.cell,
+        "name": burg.name
+      })
+    }
+  }
+
+  return locations
+}
+
 // from iframe
 window.addEventListener('message', ({ data }) => {
-  if (data.cmd === 'revealCells') {
-
-    revealCells(data.params.cells)
-
-  } else if (data.cmd === 'unFog') {
+  if (data.cmd === 'unFog') {
 
     hideCells(data.params.id)
 
@@ -129,14 +140,14 @@ window.addEventListener('message', ({ data }) => {
 
     showPlayers(data.params.players)
 
-  } else if (data.cmd === 'showExploredCells') {
-    const toReveal = getToRevealCells(data.params.player.cell, data.params.cells)
+  } else if (data.cmd === 'showMyPlayer') {
+    // Create myPlayer marker
+    showPlayers([data.params.player])
+    // Get to reveal cellss
+    const toReveal = getToRevealCells(data.params.player.cell, data.params.player.revealedCell)
+    // Reveal cells
     hideCells('myFogId')
-    revealCells([...data.params.cells, ...toReveal])
-
-  } else if (data.cmd === 'getNextTowns') {
-
-    getNextTowns(data.params.cellId)
+    revealCells([...data.params.player.revealedCell, ...toReveal])
 
   } else {
     console.log('else', data)
