@@ -33,6 +33,7 @@ export default function usePlayer () {
 
     const getPlayerImage = useComponentValue(ImageComponent, customPlayerId)
     const getPlayerConfig = useComponentValue(ConfigComponent, customPlayerId)
+    const getPlayerBattlePoints = useComponentValue(BattlePointsComponent, customPlayerId)
 
     const player = {
         id: playerEntity,
@@ -82,7 +83,8 @@ export default function usePlayer () {
         createPlayer,
         setCustomPlayerId,
         getPlayerImage,
-        getPlayerConfig
+        getPlayerConfig,
+        getPlayerBattlePoints
     }
 }
 
