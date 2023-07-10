@@ -7,7 +7,7 @@ export default mudConfig({
       InteractionType: ["NOT_INTERACTABLE", "SINGLE", "MULTIPLE"],
       TravelStatus: ["NOT_TRAVELLING", "PREPARING", "READY_TO_TRAVEL", "TRAVELLING"],
       BattleStatus: ["NOT_IN_BATTLE", "IN_BATTLE", "DONE_SELECTING"],
-      BattleOptions: ["Sword", "Scroll", "Potion"],
+      BattleOptions: ["NONE", "Sword", "Scroll", "Potion"],
     },
     tables: {
         StoryComponent: "bool",
@@ -61,24 +61,32 @@ export default mudConfig({
           }
         },
         BattleQueueComponent: {
-          keySchema: {
-            locationId: "bytes32",
-          },
           schema: {
             playerId: "bytes32",
           }
         },
         BattleComponent: {
-          keySchema: {
-            playerId: "bytes32",
-            locationId: "bytes32",
-          },
           schema: {
             opponent: "bytes32",
             option: "bytes32",
             status: "BattleStatus",
             hashSalt: "string",
           }
+        },
+        BattleHistoryComponent: {
+          keySchema: {
+            id: "uint256"
+          },
+          schema: {
+            winner: "bytes32",
+            winnerOption: "BattleOptions",
+            loser: "bytes32",
+            loserOption: "BattleOptions"
+          }
+        },
+        BattleHistoryCounter: {
+          keySchema: {},
+          schema: "uint256"
         }
     },
     modules: [
