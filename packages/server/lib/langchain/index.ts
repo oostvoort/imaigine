@@ -2,9 +2,9 @@ import { StructuredOutputParser } from 'langchain/output_parsers'
 import {
   locationInteractionSchema,
   locationSchema,
-  nonPlayerCharacterSchema, npcInteractionSchema,
+  nonPlayerCharacterSchema, npcInteractionSchema, npcInteractionZodSchema,
   playerCharacterSchema,
-  storySchema, travelSchema,
+  storySchema,
 } from './schemas'
 import { OpenAI, PromptTemplate } from 'langchain'
 import { PipelinePromptTemplate } from 'langchain/prompts'
@@ -30,6 +30,9 @@ import {
   InteractSingleDoneResponse,
   Story, TravelLocationAttributes,
 } from 'types'
+
+import { z } from "zod"
+import { getStringContent } from '../../utils/getStringContent'
 
 dotenv.config()
 
@@ -169,26 +172,50 @@ export async function generateNpcInteraction(npcInteraction: NpcInteractionProps
   neutralResponse: string
 }
 > {
-  const parser = StructuredOutputParser.fromNamesAndDescriptions(npcInteractionSchema)
-
+  const parser = StructuredOutputParser.fromZodSchema((npcInteractionZodSchema))
   const formatInstruction = parser.getFormatInstructions()
 
-  const composedPrompt = await createFullPrompt(npcInteractionPrompt, formatInstruction)
+  const prompt = new PromptTemplate({
+    template: `
+    Consider a world called "{storyName}". {storySummary}\n
+    Consider "{npcName}" an non player character with the following description: "{npcSummary}"\n
+    "{conversationHistory}"
 
-  const locationInteraction = await composedPrompt.format(npcInteraction)
+    Consider that the non player character (NPC) is having a conversation with the player.\n
+    Make the npc responses based on it's personality\n
 
-  const result = await model.call(locationInteraction)
+    Generate a npc response
+    Generate 3 choices in 3 to 5 words for the player: a good, negative and neutral\n
+    Generate what player will say to the npc: a good, negative and neutral
 
-  const parseData = await parser.parse(result)
+    {format_instructions}
+  `,
+    inputVariables: ["storyName", "storySummary", "npcName", "npcSummary", "conversationHistory"],
+    partialVariables: {format_instructions: formatInstruction}
+  })
+
+  console.info(npcInteraction.conversationHistory)
+
+  const input = await prompt.format({
+    storyName: npcInteraction.storyName,
+    storySummary: npcInteraction.storySummary,
+    npcName: npcInteraction.npcName,
+    npcSummary: npcInteraction.npcSummary,
+    conversationHistory: npcInteraction.conversationHistory
+  })
+
+  const response = await model.call(input)
+
+  const parseData = await parser.parse(response)
 
   return {
-    response: parseData.response,
-    goodChoice: parseData.goodChoice,
-    evilChoice: parseData.evilChoice,
-    neutralChoice: parseData.neutralChoice,
-    goodResponse: parseData.goodResponse,
-    evilResponse: parseData.evilResponse,
-    neutralResponse: parseData.neutralResponse
+    evilChoice: parseData.evil.choice,
+    evilResponse: parseData.evil.response,
+    goodChoice: parseData.good.choice,
+    goodResponse: parseData.good.response,
+    neutralChoice: parseData.neutral.choice,
+    neutralResponse: parseData.neutral.response,
+    response: parseData.response
   }
 }
 
@@ -213,22 +240,45 @@ export async function generatePlayerCharacter(player: PlayerCharacterProps): Pro
 }
 
 export async function generateTravel(locations: string) {
-  const parser = StructuredOutputParser.fromNamesAndDescriptions(travelSchema)
 
-  const formatInstruction = parser.getFormatInstructions()
+  try {
+    const parser = StructuredOutputParser.fromZodSchema((
+      z.object({
+        travelStory: z.string()
+          .describe('travel story of the player like your telling a story, should not be detailed like mentioning numbers and be more creative')
+      })
+    ))
+    const formatInstruction = parser.getFormatInstructions()
 
-  const composedPrompt = await createFullPrompt(travelPrompt, formatInstruction)
+    const prompt = new PromptTemplate({
+      template: `
+      Consider the following location\n
+      {locations}\n
+      Generate a travel story of the player like your telling in 2 to 3 paragraphs in one line\n
+      {format_instructions}
+      `,
+      inputVariables: ["locations"],
+      partialVariables: {format_instructions: formatInstruction}
+    })
 
-  const travel = await composedPrompt.format({locations: locations})
+    const input = await prompt.format({locations: locations})
 
-  const result = await model.call(travel)
+    const response = await model.call(input)
 
-  const parseData = await parser.parse(result)
+    const data = getStringContent(response)
 
-  return parseData.travelStory
+    const travelStory: {travelStory: string} = await JSON.parse(removeNewlines(data))
+
+    return travelStory.travelStory
+  } catch (e) {
+    return e
+  }
 }
 
-
+function removeNewlines(str: string): string {
+  console.info(str)
+  return str.replace(/\n/g, ' ');
+}
 
 
 
