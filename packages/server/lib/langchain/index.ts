@@ -1,10 +1,10 @@
 import { StructuredOutputParser } from 'langchain/output_parsers'
 import {
-  locationInteractionSchema,
+  locationInteractionSchema, locationInteractionZodSchema,
   locationSchema,
   nonPlayerCharacterSchema, npcInteractionSchema, npcInteractionZodSchema,
   playerCharacterSchema,
-  storySchema,
+  storySchema, summaryZodSchema,
 } from './schemas'
 import { OpenAI, PromptTemplate } from 'langchain'
 import { PipelinePromptTemplate } from 'langchain/prompts'
@@ -33,6 +33,7 @@ import {
 
 import { z } from "zod"
 import { getStringContent } from '../../utils/getStringContent'
+import * as wasi from 'wasi'
 
 dotenv.config()
 
@@ -45,7 +46,6 @@ const model = new OpenAI({
   frequencyPenalty: 0,
   presencePenalty: 0,
 })
-
 
 export async function createFullPrompt(instructions: string, formatInstructions: string) {
   const fullPrompt = PromptTemplate.fromTemplate(`
@@ -109,37 +109,61 @@ export async function generateLocation(story: Story, locationName: string): Prom
 }
 
 export async function generateLocationInteraction(interaction: LocationInteractionProps): Promise<InteractSingleDoneResponse> {
-  const parser = StructuredOutputParser.fromNamesAndDescriptions(locationInteractionSchema)
+  try {
+    let locationHistory = ''
 
-  const formatInstruction = parser.getFormatInstructions()
+    locationHistory = interaction.locationHistory.length > 500 ? await summarizeText(interaction.locationHistory) : interaction.locationHistory
 
-  const composedPrompt = await createFullPrompt(locationInteractionPropmt, formatInstruction)
+    const parser = StructuredOutputParser.fromZodSchema((locationInteractionZodSchema))
+    const formatInstruction = parser.getFormatInstructions()
+    const prompt = new PromptTemplate({
+      template: `
+     Consider a world called "{storyName}". {storySummary}\n
+     "{locationName}" is a location in {storyName}. The following is its description:\n
+     "{locationSummary}"\n
+     {locationHistory}
+     Consider that the main character is {playerName} is in this location.\n
 
-  const locationInteraction = await composedPrompt.format(interaction)
+     {format_instructions}
+  `,
+      inputVariables: ["storyName", "storySummary", "locationName", "locationSummary", "locationHistory", "playerName"],
+      partialVariables: {format_instructions: formatInstruction}
+    })
 
-  const result = await model.call(locationInteraction)
+    const input = await prompt.format({
+      storyName: interaction.storyName,
+      storySummary: interaction.storySummary,
+      locationName: interaction.locationName,
+      locationSummary: interaction.locationSummary,
+      locationHistory: locationHistory,
+      playerName: interaction.playerName
+    })
 
-  const parseData = await parser.parse(result)
+    const response = await model.call(input)
 
-  return {
-    scenario: parseData.scenario,
-    options: {
-      good: {
-        choice: parseData.goodChoice,
-        effect: parseData.goodEffect,
-      },
-      evil: {
-        choice: parseData.evilChoice,
-        effect: parseData.evilEffect,
-      },
-      neutral: {
-        choice: parseData.neutralChoice,
-        effect: parseData.neutralEffect,
+    const parseData = await parser.parse(response)
+
+    return {
+      scenario: parseData.scenario,
+      options: {
+        good: {
+          choice: parseData.good.choice,
+          effect: parseData.good.effect,
+        },
+        evil: {
+          choice: parseData.evil.choice,
+          effect: parseData.evil.effect,
+        },
+        neutral: {
+          choice: parseData.neutral.choice,
+          effect: parseData.neutral.effect,
+        }
       }
     }
+  } catch (e) {
+    return e
   }
 }
-
 
 export async function generateNonPlayerCharacter(npc: NonPlayerCharacterProps): Promise<NonPlayerCharacterResponse> {
   const parser = StructuredOutputParser.fromNamesAndDescriptions(nonPlayerCharacterSchema)
@@ -193,8 +217,6 @@ export async function generateNpcInteraction(npcInteraction: NpcInteractionProps
     inputVariables: ["storyName", "storySummary", "npcName", "npcSummary", "conversationHistory"],
     partialVariables: {format_instructions: formatInstruction}
   })
-
-  console.info(npcInteraction.conversationHistory)
 
   const input = await prompt.format({
     storyName: npcInteraction.storyName,
@@ -275,10 +297,45 @@ export async function generateTravel(locations: string) {
   }
 }
 
+export async function summarizeText(text: string) : Promise<string> {
+  console.info("- summarizing text ...")
+
+  try {
+    const parser = StructuredOutputParser.fromZodSchema((summaryZodSchema))
+    const formatInstruction = parser.getFormatInstructions()
+
+    const prompt = new PromptTemplate({
+      template: `
+      Generate a summary of the text: "{summary}"
+      {format_instructions}
+      `,
+      inputVariables: ["summary"],
+      partialVariables: {format_instructions: formatInstruction}
+    })
+
+    const input = await prompt.format({summary: text})
+
+    const response = await model.call(input)
+
+    const parseData = await parser.parse(response)
+
+    console.info("- done summarizing text")
+
+    console.info(parseData.summary)
+
+    return parseData.summary
+
+  } catch (e) {
+    console.info(e)
+    return e
+  }
+
+}
 function removeNewlines(str: string): string {
   console.info(str)
   return str.replace(/\n/g, ' ');
 }
+
 
 
 
