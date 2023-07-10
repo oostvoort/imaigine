@@ -382,8 +382,10 @@ export function defineContractComponents(world: World) {
         world,
         {
           opponent: RecsType.String,
-          option: RecsType.String,
+          option: RecsType.Number,
+          hashedOption: RecsType.String,
           status: RecsType.Number,
+          timestamp: RecsType.BigInt,
           hashSalt: RecsType.String,
         },
         {

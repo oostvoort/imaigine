@@ -68,8 +68,10 @@ export default mudConfig({
         BattleComponent: {
           schema: {
             opponent: "bytes32",
-            option: "bytes32",
+            option: "BattleOptions",
+            hashedOption: "bytes32",
             status: "BattleStatus",
+            timestamp: "uint256",
             hashSalt: "string",
           }
         },

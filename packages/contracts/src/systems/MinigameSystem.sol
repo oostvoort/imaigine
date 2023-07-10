@@ -16,11 +16,7 @@ import { BattleStatus, BattleOptions } from "../codegen/Types.sol";
 
 contract MinigameSystem is System {
 
-    struct HashOptionsValue {
-        string key;
-        string data;
-        uint256 timestamp;
-    }
+  uint256 private constant FORFEIT_TIME = 1_000 * 15; // the time elapsed wherein a user is considered forfeited
 
   /// @notice called by the player to play rps
   function play() public returns (bytes32) {
@@ -39,6 +35,27 @@ contract MinigameSystem is System {
     return opponent;
   }
 
+  /// @notice called by the player to battle
+  /// @param hashedOption is the option hashed by a salt in the frontend
+  function battle(bytes32 hashedOption) public {
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    bytes32 opponent = BattleComponent.getOpponent(playerID);
+    require(
+      BattleComponent.getStatus(opponent) != BattleStatus.DONE_SELECTING,
+      "can no longer change selection"
+    );
+    BattleComponent.setHashedOption(playerID, hashedOption);
+    BattleComponent.setStatus(playerID, BattleStatus.DONE_SELECTING);
+    BattleComponent.setTimestamp(playerID, block.timestamp);
+  }
+
+  /// @notice called by the player to evaluate battle
+  /// @param hashSalt was the salt used to hash the option
+  /// @param option is the actual option the player gave
+  function lockIn(string memory hashSalt, BattleOptions option) public {
+//    bytes32 opponent = BattleComponent.getOpponent(playerID);
+  }
+
   /// @notice called by the player to leave rps
   function leave() public returns (bytes32) {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
@@ -49,35 +66,20 @@ contract MinigameSystem is System {
     else {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
       logHistory(battleData.opponent, playerID, BattleOptions.NONE, BattleOptions.NONE);
-      BattleComponent.set(playerID, 0, 0, BattleStatus.NOT_IN_BATTLE, "");
+      BattleComponent.set(playerID, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
       if (playerInQueue != 0) {
         beginMatch(battleData.opponent, playerInQueue, locationId);
       } else {
         BattleQueueComponent.set(locationId, battleData.opponent);
-        BattleComponent.set(battleData.opponent, 0, 0, BattleStatus.NOT_IN_BATTLE, "");
+        BattleComponent.set(battleData.opponent, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
       }
     }
     return locationId;
   }
 
-
-    // TODO NOT FINISHED
-//    function lockInBetting(bytes32 playerId, bytes32 locationId, string[] memory _hashsalt) public {
-//        require(_hashsalt.length == 3, "invalid hash salt");
-//        require(BattleComponent.get(playerId, locationId).status == BattleStatus.IN_BATTLE, "player doesn't exist in the match");
-
-//        HashOptionsValue memory value = HashOptionsValue({
-//            key : _hashsalt[0],
-//            data : _hashsalt[1],
-//            timestamp : _hashsalt[2]
-//        });
-
-//        BattleComponent.pushHashSalt(playerId, locationId, value);
-//    }
-
   function beginMatch(bytes32 player1, bytes32 player2, bytes32 locationId) internal {
-    BattleComponent.set(player1, player2, 0, BattleStatus.IN_BATTLE, "");
-    BattleComponent.set(player2, player1, 0, BattleStatus.IN_BATTLE, "");
+    BattleComponent.set(player1, player2, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, "");
+    BattleComponent.set(player2, player1, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, "");
 
     BattleQueueComponent.set(locationId, 0);
   }

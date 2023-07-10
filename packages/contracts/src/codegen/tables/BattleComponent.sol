@@ -18,26 +18,30 @@ import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
 // Import user types
-import { BattleStatus } from "./../Types.sol";
+import { BattleOptions, BattleStatus } from "./../Types.sol";
 
 bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("BattleComponent")));
 bytes32 constant BattleComponentTableId = _tableId;
 
 struct BattleComponentData {
   bytes32 opponent;
-  bytes32 option;
+  BattleOptions option;
+  bytes32 hashedOption;
   BattleStatus status;
+  uint256 timestamp;
   string hashSalt;
 }
 
 library BattleComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](4);
+    SchemaType[] memory _schema = new SchemaType[](6);
     _schema[0] = SchemaType.BYTES32;
-    _schema[1] = SchemaType.BYTES32;
-    _schema[2] = SchemaType.UINT8;
-    _schema[3] = SchemaType.STRING;
+    _schema[1] = SchemaType.UINT8;
+    _schema[2] = SchemaType.BYTES32;
+    _schema[3] = SchemaType.UINT8;
+    _schema[4] = SchemaType.UINT256;
+    _schema[5] = SchemaType.STRING;
 
     return SchemaLib.encode(_schema);
   }
@@ -51,11 +55,13 @@ library BattleComponent {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](4);
+    string[] memory _fieldNames = new string[](6);
     _fieldNames[0] = "opponent";
     _fieldNames[1] = "option";
-    _fieldNames[2] = "status";
-    _fieldNames[3] = "hashSalt";
+    _fieldNames[2] = "hashedOption";
+    _fieldNames[3] = "status";
+    _fieldNames[4] = "timestamp";
+    _fieldNames[5] = "hashSalt";
     return ("BattleComponent", _fieldNames);
   }
 
@@ -116,37 +122,71 @@ library BattleComponent {
   }
 
   /** Get option */
-  function getOption(bytes32 key) internal view returns (bytes32 option) {
+  function getOption(bytes32 key) internal view returns (BattleOptions option) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
-    return (Bytes.slice32(_blob, 0));
+    return BattleOptions(uint8(Bytes.slice1(_blob, 0)));
   }
 
   /** Get option (using the specified store) */
-  function getOption(IStore _store, bytes32 key) internal view returns (bytes32 option) {
+  function getOption(IStore _store, bytes32 key) internal view returns (BattleOptions option) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
-    return (Bytes.slice32(_blob, 0));
+    return BattleOptions(uint8(Bytes.slice1(_blob, 0)));
   }
 
   /** Set option */
-  function setOption(bytes32 key, bytes32 option) internal {
+  function setOption(bytes32 key, BattleOptions option) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((option)));
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked(uint8(option)));
   }
 
   /** Set option (using the specified store) */
-  function setOption(IStore _store, bytes32 key, bytes32 option) internal {
+  function setOption(IStore _store, bytes32 key, BattleOptions option) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((option)));
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked(uint8(option)));
+  }
+
+  /** Get hashedOption */
+  function getHashedOption(bytes32 key) internal view returns (bytes32 hashedOption) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
+    return (Bytes.slice32(_blob, 0));
+  }
+
+  /** Get hashedOption (using the specified store) */
+  function getHashedOption(IStore _store, bytes32 key) internal view returns (bytes32 hashedOption) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
+    return (Bytes.slice32(_blob, 0));
+  }
+
+  /** Set hashedOption */
+  function setHashedOption(bytes32 key, bytes32 hashedOption) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((hashedOption)));
+  }
+
+  /** Set hashedOption (using the specified store) */
+  function setHashedOption(IStore _store, bytes32 key, bytes32 hashedOption) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((hashedOption)));
   }
 
   /** Get status */
@@ -154,7 +194,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
     return BattleStatus(uint8(Bytes.slice1(_blob, 0)));
   }
 
@@ -163,7 +203,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
     return BattleStatus(uint8(Bytes.slice1(_blob, 0)));
   }
 
@@ -172,7 +212,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked(uint8(status)));
+    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(status)));
   }
 
   /** Set status (using the specified store) */
@@ -180,7 +220,41 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked(uint8(status)));
+    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(status)));
+  }
+
+  /** Get timestamp */
+  function getTimestamp(bytes32 key) internal view returns (uint256 timestamp) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Get timestamp (using the specified store) */
+  function getTimestamp(IStore _store, bytes32 key) internal view returns (uint256 timestamp) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Set timestamp */
+  function setTimestamp(bytes32 key, uint256 timestamp) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)));
+  }
+
+  /** Set timestamp (using the specified store) */
+  function setTimestamp(IStore _store, bytes32 key, uint256 timestamp) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)));
   }
 
   /** Get hashSalt */
@@ -188,7 +262,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 5);
     return (string(_blob));
   }
 
@@ -197,7 +271,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 5);
     return (string(_blob));
   }
 
@@ -206,7 +280,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 3, bytes((hashSalt)));
+    StoreSwitch.setField(_tableId, _keyTuple, 5, bytes((hashSalt)));
   }
 
   /** Set hashSalt (using the specified store) */
@@ -214,7 +288,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 3, bytes((hashSalt)));
+    _store.setField(_tableId, _keyTuple, 5, bytes((hashSalt)));
   }
 
   /** Get the length of hashSalt */
@@ -222,7 +296,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 3, getSchema());
+    uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 5, getSchema());
     return _byteLength / 1;
   }
 
@@ -231,7 +305,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 3, getSchema());
+    uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 5, getSchema());
     return _byteLength / 1;
   }
 
@@ -240,7 +314,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 5, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
   }
 
@@ -249,7 +323,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
+    bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 5, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
   }
 
@@ -258,7 +332,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
+    StoreSwitch.pushToField(_tableId, _keyTuple, 5, bytes((_slice)));
   }
 
   /** Push a slice to hashSalt (using the specified store) */
@@ -266,7 +340,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
+    _store.pushToField(_tableId, _keyTuple, 5, bytes((_slice)));
   }
 
   /** Pop a slice from hashSalt */
@@ -274,7 +348,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.popFromField(_tableId, _keyTuple, 3, 1);
+    StoreSwitch.popFromField(_tableId, _keyTuple, 5, 1);
   }
 
   /** Pop a slice from hashSalt (using the specified store) */
@@ -282,7 +356,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.popFromField(_tableId, _keyTuple, 3, 1);
+    _store.popFromField(_tableId, _keyTuple, 5, 1);
   }
 
   /** Update a slice of hashSalt at `_index` */
@@ -290,7 +364,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
+    StoreSwitch.updateInField(_tableId, _keyTuple, 5, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of hashSalt (using the specified store) at `_index` */
@@ -298,7 +372,7 @@ library BattleComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
+    _store.updateInField(_tableId, _keyTuple, 5, _index * 1, bytes((_slice)));
   }
 
   /** Get the full data */
@@ -320,8 +394,16 @@ library BattleComponent {
   }
 
   /** Set the full data using individual values */
-  function set(bytes32 key, bytes32 opponent, bytes32 option, BattleStatus status, string memory hashSalt) internal {
-    bytes memory _data = encode(opponent, option, status, hashSalt);
+  function set(
+    bytes32 key,
+    bytes32 opponent,
+    BattleOptions option,
+    bytes32 hashedOption,
+    BattleStatus status,
+    uint256 timestamp,
+    string memory hashSalt
+  ) internal {
+    bytes memory _data = encode(opponent, option, hashedOption, status, timestamp, hashSalt);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -334,11 +416,13 @@ library BattleComponent {
     IStore _store,
     bytes32 key,
     bytes32 opponent,
-    bytes32 option,
+    BattleOptions option,
+    bytes32 hashedOption,
     BattleStatus status,
+    uint256 timestamp,
     string memory hashSalt
   ) internal {
-    bytes memory _data = encode(opponent, option, status, hashSalt);
+    bytes memory _data = encode(opponent, option, hashedOption, status, timestamp, hashSalt);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -348,30 +432,43 @@ library BattleComponent {
 
   /** Set the full data using the data struct */
   function set(bytes32 key, BattleComponentData memory _table) internal {
-    set(key, _table.opponent, _table.option, _table.status, _table.hashSalt);
+    set(key, _table.opponent, _table.option, _table.hashedOption, _table.status, _table.timestamp, _table.hashSalt);
   }
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, bytes32 key, BattleComponentData memory _table) internal {
-    set(_store, key, _table.opponent, _table.option, _table.status, _table.hashSalt);
+    set(
+      _store,
+      key,
+      _table.opponent,
+      _table.option,
+      _table.hashedOption,
+      _table.status,
+      _table.timestamp,
+      _table.hashSalt
+    );
   }
 
   /** Decode the tightly packed blob using this table's schema */
   function decode(bytes memory _blob) internal view returns (BattleComponentData memory _table) {
-    // 65 is the total byte length of static data
-    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 65));
+    // 98 is the total byte length of static data
+    PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 98));
 
     _table.opponent = (Bytes.slice32(_blob, 0));
 
-    _table.option = (Bytes.slice32(_blob, 32));
+    _table.option = BattleOptions(uint8(Bytes.slice1(_blob, 32)));
 
-    _table.status = BattleStatus(uint8(Bytes.slice1(_blob, 64)));
+    _table.hashedOption = (Bytes.slice32(_blob, 33));
+
+    _table.status = BattleStatus(uint8(Bytes.slice1(_blob, 65)));
+
+    _table.timestamp = (uint256(Bytes.slice32(_blob, 66)));
 
     // Store trims the blob if dynamic fields are all empty
-    if (_blob.length > 65) {
+    if (_blob.length > 98) {
       uint256 _start;
       // skip static data length + dynamic lengths word
-      uint256 _end = 97;
+      uint256 _end = 130;
 
       _start = _end;
       _end += _encodedLengths.atIndex(0);
@@ -382,15 +479,18 @@ library BattleComponent {
   /** Tightly pack full data using this table's schema */
   function encode(
     bytes32 opponent,
-    bytes32 option,
+    BattleOptions option,
+    bytes32 hashedOption,
     BattleStatus status,
+    uint256 timestamp,
     string memory hashSalt
   ) internal view returns (bytes memory) {
     uint40[] memory _counters = new uint40[](1);
     _counters[0] = uint40(bytes(hashSalt).length);
     PackedCounter _encodedLengths = PackedCounterLib.pack(_counters);
 
-    return abi.encodePacked(opponent, option, status, _encodedLengths.unwrap(), bytes((hashSalt)));
+    return
+      abi.encodePacked(opponent, option, hashedOption, status, timestamp, _encodedLengths.unwrap(), bytes((hashSalt)));
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
