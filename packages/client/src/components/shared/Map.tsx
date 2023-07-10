@@ -7,7 +7,7 @@ type PropType = {
 const Map: React.FC<PropType> = ({ className }) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const { players, myPlayer, isMyPlayerComplete, prepareTravel} = useMap()
+  const { players, myPlayer, isMyPlayerComplete} = useMap()
 
   // console.log('isMyPlayerComplete', isMyPlayerComplete)
   // console.log('myPlayer', myPlayer)

@@ -39,3 +39,12 @@ export async function getRoute(mapSeed: number, playerEntityId: string, from: nu
     }
   }, exploredCells, from, to)
 }
+
+export async function getLocations(mapSeed: number) {
+  const page = await launchAndNavigateMap(mapSeed)
+  // Access the function on the page
+  return await page.evaluate(() => {
+    // Call the function on the page to get all burgs
+    return window.getAllBurg()
+  })
+}
