@@ -30,3 +30,4 @@ import { BattleQueueComponent, BattleQueueComponentTableId } from "./tables/Batt
 import { BattleComponent, BattleComponentData, BattleComponentTableId } from "./tables/BattleComponent.sol";
 import { BattleHistoryComponent, BattleHistoryComponentData, BattleHistoryComponentTableId } from "./tables/BattleHistoryComponent.sol";
 import { BattleHistoryCounter, BattleHistoryCounterTableId } from "./tables/BattleHistoryCounter.sol";
+import { BattlePointsComponent, BattlePointsComponentTableId } from "./tables/BattlePointsComponent.sol";
