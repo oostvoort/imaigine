@@ -142,7 +142,13 @@ app.get('/get-route', async (req: Request, res: Response) => {
   } catch (e) {
     res.status(500).send(e.message)
   }
-
+const locations = {
+  Zhir: 2207,
+  Side: 3003,
+  Grirkrun: 2500,
+  Zrald: 3171,
+  Sierhod: 1808
+}
 
 })
 
@@ -317,9 +323,8 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
   if(props.mock) res.send(await generateMockLocationInteraction(props.playerEntityId))
   else {
     try {
-      // get details of location, player and npc using ipfs
+      // get details of location and player using ipfs
       const location: Based = await getFromIpfs(props.locationIpfsHash)
-      const npc: Based = await getFromIpfs(props.npcIpfsHash[0])
       const player: { name: string, description: string } = await getFromIpfs(props.playerIpfsHash)
 
       // check interaction table if have existing interaction
@@ -347,8 +352,6 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             storySummary: storyConfig.summary,
             locationName: location.name,
             locationSummary: location.summary,
-            npcName: npc.name,
-            npcSummary: npc.summary,
             playerName: player.name,
             playerSummary: player.description,
             locationHistory: history ? `Location History: "${history}" \n` : '',
@@ -395,15 +398,11 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
               history += historyRow.player_log + '\n'
             }
 
-            console.info({ history })
-
             const locationInteraction = await generateLocationInteraction({
               storyName: storyConfig.name,
               storySummary: storyConfig.summary,
               locationName: location.name,
               locationSummary: location.summary,
-              npcName: npc.name,
-              npcSummary: npc.summary,
               playerName: player.name,
               playerSummary: player.description,
               locationHistory: history ? `Location History: "${history}" \n` : '',
