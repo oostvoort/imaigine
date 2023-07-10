@@ -6,7 +6,7 @@ export default mudConfig({
     enums: {
       InteractionType: ["NOT_INTERACTABLE", "SINGLE", "MULTIPLE"],
       TravelStatus: ["NOT_TRAVELLING", "PREPARING", "READY_TO_TRAVEL", "TRAVELLING"],
-      BattleStatus: ["NOT_IN_BATTLE", "IN_BATTLE", "DONE_SELECTING"],
+      BattleStatus: ["NOT_IN_BATTLE", "IN_BATTLE", "DONE_SELECTING", "LOCKED_IN"],
       BattleOptions: ["NONE", "Sword", "Scroll", "Potion"],
     },
     tables: {
@@ -83,13 +83,15 @@ export default mudConfig({
             winner: "bytes32",
             winnerOption: "BattleOptions",
             loser: "bytes32",
-            loserOption: "BattleOptions"
+            loserOption: "BattleOptions",
+            draw: "bool" // flag that states if winner and loser drew
           }
         },
         BattleHistoryCounter: {
           keySchema: {},
           schema: "uint256"
-        }
+        },
+      BattlePointsComponent: "uint256"
     },
     modules: [
         {

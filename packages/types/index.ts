@@ -194,3 +194,8 @@ export interface RouteObject {
   religion: string,
   burg: string
 }
+
+export interface LocationObject {
+  cellNumber: number,
+  name: string
+}

@@ -115,6 +115,21 @@ function showPlayers(players) {
   }
 }
 
+function getAllBurg() {
+  const locations = []
+
+  for(const burg of pack.burgs){
+    if (Object.keys(burg).length !== 0){
+      locations.push({
+        "cellNumber" : burg.cell,
+        "name": burg.name
+      })
+    }
+  }
+
+  return locations
+}
+
 // from iframe
 window.addEventListener('message', ({ data }) => {
   if (data.cmd === 'unFog') {
