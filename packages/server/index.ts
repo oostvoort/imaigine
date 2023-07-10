@@ -40,11 +40,13 @@ import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
 import {
+  calculateRevealedCells,
   convertLocationNumberToLocationId,
   getPlayerDestination,
   getPlayerLocation,
   startTravel,
-  worldContract} from './lib/contract'
+  worldContract,
+} from './lib/contract'
 import { BigNumber } from 'ethers'
 import { getRoute } from './utils/getMap'
 import {
@@ -131,6 +133,16 @@ app.get('/mapdata', async (req: Request, res: Response, next) => {
   } catch (e) {
     console.info(e)
     next(e)
+  }
+})
+
+app.post('/get-revealed-cells', (req, res) => {
+  const props: { revealedCells: string} = req.body
+  try {
+    const revealedCells = calculateRevealedCells(props.revealedCells)
+    res.send({ revealedCells })
+  } catch (e) {
+    res.status(500).send(e.toString())
   }
 })
 

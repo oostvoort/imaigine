@@ -81,23 +81,29 @@ export const getPlayerDestination = (playerEntityId: string) : Promise<number> =
 export const startTravel = async (playerEntityId: string, route: number[], toRevealDestination: number[]) => {
   await worldContract.startTravel(playerEntityId, route, toRevealDestination)
 }
-export const getPlayerRevealedCells = async (playEntityId: string) => {
-  const revealedCells = await worldContract.getField(REVEALED_CELLS_TABLE_ID, [playEntityId], 0)
+
+const BIT_SIZE = 256
+const BIT_LENGTH = 16
+
+export const calculateRevealedCells = (revealedCells: string) => {
   const [bitMap] = ethers.utils.defaultAbiCoder.decode(
     ['uint256[]'], revealedCells
   ) as [BigNumber[]]
   const playerRevealedCells: number[] = []
   if (!bitMap.length) return playerRevealedCells
-  for (let i = 0; i < bitMap.length; i++) {
-    for (let j = (i * 1024); j < (i + 1) * 1024 && !bitMap[i].eq(0); j++) {
-      const arrayRow = Math.round(j / 1024)
-      const arrayColumn = j % 1024;
-      const currentBit = bitMap[arrayRow]
-      const shiftedRight = currentBit.shr(arrayColumn).and(1)
-      if (!shiftedRight.eq(0)) {
-        playerRevealedCells.push(j)
-      }
+  for (let i = 0; i < BIT_LENGTH * BIT_SIZE; i++) {
+    const arrayRow = Math.floor(i / BIT_SIZE)
+    const arrayColumn = i % BIT_SIZE;
+    const currentBit = bitMap[arrayRow]
+    console.log(currentBit, i, arrayRow, arrayColumn)
+    const shiftedRight = currentBit.shr(arrayColumn).and(1)
+    if (!shiftedRight.eq(0)) {
+      playerRevealedCells.push(i)
     }
   }
   return playerRevealedCells
+}
+export const getPlayerRevealedCells = async (playEntityId: string) => {
+  const revealedCells = await worldContract.getField(REVEALED_CELLS_TABLE_ID, [playEntityId], 0)
+  return calculateRevealedCells(revealedCells)
 }

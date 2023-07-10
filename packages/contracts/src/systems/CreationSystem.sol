@@ -78,7 +78,7 @@ contract CreationSystem is System {
     MapCellComponent.set(playerID, MapCellComponent.get(locationID));
 
     // TODO reveal other nearby cells
-    uint256[] memory revealedCells = new uint256[](4);
+    uint256[] memory revealedCells = new uint256[](16);
     revealedCells.setRevealedCell(MapCellComponent.get(locationID), true);
     RevealedCells.set(playerID, revealedCells.encode());
 
