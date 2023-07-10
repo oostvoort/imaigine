@@ -39,7 +39,7 @@ const exploredCells = [813, 653]
 
 
 const Map: React.FC<PropType> = ({ className }) => {
-  const mapSeed = 927
+  const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
@@ -97,6 +97,8 @@ const Map: React.FC<PropType> = ({ className }) => {
       iframeRef.current.src = iframeRef.current.src
     }
   }
+
+  console.log('mapSeed', mapSeed)
   return (
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
@@ -108,7 +110,7 @@ const Map: React.FC<PropType> = ({ className }) => {
         ref={iframeRef}
         width={'w-[inherit]'}
         className={className}
-        src={`${document.baseURI}map/index.html?burg=75&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
+        src={`${document.baseURI}map/index.html?maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
         title="Map"
       />
     </div>
