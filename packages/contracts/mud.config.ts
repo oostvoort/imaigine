@@ -91,7 +91,7 @@ export default mudConfig({
           keySchema: {},
           schema: "uint256"
         },
-      BattlePointsComponent: "uint256"
+      BattlePointsComponent: :uint256"
     },
     modules: [
         {
