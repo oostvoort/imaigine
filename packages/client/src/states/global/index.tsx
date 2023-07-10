@@ -11,7 +11,7 @@ export enum SCREENS {
   TEST
 }
 
-export const activeScreen_atom = atom<number>(SCREENS.TITLE)
+export const activeScreen_atom = atom<number>(SCREENS.TEST)
 
 export const currentLoader_atom = atom<
   'loadingAvatar' |
