@@ -6,7 +6,8 @@ import { System } from "@latticexyz/world/src/System.sol";
 import {
   BattleQueueComponent,
   BattleComponent,
-  BattleComponentData
+  BattleComponentData,
+  LocationComponent
 } from "../codegen/Tables.sol";
 
 import { BattleStatus } from "../codegen/Types.sol";
@@ -18,6 +19,27 @@ contract MinigameSystem is System {
         string data;
         uint256 timestamp;
     }
+
+  /// @notice called by the player to play rps
+  function play() public returns (bytes32) {
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    bytes32 locationId = LocationComponent.get(playerID);
+    bytes32 opponent = BattleQueueComponent.get(locationId);
+
+    // TODO: get player to leave from current interaction
+
+    if (opponent == 0) {
+      BattleQueueComponent.set(locationId, playerID);
+      return opponent;
+    }
+
+    BattleComponent.set(playerID, locationId, opponent, 0, BattleStatus.IN_BATTLE, "");
+    BattleComponent.set(opponent, locationId, opponent, 0, BattleStatus.IN_BATTLE, "");
+
+    BattleQueueComponent.set(locationId, 0);
+
+    return opponent;
+  }
 
     /// This function sets a player in the battle queue for a specific location.
     /// It first checks if the player is already in the queue by calling the "get" function from the BattleQueueComponent contract and then comparing the result to 0.
