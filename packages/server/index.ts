@@ -39,7 +39,12 @@ import { getLocationDetails, getLocationList } from './utils/getLocationList'
 import * as path from 'path'
 import { generateMap } from './generate'
 import fs from 'fs-extra'
-import { getPlayerDestination, getPlayerLocation, startTravel, worldContract } from './lib/contract'
+import {
+  convertLocationNumberToLocationId,
+  getPlayerDestination,
+  getPlayerLocation,
+  startTravel,
+  worldContract} from './lib/contract'
 import { BigNumber } from 'ethers'
 import { getRoute } from './utils/getMap'
 import {
@@ -96,6 +101,16 @@ app.listen(port, async () => {
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).send('Something broke!')
+})
+
+app.post('/generate-location-id', async (req, res, next) => {
+  const props: { cellNumber: number } = req.body
+  try {
+    const locationId = convertLocationNumberToLocationId(props.cellNumber)
+    res.send({result: locationId})
+  } catch (e) {
+    res.status(500).send(e.toString())
+  }
 })
 
 app.get('/mapdata', async (req: Request, res: Response, next) => {
