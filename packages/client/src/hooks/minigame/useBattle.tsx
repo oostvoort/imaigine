@@ -26,6 +26,8 @@ export default function useBattle(playerId: Entity) {
     }
   } = useMUD()
 
+  const DEFAULT_BATTLE_POINTS = BigInt("0")
+
   const [, setHashAtom] = useAtom(hash_options_set_value)
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
@@ -40,7 +42,7 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, playerId),
     image: useComponentValue(ImageComponent, playerId),
     location: useComponentValue(LocationComponent, playerId),
-    battlePoints: useComponentValue(BattlePointsComponent, playerId, 0)
+    battlePoints: useComponentValue(BattlePointsComponent, playerId)
   }
 
   const opponentInfo = {
@@ -49,7 +51,7 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
     image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
     location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
-    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, 0)
+    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity)
   }
 
   /**
@@ -67,7 +69,7 @@ export default function useBattle(playerId: Entity) {
     const data = utils.keccak256(utils.toUtf8Bytes(options))
     const timestamp = new Date().getTime()
 
-    const hashOptions = utils.solidityKeccak256(["string", "string", "uint256"], [key, data, timestamp])
+    const hashOptions = utils.solidityKeccak256(["string", "uint256"], [String(key + timestamp), data])
 
     setBattleOption(hashOptions)
     setHashAtom({ key, data, timestamp })
