@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useMap } from '@/hooks/v1/useMap'
+import LocationDialog from '@/components/shared/LocationDialog'
 
 type PropType = {
   className?: string
@@ -7,11 +8,9 @@ type PropType = {
 const Map: React.FC<PropType> = ({ className }) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const { players, myPlayer, isMyPlayerComplete} = useMap()
 
-  // console.log('isMyPlayerComplete', isMyPlayerComplete)
-  // console.log('myPlayer', myPlayer)
-  // console.log('players', players)
+  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
+  const { players, myPlayer, isMyPlayerComplete} = useMap()
 
   useEffect(() => {
 
@@ -28,13 +27,12 @@ const Map: React.FC<PropType> = ({ className }) => {
           showMyPlayer()
       } else if(cmd === "BurgClicked"){
         console.log("BurgClicked", params)
-        prepareTravel.mutate(params.locationId)
-
         // player.cell = params.locationId
         // if (!exploredCells.includes(params.locationId)) {
         //   exploredCells.push(params.locationId)
         // }
         // showExploredCells()
+        setIsOpen(true)
       }else{
         console.log('Other message received from iframe:', event.data)
 
@@ -89,6 +87,7 @@ const Map: React.FC<PropType> = ({ className }) => {
           <>Loading</>
         )
       }
+      <LocationDialog isOpen={isOpen} setOpen={value => setIsOpen(value)} />
     </div>
   )
 }
