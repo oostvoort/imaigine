@@ -18,6 +18,6 @@ export type LOCKINTYPES = {
 
 export type HashOptionsTypes = {
   key : string,
-  data : string,
+  data : BattleOptions,
   timestamp : number
 }

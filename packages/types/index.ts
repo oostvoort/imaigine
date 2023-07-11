@@ -1,30 +1,37 @@
 export interface Dev {
   mock?: boolean
 }
+
 export interface Story {
   name: string,
   description: string
 }
+
 export interface GenerateStoryProps {
   theme: string,
   races: string[],
   currency: string
 }
+
 export interface GenerateStoryResponse {
   name: string,
   description: string
 }
+
 export interface GenerateLocationProps extends Dev {
   id: number,
 }
+
 export interface GenerateLocationResponse {
   ipfsHash: string,
   imageHash: string,
 }
+
 export interface InteractionOption {
   choice: string,
   effect: string
 }
+
 export interface InteractSingleDoneResponse {
   scenario: string,
   options: {
@@ -33,14 +40,17 @@ export interface InteractSingleDoneResponse {
     neutral: InteractionOption
   }
 }
+
 export interface GenerateNpcProps extends Dev {
   locationIpfsHash: string,
   locationId: string
 }
+
 export interface GenerateNpcResponse {
   ipfsHash: string,
   imageHash: string,
 }
+
 export interface GeneratePlayerProps extends Dev {
   ageGroup: string,
   genderIdentity: string,
@@ -49,26 +59,37 @@ export interface GeneratePlayerProps extends Dev {
   bodyType: string,
   favColor: string
 }
+
 export interface GeneratePlayerResponse {
   ipfsHash: string
   visualSummary: string,
   locationId: string
 }
-export interface GeneratePlayerImageProps extends Dev { visualSummary: string}
-export interface GeneratePlayerImageResponse { imageIpfsHash: string}
+
+export interface GeneratePlayerImageProps extends Dev {
+  visualSummary: string
+}
+
+export interface GeneratePlayerImageResponse {
+  imageIpfsHash: string
+}
+
 export interface CreatePlayerProps extends Dev {
   playerId: string,
   ipfsHash: string,
   imageIpfsHash: string,
   locationId: string
 }
+
 export interface StoreToIPFS {
   json: any
 }
+
 export interface Based {
   name: string,
   summary: string
 }
+
 export interface StoryConfig {
   name: string,
   summary: string,
@@ -76,15 +97,18 @@ export interface StoryConfig {
   currency: string,
   races: string[]
 }
+
 export interface StartingLocation {
   config: string,
   imgHash: string,
   id: string
 }
+
 export interface BaseConfig {
   storyConfig: string,
   startingLocations: Array<StartingLocation>
 }
+
 export interface InteractSQLResult {
   log_id: number,
   interactable_id: string,
@@ -96,6 +120,7 @@ export interface InteractSQLResult {
   neutral_choice: string,
   neutral_effect: string
 }
+
 export interface InsertInteractionParams {
   interactable_id: string,
   scenario: string,
@@ -106,6 +131,7 @@ export interface InsertInteractionParams {
   neutral_choice: string,
   neutral_effect: string
 }
+
 export interface LogSqlResult {
   log_id: number,
   interactable_id: string,
@@ -114,6 +140,7 @@ export interface LogSqlResult {
   by: string,
   player_log: string,
 }
+
 export interface InteractLocationProps extends Dev {
   playerEntityId: string,
   locationEntityId: string,
@@ -121,12 +148,14 @@ export interface InteractLocationProps extends Dev {
   playerIpfsHash: string,
   npcIpfsHash: Array<string>,
 }
+
 export interface InteractNpcProps extends Dev {
   playerEntityId: Array<string>,
   playerIpfsHash: Array<string>,
   npcIpfsHash: string,
   npcEntityId: string,
 }
+
 export interface InteractNpcResponse {
   conversationHistory: Array<Conversation>,
   option: {
@@ -144,6 +173,7 @@ export interface InteractNpcResponse {
     }
   }
 }
+
 export interface InsertHistoryLogsParams {
   interactable_id: string,
   players: string,
@@ -151,17 +181,21 @@ export interface InsertHistoryLogsParams {
   by: string,
   player_log: string
 }
+
 export interface Conversation {
   logId: number,
   by: string,
   text: string,
 }
+
 export interface GenerateTravelProps {
   playerEntityId: string
 }
+
 export interface GenerateTravelResponse {
   travelStory: string
 }
+
 export interface TravelLocationAttributes {
   locationName: string,
   latitude: string,
@@ -198,4 +232,9 @@ export interface RouteObject {
 export interface LocationObject {
   cellNumber: number,
   name: string
+}
+
+export interface PlayerHistoryProps {
+  playerEntityId: string,
+  locationId: string
 }

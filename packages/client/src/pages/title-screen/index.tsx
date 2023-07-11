@@ -1,12 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { useSetAtom } from 'jotai'
 import { activeScreen_atom, SCREENS } from '@/states/global'
+import useLocalStorage from '@/hooks/useLocalStorage'
+import { verifyPrivateKey } from '@/global/utils'
 
+const DUMMY_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 export default function TitleScreen() {
   const setActiveScreen = useSetAtom(activeScreen_atom)
+
+  const [, setPrivateKey] = useLocalStorage('mud:burnerWallet', DUMMY_PRIVATE_KEY)
+
+  const [isLoadExisting, setIsLoadExisting] = useState(false)
+
+  const [input, setInput] = useState('')
+
+  const handleLoadExisting = (privateKey: string) => {
+    const isValid = verifyPrivateKey(privateKey)
+    if (isValid) {
+      setPrivateKey(privateKey)
+      window.location.reload()
+    }
+    setIsLoadExisting(false)
+  }
 
   return (
     <div className={clsx([
@@ -30,10 +48,15 @@ export default function TitleScreen() {
           >
             Create New Character
           </Button>
+          { isLoadExisting && <input value={input} onChange={(e) => setInput(e.target.value)}/>}
           <Button
             size="2xl"
             variant="outline"
             className="rounded-full px-14 mt-4 uppercase font-jost text-xl w-[17em]"
+            onClick={() => {
+              if (isLoadExisting) handleLoadExisting(input)
+              else setIsLoadExisting(true)
+            }}
           >
             Load Existing
           </Button>
