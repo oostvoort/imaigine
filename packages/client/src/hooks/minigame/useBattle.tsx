@@ -1,14 +1,14 @@
 import { useMUD } from '@/MUDContext'
-import { Entity, Type } from '@latticexyz/recs'
+import { ComponentValue, Entity } from '@latticexyz/recs'
 import { useComponentValue } from "@latticexyz/react"
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { PromiseOrValue } from 'contracts/types/ethers-contracts/common'
-import { LOCKINTYPES } from '@/hooks/minigame/types/battle'
 import { useState } from 'react'
 import { utils } from 'ethers'
 import { useAtom } from 'jotai'
-import { hash_options_set_value } from '@/states/minigame'
+import { hash_options_set_value, hash_options_value } from '@/states/minigame'
+import { HashOptionsTypes } from '@/hooks/minigame/types/battle'
 
 export default function useBattle(playerId: Entity) {
   const {
@@ -26,7 +26,10 @@ export default function useBattle(playerId: Entity) {
     }
   } = useMUD()
 
+  const DEFAULT_BATTLE_POINTS: unknown = "0"
+
   const [, setHashAtom] = useAtom(hash_options_set_value)
+  const [hashAtom] = useAtom<HashOptionsTypes>(hash_options_value)
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
 
@@ -40,7 +43,7 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, playerId),
     image: useComponentValue(ImageComponent, playerId),
     location: useComponentValue(LocationComponent, playerId),
-    battlePoints: useComponentValue(BattlePointsComponent, playerId, 0)
+    battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue)
   }
 
   const opponentInfo = {
@@ -49,7 +52,7 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
     image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
     location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
-    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, 0)
+    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, DEFAULT_BATTLE_POINTS as ComponentValue)
   }
 
   /**
@@ -64,10 +67,10 @@ export default function useBattle(playerId: Entity) {
    */
   const onSelectOptions = (options: string) => {
     const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
-    const data = utils.keccak256(utils.toUtf8Bytes(options))
     const timestamp = new Date().getTime()
+    const data = options
 
-    const hashOptions = utils.solidityKeccak256(["string", "string", "uint256"], [key, data, timestamp])
+    const hashOptions = utils.solidityKeccak256(["string", "string"], [String(key + timestamp), data])
 
     setBattleOption(hashOptions)
     setHashAtom({ key, data, timestamp })
@@ -94,23 +97,23 @@ export default function useBattle(playerId: Entity) {
 
   /**
    * Defines a mutation hook to lock in battle options.
-   * @param data An object containing the hashSalt and options to lock in.
-   * @param hashSalt The hash salt corresponding to the selected options.
-   * @param options The selected battle options.
+   * @param mutationKey The key for the mutation.
+   * @param mutationFn The function to execute the mutation.
    * @throws Error if hashSalt or options are undefined.
-   * Sends a transaction to lock in the battle options.
+   * Gets the key, data and timestamp from the hash_options_value atom.
+   * Checks that key, data and timestamp are defined.
+   * Sends a transaction to lock in the battle options with the key, timestamp and options.
    * Waits for the transaction to be confirmed.
    * Returns the battle data.
    */
   const lockIn = useMutation({
     mutationKey: ["lockIn"],
-    mutationFn: async (data: LOCKINTYPES) => {
-      const { hashSalt, options } = data
+    mutationFn: async () => {
+      const { key, data, timestamp } = hashAtom
 
-      if (hashSalt == undefined) throw new Error ("Requested hashSalt is undefined")
-      if (options == undefined) throw new Error ("Requested options is undefined")
+      if (key == undefined || data == undefined || timestamp == undefined) throw new Error("Requested options is empty")
 
-      const tx = await worldSend('lockIn', [hashSalt, options])
+      const tx = await worldSend('lockIn', [String(key + timestamp), data])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return battleData
     }

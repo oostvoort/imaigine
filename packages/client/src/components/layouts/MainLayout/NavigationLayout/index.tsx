@@ -16,50 +16,47 @@ import useBattle from '@/hooks/minigame/useBattle'
 
 export default function Header() {
   const { player } = usePlayer()
-  const { battleData } = useBattle(player.id as Entity)
-
-  const { play, playdata } = usePlay(player.location?.value as Entity)
-  const {leave} = useLeave()
-  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
-console.log("battleData", battleData);
   const activeScreen = useGameState()
+  const { battleData } = useBattle(player.id as Entity)
+  const { play, playdata } = usePlay(player.location?.value as Entity)
+  const { leave } = useLeave(player.location?.value as Entity)
+
+  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
+
 
   const handleButtonClick = () => {
     setActiveScreen(activeScreen === SCREENS.CURRENT_LOCATION ? SCREENS.WORLD_MAP : SCREENS.CURRENT_LOCATION)
   }
 
-  const handleButtonClickOnStartBattle = async () => {
+  const handleStartBattle = () => {
     try {
-      await play.mutateAsync()
+      play.mutate()
       setActiveScreen(SCREENS.MINIGAME)
-
-
-      // if(battleData.battle !== undefined){
-      //   await leave.mutateAsync()
-      //   setActiveScreen(SCREENS.CURRENT_LOCATION)
-      // }else{
-      //   await play.mutateAsync()
-      //   setActiveScreen(SCREENS.MINIGAME)
-      // }
     } catch (e) {
       console.error(e)
     }
   }
 
   const handleLeaveBattle = () => {
-    leave.mutate()
-    setActiveScreen(SCREENS.CURRENT_LOCATION)
+    try {
+      leave.mutate()
+      setActiveScreen(SCREENS.CURRENT_LOCATION)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
+  // console.log('minigame player', player)
+  // console.log('minigame playdata', playdata)
+  // console.log('minigame battleData', battleData)
 
-  console.log("battleData.battle !== undefined", battleData.battle !== undefined);
   return (
     <div
-      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80'])}>
+      className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80' ])}>
       <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between items-center', 'px-md' ])}>
         {/*Menu Wrapper*/}
         <div className={clsx([ 'flex items-center space-x-md' ])}>
-          <DialogWidget  button={{
+          <DialogWidget button={{
             variant: 'default',
             title: 'Profile',
             imgSrc: '',
@@ -105,10 +102,10 @@ console.log("battleData", battleData);
         {/*End of Menu Wrapper*/}
 
         <Button
-            variant={'outline'}
-            onClick={battleData.battle !== undefined ? handleLeaveBattle : handleButtonClickOnStartBattle}
+          variant={'outline'}
+          onClick={ activeScreen === SCREENS.MINIGAME ? handleLeaveBattle : handleStartBattle }
         >
-          {battleData.battle !== undefined ? 'LEAVE BATTLE' : 'START BATTLE'}
+          {activeScreen === SCREENS.MINIGAME ? 'LEAVE BATTLE' : 'START BATTLE'}
         </Button>
       </div>
 
