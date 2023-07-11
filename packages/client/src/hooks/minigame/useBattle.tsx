@@ -1,6 +1,6 @@
 import { useMUD } from '@/MUDContext'
 import { ComponentValue, Entity } from '@latticexyz/recs'
-import { useComponentValue } from "@latticexyz/react"
+import { useComponentValue } from '@latticexyz/react'
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { PromiseOrValue } from 'contracts/types/ethers-contracts/common'
@@ -79,6 +79,23 @@ export default function useBattle(playerId: Entity) {
   }
 
   /**
+   * Defines a mutation hook to set battle lock.
+   * @param mutationKey The key for the mutation.
+   * @param mutationFn The function to execute the mutation.
+   * Sends a transaction to set lock in the battle options
+   * Waits for the transaction to be confirmed.
+   * Returns the battle data.
+   * */
+  const setLockBattle = useMutation({
+    mutationKey: ["setLockBattle"],
+    mutationFn: async () => {
+      const tx = await worldSend('battleLock', [])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      return battleData
+    }
+  })
+
+  /**
    * Defines a mutation hook to set battle options.
    * @throws Error if battleOption is undefined.
    * Sends a transaction with the battle options.
@@ -113,7 +130,7 @@ export default function useBattle(playerId: Entity) {
     mutationFn: async () => {
       const { key, data, timestamp } = hashAtom
 
-      if (key == undefined || data == undefined || timestamp == undefined) throw new Error("Requested options is empty")
+      if (key == undefined || (data == undefined || data == BattleOptions.NONE) || timestamp == undefined) throw new Error("Requested options is empty")
 
       const tx = await worldSend('lockIn', [String(key + timestamp), data])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
@@ -127,6 +144,7 @@ export default function useBattle(playerId: Entity) {
     lockIn,
     onSelectOptions,
     playerInfo,
-    opponentInfo
+    opponentInfo,
+    setLockBattle
   }
 }
