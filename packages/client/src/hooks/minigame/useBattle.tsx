@@ -1,68 +1,127 @@
-import React from 'react'
 import { useMUD } from '@/MUDContext'
+import { Entity, Type } from '@latticexyz/recs'
+import { useComponentValue } from "@latticexyz/react"
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
-import { SETBATTLETYPES } from '@/hooks/minigame/types/battle'
-import { useRow } from '@latticexyz/react'
-import { Entity } from '@latticexyz/recs'
+import { PromiseOrValue } from 'contracts/types/ethers-contracts/common'
+import { LOCKINTYPES } from '@/hooks/minigame/types/battle'
+import { useState } from 'react'
+import { utils } from 'ethers'
+import { useAtom } from 'jotai'
+import { hash_options_set_value } from '@/states/minigame'
 
-export default function useBattle () {
-    const {
-      network: {
-        worldSend,
-        txReduced$,
-        storeCache
-      }
-    } = useMUD()
+export default function useBattle(playerId: Entity) {
+  const {
+    components: {
+      BattleComponent,
+      BattlePointsComponent,
+      PlayerComponent,
+      ConfigComponent,
+      ImageComponent,
+      LocationComponent
+    },
+    network: {
+      worldSend,
+      txReduced$,
+    }
+  } = useMUD()
 
-    const [playerId, setPlayerId] = React.useState<Entity>()
-    const [locationId, setLocationId] = React.useState<Entity>()
+  const [, setHashAtom] = useAtom(hash_options_set_value)
+
+  const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
+
+  const battleData = {
+    battle: useComponentValue(BattleComponent, playerId),
+  }
+
+  const playerInfo = {
+    id: playerId,
+    player: useComponentValue(PlayerComponent, playerId),
+    config: useComponentValue(ConfigComponent, playerId),
+    image: useComponentValue(ImageComponent, playerId),
+    location: useComponentValue(LocationComponent, playerId),
+    battlePoints: useComponentValue(BattlePointsComponent, playerId, 0)
+  }
+
+  const opponentInfo = {
+    id: battleData.battle?.opponent,
+    player: useComponentValue(PlayerComponent, battleData.battle?.opponent as Entity),
+    config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
+    image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
+    location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
+    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, 0)
+  }
 
   /**
-   * Object containing the battle component data for a player's match.
-   * @param storeCache - The cache containing the battle component data.
-   * @param table - The table name to query, "BattleComponent".
-   * @param key - The key to query the table with, containing the player ID and location ID.
+   * Generates a hash of the selected battle options.
+   * @param options The selected battle options.
+   * Generates a key hash from the string "SECRET_ID".
+   * Generates a data hash from the selected options.
+   * Gets the current timestamp.
+   * Generates a hash of the key, data and timestamp using solidityKeccak256.
+   * Sets the battleOption state to the generated hash.
+   * Sets the hash_options_set_value atom to an object containing the key, data and timestamp.
    */
-    const match = {
-      battle: useRow(storeCache, {
-          table: "BattleComponent",
-          key: {
-            playerId: playerId as `0x${string}`,
-            locationId: locationId as `0x${string}`
-          }
-      })
-    }
+  const onSelectOptions = (options: string) => {
+    const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
+    const data = utils.keccak256(utils.toUtf8Bytes(options))
+    const timestamp = new Date().getTime()
+
+    const hashOptions = utils.solidityKeccak256(["string", "string", "uint256"], [key, data, timestamp])
+
+    setBattleOption(hashOptions)
+    setHashAtom({ key, data, timestamp })
+  }
 
   /**
-   * Mutation to set up a battle match between two players.
-   * @param mutationKey - The key for the mutation, ["setMatch"].
-   * @param mutationFn - The async function to execute the mutation.
-   * @param data - The data for the mutation, containing the opponent ID.
-   * @throws Error if the player ID or location ID is undefined.
-   * @returns The match object containing the battle component data for the player in the match.
+   * Defines a mutation hook to set battle options.
+   * @throws Error if battleOption is undefined.
+   * Sends a transaction with the battle options.
+   * Waits for the transaction to be confirmed.
+   * Returns the battle data.
    */
-    const setMatch = useMutation({
-      mutationKey: ["setMatch"],
-      mutationFn: async (data: SETBATTLETYPES) => {
-        if (match.battle != undefined) return match
+  const setBattle = useMutation({
+    mutationKey: ["setBattle"],
+    mutationFn: async () => {
 
-        if (playerId == undefined) throw new Error("Required Player Entity: `setPlayerId(\"0x00\")`")
-        if (locationId == undefined) throw new Error("Required Location Entity: `setLocationId(\"0x00\")`")
+      if (battleOption == undefined) throw new Error("Requested options is empty")
 
-        const { opponentId } = data
-        const tx = await worldSend('setMatch', [playerId, locationId, opponentId])
-        await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-        return match
-      }
-    })
-
-    return {
-      playerId,
-      locationId,
-      setPlayerId,
-      setLocationId,
-      setMatch,
-      match
+      const tx = await worldSend('battle', [battleOption])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      return battleData
     }
+  })
+
+  /**
+   * Defines a mutation hook to lock in battle options.
+   * @param data An object containing the hashSalt and options to lock in.
+   * @param hashSalt The hash salt corresponding to the selected options.
+   * @param options The selected battle options.
+   * @throws Error if hashSalt or options are undefined.
+   * Sends a transaction to lock in the battle options.
+   * Waits for the transaction to be confirmed.
+   * Returns the battle data.
+   */
+  const lockIn = useMutation({
+    mutationKey: ["lockIn"],
+    mutationFn: async (data: LOCKINTYPES) => {
+      const { hashSalt, options } = data
+
+      if (hashSalt == undefined) throw new Error ("Requested hashSalt is undefined")
+      if (options == undefined) throw new Error ("Requested options is undefined")
+
+      const tx = await worldSend('lockIn', [hashSalt, options])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      return battleData
+    }
+  })
+
+  return {
+    battleData,
+    setBattle,
+    lockIn,
+    onSelectOptions,
+    playerInfo,
+    opponentInfo
+  }
 }
