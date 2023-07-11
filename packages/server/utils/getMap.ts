@@ -45,6 +45,8 @@ export async function getLocations(mapSeed: number) {
   // Access the function on the page
   return await page.evaluate(() => {
     // Call the function on the page to get all burgs
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return window.getAllBurg()
   })
 }
