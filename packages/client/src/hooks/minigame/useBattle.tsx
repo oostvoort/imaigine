@@ -37,6 +37,10 @@ export default function useBattle(playerId: Entity) {
     battle: useComponentValue(BattleComponent, playerId),
   }
 
+  const opponentBattleData = {
+    battle: useComponentValue(BattleComponent, battleData.battle?.opponent as Entity),
+  }
+
   const playerInfo = {
     id: playerId,
     player: useComponentValue(PlayerComponent, playerId),
@@ -145,6 +149,7 @@ export default function useBattle(playerId: Entity) {
     onSelectOptions,
     playerInfo,
     opponentInfo,
-    setLockBattle
+    setLockBattle,
+    opponentBattleData
   }
 }
