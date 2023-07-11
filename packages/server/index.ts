@@ -64,7 +64,7 @@ dotenv.config()
 
 declare global {
   interface Window {
-    findNearestPath: (from: number, to: number) => [ number[] ],
+    findNearestPath: (from: number, to: number) =>  number[] ,
     getCellInfo: (cell: number) => RouteObject,
     getToRevealCells: (currentLocation: number, exploreCells: number[]) => number[],
     getAllBurg:() => LocationObject[]
@@ -152,7 +152,7 @@ app.post('/get-revealed-cells', (req, res) => {
 app.get('/get-route', async (req: Request, res: Response) => {
   const seed = Number(process.env.MAP_SEED)
   try {
-    const result = await getRoute(seed, "1",813, 653)
+    const result = await getRoute(seed, "1",2207, 1892)
     res.send(result)
   } catch (e) {
     res.status(500).send(e.message)
@@ -679,12 +679,12 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
   try {
 
     const playerCurrentLocationId = await getPlayerLocation(props.playerEntityId)
-    // const playerDestinationLocationId = await getPlayerDestination(props.playerEntityId)
-    const playerDestinationLocationId = 1514
+    const playerDestinationLocationId = await getPlayerDestination(props.playerEntityId)
+    // const playerDestinationLocationId = 1514
 
     console.info("- getting route ...")
     const data = await getRoute(Number(process.env.MAP_SEED), props.playerEntityId, playerCurrentLocationId, playerDestinationLocationId)
-    console.info("- done getting route")
+    console.info("- done getting route", data)
 
     await startTravel(props.playerEntityId, data.routeData.map(route => route.cell), data.toRevealAtDestination)
 

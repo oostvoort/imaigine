@@ -61,7 +61,7 @@ function getToRevealCells(currentLocation, exploredCells) {
     if (burg !== currentLocation) {
       const paths = findNearestPath(currentLocation, burg)
       if (paths.length > 0) {
-        nearestBurgPath = [...nearestBurgPath, ...paths[0]]
+        nearestBurgPath = [...nearestBurgPath, ...paths]
       }
     }
   }

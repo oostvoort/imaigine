@@ -133,3 +133,8 @@ export type GenerateLocationInteraction = {
   interactableId: PromiseOrValue<string>,
   choiceId: PromiseOrValue<string>
 }
+
+
+export type MyPlayer = {
+
+}
