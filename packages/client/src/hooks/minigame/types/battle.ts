@@ -15,3 +15,9 @@ export type LOCKINTYPES = {
   hashSalt: PromiseOrValue<string>,
   options: PromiseOrValue<BattleOptions>
 }
+
+export type HashOptionsTypes = {
+  key : string,
+  data : string,
+  timestamp : number
+}

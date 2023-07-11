@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { utils } from 'ethers'
 import { useAtom } from 'jotai'
 import { hash_options_set_value, hash_options_value } from '@/states/minigame'
+import { HashOptionsTypes } from '@/hooks/minigame/types/battle'
 
 export default function useBattle(playerId: Entity) {
   const {
@@ -28,7 +29,7 @@ export default function useBattle(playerId: Entity) {
   const DEFAULT_BATTLE_POINTS: unknown = "0"
 
   const [, setHashAtom] = useAtom(hash_options_set_value)
-  const [hashAtom] = useAtom<{key : string, data : string, timestamp : number}>(hash_options_value)
+  const [hashAtom] = useAtom<HashOptionsTypes>(hash_options_value)
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
 
