@@ -70,7 +70,7 @@ export default function useBattle(playerId: Entity) {
     const timestamp = new Date().getTime()
     const data = options
 
-    const hashOptions = utils.solidityKeccak256(["string", "uint256"], [String(key + timestamp), data])
+    const hashOptions = utils.solidityKeccak256(["string", "string"], [String(key + timestamp), data])
 
     setBattleOption(hashOptions)
     setHashAtom({ key, data, timestamp })
