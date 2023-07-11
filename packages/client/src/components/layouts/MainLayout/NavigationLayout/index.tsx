@@ -11,12 +11,17 @@ import { useAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
+import useLeave from '@/hooks/minigame/useLeave'
+import useBattle from '@/hooks/minigame/useBattle'
 
 export default function Header() {
   const { player } = usePlayer()
-  const { play } = usePlay(player.location?.value as Entity)
-  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
+  const { battleData } = useBattle(player.id as Entity)
 
+  const { play, playdata } = usePlay(player.location?.value as Entity)
+  const {leave} = useLeave()
+  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
+console.log("battleData", battleData);
   const activeScreen = useGameState()
 
   const handleButtonClick = () => {
@@ -27,11 +32,27 @@ export default function Header() {
     try {
       await play.mutateAsync()
       setActiveScreen(SCREENS.MINIGAME)
+
+
+      // if(battleData.battle !== undefined){
+      //   await leave.mutateAsync()
+      //   setActiveScreen(SCREENS.CURRENT_LOCATION)
+      // }else{
+      //   await play.mutateAsync()
+      //   setActiveScreen(SCREENS.MINIGAME)
+      // }
     } catch (e) {
       console.error(e)
     }
   }
 
+  const handleLeaveBattle = () => {
+    leave.mutate()
+    setActiveScreen(SCREENS.CURRENT_LOCATION)
+  }
+
+
+  console.log("battleData.battle !== undefined", battleData.battle !== undefined);
   return (
     <div
       className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80'])}>
@@ -85,9 +106,9 @@ export default function Header() {
 
         <Button
             variant={'outline'}
-            onClick={handleButtonClickOnStartBattle}
+            onClick={battleData.battle !== undefined ? handleLeaveBattle : handleButtonClickOnStartBattle}
         >
-          START BATTLE
+          {battleData.battle !== undefined ? 'LEAVE BATTLE' : 'START BATTLE'}
         </Button>
       </div>
 

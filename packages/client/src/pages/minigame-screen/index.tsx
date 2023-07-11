@@ -6,31 +6,24 @@ import { IPFS_URL_PREFIX } from '@/global/constants'
 import usePlayer from '@/hooks/usePlayer'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
-import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { getFromIPFS } from '@/global/utils'
 import { useQuery } from '@tanstack/react-query'
 
 export default function MinigameScreen() {
-  const { player, getPlayerConfig, getPlayerImage, getPlayerBattlePoints, setCustomPlayerId } = usePlayer()
-  const { playdata } = usePlay(player.location?.value as Entity)
-  const { battleData } = useBattle(player.id as Entity)
-
+  const { player } = usePlayer()
+  // const { playdata } = usePlay(player.location?.value as Entity)
+  const { battleData, playerInfo, opponentInfo } = useBattle(player.id as Entity)
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
-  console.log("player", player);
 
-  React.useEffect(() => {
-    setCustomPlayerId(battleData.battle?.opponent as Entity)
-  }, [ battleData ])
-
-  const opponentInformation = useQuery({
-    queryKey: [ 'opponent-information', getPlayerConfig ],
+  const _opponentInfo = useQuery({
+    queryKey: [ 'opponent-info' ],
     queryFn: async () => {
-      if (getPlayerConfig) {
-        const data = await (await getFromIPFS(getPlayerConfig.value as string)).json()
+      if (opponentInfo.config && opponentInfo.config.value) {
+        const data = await (await getFromIPFS(opponentInfo.config.value as string)).json()
         return {
-          image: getPlayerImage?.value,
+          image: opponentInfo.image?.value,
           name: data.name,
           description: data.description,
         }
@@ -39,6 +32,10 @@ export default function MinigameScreen() {
       return {}
     },
   })
+
+  // console.log('minigame playerInfo', playerInfo)
+  // console.log('minigame opponentInfo', opponentInfo)
+  // console.log('minigame _opponentInfo', _opponentInfo.data)
 
   const weapons = [
     {
@@ -78,11 +75,15 @@ export default function MinigameScreen() {
 
                   <div className={clsx([ 'mt-lg mb-md h-full', 'flex flex-col justify-between' ])}>
                     <PlayerScoreBoard
-                      name={opponentInformation.data ? opponentInformation.data.name : '???'}
-                      imgSrc={opponentInformation.data ? `${IPFS_URL_PREFIX}/${opponentInformation.data.image}` : ''} />
+                      name={_opponentInfo.data ? _opponentInfo.data.name : '???'}
+                      imgSrc={_opponentInfo.data ? `${IPFS_URL_PREFIX}/${_opponentInfo.data.image}` : ''}
+                      battlePoints={0}
+                    />
+
 
                     <PlayerScoreBoard
-                      imgSrc={player.image?.value ? `${IPFS_URL_PREFIX}/${player.image.value}` : ''} name={'YOU'} />
+                      imgSrc={player.image?.value ? `${IPFS_URL_PREFIX}/${player.image.value}` : ''} name={'YOU'}
+                      battlePoints={0} />
                   </div>
                   {/*End of Player Wrapper*/}
                 </div>

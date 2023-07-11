@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { useMUD } from '@/MUDContext'
-import { Entity } from '@latticexyz/recs'
 
 export default function useLeave() {
 
