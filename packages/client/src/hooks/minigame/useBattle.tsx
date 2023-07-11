@@ -66,8 +66,8 @@ export default function useBattle(playerId: Entity) {
    */
   const onSelectOptions = (options: string) => {
     const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
-    const data = utils.keccak256(utils.toUtf8Bytes(options))
     const timestamp = new Date().getTime()
+    const data = options
 
     const hashOptions = utils.solidityKeccak256(["string", "uint256"], [String(key + timestamp), data])
 
