@@ -18,11 +18,12 @@ import {
   InteractNpcProps,
   InteractNpcResponse,
   InteractSQLResult, LocationObject,
-  LogSqlResult, RouteObject,
+  LogSqlResult, PlayerHistoryProps, RouteObject,
   StoreToIPFS,
   StoryConfig,
 } from 'types'
 import {
+  generateHistory,
   generateLocation,
   generateLocationInteraction,
   generateNonPlayerCharacter,
@@ -394,14 +395,15 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
         } else {
 
           // checking of choice
-          const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
+          // const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
+          const choice = BigNumber.from(1)
 
           if (choice.toNumber()) {
 
             await insertHistoryLogs({
               interactable_id: props.locationEntityId,
               by: 'player',
-              players: player.name,
+              players: props.playerEntityId,
               mode: 'action',
               player_log: interactions[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
             })
@@ -439,7 +441,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             })
             console.info('- done inserting new interaction')
 
-            await worldContract.openInteraction(props.playerEntityId)
+            // await worldContract.openInteraction(props.playerEntityId)
 
             res.send(locationInteraction)
           } else {
@@ -712,6 +714,29 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
   }
 })
 
+app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
+  const props: PlayerHistoryProps = req.body
+
+  try {
+    const locationHistory = await fetchHistoryLogs(props.locationId)
+
+    const playerInvolvement = locationHistory.filter(history => history.players.includes(props.playerEntityId))
+
+    let historyText = ``
+
+    playerInvolvement.forEach((item) => {
+      historyText += `${item.player_log}\n`
+    })
+
+    const generatedHistory = await generateHistory(historyText)
+
+    const data: {output: {history: string}} = JSON.parse(generatedHistory)
+
+    res.send({history: data.output.history})
+  } catch (e) {
+    next(e)
+  }
+})
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
   const props: StoreToIPFS = req.body
 
