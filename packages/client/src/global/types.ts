@@ -135,6 +135,11 @@ export type GenerateLocationInteraction = {
 }
 
 
-export type MyPlayer = {
-
+export type MapPlayer = {
+  cell: number,
+  config: string,
+  entityId: string,
+  legend: string,
+  name: string,
+  revealedCell: Array<number>
 }
