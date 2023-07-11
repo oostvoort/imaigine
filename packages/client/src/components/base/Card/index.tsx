@@ -99,7 +99,7 @@ const CardTimer = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
 
 CardTimer.displayName = 'CardTimer'
 
-const PlayerScoreBoard = ({ imgSrc, name }: { className?: string, name?: string, imgSrc?: string }) => {
+const PlayerScoreBoard = ({ imgSrc, name, battlePoints }: { className?: string, name?: string, imgSrc?: string, battlePoints: number }) => {
   return (
     <React.Fragment>
       {/*Player Opponent Card*/}
@@ -136,7 +136,7 @@ const PlayerScoreBoard = ({ imgSrc, name }: { className?: string, name?: string,
           <div
             className={clsx([ 'flex justify-between', 'px-2', 'border border-accent rounded-lg', 'bg-[#16150A]', 'text-[14px] leading-[32px] text-left text-option-11', 'font-segoe', 'tracking-[0.28px]' ])}>
             <p>{name}</p>
-            <p>?BP</p>
+            <p>{`${battlePoints} BP`}</p>
           </div>
         </div>
       </div>
