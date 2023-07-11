@@ -1,35 +1,37 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
+import LocationDialog from '@/components/shared/LocationDialog'
 
 type PropType = {
   className?: string
 }
-const Map: React.FC<PropType> = ({ className }) => {
+const Map: React.FC<PropType> = ({ className }: PropType) => {
+  // const [myPlayerMarkerId] = useAtomValue(myPlayerMarkerId_atom)
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const { players, myPlayer, isComplete, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
   const { generateTravel } =  useTravel()
-  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const [isMapRendered, setIsMapRendered] = React.useState(false)
 
+  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
+  const [locationData, setLocationData] = React.useState<any>({} as any)
 
-  // console.log('myPlayer', myPlayer)
-  // console.log('players', players)
-  //
   useEffect(() => {
     if(!travelData) return
     if (travelData.status >= 2){
-      console.log('TRAVEL time', Number(travelData.lastTravelledTimestamp))
-      console.log('TRAVEL status', travelData.status)
-      if (currentTimestamp - Number(travelData.lastTravelledTimestamp) >= 15) {
-        travel.mutate()
-        console.log('travelling')
-      }
+      setInterval(() => {
+        console.log('Player is travelling...')
+        travel.mutate();
+        showMyPlayer()
+      }, 15000); // 15 seconds interval
     }
-  }, [travelData, currentTimestamp])
-  console.log('travel data', travelData, currentTimestamp)
-  useEffect(() => {
+  }, [travelData])
 
+  // useEffect(() => {
+  // },[isMapRendered, myPlayer])
+
+  useEffect(() => {
     const handleMessage = (event: any) => {
 
       // ignore events that are not from the same baseUri
@@ -39,16 +41,12 @@ const Map: React.FC<PropType> = ({ className }) => {
       const {cmd, params} = event.data
 
       if(cmd === "FinishedLoadingMap"){
+        setIsMapRendered(true)
 
-          // Display myPlayer and player's marker
-          // showPlayers()
-          showMyPlayer()
       } else if(cmd === "BurgClicked"){
           // Travel
-          prepareTravel.mutate({ toLocation: params.locationId })
-          generateTravel.mutate()
-          console.log('travel')
-
+        setIsOpen(true)
+          prepareTravel.mutateAsync({ toLocation: params.locationId }).then(() => generateTravel.mutate())
       }else{
         console.log('Other message received from iframe:', event.data)
       }
@@ -61,7 +59,7 @@ const Map: React.FC<PropType> = ({ className }) => {
     return () => {
       window.removeEventListener('message', handleMessage)
     }
-  }, [myPlayer])
+  }, [])
 
 
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
@@ -78,6 +76,10 @@ const Map: React.FC<PropType> = ({ className }) => {
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
   const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
 
+
+  if (isMyPlayerComplete && isMapRendered) showMyPlayer()
+
+
   const reloadIframe = () => {
     if (iframeRef.current) {
       iframeRef.current.src = iframeRef.current.src
@@ -90,18 +92,23 @@ const Map: React.FC<PropType> = ({ className }) => {
       <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
       {
-        ( isMyPlayerComplete ) ? (
-          <iframe
-            ref={iframeRef}
-            width={'w-[inherit]'}
-            className={className}
-            src={`${document.baseURI}map/index.html?cell=${myPlayer?.cell}&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
-            title="Map"
-          />
-        ): (
-          <>Loading</>
+        isMyPlayerComplete ? (
+            <iframe
+              ref={iframeRef}
+              width={'w-[inherit]'}
+              className={className}
+              src={`${document.baseURI}map/index.html?cell=${myPlayer?.cell}&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
+              title="Map"
+            />
+        ) : (
+          <div>Loading ...</div>
         )
       }
+      <LocationDialog
+        isOpen={isOpen}
+        setOpen={value => setIsOpen(value)}
+        location={locationData}
+      />
     </div>
   )
 }
