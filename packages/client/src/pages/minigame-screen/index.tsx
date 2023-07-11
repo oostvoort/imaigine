@@ -10,33 +10,66 @@ import { Entity } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { getFromIPFS } from '@/global/utils'
 import { useQuery } from '@tanstack/react-query'
+import useGameState from '@/hooks/useGameState'
+import usePlay from '@/hooks/minigame/usePlay'
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  // const { playdata } = usePlay(player.location?.value as Entity)
+  const activeScreen = useGameState()
+  const { playdata} = usePlay(player.location?.value as Entity)
   const { battleData, playerInfo, opponentInfo } = useBattle(player.id as Entity)
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
 
-  const _opponentInfo = useQuery({
-    queryKey: [ 'opponent-info' ],
-    queryFn: async () => {
-      if (opponentInfo.config && opponentInfo.config.value) {
-        const data = await (await getFromIPFS(opponentInfo.config.value as string)).json()
-        return {
-          image: opponentInfo.image?.value,
-          name: data.name,
-          description: data.description,
-        }
-      }
 
-      return {}
+  const playerWaiting = playdata.opponent?.playerId === player.id
+  const opponentInGame = playdata.opponent?.playerId !== player.id
+
+  const _opponentInfo = useQuery({
+    queryKey: [ 'opponent-info', activeScreen, opponentInfo  ],
+    queryFn: async () => {
+      if (!opponentInfo.config || !opponentInfo.image) throw new Error('opponent info query error: opponentInfo still undefined')
+      const data = await (await getFromIPFS(opponentInfo.config.value as string)).json()
+      console.log("minigame", 'Rerun');
+      return {
+        image: opponentInfo.image?.value,
+        battlePoints: opponentInfo.battlePoints,
+        name: data.name,
+        description: data.description,
+      }
     },
+    enabled: Boolean(opponentInfo.config && opponentInfo.image),
+    refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
+  })
+
+  const _playerInfo = useQuery({
+    queryKey: [ 'player-info', activeScreen, playerInfo ],
+    queryFn: async () => {
+      if (!playerInfo.config || !playerInfo.image) throw new Error('player info query error: playerInfo still undefined')
+
+      const data = await (await getFromIPFS(playerInfo.config.value as string)).json()
+      return {
+        image: playerInfo.image?.value,
+        battlePoints: playerInfo.battlePoints ?? 0,
+        name: data.name,
+        description: data.description,
+      }
+    },
+    enabled: Boolean(playerInfo.config && playerInfo.image),
+    refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
   })
 
   // console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
   // console.log('minigame _opponentInfo', _opponentInfo.data)
+  // console.log('minigame _playerInfo', _playerInfo.data)
+  // console.log("minigame battleData",  battleData);
+  console.log("minigame playerWaiting",  playerWaiting);
+  console.log("minigame playerInGame",  opponentInGame);
+  // console.log("minigame playdata",  playdata.opponent?.playerId);
 
+  // "0x0000000000000000000000003738eb9748e499f9542d4aea37053ec8fbe261e3"
   const weapons = [
     {
       src: '/src/assets/minigame/icon_rps_sword.jpg',
@@ -75,15 +108,18 @@ export default function MinigameScreen() {
 
                   <div className={clsx([ 'mt-lg mb-md h-full', 'flex flex-col justify-between' ])}>
                     <PlayerScoreBoard
+                      isLoading={_opponentInfo.isLoading}
                       name={_opponentInfo.data ? _opponentInfo.data.name : '???'}
-                      imgSrc={_opponentInfo.data ? `${IPFS_URL_PREFIX}/${_opponentInfo.data.image}` : ''}
-                      battlePoints={0}
+                      imgSrc={`${IPFS_URL_PREFIX}/${_opponentInfo.data?.image}`}
+                      battlePoints={_opponentInfo.isSuccess ? Number(_opponentInfo.data?.battlePoints) : '?'}
                     />
 
-
                     <PlayerScoreBoard
-                      imgSrc={player.image?.value ? `${IPFS_URL_PREFIX}/${player.image.value}` : ''} name={'YOU'}
-                      battlePoints={0} />
+                      isLoading={_playerInfo.isLoading}
+                      name={_playerInfo.data ? 'YOU' : '???'}
+                      imgSrc={`${IPFS_URL_PREFIX}/${_playerInfo.data?.image}`}
+                      battlePoints={_playerInfo.isSuccess ? Number(_playerInfo.data?.battlePoints) : '?'}
+                    />
                   </div>
                   {/*End of Player Wrapper*/}
                 </div>
@@ -115,7 +151,7 @@ export default function MinigameScreen() {
               {/*Waiting for opponent*/}
               <Template.MinigameLayout.WaitingForOpponent className={''}>
                 {
-                  battleData.battle === undefined ?
+                  battleData.battle === undefined || playerWaiting ?
                     <React.Fragment>
                       <div
                         className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
@@ -129,7 +165,7 @@ export default function MinigameScreen() {
                       </div>
 
                       <div
-                        className={clsx([ 'bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
+                        className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
                         <p
                           className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
                           THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR

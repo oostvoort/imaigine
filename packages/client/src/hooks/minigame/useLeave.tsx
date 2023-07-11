@@ -9,7 +9,7 @@ export default function useLeave(locationId: Entity) {
   const {
     network: {
       worldSend,
-      txReduced$
+      txReduced$,
     },
   } = useMUD()
 
@@ -24,7 +24,7 @@ export default function useLeave(locationId: Entity) {
    * Returns the playdata.
    */
   const leave = useMutation({
-    mutationKey: ["leave"],
+    mutationKey: [ 'leave' ],
     mutationFn: async () => {
       const tx = await worldSend('leave', [])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
