@@ -46,6 +46,12 @@ contract MinigameSystem is System {
     BattleComponent.setTimestamp(playerID, block.timestamp);
   }
 
+  /// @notice called by the player to lock in a battle
+  function battleLock() public {
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
+  }
+
   /// @notice called by the player to evaluate battle
   /// @param hashSalt was the salt used to hash the option
   /// @param option is the actual option the player gave
