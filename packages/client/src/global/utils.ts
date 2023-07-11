@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { IPFS_URL_PREFIX } from '@/global/constants'
+import { ethers } from 'ethers'
 import { concat, hexlify, keccak256, solidityPack, toUtf8Bytes } from 'ethers/lib/utils'
 import { constants } from 'ethers'
 
@@ -36,6 +37,17 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return array
 }
+
+export const verifyPrivateKey = (value: string) => {
+  if (ethers.utils.isHexString(value)) {
+    return true;
+  } else {
+    if (value.length === 64) {
+      return ethers.utils.isHexString(`0x${value}`);
+    }
+    return false;
+  }
+};
 
 const toBytes16 = (str: string) => {
   const bytes = toUtf8Bytes(str)

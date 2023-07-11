@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
   "locationIpfsHash": "QmQdhoG3tiQwkCx3XUxDeoFvgSG3E5iB4VJAyHVvZzJMM4",
-  "playerIpfsHash": "QmT23hETEuddnXWoCn4veVtFKkaWLbbyKFfqbi5DwbJZr9",
-  "locationEntityId": "0x0000000000000000000000000000000000000000000000000000000000000021",
-  "playerEntityId": "0x0000000000000000000000000000000000000000000000000000000000000021"
+  "playerIpfsHash": "QmWoP45qHtVC8CmzdYtUvqsLEPMvdALCJG3AyUdj3XXVBc",
+  "locationEntityId": "0x01d07bf849d8bc0b9f6bba4ecb1f6137666c77ed849cb8c70b417bf1eae4059c",
+  "playerEntityId": "0xc3b0acd499d7793c18b519aee79a585b823b44d70b61c8db1eed3e3690e60ce2"
 }

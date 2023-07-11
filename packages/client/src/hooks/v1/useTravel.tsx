@@ -28,7 +28,7 @@ export default function useTravel() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(playerEntity),
+          body: JSON.stringify({ playerEntityId: playerEntity }),
         });
 
         const data = await response.json()

@@ -191,7 +191,7 @@ window.Routes = (function () {
 
     // Push the generated segments onto the paths, so they can be drawn later.
     segments.forEach(s => path.push(s))
-    return path
+    return path[0].reverse()
   }
 
   const regenerate = function () {

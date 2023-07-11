@@ -99,7 +99,8 @@ const CardTimer = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
 
 CardTimer.displayName = 'CardTimer'
 
-const PlayerScoreBoard = ({ imgSrc, name, battlePoints }: { className?: string, name?: string, imgSrc?: string, battlePoints: number }) => {
+const PlayerScoreBoard = ({ imgSrc, name, battlePoints, isLoading }: { className?: string, name?: string, imgSrc?: string, battlePoints: number | string, isLoading:boolean }) => {
+  //TODO: ADD ANIMATION AND LOADING EFFECT
   return (
     <React.Fragment>
       {/*Player Opponent Card*/}

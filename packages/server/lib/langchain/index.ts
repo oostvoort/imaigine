@@ -7,7 +7,12 @@ import {
   storySchema, summaryZodSchema,
 } from './schemas'
 import { OpenAI, PromptTemplate } from 'langchain'
-import { PipelinePromptTemplate } from 'langchain/prompts'
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+  PipelinePromptTemplate,
+  SystemMessagePromptTemplate,
+} from 'langchain/prompts'
 import {
   locationInteractionPropmt,
   locationPrompt,
@@ -34,6 +39,10 @@ import {
 import { z } from "zod"
 import { getStringContent } from '../../utils/getStringContent'
 import * as wasi from 'wasi'
+import { HumanMessage } from 'langchain/schema'
+import { ChatOpenAI } from 'langchain/chat_models'
+import * as process from 'process'
+import { createStructuredOutputChainFromZod } from 'langchain/chains/openai_functions'
 
 dotenv.config()
 
@@ -46,6 +55,8 @@ const model = new OpenAI({
   frequencyPenalty: 0,
   presencePenalty: 0,
 })
+
+const llm = new ChatOpenAI({ modelName: "gpt-3.5-turbo-0613", temperature: 0, openAIApiKey: process.env.OPENAI_API_KEY, });
 
 export async function createFullPrompt(instructions: string, formatInstructions: string) {
   const fullPrompt = PromptTemplate.fromTemplate(`
@@ -330,6 +341,39 @@ export async function summarizeText(text: string) : Promise<string> {
     return e
   }
 
+}
+
+export async function generateHistory(text: string): Promise<string> {
+  const historySchema = z.object({
+    history: z.string().describe("the summarized text")
+  })
+
+  const prompt = new ChatPromptTemplate({
+    promptMessages: [
+      SystemMessagePromptTemplate.fromTemplate(`
+      You will be provided with a text of what player do in the world. Your task is to
+      summarize the text given delimited by triple quotes. Be creative
+      if there is no text return a "No history available right now"
+      """{text}"""
+      `),
+    ],
+    inputVariables: ["text"]
+  })
+
+
+
+  const chain = createStructuredOutputChainFromZod(historySchema, {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    prompt,
+    llm,
+  });
+
+  const response = await chain.call({
+    text: text,
+  });
+
+  return JSON.stringify(response, null, 2)
 }
 function removeNewlines(str: string): string {
   console.info(str)

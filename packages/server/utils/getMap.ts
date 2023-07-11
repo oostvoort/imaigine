@@ -25,7 +25,7 @@ export async function getRoute(mapSeed: number, playerEntityId: string, from: nu
     // Call the function on the page to find the nearest path
     const paths = window.findNearestPath(from, to)
 
-    for (const path of paths[0]) {
+    for (const path of paths) {
       const pathInfo = window.getCellInfo(path)
       routeData.push(pathInfo)
     }

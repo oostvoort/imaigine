@@ -25,8 +25,6 @@ function hook_onMapClick(el, p) {
   if (grand.id === 'burgIcons') {
     console.log("Clicked burg: ", i)
     if (pack.cells.burg[i] <= 0) return // check if cellId has burg
-    // const reveal = getToRevealCells(813, [813,987])
-    // console.log('reveal', reveal)
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
@@ -63,7 +61,7 @@ function getToRevealCells(currentLocation, exploredCells) {
     if (burg !== currentLocation) {
       const paths = findNearestPath(currentLocation, burg)
       if (paths.length > 0) {
-        nearestBurgPath = [...nearestBurgPath, ...paths[0]]
+        nearestBurgPath = [...nearestBurgPath, ...paths]
       }
     }
   }
@@ -115,7 +113,7 @@ function showPlayers(players) {
   }
 }
 
-function getAllBurg() {
+function getAllBurgs() {
   const locations = []
 
   for(const burg of pack.burgs){
