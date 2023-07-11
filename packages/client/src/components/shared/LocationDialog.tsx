@@ -3,16 +3,28 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Dialog } from '@/components/base/Dialog'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
+import { Entity } from '@latticexyz/recs'
+import { IPFS_URL_PREFIX } from '@/global/constants'
+
+type LocationType = {
+  name: string,
+  summary: string,
+  imgHash: string,
+}
 
 type PropType = {
   isOpen?: boolean,
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>,
+  location: LocationType,
 }
 
-export default function LocationDialog({ isOpen, setOpen }: PropType) {
+export default function LocationDialog({ isOpen, setOpen, location }: PropType) {
   const handleTravel = () => {
+    console.log(location)
     console.info('Travelling...')
   }
+
+  // console.log('LOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD', location)
 
   return (
     <Dialog open={isOpen} onOpenChange={() => null}>
@@ -40,43 +52,49 @@ export default function LocationDialog({ isOpen, setOpen }: PropType) {
               'fixed p-md shadow-lg',
             ])}
           >
-            <div className={clsx('flex h-full gap-x-6')}>
-              <div className={clsx('w-5/12')}>
-                <img
-                  src={'/src/assets/background/bg1.jpg'}
-                  alt={'Location'}
-                  className={clsx([
-                    'w-full h-full object-cover',
-                    'rounded rounded-xl',
-                  ])}
-                />
-              </div>
-              <div className={clsx('flex flex-col justify-between w-7/12')}>
-                <div>
-                  <h1 className={clsx([
-                    'text-4xl text-option-9',
-                    'font-amiri',
-                    'leading-[48px] my-3',
-                  ])}>
-                    Everpeak Mountain
-                  </h1>
-                  <p className={clsx('text-3xl text-option-11 font-amiri leading-10')}>
-                    A majestic range reaching towards the sky, their rugged peaks kissed by snow. Towering cliffs and deep
-                    valleys carve the landscape, while ancient pines cling to the slopes. A realm of awe and mystery, where
-                    echoes of legends and the whispers of nature intertwine in harmony.
-                  </p>
+            {
+              !location.name ? (
+                <h1 className={'m-auto text-4xl'}>Loading...</h1>
+              ) : (
+                <div className={clsx('flex h-full gap-x-6')}>
+                  <div className={clsx('w-5/12')}>
+                    <img
+                      src={`${location.imgHash ? `${IPFS_URL_PREFIX}/${location.imgHash}` : '/src/assets/background/bg1.jpg'}`}
+                      alt={'Location'}
+                      className={clsx([
+                        'w-full h-full object-cover',
+                        'rounded rounded-xl',
+                      ])}
+                    />
+                  </div>
+                  <div className={clsx('flex flex-col justify-between w-7/12')}>
+                    <div>
+                      <h1 className={clsx([
+                        'text-4xl text-option-9',
+                        'font-amiri',
+                        'leading-[48px] my-3',
+                      ])}>
+                        {location.name}
+                      </h1>
+                      <div className={clsx('overflow-y-auto h-[350px]')}>
+                        <p className={clsx('text-3xl text-option-11 font-amiri leading-10')}>
+                          {location.summary}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={'flex justify-center'}>
+                      <Button
+                        variant={'neutral'}
+                        size={'btnWithBgImg'}
+                        onClick={handleTravel}
+                      >
+                        Travel to {location.name}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <div className={'flex justify-center'}>
-                  <Button
-                    variant={'neutral'}
-                    size={'btnWithBgImg'}
-                    onClick={handleTravel}
-                  >
-                    Travel to Everpeak Mountains
-                  </Button>
-                </div>
-              </div>
-            </div>
+              )
+            }
           </DialogPrimitive.Content>
         </DialogPrimitive.Overlay>
       </DialogPrimitive.Portal>

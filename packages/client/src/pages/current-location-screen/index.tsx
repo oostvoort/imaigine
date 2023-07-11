@@ -35,7 +35,7 @@ export default function CurrentLocationScreen() {
   const setCurrentLocation = useSetAtom(currentLocation_atom)
 
   // TODO: wrap in a memo since its only a checker for the three data below
-  const isDataReady = !!player.config?.value && !!location.config?.value && !!npc.data
+  const isDataReady = !!player.config?.value && !!location.data?.config.value && !!npc.data
 
   const locationDetails = {
     scenario: generateLocationInteraction.data?.scenario,
@@ -90,7 +90,7 @@ export default function CurrentLocationScreen() {
       setCurrentLocation({
         name: '',
         summary: '',
-        image: location.imgHash?.value,
+        image: location.data?.imgHash?.value,
         npc: { ...npc.data[0] }
       })
     }
@@ -119,7 +119,7 @@ export default function CurrentLocationScreen() {
           }}
         >
             {
-              location.imgHash === undefined ?
+              location.data?.imgHash === undefined ?
                 <div className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'} >
                   <div className={'border border-4 rounded-full p-10 text-center'}>
                     <img src={'src/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'}/>
@@ -127,7 +127,7 @@ export default function CurrentLocationScreen() {
                 </div>
                 :
                 <img
-                  src={`${IPFS_URL_PREFIX}/${location.imgHash.value}`}
+                  src={`${IPFS_URL_PREFIX}/${location.data.imgHash.value}`}
                   alt={'Location'}
                   className={clsx([
                     'object-cover w-full h-full',

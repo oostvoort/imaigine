@@ -1,16 +1,14 @@
 import { useMUD } from '@/MUDContext'
 import { useComponentValue } from '@latticexyz/react'
-import { Entity } from '@latticexyz/recs'
+import { Entity, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
 import { convertLocationNumberToLocationId, getFromIPFS } from '@/global/utils'
 import { GenerateLocationProps, GenerateLocationResponse, LocationParam } from '@/global/types'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { SERVER_API } from '@/global/constants'
 
 export default function useLocation(locationIdParam?: LocationParam) {
   const locationIdInContract = typeof locationIdParam === "string" ?
     locationIdParam : convertLocationNumberToLocationId(locationIdParam ?? 0)
-
-  console.log('locParams', locationIdInContract)
 
   const {
     components: {
@@ -21,12 +19,45 @@ export default function useLocation(locationIdParam?: LocationParam) {
     }
   } = useMUD()
 
-  const location = {
-    config: useComponentValue(ConfigComponent, locationIdInContract as Entity),
-    scene: useComponentValue(SceneComponent, locationIdInContract as Entity),
-    imgHash: useComponentValue(ImageComponent, locationIdInContract as Entity),
-    interactionType: useComponentValue(InteractionTypeComponent, locationIdInContract as Entity),
-  }
+
+  const location = useQuery(
+    [ `location-${locationIdParam}` ],
+    async () => {
+      if (!locationIdInContract) throw new Error('No location id')
+      console.info('getting location')
+      const locationIds = runQuery([
+        Has(ConfigComponent),
+        Has(SceneComponent),
+        Has(ImageComponent),
+        Has(InteractionTypeComponent)
+      ]).values()
+
+      const locationId = Array.from(locationIds).find((entityId) => locationIdInContract === entityId)
+
+      if (locationId) {
+        const config = getComponentValueStrict(ConfigComponent, locationId as Entity).value
+        const scene = getComponentValueStrict(SceneComponent, locationId as Entity)
+        const imgHash = getComponentValueStrict(ImageComponent, locationId as Entity)
+        const interactionType = getComponentValueStrict(InteractionTypeComponent, locationId as Entity)
+        const configData = await getFromIPFS(config)
+        const result = await configData.json()
+
+        return {
+          config: {
+            value: config,
+            ...result
+          },
+          scene,
+          imgHash,
+          interactionType
+        }
+      }
+
+      return null
+    }, {
+      enabled: Boolean(locationIdParam),
+      staleTime: Infinity
+    })
 
   const generateLocation = useMutation({
     mutationKey: [ 'generate-location' ],
@@ -41,14 +72,9 @@ export default function useLocation(locationIdParam?: LocationParam) {
           body: JSON.stringify({ id: variables.id }),
         });
 
-        console.log({response})
-
         const data = await response.json() as GenerateLocationResponse
         const getDataFromIPFS = await getFromIPFS(data.ipfsHash)
         const ipfsData = await getDataFromIPFS.json();
-
-        console.log({data})
-        console.log({ipfsData})
 
         return {
           ...data,

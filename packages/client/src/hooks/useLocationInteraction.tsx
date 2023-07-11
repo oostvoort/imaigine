@@ -29,7 +29,7 @@ export default function useLocationInteraction() {
   const data = {
     playerEntityId: playerEntity,
     locationEntityId: player.location?.value,
-    locationIpfsHash: location.config?.value,
+    locationIpfsHash: location.data?.config.value,
     playerIpfsHash: player.config?.value,
   }
 
