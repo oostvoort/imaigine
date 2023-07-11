@@ -395,8 +395,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
         } else {
 
           // checking of choice
-          // const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
-          const choice = BigNumber.from(1)
+          const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
 
           if (choice.toNumber()) {
 
@@ -441,7 +440,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             })
             console.info('- done inserting new interaction')
 
-            // await worldContract.openInteraction(props.playerEntityId)
+            await worldContract.openInteraction(props.playerEntityId)
 
             res.send(locationInteraction)
           } else {
