@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { utils } from 'ethers'
 import { useAtom } from 'jotai'
 import { hash_options_set_value, hash_options_value } from '@/states/minigame'
-import { HashOptionsTypes } from '@/hooks/minigame/types/battle'
+import { BattleOptions, HashOptionsTypes } from '@/hooks/minigame/types/battle'
 
 export default function useBattle(playerId: Entity) {
   const {
@@ -65,12 +65,12 @@ export default function useBattle(playerId: Entity) {
    * Sets the battleOption state to the generated hash.
    * Sets the hash_options_set_value atom to an object containing the key, data and timestamp.
    */
-  const onSelectOptions = async (options: string) => {
+  const onSelectOptions = async (options: BattleOptions) => {
     const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
     const timestamp = new Date().getTime()
     const data = options
 
-    const hashOptions = utils.solidityKeccak256(["string", "string"], [String(key + timestamp), data])
+    const hashOptions = utils.solidityKeccak256(["string", "uint8"], [String(key + timestamp), data])
 
     setBattleOption(hashOptions)
     setHashAtom({ key, data, timestamp })

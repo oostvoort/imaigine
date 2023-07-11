@@ -4,7 +4,7 @@ import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
 import { Button } from '@/components/base/Button'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import usePlayer from '@/hooks/usePlayer'
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+// import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
 import { Entity } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
@@ -12,24 +12,45 @@ import { getFromIPFS } from '@/global/utils'
 import { useQuery } from '@tanstack/react-query'
 import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
+import { BattleOptions } from '@/hooks/minigame/types/battle'
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
   const activeScreen = useGameState()
-  const { playdata} = usePlay(player.location?.value as Entity)
-  const { battleData, playerInfo, opponentInfo } = useBattle(player.id as Entity)
+  const { playdata } = usePlay(player.location?.value as Entity)
+  const { battleData, playerInfo, opponentInfo, onSelectOptions, lockIn } = useBattle(player.id as Entity)
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
-
+  // const [ countdown, setCountdown ] = React.useState<number>(10)
 
   const playerWaiting = playdata.opponent?.playerId === player.id
-  const opponentInGame = playdata.opponent?.playerId !== player.id
+  const playersInMatch = playdata.opponent?.playerId !== player.id
+
+  // React.useEffect(() => {
+  //   if (playersInMatch) {
+  //     const timer = setInterval(() => {
+  //       setCountdown((prevCountdown) => {
+  //         if (prevCountdown === 0) {
+  //           clearInterval(timer) // Stop the timer when countdown reaches 0
+  //           // Perform any actions or display a message when countdown reaches 0
+  //           console.log('Countdown completed!')
+  //         }
+  //         return prevCountdown - 1
+  //       })
+  //     }, 1000)
+  //
+  //     return () => {
+  //       clearInterval(timer)
+  //     }
+  //   }
+  // }, [ playersInMatch ])
+
 
   const _opponentInfo = useQuery({
-    queryKey: [ 'opponent-info', activeScreen, opponentInfo  ],
+    queryKey: [ 'opponent-info', activeScreen, opponentInfo ],
     queryFn: async () => {
       if (!opponentInfo.config || !opponentInfo.image) throw new Error('opponent info query error: opponentInfo still undefined')
       const data = await (await getFromIPFS(opponentInfo.config.value as string)).json()
-      console.log("minigame", 'Rerun');
+      console.log('minigame', 'Rerun')
       return {
         image: opponentInfo.image?.value,
         battlePoints: opponentInfo.battlePoints,
@@ -62,20 +83,20 @@ export default function MinigameScreen() {
 
   // console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
-  // console.log('minigame _opponentInfo', _opponentInfo.data)
-  // console.log('minigame _playerInfo', _playerInfo.data)
-  // console.log("minigame battleData",  battleData);
-  console.log("minigame playerWaiting",  playerWaiting);
-  console.log("minigame playerInGame",  opponentInGame);
-  // console.log("minigame playdata",  playdata.opponent?.playerId);
+  console.log('minigame _opponentInfo', _opponentInfo.data)
+  console.log('minigame _playerInfo', _playerInfo.data)
+  console.log('minigame battleData', battleData)
+  // console.log("minigame playerWaiting",  playerWaiting);
+  // console.log("minigame playerInGame",  playersInMatch);
+  // console.log('minigame countdown', countdown)
 
-  // "0x0000000000000000000000003738eb9748e499f9542d4aea37053ec8fbe261e3"
   const weapons = [
     {
       src: '/src/assets/minigame/icon_rps_sword.jpg',
       alt: 'Sword Icon',
       onClick: () => {
         setSelectedWeapon(0)
+        onSelectOptions(BattleOptions.Sword)
       },
     },
     {
@@ -83,6 +104,7 @@ export default function MinigameScreen() {
       alt: 'Scroll Icon',
       onClick: () => {
         setSelectedWeapon(1)
+        onSelectOptions(BattleOptions.Scroll)
       },
     },
     {
@@ -90,6 +112,7 @@ export default function MinigameScreen() {
       alt: 'Potion Icon',
       onClick: () => {
         setSelectedWeapon(2)
+        onSelectOptions(BattleOptions.Potion)
       },
     },
   ]
@@ -149,61 +172,65 @@ export default function MinigameScreen() {
                    draggable={false} />
 
               {/*Waiting for opponent*/}
-              <Template.MinigameLayout.WaitingForOpponent className={''}>
+              <Template.MinigameLayout.WaitingForOpponent
+                className={clsx([ { hidden: !battleData.battle === undefined || !playerWaiting } ])}>
                 {
-                  battleData.battle === undefined || playerWaiting ?
-                    <React.Fragment>
-                      <div
-                        className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                        <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                             className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
-                        <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other
-                          player</p>
+                  battleData.battle === undefined || playerWaiting &&
+                  <React.Fragment>
+                    <div
+                      className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                      <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                           className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
+                      <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other
+                        player</p>
 
-                        {/*Note*/}
+                      {/*Note*/}
 
-                      </div>
+                    </div>
 
-                      <div
-                        className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
-                        <p
-                          className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
-                          THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
+                    <div
+                      className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
+                      <p
+                        className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
+                        THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
                           MAP FOR
                           INCOMING PLAYERS.
                         </p>
                       </div>
                     </React.Fragment>
-
-                    : null
                 }
 
 
               </Template.MinigameLayout.WaitingForOpponent>
 
               {/*Choosing Weapon*/}
-              <Template.MinigameLayout.ChooseWeapon className={'hidden'}>
+              <Template.MinigameLayout.ChooseWeapon className={clsx([ { hidden: !playersInMatch } ])}>
                 <div
                   className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                  <CountdownCircleTimer
-                    isPlaying={true}
-                    duration={10}
-                    colors={'#FFBB00'}
-                    size={96}
-                    strokeWidth={10}
-                    trailColor={'#704E00'}
-                  >
-                    {({ remainingTime }) => <p
-                      className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>}
-                  </CountdownCircleTimer>
+                  {/*<CountdownCircleTimer*/}
+                  {/*  isPlaying={true}*/}
+                  {/*  duration={10}*/}
+                  {/*  colors={'#FFBB00'}*/}
+                  {/*  size={96}*/}
+                  {/*  strokeWidth={10}*/}
+                  {/*  trailColor={'#704E00'}*/}
+                  {/*>*/}
+                  {/*  {({ remainingTime }) => <p*/}
+                  {/*    className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>}*/}
+                  {/*</CountdownCircleTimer>*/}
                 </div>
 
                 <div
-                  className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2' ])}>
+                  className={clsx([ 'hidden bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2' ])}>
                   <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
                        className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
                   <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for opponent</p>
                 </div>
+
+                {/*<Button onClick={() => lockIn.mutateAsync()} variant={'neutral'} size={'btnWithBgImg'}*/}
+                {/*        className={'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2'}>Lock*/}
+                {/*  In</Button>*/}
+
 
                 <div
                   className={clsx([ 'flex gap-md', 'absolute left-1/2 -bottom-[10%] -translate-x-1/2 -translate-y-2/4' ])}>
