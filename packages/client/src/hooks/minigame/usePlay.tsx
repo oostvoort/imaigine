@@ -26,6 +26,15 @@ export default function usePlay(locationId: Entity) {
     opponent: useComponentValue(BattleQueueComponent, locationId)
   }
 
+    /**
+     * Defines a mutation hook to play in a location.
+     * @param mutationKey The key for the mutation.
+     * @param mutationFn The function to execute the mutation.
+     * Checks if the opponent player ID is the same as the player entity. If so, returns the playdata.
+     * Sends a transaction to play in the location.
+     * Waits for the transaction to be confirmed.
+     * Returns the playdata.
+     */
     const play = useMutation({
     mutationKey: ["play"],
     mutationFn: async () => {
