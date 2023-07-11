@@ -65,7 +65,7 @@ export default function useBattle(playerId: Entity) {
    * Sets the battleOption state to the generated hash.
    * Sets the hash_options_set_value atom to an object containing the key, data and timestamp.
    */
-  const onSelectOptions = (options: string) => {
+  const onSelectOptions = async (options: string) => {
     const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
     const timestamp = new Date().getTime()
     const data = options
@@ -74,6 +74,8 @@ export default function useBattle(playerId: Entity) {
 
     setBattleOption(hashOptions)
     setHashAtom({ key, data, timestamp })
+
+    await setBattle.mutateAsync()
   }
 
   /**
