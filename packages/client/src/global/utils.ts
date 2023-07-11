@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import { keccak256, solidityPack } from 'ethers/lib/utils'
+import { ethers } from 'ethers'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -35,3 +36,14 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return array
 }
+
+export const verifyPrivateKey = (value: string) => {
+  if (ethers.utils.isHexString(value)) {
+    return true;
+  } else {
+    if (value.length === 64) {
+      return ethers.utils.isHexString(`0x${value}`);
+    }
+    return false;
+  }
+};

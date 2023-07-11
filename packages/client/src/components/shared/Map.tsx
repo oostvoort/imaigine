@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useMap } from '@/hooks/v1/useMap'
+import useTravel from '@/hooks/v1/useTravel'
 
 type PropType = {
   className?: string
@@ -7,12 +8,26 @@ type PropType = {
 const Map: React.FC<PropType> = ({ className }) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const { players, myPlayer, isMyPlayerComplete} = useMap()
+  const { players, myPlayer, isComplete, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
+  const { generateTravel } =  useTravel()
+  const currentTimestamp = Math.floor(Date.now() / 1000);
 
-  // console.log('isMyPlayerComplete', isMyPlayerComplete)
+
   // console.log('myPlayer', myPlayer)
   // console.log('players', players)
-
+  //
+  useEffect(() => {
+    if(!travelData) return
+    if (travelData.status >= 2){
+      console.log('TRAVEL time', Number(travelData.lastTravelledTimestamp))
+      console.log('TRAVEL status', travelData.status)
+      if (currentTimestamp - Number(travelData.lastTravelledTimestamp) >= 15) {
+        travel.mutate()
+        console.log('travelling')
+      }
+    }
+  }, [travelData, currentTimestamp])
+  console.log('travel data', travelData, currentTimestamp)
   useEffect(() => {
 
     const handleMessage = (event: any) => {
@@ -24,20 +39,18 @@ const Map: React.FC<PropType> = ({ className }) => {
       const {cmd, params} = event.data
 
       if(cmd === "FinishedLoadingMap"){
-          showPlayers()
+
+          // Display myPlayer and player's marker
+          // showPlayers()
           showMyPlayer()
       } else if(cmd === "BurgClicked"){
-        console.log("BurgClicked", params)
-        prepareTravel.mutate(params.locationId)
+          // Travel
+          prepareTravel.mutate({ toLocation: params.locationId })
+          generateTravel.mutate()
+          console.log('travel')
 
-        // player.cell = params.locationId
-        // if (!exploredCells.includes(params.locationId)) {
-        //   exploredCells.push(params.locationId)
-        // }
-        // showExploredCells()
       }else{
         console.log('Other message received from iframe:', event.data)
-
       }
     }
 
@@ -48,7 +61,7 @@ const Map: React.FC<PropType> = ({ className }) => {
     return () => {
       window.removeEventListener('message', handleMessage)
     }
-  }, [])
+  }, [myPlayer])
 
 
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
@@ -70,14 +83,14 @@ const Map: React.FC<PropType> = ({ className }) => {
       iframeRef.current.src = iframeRef.current.src
     }
   }
-
+  console.log('myPlayer', myPlayer)
   return(
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
       <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
       {
-        ( isMyPlayerComplete) ? (
+        ( isMyPlayerComplete ) ? (
           <iframe
             ref={iframeRef}
             width={'w-[inherit]'}

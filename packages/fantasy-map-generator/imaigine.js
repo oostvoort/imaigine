@@ -25,8 +25,6 @@ function hook_onMapClick(el, p) {
   if (grand.id === 'burgIcons') {
     console.log("Clicked burg: ", i)
     if (pack.cells.burg[i] <= 0) return // check if cellId has burg
-    const reveal = getToRevealCells(813, [813,987])
-    console.log('reveal', reveal)
     // Get burgLabel element
     const burgElement = document.getElementById(`burgLabel${el.dataset.id}`)
 
@@ -115,7 +113,7 @@ function showPlayers(players) {
   }
 }
 
-function getAllBurg() {
+function getAllBurgs() {
   const locations = []
 
   for(const burg of pack.burgs){
