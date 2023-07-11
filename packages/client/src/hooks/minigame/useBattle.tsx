@@ -1,5 +1,5 @@
 import { useMUD } from '@/MUDContext'
-import { Entity, Type } from '@latticexyz/recs'
+import { ComponentValue, Entity } from '@latticexyz/recs'
 import { useComponentValue } from "@latticexyz/react"
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
@@ -26,7 +26,7 @@ export default function useBattle(playerId: Entity) {
     }
   } = useMUD()
 
-  const DEFAULT_BATTLE_POINTS = BigInt("0")
+  const DEFAULT_BATTLE_POINTS: unknown = "0"
 
   const [, setHashAtom] = useAtom(hash_options_set_value)
 
@@ -42,7 +42,7 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, playerId),
     image: useComponentValue(ImageComponent, playerId),
     location: useComponentValue(LocationComponent, playerId),
-    battlePoints: useComponentValue(BattlePointsComponent, playerId)
+    battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue)
   }
 
   const opponentInfo = {
@@ -51,7 +51,7 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
     image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
     location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
-    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity)
+    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, DEFAULT_BATTLE_POINTS as ComponentValue)
   }
 
   /**
