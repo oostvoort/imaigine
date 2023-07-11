@@ -133,7 +133,7 @@ export const useMap = () => {
       myPlayer?.legend !== 'Loading Legend' &&
       myPlayer?.config !== '' &&
       myPlayer?.cell !== 0 &&
-      myPlayer?.revealedCell?.length > 0,
+      !!myPlayer?.revealedCell?.length,
     players: players.filter(player => player.entityId !== myPlayer?.entityId),
     myPlayer,
     travelData

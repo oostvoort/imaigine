@@ -1,8 +1,9 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { IPFS_URL_PREFIX } from '@/global/constants'
-import { keccak256, solidityPack } from 'ethers/lib/utils'
 import { ethers } from 'ethers'
+import { concat, hexlify, keccak256, solidityPack, toUtf8Bytes } from 'ethers/lib/utils'
+import { constants } from 'ethers'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -47,3 +48,21 @@ export const verifyPrivateKey = (value: string) => {
     return false;
   }
 };
+
+const toBytes16 = (str: string) => {
+  const bytes = toUtf8Bytes(str)
+  return hexlify(concat([bytes, constants.HashZero]).slice(0, 16))
+}
+
+const LOCATION_PREFIX = toBytes16('LOCATION')
+
+/// @dev changes cellNumber to locationId
+export const convertLocationNumberToLocationId = (locationNumber: number) => {
+
+  return keccak256(
+    solidityPack(
+      ['bytes16', 'uint256'],
+      [LOCATION_PREFIX, locationNumber]
+    )
+  )
+}

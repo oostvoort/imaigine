@@ -25,6 +25,8 @@ contract MinigameSystem is System {
     bytes32 locationId = LocationComponent.get(playerID);
     bytes32 opponent = BattleQueueComponent.get(locationId);
 
+    require(opponent != playerID, "rejoining the same game");
+
     // TODO: get player to leave from current interaction
 
     if (opponent == 0) {

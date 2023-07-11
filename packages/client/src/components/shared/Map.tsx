@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
+import LocationDialog from '@/components/shared/LocationDialog'
 
 type PropType = {
   className?: string
 }
-const Map: React.FC<PropType> = ({ className }) => {
+const Map: React.FC<PropType> = ({ className }: PropType) => {
   // const [myPlayerMarkerId] = useAtomValue(myPlayerMarkerId_atom)
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const { players, myPlayer, isComplete, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
   const { generateTravel } =  useTravel()
   const [isMapRendered, setIsMapRendered] = React.useState(false)
+
+  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
+  const [locationData, setLocationData] = React.useState<any>({} as any)
 
   useEffect(() => {
     if(!travelData) return
@@ -41,6 +45,7 @@ const Map: React.FC<PropType> = ({ className }) => {
 
       } else if(cmd === "BurgClicked"){
           // Travel
+        setIsOpen(true)
           prepareTravel.mutateAsync({ toLocation: params.locationId }).then(() => generateTravel.mutate())
       }else{
         console.log('Other message received from iframe:', event.data)
@@ -86,14 +91,24 @@ const Map: React.FC<PropType> = ({ className }) => {
       <br /><br /><br /><br /><br /><br />
       <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
-      <iframe
-        ref={iframeRef}
-        width={'w-[inherit]'}
-        className={className}
-        src={`${document.baseURI}map/index.html?cell=${myPlayer?.cell}&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
-        title="Map"
+      {
+        isMyPlayerComplete ? (
+            <iframe
+              ref={iframeRef}
+              width={'w-[inherit]'}
+              className={className}
+              src={`${document.baseURI}map/index.html?cell=${myPlayer?.cell}&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
+              title="Map"
+            />
+        ) : (
+          <div>Loading ...</div>
+        )
+      }
+      <LocationDialog
+        isOpen={isOpen}
+        setOpen={value => setIsOpen(value)}
+        location={locationData}
       />
-      { isMyPlayerComplete ? (<div>loading</div>) : null }
     </div>
   )
 }
