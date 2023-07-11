@@ -15,6 +15,14 @@ export default function useLeave(locationId: Entity) {
 
   const { playdata } = usePlay(locationId)
 
+  /**
+   * Defines a mutation hook to leave a location.
+   * @param mutationKey The key for the mutation.
+   * @param mutationFn The function to execute the mutation.
+   * Sends a transaction to leave the location.
+   * Waits for the transaction to be confirmed.
+   * Returns the playdata.
+   */
   const leave = useMutation({
     mutationKey: ["leave"],
     mutationFn: async () => {
