@@ -4,7 +4,7 @@ import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
 import { Button } from '@/components/base/Button'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import usePlayer from '@/hooks/usePlayer'
-// import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
 import { Entity } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
@@ -12,11 +12,13 @@ import { getFromIPFS } from '@/global/utils'
 import { useQuery } from '@tanstack/react-query'
 import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
+import { useAtom } from 'jotai/index'
+import { hash_options_set_value } from '@/states/minigame'
 
-const useGetFromIPFS = (ipfsHash: string) => {
+const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(
     {
-      queryKey: ['ipfs', ipfsHash],
+      queryKey: [ 'ipfs', ipfsHash, key ],
       queryFn: async () => await (await getFromIPFS(ipfsHash)).json() as {
         name: string,
         description: string,
@@ -26,63 +28,75 @@ const useGetFromIPFS = (ipfsHash: string) => {
       enabled: !!ipfsHash,
       refetchIntervalInBackground: false,
       refetchOnWindowFocus: false,
-    }
+    },
   )
 }
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
   const { playdata } = usePlay(player.location?.value as Entity)
-  const { battleData, playerInfo, opponentInfo, onSelectOptions, lockIn  } = useBattle(player.id as Entity)
+  const {
+    battleData,
+    playerInfo,
+    opponentInfo,
+    onSelectOptions,
+    setLockBattle,
+    lockIn,
+    opponentBattleData,
+  } = useBattle(player.id as Entity)
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
-  // const [ countdown, setCountdown ] = React.useState<number>(10)
+  const [ countdown, setCountdown ] = React.useState<number>(10)
+  const [ , setHashAtom ] = useAtom(hash_options_set_value)
+
 
   const playerWaiting = playdata.opponent?.playerId === player.id
   const playersInMatch = playdata.opponent?.playerId !== player.id
 
-  const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '')
-  if(_opponentInfo.isSuccess) {
+  const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '', 'opponent')
+  if (_opponentInfo.isSuccess) {
     _opponentInfo.data.image = opponentInfo?.image?.value ?? ''
     _opponentInfo.data.battlePoints = Number(opponentInfo.battlePoints?.value ?? '0')
   }
 
-  const _playerInfo = useGetFromIPFS(playerInfo?.config?.value ?? '')
+  const _playerInfo = useGetFromIPFS(playerInfo?.config?.value ?? '', 'player')
   if (_playerInfo.isSuccess) {
     _playerInfo.data.image = playerInfo?.image?.value ?? ''
     _playerInfo.data.battlePoints = Number(playerInfo.battlePoints?.value ?? '0')
   }
 
-
-  // React.useEffect(() => {
-  //   if (playersInMatch) {
-  //     const timer = setInterval(() => {
-  //       setCountdown((prevCountdown) => {
-  //         if (prevCountdown === 0) {
-  //           clearInterval(timer) // Stop the timer when countdown reaches 0
-  //           // Perform any actions or display a message when countdown reaches 0
-  //           console.log('Countdown completed!')
-  //         }
-  //         return prevCountdown - 1
-  //       })
-  //     }, 1000)
-  //
-  //     return () => {
-  //       clearInterval(timer)
-  //     }
-  //   }
-  // }, [ playersInMatch ])
+  const handleLockIn = () => {
+    setLockBattle.mutate()
 
 
+    lockIn.mutateAsync().then(() => {
+      setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+      setSelectedWeapon(3)
+    })
+  }
 
+  const opponentHasNotSelectedWeapon = opponentBattleData.battle?.hashedOption === '0x0000000000000000000000000000000000000000000000000000000000000000'
+
+  React.useEffect(() => {
+    if (selectedWeapon !== 3 && !opponentHasNotSelectedWeapon) {
+      setLockBattle.mutateAsync().then(() => {
+        lockIn.mutateAsync().then(() => {
+          setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+          setSelectedWeapon(3)
+        })
+      })
+    }
+  }, [ selectedWeapon, opponentHasNotSelectedWeapon ])
+
+  // console.log('minigame opponentHasNotSelectedWeapon', opponentHasNotSelectedWeapon)
   // console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
   // console.log('minigame _opponentInfo', _opponentInfo.data)
   // console.log('minigame _playerInfo', _playerInfo.data)
   // console.log('minigame battleData', battleData)
-  console.log('minigame playerWaiting', playerWaiting)
+  // console.log('minigame playerWaiting', playerWaiting)
   // console.log("minigame playerInGame",  playersInMatch);
   // console.log('minigame countdown', countdown)
-  console.log('minigame battle data', battleData.battle === undefined)
+  // console.log('minigame battle data', battleData.battle)
 
   const weapons = [
     {
@@ -198,35 +212,39 @@ export default function MinigameScreen() {
               {/*Choosing Weapon*/}
               <Template.MinigameLayout.ChooseWeapon className={clsx([ { hidden: !playersInMatch } ])}>
                 <div
-                  className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                  {/*<CountdownCircleTimer*/}
-                  {/*  isPlaying={true}*/}
-                  {/*  duration={10}*/}
-                  {/*  colors={'#FFBB00'}*/}
-                  {/*  size={96}*/}
-                  {/*  strokeWidth={10}*/}
-                  {/*  trailColor={'#704E00'}*/}
-                  {/*>*/}
-                  {/*  {({ remainingTime }) => {*/}
-                  {/*    return (*/}
-                  {/*      <p*/}
-                  {/*        className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>*/}
-                  {/*    )*/}
-                  {/*  }*/}
-                  {/*  }*/}
-                  {/*</CountdownCircleTimer>*/}
+                  className={clsx([ 'hidden h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2', { hidden: countdown === 0 || selectedWeapon !== 3 } ])}>
+                  <CountdownCircleTimer
+                    isPlaying={true}
+                    duration={10}
+                    colors={'#FFBB00'}
+                    size={96}
+                    strokeWidth={10}
+                    trailColor={'#704E00'}
+                  >
+                    {({ remainingTime }) => {
+                      return (
+                        <p
+                          className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>
+                      )
+                    }
+                    }
+                  </CountdownCircleTimer>
                 </div>
 
                 <div
-                  className={clsx([ 'hidden bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2' ])}>
+                  className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': selectedWeapon !== 3 && !opponentHasNotSelectedWeapon } ])}>
                   <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                       className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
-                  <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for opponent</p>
+                       className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { hidden: !opponentHasNotSelectedWeapon || selectedWeapon === 3 } ])}
+                       draggable={false} />
+                  <p
+                    className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon !== 3 } ])}>{'Choose your weapon'}</p>
+                  <p
+                    className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon === 3 } ])}>{opponentHasNotSelectedWeapon && 'Waiting for opponent'}</p>
                 </div>
 
-                {/*<Button onClick={() => lockIn.mutateAsync()} variant={'neutral'} size={'btnWithBgImg'}*/}
-                {/*        className={'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2'}>Lock*/}
-                {/*  In</Button>*/}
+                <Button onClick={handleLockIn} variant={'neutral'} size={'btnWithBgImg'}
+                        className={clsx([ 'hidden absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': !playersInMatch } ])}>Lock
+                  In</Button>
 
 
                 <div

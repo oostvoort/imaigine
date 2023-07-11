@@ -3,7 +3,6 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 
 type PropType = {
-  myPlayer:
   className?: string
 }
 const Map: React.FC<PropType> = ({ className }) => {
