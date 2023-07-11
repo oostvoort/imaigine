@@ -20,7 +20,7 @@ export default function useLeave(locationId: Entity) {
     mutationFn: async () => {
       const tx = await worldSend('leave', [])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return true
+      return playdata
     }
   })
 
