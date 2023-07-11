@@ -9,7 +9,8 @@ import {
   BattleComponentData,
   LocationComponent,
   BattleHistoryCounter,
-  BattleHistoryComponent
+  BattleHistoryComponent,
+  BattlePointsComponent
 } from "../codegen/Tables.sol";
 
 import { BattleStatus, BattleOptions } from "../codegen/Types.sol";
@@ -49,11 +50,54 @@ contract MinigameSystem is System {
   /// @param hashSalt was the salt used to hash the option
   /// @param option is the actual option the player gave
   function lockIn(string memory hashSalt, BattleOptions option) public {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    bytes32 opponent = BattleComponent.getOpponent(playerID);
-    BattleStatus opponentStatus = BattleComponent.getStatus(opponent);
-    if (opponentStatus == BattleStatus.DONE_SELECTING) {
+    require(option != BattleOptions.NONE, "option cannot be none");
 
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
+
+    require(
+      keccak256(abi.encodePacked(hashSalt, option)) ==
+      battleComponentData.hashedOption,
+      "incorrect hash salt or option provided"
+    );
+
+    BattleComponentData memory opponentBattleData = BattleComponent.get(battleComponentData.opponent);
+    if (opponentBattleData.status == BattleStatus.LOCKED_IN) {
+      if (option == opponentBattleData.option) {
+        logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, true);
+      } else if (option == BattleOptions.Sword) {
+        if (opponentBattleData.option == BattleOptions.Scroll)
+          logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
+        else
+          logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
+      } else if (option == BattleOptions.Scroll) {
+        if (opponentBattleData.option == BattleOptions.Potion)
+          logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
+        else
+          logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
+      } else {
+        if (opponentBattleData.option == BattleOptions.Sword)
+          logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
+        else
+          logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
+      }
+      beginMatch(playerID, battleComponentData.opponent, 0);
+    } else {
+      if (opponentBattleData.timestamp + FORFEIT_TIME <= block.timestamp) {
+        bytes32 locationId = LocationComponent.get(playerID);
+        bytes32 playerInQueue = BattleQueueComponent.get(locationId);
+        kickOutPlayer(battleComponentData.opponent, playerID, playerInQueue, locationId);
+      } else {
+        BattleComponent.set(
+          playerID,
+          battleComponentData.opponent,
+          option,
+          battleComponentData.hashedOption,
+          BattleStatus.LOCKED_IN,
+          block.timestamp,
+          hashSalt
+        );
+      }
     }
   }
 
@@ -66,14 +110,7 @@ contract MinigameSystem is System {
     if (playerID == playerInQueue) BattleQueueComponent.set(locationId, 0);
     else {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
-      logHistory(battleData.opponent, playerID, BattleOptions.NONE, BattleOptions.NONE);
-      BattleComponent.set(playerID, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
-      if (playerInQueue != 0) {
-        beginMatch(battleData.opponent, playerInQueue, locationId);
-      } else {
-        BattleQueueComponent.set(locationId, battleData.opponent);
-        BattleComponent.set(battleData.opponent, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
-      }
+      kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
     }
     return locationId;
   }
@@ -85,14 +122,35 @@ contract MinigameSystem is System {
     BattleQueueComponent.set(locationId, 0);
   }
 
+  function kickOutPlayer(bytes32 playerToKickOut, bytes32 stayingPlayer, bytes32 playerInQueue, bytes32 locationId) internal {
+    logHistory(stayingPlayer, playerToKickOut, BattleOptions.NONE, BattleOptions.NONE, false);
+    BattleComponent.set(playerToKickOut, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
+
+    if (playerInQueue != 0) {
+      beginMatch(stayingPlayer, playerInQueue, locationId);
+    } else {
+      BattleQueueComponent.set(locationId, stayingPlayer);
+      BattleComponent.set(stayingPlayer, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
+    }
+  }
+
   function logHistory(
     bytes32 winner,
     bytes32 loser,
     BattleOptions winnerOption,
-    BattleOptions loserOption
+    BattleOptions loserOption,
+    bool draw
   ) internal {
     uint256 id = BattleHistoryCounter.get();
-    BattleHistoryComponent.set(id, winner, winnerOption, loser, loserOption);
+    BattleHistoryComponent.set(id, winner, winnerOption, loser, loserOption, draw);
     BattleHistoryCounter.set(id + 1);
+
+    if(!draw && BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE) {
+      uint256 winnerPoints = BattlePointsComponent.get(winner) + 1;
+      uint256 loserPoints = BattlePointsComponent.get(loser);
+      uint256 finalLoserPoints = loserPoints == 0 ? 0 : loserPoints - 1;
+      BattlePointsComponent.set(winner, winnerPoints);
+      BattlePointsComponent.set(loser, loserPoints);
+    }
   }
 }

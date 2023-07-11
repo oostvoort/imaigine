@@ -18,7 +18,8 @@ enum TravelStatus {
 enum BattleStatus {
   NOT_IN_BATTLE,
   IN_BATTLE,
-  DONE_SELECTING
+  DONE_SELECTING,
+  LOCKED_IN
 }
 
 enum BattleOptions {
