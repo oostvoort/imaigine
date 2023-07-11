@@ -31,6 +31,7 @@ contract InteractionSystem is MudV2Test {
   bytes32 private fromLocation;
   bytes32 private toLocation;
   bytes32 private playerId;
+  uint256 private fromLocationCellNumber = 99;
   uint256 private toLocationCellNumber = 100;
   bytes32 private zeroBytes = keccak256(abi.encodePacked(new bytes(0)));
   address private constant PLAYER_1 = address(1);
@@ -43,7 +44,7 @@ contract InteractionSystem is MudV2Test {
     super.setUp();
     world = IWorld(worldAddress);
 
-    fromLocation = world.createLocation("config", "image", 99);
+    fromLocation = world.createLocation("config", "image", fromLocationCellNumber);
     toLocation = keccak256(abi.encodePacked(bytes16("LOCATION"), toLocationCellNumber));
 
     vm.prank(PLAYER_1, PLAYER_1);
@@ -137,9 +138,15 @@ contract InteractionSystem is MudV2Test {
     vm.prank(PLAYER_1, PLAYER_1);
     world.prepareTravel(toLocationCellNumber);
 
+    uint256[] memory revealedCells = new uint256[](16);
+    revealedCells.setRevealedCell(fromLocationCellNumber, true);
+
     uint256[] memory pathCells = new uint256[](2);
     pathCells[0] = 1;
     pathCells[1] = 2;
+
+    revealedCells.setRevealedCell(1, true);
+    revealedCells.setRevealedCell(2, true);
 
     uint256[] memory toRevealAtDestination = new uint256[](2);
     toRevealAtDestination[0] = 3;
@@ -180,8 +187,6 @@ contract InteractionSystem is MudV2Test {
     assertEq(travelComponentData.lastTravelledTimestamp, 0);
     assertEq(zeroBytes, keccak256(abi.encodePacked(travelComponentData.path)));
     assertEq(zeroBytes, keccak256(abi.encodePacked(travelComponentData.toRevealAtDestination)));
-
-    uint256[] memory revealedCells = new uint256[](4);
 
     for(uint256 i = 0; i < toRevealAtDestination.length; i++) {
       revealedCells.setRevealedCell(toRevealAtDestination[i], true);
