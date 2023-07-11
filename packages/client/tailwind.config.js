@@ -30,7 +30,9 @@ export default {
       "btnEvil": "url('src/assets/background/btn_evil.png')",
       "btnEvilHover": "url('src/assets/background/btn_evil_hover.png')",
       "modal": "url('src/assets/background/bg_gray.jpg')",
-      "lining": "url('src/assets/minigame/bg_lining.svg')"
+      "lining": "url('src/assets/minigame/bg_lining.svg')",
+      "liningBig": "url('src/assets/minigame/bg_lining_big.svg')",
+      "noLining": "url('src/assets/minigame/bg_lining_noFrames.svg')"
     },
     container: {
       center: true,

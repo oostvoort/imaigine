@@ -9,53 +9,50 @@ import { activeScreen_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
 import { useAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
-import useQueue from '@/hooks/minigame/useQueue'
+import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
+import useLeave from '@/hooks/minigame/useLeave'
 import useBattle from '@/hooks/minigame/useBattle'
 
 export default function Header() {
   const { player } = usePlayer()
-  const { setLocationEntity, setQueue, battleQueue } = useQueue()
-  const { setPlayerId, setLocationId, setMatch } = useBattle()
+  const { battleData } = useBattle(player.id as Entity)
+
+  const { play, playdata } = usePlay(player.location?.value as Entity)
+  const {leave} = useLeave()
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
-
+console.log("battleData", battleData);
   const activeScreen = useGameState()
-
-  //Todo: change this to dynamic value
-  React.useEffect(() => {
-    setLocationEntity('0x0000000000000000000000000000000000000000000000000000000000000002' as Entity)
-    setLocationId('0x0000000000000000000000000000000000000000000000000000000000000002' as Entity)
-  }, [])
 
   const handleButtonClick = () => {
     setActiveScreen(activeScreen === SCREENS.CURRENT_LOCATION ? SCREENS.WORLD_MAP : SCREENS.CURRENT_LOCATION)
   }
 
   const handleButtonClickOnStartBattle = async () => {
-      try {
-        //initial queing
-        if (battleQueue.playerId == undefined) {
-          await setQueue.mutateAsync({
-            playerId: player.id as Entity,
-            locationId: '0x0000000000000000000000000000000000000000000000000000000000000002' as Entity,
-          })
-          setActiveScreen(SCREENS.MINIGAME)
-        }
+    try {
+      await play.mutateAsync()
+      setActiveScreen(SCREENS.MINIGAME)
 
-        //Set match to the player queing
-        if (battleQueue.playerId?.playerId && battleQueue.playerId?.playerId != player.id) {
-          setPlayerId(player.id)
 
-          await setMatch.mutateAsync({
-            opponentId: battleQueue.playerId?.playerId as Entity,
-          })
-          setActiveScreen(SCREENS.MINIGAME)
-        }
-      } catch (e) {
-        console.error(e)
-      }
+      // if(battleData.battle !== undefined){
+      //   await leave.mutateAsync()
+      //   setActiveScreen(SCREENS.CURRENT_LOCATION)
+      // }else{
+      //   await play.mutateAsync()
+      //   setActiveScreen(SCREENS.MINIGAME)
+      // }
+    } catch (e) {
+      console.error(e)
+    }
   }
 
+  const handleLeaveBattle = () => {
+    leave.mutate()
+    setActiveScreen(SCREENS.CURRENT_LOCATION)
+  }
+
+
+  console.log("battleData.battle !== undefined", battleData.battle !== undefined);
   return (
     <div
       className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80'])}>
@@ -109,9 +106,9 @@ export default function Header() {
 
         <Button
             variant={'outline'}
-            onClick={handleButtonClickOnStartBattle}
+            onClick={battleData.battle !== undefined ? handleLeaveBattle : handleButtonClickOnStartBattle}
         >
-          START BATTLE
+          {battleData.battle !== undefined ? 'LEAVE BATTLE' : 'START BATTLE'}
         </Button>
       </div>
 

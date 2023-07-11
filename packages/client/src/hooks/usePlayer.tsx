@@ -19,6 +19,8 @@ export default function usePlayer () {
             ImageComponent,
             LocationComponent,
             KarmaPointsComponent,
+            BattlePointsComponent,
+            BattleComponent
         },
 
         network: {
@@ -32,6 +34,11 @@ export default function usePlayer () {
 
     const getPlayerImage = useComponentValue(ImageComponent, customPlayerId)
     const getPlayerConfig = useComponentValue(ConfigComponent, customPlayerId)
+    const getPlayerBattlePoints = useComponentValue(BattlePointsComponent, customPlayerId)
+
+    const battleComponent = useComponentValue(BattleComponent, playerEntity)
+
+    console.log({ battleComponent })
 
     const player = {
         id: playerEntity,
@@ -42,6 +49,7 @@ export default function usePlayer () {
         image: useComponentValue(ImageComponent, playerEntity),
         location: useComponentValue(LocationComponent, playerEntity),
         karmaPoints: useComponentValue(KarmaPointsComponent, playerEntity),
+        battlePoints: useComponentValue(BattlePointsComponent, playerEntity)
     }
 
     const generatePlayer = useMutation<Awaited<GeneratedPlayer>, Error, GeneratePlayerProps>(async (data) => {
@@ -80,7 +88,8 @@ export default function usePlayer () {
         createPlayer,
         setCustomPlayerId,
         getPlayerImage,
-        getPlayerConfig
+        getPlayerConfig,
+        getPlayerBattlePoints
     }
 }
 
