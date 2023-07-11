@@ -10,20 +10,48 @@ import { Entity } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { getFromIPFS } from '@/global/utils'
 import { useQuery } from '@tanstack/react-query'
-import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
 
+const useGetFromIPFS = (ipfsHash: string) => {
+  return useQuery(
+    {
+      queryKey: ['ipfs', ipfsHash],
+      queryFn: async () => await (await getFromIPFS(ipfsHash)).json() as {
+        name: string,
+        description: string,
+        battlePoints: number,
+        image: string
+      },
+      enabled: !!ipfsHash,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+    }
+  )
+}
+
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const activeScreen = useGameState()
   const { playdata } = usePlay(player.location?.value as Entity)
-  const { battleData, playerInfo, opponentInfo, onSelectOptions, lockIn } = useBattle(player.id as Entity)
+  const { battleData, playerInfo, opponentInfo, onSelectOptions, lockIn  } = useBattle(player.id as Entity)
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
   // const [ countdown, setCountdown ] = React.useState<number>(10)
 
   const playerWaiting = playdata.opponent?.playerId === player.id
   const playersInMatch = playdata.opponent?.playerId !== player.id
+
+  const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '')
+  if(_opponentInfo.isSuccess) {
+    _opponentInfo.data.image = opponentInfo?.image?.value ?? ''
+    _opponentInfo.data.battlePoints = Number(opponentInfo.battlePoints?.value ?? '0')
+  }
+
+  const _playerInfo = useGetFromIPFS(playerInfo?.config?.value ?? '')
+  if (_playerInfo.isSuccess) {
+    _playerInfo.data.image = playerInfo?.image?.value ?? ''
+    _playerInfo.data.battlePoints = Number(playerInfo.battlePoints?.value ?? '0')
+  }
+
 
   // React.useEffect(() => {
   //   if (playersInMatch) {
@@ -45,50 +73,16 @@ export default function MinigameScreen() {
   // }, [ playersInMatch ])
 
 
-  const _opponentInfo = useQuery({
-    queryKey: [ 'opponent-info', activeScreen, opponentInfo ],
-    queryFn: async () => {
-      if (!opponentInfo.config || !opponentInfo.image) throw new Error('opponent info query error: opponentInfo still undefined')
-      const data = await (await getFromIPFS(opponentInfo.config.value as string)).json()
-      console.log('minigame', 'Rerun')
-      return {
-        image: opponentInfo.image?.value,
-        battlePoints: opponentInfo.battlePoints,
-        name: data.name,
-        description: data.description,
-      }
-    },
-    enabled: Boolean(opponentInfo.config && opponentInfo.image),
-    refetchOnWindowFocus: false,
-    refetchIntervalInBackground: false,
-  })
-
-  const _playerInfo = useQuery({
-    queryKey: [ 'player-info', activeScreen, playerInfo ],
-    queryFn: async () => {
-      if (!playerInfo.config || !playerInfo.image) throw new Error('player info query error: playerInfo still undefined')
-
-      const data = await (await getFromIPFS(playerInfo.config.value as string)).json()
-      return {
-        image: playerInfo.image?.value,
-        battlePoints: playerInfo.battlePoints ?? 0,
-        name: data.name,
-        description: data.description,
-      }
-    },
-    enabled: Boolean(playerInfo.config && playerInfo.image),
-    refetchOnWindowFocus: false,
-    refetchIntervalInBackground: false,
-  })
 
   // console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
-  console.log('minigame _opponentInfo', _opponentInfo.data)
-  console.log('minigame _playerInfo', _playerInfo.data)
-  console.log('minigame battleData', battleData)
-  // console.log("minigame playerWaiting",  playerWaiting);
+  // console.log('minigame _opponentInfo', _opponentInfo.data)
+  // console.log('minigame _playerInfo', _playerInfo.data)
+  // console.log('minigame battleData', battleData)
+  console.log('minigame playerWaiting', playerWaiting)
   // console.log("minigame playerInGame",  playersInMatch);
   // console.log('minigame countdown', countdown)
+  console.log('minigame battle data', battleData.battle === undefined)
 
   const weapons = [
     {
@@ -114,6 +108,7 @@ export default function MinigameScreen() {
         setSelectedWeapon(2)
         onSelectOptions(BattleOptions.Potion)
       },
+
     },
   ]
 
@@ -172,35 +167,32 @@ export default function MinigameScreen() {
                    draggable={false} />
 
               {/*Waiting for opponent*/}
-              <Template.MinigameLayout.WaitingForOpponent
-                className={clsx([ { hidden: !battleData.battle === undefined || !playerWaiting } ])}>
+              <Template.MinigameLayout.WaitingForOpponent>
                 {
-                  battleData.battle === undefined || playerWaiting &&
-                  <React.Fragment>
-                    <div
-                      className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                      <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                           className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
-                      <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other
-                        player</p>
+                  battleData.battle === undefined || playerWaiting ?
+                    <React.Fragment>
+                      <div
+                        className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                        <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                             className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
+                        <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>Waiting for the other
+                          player</p>
 
-                      {/*Note*/}
+                        {/*Note*/}
 
-                    </div>
+                      </div>
 
-                    <div
-                      className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
-                      <p
-                        className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
-                        THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
+                      <div
+                        className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
+                        <p
+                          className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
+                          THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
                           MAP FOR
                           INCOMING PLAYERS.
                         </p>
                       </div>
-                    </React.Fragment>
+                    </React.Fragment> : null
                 }
-
-
               </Template.MinigameLayout.WaitingForOpponent>
 
               {/*Choosing Weapon*/}
@@ -215,8 +207,13 @@ export default function MinigameScreen() {
                   {/*  strokeWidth={10}*/}
                   {/*  trailColor={'#704E00'}*/}
                   {/*>*/}
-                  {/*  {({ remainingTime }) => <p*/}
-                  {/*    className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>}*/}
+                  {/*  {({ remainingTime }) => {*/}
+                  {/*    return (*/}
+                  {/*      <p*/}
+                  {/*        className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>*/}
+                  {/*    )*/}
+                  {/*  }*/}
+                  {/*  }*/}
                   {/*</CountdownCircleTimer>*/}
                 </div>
 
