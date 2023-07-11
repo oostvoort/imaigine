@@ -17,6 +17,9 @@ async function delay(ms: number): Promise<void> {
 
 export async function getRoute(mapSeed: number, playerEntityId: string, from: number, to: number) {
   const exploredCells = await getPlayerRevealedCells(playerEntityId)
+  console.log('explored', exploredCells)
+  console.log('from', from)
+  console.log('to', to)
   const page = await launchAndNavigateMap(mapSeed)
   // Access the function on the page
   return await page.evaluate((exploredCells: number[], from: number, to: number) => {

@@ -95,7 +95,6 @@ export const calculateRevealedCells = (revealedCells: string) => {
     const arrayRow = Math.floor(i / BIT_SIZE)
     const arrayColumn = i % BIT_SIZE;
     const currentBit = bitMap[arrayRow]
-    console.log(currentBit, i, arrayRow, arrayColumn)
     const shiftedRight = currentBit.shr(arrayColumn).and(1)
     if (!shiftedRight.eq(0)) {
       playerRevealedCells.push(i)

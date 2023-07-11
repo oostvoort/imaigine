@@ -1,5 +1,5 @@
 import { useMUD } from '@/MUDContext'
-import { useEntityQuery, useRows } from '@latticexyz/react'
+import { useEntityQuery, useRows, useComponentValue } from '@latticexyz/react'
 import { Has, Entity } from '@latticexyz/recs'
 import React, { useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
@@ -39,9 +39,12 @@ export const useMap = () => {
       txReduced$
     },
     components: {
-      PlayerComponent
+      PlayerComponent,
+      TravelComponent
     },
   } = useMUD()
+
+  const travelData = useComponentValue(TravelComponent, playerEntity)
 
   const [configIpfs, setConfigIpfs] = useState<Record<string, {name: string, description: string}>>({})
 
@@ -111,13 +114,11 @@ export const useMap = () => {
     playerEntities.length &&
     mapCells.length &&
     configs.length &&
-    revealedCells.length
+    revealedCells.length &&
+    Object.values(configIpfs).length === playerEntities.length
   ) ? Status.COMPLETE : Status.LOADING
 
   const myPlayer = players.find(player => player.entityId === playerEntity)
-
-  console.log({myPlayer})
-
 
   return {
     functions: {
@@ -131,9 +132,10 @@ export const useMap = () => {
       myPlayer?.name !== 'Loading Name' &&
       myPlayer?.legend !== 'Loading Legend' &&
       myPlayer?.config !== '' &&
-      myPlayer.cell !== 0 &&
+      myPlayer?.cell !== 0 &&
       myPlayer?.revealedCell?.length > 0,
-    players,
-    myPlayer
+    players: players.filter(player => player.entityId !== myPlayer?.entityId),
+    myPlayer,
+    travelData
   }
 }
