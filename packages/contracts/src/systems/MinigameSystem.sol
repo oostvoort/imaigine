@@ -130,7 +130,7 @@ contract MinigameSystem is System {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
       kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
     }
-    BattleResultsComponents.update(playerID, 0, 0);
+    BattleResultsComponents.set(playerID, 0, 0);
     return locationId;
   }
 
@@ -184,6 +184,6 @@ contract MinigameSystem is System {
     uint32 totalWin = BattleResultsComponents.get(playerId).totalWins;
     uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
 
-    BattleResultsComponents.update(playerId, (totalWin + win), (totalLose + lose));
+    BattleResultsComponents.set(playerId, (totalWin + win), (totalLose + lose));
   }
 }
