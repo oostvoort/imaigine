@@ -54,6 +54,15 @@ contract MinigameSystem is System {
     BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
   }
 
+  /// @notice called by the timer to execute pre-result in a battle
+  /// @param option is the actual option the player gave
+  function preResult(BattleOptions option) public {
+    require(option != BattleOptions.NONE, "option cannot be none");
+
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    BattleComponent.setOption(playerID, option);
+  }
+
   /// @notice called by the player to evaluate battle
   /// @param hashSalt was the salt used to hash the option
   /// @param option is the actual option the player gave
