@@ -190,6 +190,6 @@ contract MinigameSystem is System {
     uint32 totalWin = BattleResultsComponents.get(playerId).totalWins;
     uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
 
-    BattleResultsComponents.set(playerId, (totalWin + lose), (totalLose + win));
+    BattleResultsComponents.set(playerId, (totalLose + lose), (totalWin + win));
   }
 }
