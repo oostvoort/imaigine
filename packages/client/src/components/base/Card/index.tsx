@@ -99,7 +99,17 @@ const CardTimer = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
 
 CardTimer.displayName = 'CardTimer'
 
-const PlayerScoreBoard = ({ imgSrc, name, battlePoints, isLoading }: { className?: string, name?: string, imgSrc?: string, battlePoints: number | string, isLoading:boolean }) => {
+type PlayerScoreBoardProps = {
+  className?: string,
+  name?: string,
+  imgSrc?: string,
+  battlePoints: number | string,
+  isLoading: boolean
+  win: string
+  loss: string
+}
+
+const PlayerScoreBoard = ({ imgSrc, name, battlePoints, win, loss }: PlayerScoreBoardProps) => {
   //TODO: ADD ANIMATION AND LOADING EFFECT
   return (
     <React.Fragment>
@@ -120,13 +130,13 @@ const PlayerScoreBoard = ({ imgSrc, name, battlePoints, isLoading }: { className
               <div
                 className={clsx([ 'flex flex-row', 'text-[30px] text-left leading-[48px] text-accent', 'font-amiri' ])}>
                 <h3 className={clsx([ 'basis-11/12', 'ml-md' ])}>Win</h3>
-                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>0</h3>
+                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>{win}</h3>
               </div>
 
               <div
                 className={clsx([ 'flex flex-row', 'text-[30px] leading-[48px] text-dangerAccent', 'font-amiri' ])}>
                 <h3 className={clsx([ 'basis-11/12', 'ml-md' ])}>Loss</h3>
-                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>0</h3>
+                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>{loss}</h3>
               </div>
             </div>
           </div>
