@@ -49,7 +49,7 @@ import {
   worldContract,
 } from './lib/contract'
 import { BigNumber } from 'ethers'
-import { getLocations, getRoute } from './utils/getMap'
+import { getLocations, getRoute, getToRevealCells } from './utils/getMap'
 import {
   generateMockLocationInteraction,
   generateMockNpcInteraction,
@@ -296,6 +296,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
         ipfsHash: playerIpfsHash,
         visualSummary: player.visualSummary,
         locationId: startingLocation.id,
+        cellId: startingLocation.cell
       } as GeneratePlayerResponse)
 
     } catch (e) {
@@ -325,8 +326,13 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 
   try {
     try {
-      console.info("Writing player to contract...")
-      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
+      console.info("- getting revealedCells...")
+      const revealedCells = await getToRevealCells(props.cellId, [props.cellId])
+      console.info("- done getting revealedCells")
+
+      console.info(" - writing player to contract...")
+      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId, revealedCells)).wait()
+      console.info("- done creating player")
       res.send('Player Created!')
     } catch (e) {
       next(e)
@@ -735,6 +741,7 @@ app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
     next(e)
   }
 })
+
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
   const props: StoreToIPFS = req.body
 

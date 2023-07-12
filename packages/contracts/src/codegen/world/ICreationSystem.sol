@@ -10,7 +10,8 @@ interface ICreationSystem {
     bytes32 playerID,
     string memory config,
     string memory imgHash,
-    bytes32 locationID
+    bytes32 locationID,
+    uint256[] memory defaultRevealedCells
   ) external returns (bytes32);
 
   function createCharacter(string memory config, string memory imgHash, bytes32 locationID) external returns (bytes32);

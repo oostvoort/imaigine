@@ -52,7 +52,8 @@ contract CreationSystem is System {
     bytes32 playerID,
     string memory config,
     string memory imgHash,
-    bytes32 locationID
+    bytes32 locationID,
+    uint256[] memory defaultRevealedCells
   )
   public
   returns (bytes32)
@@ -77,9 +78,12 @@ contract CreationSystem is System {
 
     MapCellComponent.set(playerID, MapCellComponent.get(locationID));
 
-    // TODO reveal other nearby cells
     uint256[] memory revealedCells = new uint256[](16);
     revealedCells.setRevealedCell(MapCellComponent.get(locationID), true);
+
+    for (uint256 i = 0; i < defaultRevealedCells.length; i++) {
+      revealedCells.setRevealedCell(defaultRevealedCells[i], true);
+    }
     RevealedCells.set(playerID, revealedCells.encode());
 
     return playerID;

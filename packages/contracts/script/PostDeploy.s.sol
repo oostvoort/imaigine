@@ -72,7 +72,8 @@ contract PostDeploy is Script {
         ),
         npcs[i].ipfsHash,
         npcs[i].imageHash,
-        cellNumber[npcs[i].locationId]
+        cellNumber[npcs[i].locationId],
+        new uint256[](0)
       );
     }
 

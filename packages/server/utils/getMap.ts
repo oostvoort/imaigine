@@ -1,7 +1,11 @@
 import puppeteer, { Page } from 'puppeteer'
 import { RouteObject } from 'types'
 import { getPlayerRevealedCells } from '../lib/contract'
+import * as dotenv from 'dotenv'
+import * as process from 'process'
 
+
+dotenv.config()
 export async function launchAndNavigateMap(seed: number): Promise<Page> {
   const browser = await puppeteer.launch({ headless: true });
   const page: Page = await browser.newPage();

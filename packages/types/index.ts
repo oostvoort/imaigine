@@ -63,7 +63,8 @@ export interface GeneratePlayerProps extends Dev {
 export interface GeneratePlayerResponse {
   ipfsHash: string
   visualSummary: string,
-  locationId: string
+  locationId: string,
+  cellId: number
 }
 
 export interface GeneratePlayerImageProps extends Dev {
@@ -78,7 +79,8 @@ export interface CreatePlayerProps extends Dev {
   playerId: string,
   ipfsHash: string,
   imageIpfsHash: string,
-  locationId: string
+  locationId: string,
+  cellId: number
 }
 
 export interface StoreToIPFS {
@@ -101,7 +103,8 @@ export interface StoryConfig {
 export interface StartingLocation {
   config: string,
   imgHash: string,
-  id: string
+  id: string,
+  cell: number
 }
 
 export interface BaseConfig {
