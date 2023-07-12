@@ -46,28 +46,14 @@ function getCellInfo(cellId) {
  return  window.Routes.getCellInfo(cellId)
 }
 
-function getToRevealCells(currentLocation, exploredCells) {
-  let newExploredCells = []
-  let nearestBurgPath = []
+function getToRevealCells(fromCell, exploredCells) {
+  // Find the nearest burg from fromCell
+  const burg = getNextTown(fromCell, exploredCells) // get the nearest unexplored burg
 
-  // Find the nearest burg for each cells
-  for (const c of exploredCells) {
-    const burg = getNextTown(c, exploredCells) // get the nearest unexplored burg
-    newExploredCells.push(burg.cell)  // push the nearest unexplored burg into newExploredCells
-  }
-
-  // Get the nearest path of nearest burg from player's current location
-  for (const burg of newExploredCells) {
-    if (burg !== currentLocation) {
-      const paths = findNearestPath(currentLocation, burg)
-      if (paths.length > 0) {
-        nearestBurgPath = [...nearestBurgPath, ...paths]
-      }
-    }
-  }
-
+  if (!burg.cell) return []
+  const paths = findNearestPath(fromCell, burg.cell)
  // Combine nearest burg and path, then remove explored cell
- return [...new Set([...nearestBurgPath, ...newExploredCells].filter(cell => !exploredCells.includes(cell)))]
+ return [...new Set([...paths, ...[burg.cell]].filter(cell => !exploredCells.includes(cell)))]
 }
 function revealCells(toRevealCells) {
   const path =
@@ -142,11 +128,15 @@ window.addEventListener('message', ({ data }) => {
     // Create myPlayer marker
     showPlayers([data.params.player])
     // Get to reveal cellss
-    const toReveal = getToRevealCells(data.params.player.cell, data.params.player.revealedCell)
+    // const toReveal = getToRevealCells(data.params.player.cell, data.params.player.revealedCell)
     // Reveal cells
     hideCells('myFogId')
-    revealCells([...data.params.player.revealedCell, ...toReveal])
+    // todo: get toRevealCells from myPlayer
+    revealCells([2207, 2103, 2101, 1998, 1893, 1892])
 
+  } else if (data.cmd === 'test') {
+    const reveal = getToRevealCells(1892, [2207, 2103, 2101, 1998, 1893, 1892])
+    console.log('reveal', reveal)
   } else {
     console.log('else', data)
   }

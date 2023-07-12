@@ -1,6 +1,5 @@
 import { useMUD } from '@/MUDContext'
-import { useComponentValue } from '@latticexyz/react'
-import { Entity, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
+import { Entity, getComponentValue, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
 import { convertLocationNumberToLocationId, getFromIPFS } from '@/global/utils'
 import { GenerateLocationProps, GenerateLocationResponse, LocationParam } from '@/global/types'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -62,7 +61,19 @@ export default function useLocation(locationIdParam?: LocationParam) {
   const generateLocation = useMutation({
     mutationKey: [ 'generate-location' ],
     mutationFn: async (variables: GenerateLocationProps) => {
-      console.log('gen-location', variables.id)
+      const config = getComponentValue(ConfigComponent, locationIdInContract as Entity)?.value
+      const imageHash = getComponentValue(ImageComponent, locationIdInContract as Entity)?.value
+      if (config && imageHash)  {
+        const getDataFromIPFS = await getFromIPFS(config)
+        const ipfsData = await getDataFromIPFS.json();
+
+        return {
+          ipfsHash: config,
+          imageHash,
+          ...ipfsData
+        }
+      }
+
       try {
         const response = await fetch(`${SERVER_API}/api/v1/generate-location`, {
           method: "POST",
