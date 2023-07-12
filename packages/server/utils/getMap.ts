@@ -31,7 +31,7 @@ export async function getRoute(mapSeed: number, playerEntityId: string, from: nu
     }
 
     // Call the function on the page to get "to reveal cell"
-    const toRevealAtDestination = window.getToRevealCells(from, exploredCells)
+    const toRevealAtDestination = window.getToRevealCells(to, exploredCells)
 
     return {
       routeData,
@@ -49,4 +49,15 @@ export async function getLocations(mapSeed: number) {
     // @ts-ignore
     return window.getAllBurg()
   })
+}
+
+export async function getToRevealCells(from: number, exploredCells: number[]) {
+  const page = await launchAndNavigateMap(Number(process.env.MAP_SEED))
+  // Access the function on the page
+  return await page.evaluate((from, exploredCells) => {
+    // Call the function on the page to get all burgs
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return window.getToRevealCells(from, exploredCells)
+  }, from, exploredCells)
 }
