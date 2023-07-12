@@ -6,14 +6,16 @@ type PropType = {
   myPlayer?: MapPlayer
   isMyPlayerComplete: boolean
   players?: MapPlayer[]
-  setIsLocationOpen: (value: boolean) => void
+  setIsLocationOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setCellNumber: (cell: number) => void
 }
 const Map: React.FC<PropType> = ({
   className,
   myPlayer,
   isMyPlayerComplete,
   players,
-  setIsLocationOpen
+  setIsLocationOpen,
+  setCellNumber,
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -34,6 +36,7 @@ const Map: React.FC<PropType> = ({
   // Display myPlayer marker on the map
   if(isMyPlayerComplete && players && isMapRendered) showMyPlayer()
 
+  const handleSelectCell = (cell: number) => setCellNumber(cell)
 
   useEffect(() => {
     const handleMessage = (event: any) => {
@@ -48,6 +51,7 @@ const Map: React.FC<PropType> = ({
       } else if(cmd === "BurgClicked"){
         // Travel
         setIsLocationOpen(true)
+        handleSelectCell(params.locationId)
       }else{
         console.log('Other message received from iframe:', event.data)
       }
