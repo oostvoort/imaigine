@@ -6,19 +6,18 @@ type PropType = {
   myPlayer?: MapPlayer
   isMyPlayerComplete: boolean
   players?: MapPlayer[]
-  setIsLocationOpen: (value: boolean) => void
+  travelPlayer: (cellId: number) => void
 }
 const Map: React.FC<PropType> = ({
   className,
   myPlayer,
   isMyPlayerComplete,
   players,
-  setIsLocationOpen
+  travelPlayer
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
-
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
       const iframeWindow = iframeRef.current.contentWindow
@@ -30,9 +29,14 @@ const Map: React.FC<PropType> = ({
   }
   // const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
   const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
+  const test = () => {sendMessageToIframe({cmd: "test", params: {player: myPlayer}})}
 
   // Display myPlayer marker on the map
-  if(isMyPlayerComplete && players && isMapRendered) showMyPlayer()
+  if(isMyPlayerComplete && myPlayer && isMapRendered) {
+    console.log('show player')
+    console.log('player current cell', myPlayer.cell)
+    showMyPlayer()
+  }
 
 
   useEffect(() => {
@@ -47,7 +51,9 @@ const Map: React.FC<PropType> = ({
         setIsMapRendered(true)
       } else if(cmd === "BurgClicked"){
         // Travel
-        setIsLocationOpen(true)
+        // test()
+        if (myPlayer?.cell === params.locationId) return
+        travelPlayer(params.locationId)
       }else{
         console.log('Other message received from iframe:', event.data)
       }
@@ -69,7 +75,7 @@ const Map: React.FC<PropType> = ({
     }
   }
 
-  return(
+  return (
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
       <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
@@ -84,5 +90,4 @@ const Map: React.FC<PropType> = ({
     </div>
   )
 }
-
 export default Map
