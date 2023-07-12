@@ -34,13 +34,34 @@ export default function useBattle(playerId: Entity) {
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
 
-  const battleData = {
-    battle: useComponentValue(BattleComponent, playerId),
+  /**
+   * Custom hook to get battle data for a player.
+   *
+   * @param playerId - ID of the player to get battle data for
+   *
+   * Calls useComponentValue to get latest battle data from BattleComponent.
+   *
+   * Returns object containing the battle data.
+   *
+   * Memoized to avoid duplicate requests.
+   */
+  const useBattleData = (playerId: Entity) => {
+    return {
+      battle: useComponentValue(BattleComponent, playerId)
+    }
   }
 
-  const opponentBattleData = {
-    battle: useComponentValue(BattleComponent, battleData.battle?.opponent as Entity),
-  }
+  /**
+   * Get battle data for current player and opponent.
+   *
+   * Calls useBattleData hook to get data for:
+   * - Current player ID
+   * - Opponent ID from player's battle data
+   *
+   * Returns battleData and opponentBattleData objects.
+   */
+  const battleData = useBattleData(playerId)
+  const opponentBattleData  = useBattleData(battleData.battle?.opponent as Entity)
 
   /**
    * Custom hook to get player data.
