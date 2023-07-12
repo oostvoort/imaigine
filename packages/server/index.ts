@@ -270,6 +270,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     console.info('generating player')
     try {
 
+      // TODO make starting location a number instead of locationIdInContract
       const startingLocation = getRandomLocation(baseConfig.startingLocations)
 
       const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
@@ -326,7 +327,10 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
   try {
     try {
       console.info("Writing player to contract...")
-      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
+      // TODO calculate revealed cells
+      /// getRevealedCells(cell)  => []
+      const revealedCells: number[] = []
+      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId, revealedCells)).wait()
       res.send('Player Created!')
     } catch (e) {
       next(e)

@@ -101,7 +101,9 @@ export interface StoryConfig {
 export interface StartingLocation {
   config: string,
   imgHash: string,
-  id: string
+  id: string,
+
+  cell: number
 }
 
 export interface BaseConfig {

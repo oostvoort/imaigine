@@ -44,8 +44,8 @@ contract InteractionSystem is MudV2Test {
 
     mockLocationID = world.createLocation("config", "image", 99);
     mockNPCID = world.createCharacter("config", "image", mockLocationID);
-    player1Id = world.createPlayer(bytes32(uint256(uint160(PLAYER_1))), "config", "image", mockLocationID);
-    player2Id = world.createPlayer(bytes32(uint256(uint160(PLAYER_2))), "config", "image", mockLocationID);
+    player1Id = world.createPlayer(bytes32(uint256(uint160(PLAYER_1))), "config", "image", mockLocationID, new uint256[](0));
+    player2Id = world.createPlayer(bytes32(uint256(uint160(PLAYER_2))), "config", "image", mockLocationID, new uint256[](0));
   }
 
   function testWorldExists() public {

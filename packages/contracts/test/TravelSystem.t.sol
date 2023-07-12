@@ -48,7 +48,7 @@ contract InteractionSystem is MudV2Test {
     toLocation = keccak256(abi.encodePacked(bytes16("LOCATION"), toLocationCellNumber));
 
     vm.prank(PLAYER_1, PLAYER_1);
-    playerId = world.createPlayer(bytes32(uint256(uint160(PLAYER_1))), "config", "image", fromLocation);
+    playerId = world.createPlayer(bytes32(uint256(uint160(PLAYER_1))), "config", "image", fromLocation, new uint256[](0));
   }
 
   function testWorldExists() public {
