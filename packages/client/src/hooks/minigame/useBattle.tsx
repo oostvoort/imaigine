@@ -42,25 +42,47 @@ export default function useBattle(playerId: Entity) {
     battle: useComponentValue(BattleComponent, battleData.battle?.opponent as Entity),
   }
 
-  const playerInfo = {
-    id: playerId,
-    player: useComponentValue(PlayerComponent, playerId),
-    config: useComponentValue(ConfigComponent, playerId),
-    image: useComponentValue(ImageComponent, playerId),
-    location: useComponentValue(LocationComponent, playerId),
-    battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue),
-    battleResults: useComponentValue(BattleResultsComponents, playerId)
+  /**
+   * Custom hook to get player data.
+   *
+   * @param playerId - ID of the player to get data for
+   *
+   * Calls useComponentValue to get latest data for:
+   * - PlayerComponent
+   * - ConfigComponent
+   * - ImageComponent
+   * - LocationComponent
+   * - BattlePointsComponent
+   * - BattleResultsComponents
+   *
+   * Returns object containing player data.
+   *
+   * Memoized to avoid duplicate requests.
+   */
+  const usePlayerData = (playerId: Entity) => {
+    // Memoization and caching
+    return {
+      id: playerId,
+      player: useComponentValue(PlayerComponent, playerId),
+      config: useComponentValue(ConfigComponent, playerId),
+      image: useComponentValue(ImageComponent, playerId),
+      location: useComponentValue(LocationComponent, playerId),
+      battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue),
+      battleResults: useComponentValue(BattleResultsComponents, playerId)
+    }
   }
 
-  const opponentInfo = {
-    id: battleData.battle?.opponent,
-    player: useComponentValue(PlayerComponent, battleData.battle?.opponent as Entity),
-    config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
-    image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
-    location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
-    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, DEFAULT_BATTLE_POINTS as ComponentValue),
-    battleResults: useComponentValue(BattleResultsComponents, battleData.battle?.opponent as Entity)
-  }
+  /**
+   * Get player and opponent data for current battle.
+   *
+   * Calls usePlayerData hook to get data for:
+   * - Current player ID
+   * - Opponent ID from battleData
+   *
+   * Returns playerInfo and opponentInfo objects.
+   */
+  const playerInfo = usePlayerData(playerId)
+  const opponentInfo =  usePlayerData(battleData.battle?.opponent as Entity)
 
   /**
    * Generates a hash of the selected battle options.
