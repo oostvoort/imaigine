@@ -674,8 +674,6 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
 app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) => {
   const props: GenerateTravelProps = req.body
 
-  console.log(props)
-
   try {
 
     const playerCurrentLocationId = await getPlayerLocation(props.playerEntityId)
