@@ -705,6 +705,7 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
     console.info("- done generating travel")
 
     res.send({
+      paths: data,
       travelStory: travelStory
     } as GenerateTravelResponse)
 

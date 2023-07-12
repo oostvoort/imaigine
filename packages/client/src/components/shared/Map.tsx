@@ -1,52 +1,53 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useMap } from '@/hooks/v1/useMap'
-import useTravel from '@/hooks/v1/useTravel'
-import LocationDialog from '@/components/shared/LocationDialog'
+import React, { useEffect, useRef } from 'react'
+import { MapPlayer } from '@/global/types'
 
 type PropType = {
   className?: string
+  myPlayer?: MapPlayer
+  isMyPlayerComplete: boolean
+  players?: MapPlayer[]
+  setIsLocationOpen: (value: boolean) => void
 }
-const Map: React.FC<PropType> = ({ className }: PropType) => {
-  // const [myPlayerMarkerId] = useAtomValue(myPlayerMarkerId_atom)
+const Map: React.FC<PropType> = ({
+  className,
+  myPlayer,
+  isMyPlayerComplete,
+  players,
+  setIsLocationOpen
+}: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const { players, myPlayer, isComplete, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
-  const { generateTravel } =  useTravel()
   const [isMapRendered, setIsMapRendered] = React.useState(false)
 
-  const [ isOpen, setIsOpen ] = React.useState<boolean>(false)
-  const [locationData, setLocationData] = React.useState<any>({} as any)
-
-  useEffect(() => {
-    if(!travelData) return
-    if (travelData.status >= 2){
-      setInterval(() => {
-        console.log('Player is travelling...')
-        travel.mutate();
-        showMyPlayer()
-      }, 15000); // 15 seconds interval
+  const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
+    if (iframeRef.current) {
+      const iframeWindow = iframeRef.current.contentWindow
+      if (iframeWindow) {
+        // Call the JavaScript function within the iframe
+        iframeWindow.postMessage(msg, '*')
+      }
     }
-  }, [travelData])
+  }
+  // const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
 
-  // useEffect(() => {
-  // },[isMapRendered, myPlayer])
+  // Display myPlayer marker on the map
+  if(isMyPlayerComplete && players && isMapRendered) showMyPlayer()
+
 
   useEffect(() => {
     const handleMessage = (event: any) => {
-
       // ignore events that are not from the same baseUri
       if (document.baseURI.indexOf(event.origin) < 0) return
-
       // Access the message data
       const {cmd, params} = event.data
 
       if(cmd === "FinishedLoadingMap"){
+        // Map rendered
         setIsMapRendered(true)
-
       } else if(cmd === "BurgClicked"){
-          // Travel
-        setIsOpen(true)
-          prepareTravel.mutateAsync({ toLocation: params.locationId }).then(() => generateTravel.mutate())
+        // Travel
+        setIsLocationOpen(true)
       }else{
         console.log('Other message received from iframe:', event.data)
       }
@@ -61,53 +62,24 @@ const Map: React.FC<PropType> = ({ className }: PropType) => {
     }
   }, [])
 
-
-  const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
-    if (iframeRef.current) {
-      const iframeWindow = iframeRef.current.contentWindow
-      if (iframeWindow) {
-        // Call the JavaScript function within the iframe
-        iframeWindow.postMessage(msg, '*')
-      }
-    }
-  }
-
   const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
-  const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
-
-
-  if (isMyPlayerComplete && isMapRendered) showMyPlayer()
-
-
   const reloadIframe = () => {
     if (iframeRef.current) {
       iframeRef.current.src = iframeRef.current.src
     }
   }
-  console.log('myPlayer', myPlayer)
+
   return(
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
       <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
       | <button onClick={reloadIframe}>Reload Iframe</button>
-      {
-        isMyPlayerComplete ? (
-            <iframe
-              ref={iframeRef}
-              width={'w-[inherit]'}
-              className={className}
-              src={`${document.baseURI}map/index.html?cell=${myPlayer?.cell}&scale=12&maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
-              title="Map"
-            />
-        ) : (
-          <div>Loading ...</div>
-        )
-      }
-      <LocationDialog
-        isOpen={isOpen}
-        setOpen={value => setIsOpen(value)}
-        location={locationData}
+      <iframe
+        ref={iframeRef}
+        width={'w-[inherit]'}
+        className={className}
+        src={`${document.baseURI}map/index.html?maplink=http://localhost:3000/mapdata?seed=${mapSeed}`}
+        title="Map"
       />
     </div>
   )
