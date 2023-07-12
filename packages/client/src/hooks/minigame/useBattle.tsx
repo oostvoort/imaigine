@@ -18,7 +18,8 @@ export default function useBattle(playerId: Entity) {
       PlayerComponent,
       ConfigComponent,
       ImageComponent,
-      LocationComponent
+      LocationComponent,
+      BattleResultsComponents
     },
     network: {
       worldSend,
@@ -47,7 +48,8 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, playerId),
     image: useComponentValue(ImageComponent, playerId),
     location: useComponentValue(LocationComponent, playerId),
-    battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue)
+    battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue),
+    battleResults: useComponentValue(BattleResultsComponents, playerId)
   }
 
   const opponentInfo = {
@@ -56,7 +58,8 @@ export default function useBattle(playerId: Entity) {
     config: useComponentValue(ConfigComponent, battleData.battle?.opponent as Entity),
     image: useComponentValue(ImageComponent, battleData.battle?.opponent as Entity),
     location: useComponentValue(LocationComponent, battleData.battle?.opponent as Entity),
-    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, DEFAULT_BATTLE_POINTS as ComponentValue)
+    battlePoints: useComponentValue(BattlePointsComponent, battleData.battle?.opponent as Entity, DEFAULT_BATTLE_POINTS as ComponentValue),
+    battleResults: useComponentValue(BattleResultsComponents, battleData.battle?.opponent as Entity)
   }
 
   /**
