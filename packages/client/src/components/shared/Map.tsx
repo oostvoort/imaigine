@@ -8,6 +8,7 @@ type PropType = {
   players?: MapPlayer[]
   setIsLocationOpen: React.Dispatch<React.SetStateAction<boolean>>
   setCellNumber: (cell: number) => void
+  travelPlayer: (cellId: number) => void
 }
 const Map: React.FC<PropType> = ({
   className,
@@ -16,6 +17,7 @@ const Map: React.FC<PropType> = ({
   players,
   setIsLocationOpen,
   setCellNumber,
+  travelPlayer
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -34,7 +36,11 @@ const Map: React.FC<PropType> = ({
   const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
 
   // Display myPlayer marker on the map
-  if(isMyPlayerComplete && players && isMapRendered) showMyPlayer()
+  if(isMyPlayerComplete && myPlayer && isMapRendered) {
+    console.log('show player')
+    console.log('player current cell', myPlayer.cell)
+    showMyPlayer()
+  }
 
   const handleSelectCell = (cell: number) => setCellNumber(cell)
 
@@ -52,6 +58,9 @@ const Map: React.FC<PropType> = ({
         // Travel
         setIsLocationOpen(true)
         handleSelectCell(params.locationId)
+        // test()
+        if (myPlayer?.cell === params.locationId) return
+        travelPlayer(params.locationId)
       }else{
         console.log('Other message received from iframe:', event.data)
       }
@@ -73,7 +82,7 @@ const Map: React.FC<PropType> = ({
     }
   }
 
-  return(
+  return (
     <div className={'w-full h-full'}>
       <br /><br /><br /><br /><br /><br />
       <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
