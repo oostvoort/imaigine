@@ -445,5 +445,21 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
+    BattleResultsComponents: (() => {
+      const tableId = new TableId("", "BattleResultsCom");
+      return defineComponent(
+        world,
+        {
+          totalWins: RecsType.Number,
+          totalLoses: RecsType.Number,
+        },
+        {
+          metadata: {
+            contractId: tableId.toHexString(),
+            tableId: tableId.toString(),
+          },
+        }
+      );
+    })(),
   };
 }
