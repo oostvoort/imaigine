@@ -328,26 +328,15 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
     try {
       console.info("- getting revealedCells...")
       const revealedCells = await getToRevealCells(props.cellId, [props.cellId])
-      console.info({ revealedCells })
       console.info("- done getting revealedCells")
 
-      console.info("Writing player to contract...")
+      console.info(" - writing player to contract...")
       await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId, revealedCells)).wait()
+      console.info("- done creating player")
       res.send('Player Created!')
     } catch (e) {
       next(e)
     }
-  } catch (e) {
-    next(e)
-  }
-})
-
-app.post('/test-reveal-cells', async (req: Request, res: Response, next) => {
-  const props: CreatePlayerProps = req.body
-
-  try {
-    const revealedCells = await getToRevealCells(props.cellId, [props.cellId])
-
   } catch (e) {
     next(e)
   }
