@@ -11,7 +11,9 @@ import {
   BattleHistoryCounter,
   BattleHistoryComponent,
   BattlePointsComponent,
-  BattleResultsComponents
+  BattleResultsComponents,
+  BattlePlayerHistoryComponent,
+  BattlePlayerHistoryComponentData
 } from "../codegen/Tables.sol";
 
 import { BattleStatus, BattleOptions } from "../codegen/Types.sol";
@@ -161,6 +163,15 @@ contract MinigameSystem is System {
     bool draw
   ) internal {
     uint256 id = BattleHistoryCounter.get();
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+
+//    BattlePlayerHistoryComponentData memory battlePlayerHistory = BattlePlayerHistoryComponent.get(playerID);
+//    battlePlayerHistory.option.push(winnerOption);
+//    battlePlayerHistory.opponent.push(loser);
+//    battlePlayerHistory.results.push(draw ? "draw" : "win");
+//
+//    BattleResultsComponents.set(playerID, battlePlayerHistory);
+
     BattleHistoryComponent.set(id, winner, winnerOption, loser, loserOption, draw);
     BattleHistoryCounter.set(id + 1);
 
@@ -172,15 +183,17 @@ contract MinigameSystem is System {
       BattlePointsComponent.set(loser, loserPoints);
 
       if (bytes32(uint256(uint160(_msgSender()))) == winner) {
-        resultsBattle(1, 0);
+        resultsBattle(1, 0, winner);
+        resultsBattle(0, 1, loser);
       } else {
-        resultsBattle(0, 1);
+        resultsBattle(1, 0, loser);
+        resultsBattle(0, 1, winner);
       }
     }
   }
 
-  function resultsBattle (uint32 win, uint32 lose) internal {
-    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+  function resultsBattle (uint32 win, uint32 lose, bytes32 playerId) internal {
+
     uint32 totalWin = BattleResultsComponents.get(playerId).totalWins;
     uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
 

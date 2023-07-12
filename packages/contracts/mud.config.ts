@@ -100,6 +100,16 @@ export default mudConfig({
             totalWins: "uint32",
             totalLoses: "uint32",
           }
+        },
+        BattlePlayerHistoryComponent: {
+          keySchema: {
+            playerID: "bytes32"
+          },
+          schema: {
+            option: "BattleOptions",
+            opponent: "bytes32",
+            results: "string"
+          }
         }
     },
     modules: [
