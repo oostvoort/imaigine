@@ -49,7 +49,7 @@ import {
   worldContract,
 } from './lib/contract'
 import { BigNumber } from 'ethers'
-import { getLocations, getRoute } from './utils/getMap'
+import { getLocations, getRoute, getToRevealCells } from './utils/getMap'
 import {
   generateMockLocationInteraction,
   generateMockNpcInteraction,
@@ -270,7 +270,6 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     console.info('generating player')
     try {
 
-      // TODO make starting location a number instead of locationIdInContract
       const startingLocation = getRandomLocation(baseConfig.startingLocations)
 
       const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
@@ -297,6 +296,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
         ipfsHash: playerIpfsHash,
         visualSummary: player.visualSummary,
         locationId: startingLocation.id,
+        cellId: startingLocation.cell
       } as GeneratePlayerResponse)
 
     } catch (e) {
@@ -326,15 +326,28 @@ app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
 
   try {
     try {
+      console.info("- getting revealedCells...")
+      const revealedCells = await getToRevealCells(props.cellId, [props.cellId])
+      console.info({ revealedCells })
+      console.info("- done getting revealedCells")
+
       console.info("Writing player to contract...")
-      // TODO calculate revealed cells
-      /// getRevealedCells(cell)  => []
-      const revealedCells: number[] = []
       await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId, revealedCells)).wait()
       res.send('Player Created!')
     } catch (e) {
       next(e)
     }
+  } catch (e) {
+    next(e)
+  }
+})
+
+app.post('/test-reveal-cells', async (req: Request, res: Response, next) => {
+  const props: CreatePlayerProps = req.body
+
+  try {
+    const revealedCells = await getToRevealCells(props.cellId, [props.cellId])
+
   } catch (e) {
     next(e)
   }
@@ -741,6 +754,7 @@ app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
     next(e)
   }
 })
+
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
   const props: StoreToIPFS = req.body
 
