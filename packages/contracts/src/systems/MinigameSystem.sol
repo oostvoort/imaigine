@@ -176,11 +176,11 @@ contract MinigameSystem is System {
       BattlePointsComponent.set(loser, loserPoints);
 
       if (playerID == winner) {
-        resultsBattle(1, 0, winner);
-        resultsBattle(0, 1, loser);
-      } else {
         resultsBattle(1, 0, loser);
         resultsBattle(0, 1, winner);
+      } else {
+        resultsBattle(1, 0, winner);
+        resultsBattle(0, 1, loser);
       }
     }
   }
