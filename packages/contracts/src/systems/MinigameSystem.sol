@@ -165,13 +165,6 @@ contract MinigameSystem is System {
     uint256 id = BattleHistoryCounter.get();
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
-//    BattlePlayerHistoryComponentData memory battlePlayerHistory = BattlePlayerHistoryComponent.get(playerID);
-//    battlePlayerHistory.option.push(winnerOption);
-//    battlePlayerHistory.opponent.push(loser);
-//    battlePlayerHistory.results.push(draw ? "draw" : "win");
-//
-//    BattleResultsComponents.set(playerID, battlePlayerHistory);
-
     BattleHistoryComponent.set(id, winner, winnerOption, loser, loserOption, draw);
     BattleHistoryCounter.set(id + 1);
 
