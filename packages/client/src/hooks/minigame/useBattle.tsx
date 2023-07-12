@@ -100,6 +100,32 @@ export default function useBattle(playerId: Entity) {
   })
 
   /**
+   * Defines a mutation hook to set the battle pre-result.
+   *
+   * @param mutationKey - The key for the mutation.
+   * @param mutationFn - The async function to execute the mutation.
+   *
+   * The mutation function:
+   * - Gets the selected battle options data from the hashAtom state.
+   * - Throws error if no data.
+   * - Sends a transaction to set the pre-result with the options data.
+   * - Waits for the transaction to be confirmed.
+   * - Returns the battle data.
+   */
+  const setBattlePreResult = useMutation({
+    mutationKey: ["preResult"],
+    mutationFn: async () => {
+
+      const { data } = hashAtom
+      if (data == undefined) throw new Error("Requested options is empty")
+
+      const tx = await worldSend('preResult', [data])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      return battleData
+    }
+  })
+
+  /**
    * Defines a mutation hook to set battle options.
    * @throws Error if battleOption is undefined.
    * Sends a transaction with the battle options.
@@ -150,6 +176,7 @@ export default function useBattle(playerId: Entity) {
     playerInfo,
     opponentInfo,
     setLockBattle,
-    opponentBattleData
+    opponentBattleData,
+    setBattlePreResult
   }
 }
