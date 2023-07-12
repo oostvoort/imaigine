@@ -1,0 +1,4 @@
+./packages/contracts/broadcast
+./packages/contracts/cache
+./packages/contracts/out
+./packages/contracts/types

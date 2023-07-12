@@ -20,7 +20,7 @@ export default function Settings() {
           className={clsx(['flex items-center justify-center gap-2', 'bg-transparent', 'text-option-8 text-xl', 'leading-8 font-segoe font-semibold', 'hover:bg-transparent'     ])}
           onClick={() => navigator.clipboard.writeText(privateKey)}
         >
-          <img src={'/src/assets/svg/bx-copy.svg'} alt={'Copy Icon'} />
+          <img src={'/assets/svg/bx-copy.svg'} alt={'Copy Icon'} />
           Copy Private Key
         </Button>
       </div>

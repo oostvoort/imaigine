@@ -78,6 +78,7 @@ const port = 3000
 
 
 app.use('/map', express.static(path.join(process.cwd(), '../fantasy-map-generator')))
+app.use('/', express.static(path.join(process.cwd(), './public')))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
