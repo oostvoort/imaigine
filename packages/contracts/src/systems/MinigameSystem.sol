@@ -10,7 +10,8 @@ import {
   LocationComponent,
   BattleHistoryCounter,
   BattleHistoryComponent,
-  BattlePointsComponent
+  BattlePointsComponent,
+  BattleResultsComponents
 } from "../codegen/Tables.sol";
 
 import { BattleStatus, BattleOptions } from "../codegen/Types.sol";
@@ -168,6 +169,20 @@ contract MinigameSystem is System {
       uint256 finalLoserPoints = loserPoints == 0 ? 0 : loserPoints - 1;
       BattlePointsComponent.set(winner, winnerPoints);
       BattlePointsComponent.set(loser, loserPoints);
+
+      if (bytes32(uint256(uint160(_msgSender()))) == winner) {
+        resultsBattle(1, 0);
+      } else {
+        resultsBattle(0, 1);
+      }
     }
+  }
+
+  function resultsBattle (uint32 win, uint32 lose) internal {
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+    uint32 totalWin = BattleResultsComponents.get(playerId).totalWins;
+    uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
+
+    BattleResultsComponents.set(playerId, (totalWin + win), (totalLose + lose));
   }
 }

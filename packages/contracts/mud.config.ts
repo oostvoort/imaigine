@@ -91,7 +91,16 @@ export default mudConfig({
           keySchema: {},
           schema: "uint256"
         },
-      BattlePointsComponent: "uint256"
+        BattlePointsComponent: "uint256",
+        BattleResultsComponents: {
+          keySchema: {
+            playerID: "bytes32"
+          },
+          schema: {
+            totalWins: "uint32",
+            totalLoses: "uint32",
+          }
+        }
     },
     modules: [
         {
