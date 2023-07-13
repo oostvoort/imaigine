@@ -23,13 +23,11 @@ export default function TravellingScreen() {
     <React.Fragment>
       <SubLayout>
         <SubLayout.VisualSummaryLayout>
-          <p className={'m-auto text-[30px] font-amiri'}>
-            <Map
-              className={'w-full h-full'}
-              myPlayer={myPlayer}
-              isMyPlayerComplete={isMyPlayerComplete}
-            />
-          </p>
+          <Map
+            className={'w-full h-full'}
+            myPlayer={myPlayer}
+            isMyPlayerComplete={isMyPlayerComplete}
+          />
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
       <Footer>
