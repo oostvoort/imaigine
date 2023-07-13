@@ -62,6 +62,7 @@ contract MinigameSystem is System {
     require(option != BattleOptions.NONE, "option cannot be none");
 
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    BattleComponent.setOption(playerID, option);
     BattlePreResultsComponents.setOption(playerID, option);
   }
 
