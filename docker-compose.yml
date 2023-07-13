@@ -1,11 +1,6 @@
 services:
   imaigine:
-    build:
-      context: .
-      args:
-        VITE_CHAIN_ID: 31337
-        VITE_IPFS_URL_PREFIX: "https://plum-electrical-partridge-761.mypinata.cloud/ipfs"
-        VITE_MOCK: "true"
+    build: .
     ports:
       - "3000:3000"
     env_file:
