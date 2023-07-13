@@ -84,6 +84,8 @@ contract MinigameSystem is System {
     if (opponentBattleData.status == BattleStatus.LOCKED_IN) {
       if (option == opponentBattleData.option) {
         logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, true);
+        BattlePreResultsComponents.setResult(playerID, "Draw");
+        BattlePreResultsComponents.setResult(battleComponentData.opponent, "Draw");
       } else if (option == BattleOptions.Sword) {
         if (opponentBattleData.option == BattleOptions.Scroll)
           logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
@@ -166,11 +168,6 @@ contract MinigameSystem is System {
 
     BattleHistoryComponent.set(id, winner, winnerOption, loser, loserOption, draw);
     BattleHistoryCounter.set(id + 1);
-
-    if (draw) {
-      BattlePreResultsComponents.setResult(winner, "Draw");
-      BattlePreResultsComponents.setResult(loser, "Draw");
-    }
 
     if(!draw && BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE) {
       uint256 winnerPoints = BattlePointsComponent.get(winner) + 1;
