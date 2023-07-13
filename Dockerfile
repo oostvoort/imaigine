@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18 as builder
 WORKDIR /app
 
 # Install prerequisites
@@ -33,9 +33,28 @@ RUN pnpm install:deps
 
 # Build the project
 COPY ./packages ./packages
-RUN ls -la
 RUN pnpm build
 
-COPY /packages/client/dist /packages/server/public
+
+RUN cp -r ./packages/client/dist/* ./packages/server/public/
+
+
+#FROM node:18-alpine as runtime
+#WORKDIR /opt
+#
+#COPY --from=builder /app/package.json ./package.json
+#COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+#COPY --from=builder /app/packages/server ./packages/server
+#COPY --from=builder /app/packages/fantasy-map-generator ./packages/fantasy-map-generator
+#COPY --from=builder /app/node_modules ./node_modules
+#COPY --from=builder /app/packages/client/dist ./packages/server/public
+#COPY --from=builder /app/packages/types ./packages/types
+#COPY --from=builder /app/packages/contracts/types ./packages/contracts/types
+#COPY --from=builder /app/packages/contracts/worlds.json ./packages/contracts/worlds.json
+#COPY --from=builder /app/packages/contracts/package.json ./packages/contracts/package.json
+#COPY --from=builder /app/packages/contracts/node_modules ./packages/contracts/node_modules
+#
+## Install dependencies
+#RUN npm install -g pnpm
 
 ENTRYPOINT ["pnpm", "dev:server"]
