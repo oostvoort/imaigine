@@ -115,6 +115,7 @@ contract MinigameSystem is System {
       BattleComponent.setHashSalt(playerID, hashSalt);
       BattleComponent.setTimestamp(playerID, block.timestamp);
       BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
+      rematch();
     } else {
       if (opponentBattleData.timestamp + FORFEIT_TIME <= block.timestamp) {
         bytes32 locationId = LocationComponent.get(playerID);
