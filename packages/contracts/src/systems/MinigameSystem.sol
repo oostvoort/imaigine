@@ -37,7 +37,7 @@ contract MinigameSystem is System {
       return opponent;
     }
 
-    beginMatch(playerID, opponent, locationId);
+    beginMatch(playerID, opponent, locationId, true);
     return opponent;
   }
 
@@ -67,13 +67,13 @@ contract MinigameSystem is System {
     BattlePreResultsComponents.setOption(playerID, option);
   }
 
-  function rematch() public {
+  function rematch(bool resetTimestamp) public {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
     BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
     require(battleComponentData.status == BattleStatus.LOCKED_IN, "player has not locked in");
     BattleComponentData memory opponentBattleData = BattleComponent.get(battleComponentData.opponent);
     require(opponentBattleData.status == BattleStatus.LOCKED_IN, "opponent has not locked in");
-    beginMatch(playerID, battleComponentData.opponent, 0);
+    beginMatch(playerID, battleComponentData.opponent, 0, resetTimestamp);
   }
 
   /// @notice called by the player to evaluate battle
@@ -150,14 +150,16 @@ contract MinigameSystem is System {
     return locationId;
   }
 
-  function beginMatch(bytes32 player1, bytes32 player2, bytes32 locationId) internal {
+  function beginMatch(bytes32 player1, bytes32 player2, bytes32 locationId, bool resetTimestamp) internal {
     BattleComponent.set(player1, player2, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, BattleOutcomeType.NONE, "");
     BattleComponent.set(player2, player1, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, BattleOutcomeType.NONE, "");
     BattlePreResultsComponents.set(player1, BattleOptions.NONE, "");
     BattlePreResultsComponents.set(player2, BattleOptions.NONE, "");
     BattleQueueComponent.set(locationId, 0);
-    BattleTimeComponent.set(player1, block.timestamp);
-    BattleTimeComponent.set(player2, block.timestamp);
+    if (resetTimestamp) {
+      BattleTimeComponent.set(player1, block.timestamp);
+      BattleTimeComponent.set(player2, block.timestamp);
+    }
   }
 
   function kickOutPlayer(bytes32 playerToKickOut, bytes32 stayingPlayer, bytes32 playerInQueue, bytes32 locationId) internal {
@@ -165,7 +167,7 @@ contract MinigameSystem is System {
     BattleComponent.set(playerToKickOut, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
 
     if (playerInQueue != 0) {
-      beginMatch(stayingPlayer, playerInQueue, locationId);
+      beginMatch(stayingPlayer, playerInQueue, locationId, true);
     } else {
       BattleQueueComponent.set(locationId, stayingPlayer);
       BattleComponent.set(stayingPlayer, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
