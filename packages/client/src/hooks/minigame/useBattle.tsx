@@ -20,7 +20,8 @@ export default function useBattle(playerId: Entity) {
       ImageComponent,
       LocationComponent,
       BattleResultsComponents,
-      BattlePreResultsComponents
+      BattlePreResultsComponents,
+      BattleTimeComponent,
     },
     network: {
       worldSend,
@@ -35,6 +36,10 @@ export default function useBattle(playerId: Entity) {
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
 
+
+  const battleTime = {
+      timer: useComponentValue(BattleTimeComponent, playerId)
+  }
   /**
    * Custom hook to get battle data for a player.
    *
@@ -218,8 +223,8 @@ export default function useBattle(playerId: Entity) {
 
   const rematch = useMutation({
     mutationKey: ["rematch"],
-    mutationFn: async () => {
-      const tx = await worldSend('rematch', [])
+    mutationFn: async (options: boolean) => {
+      const tx = await worldSend('rematch', [options])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return battleData
     }
@@ -236,5 +241,6 @@ export default function useBattle(playerId: Entity) {
     opponentBattleData,
     setBattlePreResult,
     rematch,
+    battleTime,
   }
 }
