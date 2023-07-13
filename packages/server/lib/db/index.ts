@@ -81,7 +81,6 @@ export async function fetchHistoryLogs(entityId: string): Promise<Array<LogSqlRe
     })
   })
 }
-
 export async function fetchInteraction(entityId: string): Promise<Array<InteractSQLResult> | undefined> {
   const sql = `SELECT * FROM interaction WHERE interactable_id = '${entityId}' ORDER BY log_id DESC`
   return new Promise((resolve, reject) => {
@@ -107,7 +106,6 @@ export async function fetchInteraction(entityId: string): Promise<Array<Interact
     })
   })
 }
-
 export async function insertInteraction(insertInteractionParams: InsertInteractionParams) {
 
   const insertQuery = `
@@ -142,9 +140,6 @@ export async function insertInteraction(insertInteractionParams: InsertInteracti
     }
   })
 }
-
-
-
 export async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLogsParams) {
 
   const insertQuery = `
@@ -169,5 +164,27 @@ export async function insertHistoryLogs(insertHistoryLogsParams: InsertHistoryLo
     } else {
       console.log('Data inserted successfully.')
     }
+  })
+}
+export async function fetchPlayerHistoryLogs(playerEntityId: string): Promise<Array<LogSqlResult> | undefined> {
+  const sql = `SELECT * FROM history_logs WHERE players LIKE '%' || ? || '%' ORDER BY log_id ASC;`;
+  return new Promise((resolve, reject) => {
+    database.all(sql, [`%${playerEntityId}%`],(err, rows) => {
+      if (err) {
+        console.error('Error reading data:', err)
+        reject(undefined) // Reject the promise with the error
+      } else {
+        resolve(rows.map((log: LogSqlResult) => {
+          return {
+            log_id: log.log_id,
+            interactable_id: log.interactable_id,
+            players: log.players,
+            mode: log.mode,
+            by: log.by,
+            player_log: log.player_log,
+          }
+        }))
+      }
+    })
   })
 }

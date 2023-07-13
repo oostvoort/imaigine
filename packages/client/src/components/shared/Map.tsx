@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
-import { useAtomValue } from 'jotai'
-import { activeScreen_atom } from '@/states/global'
+import { useAtom, useAtomValue } from 'jotai'
+import { activeScreen_atom, markerId_atom, SCREENS } from '@/states/global'
 
 type PropType = {
   className?: string
@@ -15,13 +15,13 @@ const Map: React.FC<PropType> = ({
   myPlayer,
   isMyPlayerComplete,
   players,
-  travelPlayer
+  travelPlayer,
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
   const activeScreen = useAtomValue(activeScreen_atom)
-
+  const [markerId, setMarkerId] =  useAtom(markerId_atom)
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
       const iframeWindow = iframeRef.current.contentWindow
@@ -32,13 +32,11 @@ const Map: React.FC<PropType> = ({
     }
   }
   // const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId}})}
 
   // Display myPlayer marker on the map
   React.useEffect(() => {
     if(isMyPlayerComplete && myPlayer && isMapRendered) {
-      console.log('show player', myPlayer.revealedCell)
-      console.log('player current cell', myPlayer.cell)
       showMyPlayer()
     }
   },[myPlayer, isMyPlayerComplete, isMapRendered])
@@ -59,7 +57,10 @@ const Map: React.FC<PropType> = ({
         if (activeScreen === 3 && travelPlayer) {
           travelPlayer(params.locationId)
         }
-      }else{
+      } else if(cmd === "PlayerMarkerId"){
+        // Save player's marker id
+        setMarkerId(params.id)
+      } else{
         console.log('Other message received from iframe:', event.data)
       }
     }
@@ -73,18 +74,17 @@ const Map: React.FC<PropType> = ({
     }
   }, [])
 
-  const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
-  const reloadIframe = () => {
-    if (iframeRef.current) {
-      iframeRef.current.src = iframeRef.current.src
-    }
-  }
+  // const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
+  // const reloadIframe = () => {
+  //   if (iframeRef.current) {
+  //     iframeRef.current.src = iframeRef.current.src
+  //   }
+  // }
 
   return (
     <div className={'w-full h-full'}>
-      <br /><br /><br /><br /><br /><br />
-      <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
-      | <button onClick={reloadIframe}>Reload Iframe</button>
+      {/*<button onClick={() => {setUnFog('myFogId')}}>unFog</button>*/}
+      {/*| <button onClick={reloadIframe}>Reload Iframe</button>*/}
       <iframe
         ref={iframeRef}
         width={'w-[inherit]'}

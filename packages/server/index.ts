@@ -56,7 +56,13 @@ import {
   generateMockPlayer,
   generateMockPlayerImage,
 } from './lib/mock'
-import { fetchHistoryLogs, fetchInteraction, insertHistoryLogs, insertInteraction } from './lib/db'
+import {
+  fetchHistoryLogs,
+  fetchInteraction,
+  fetchPlayerHistoryLogs,
+  insertHistoryLogs,
+  insertInteraction,
+} from './lib/db'
 import { removeParentheses } from './utils/removeParentheses'
 import * as process from 'process'
 
@@ -403,6 +409,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
           // checking of choice
           const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
 
+
           if (choice.toNumber()) {
 
             await insertHistoryLogs({
@@ -680,6 +687,7 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
 app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) => {
   const props: GenerateTravelProps = req.body
 
+
   try {
 
     const playerCurrentLocationId = await getPlayerLocation(props.playerEntityId)
@@ -722,14 +730,12 @@ app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
   const props: PlayerHistoryProps = req.body
 
   try {
-    const locationHistory = await fetchHistoryLogs(props.locationId)
-
-    const playerInvolvement = locationHistory.filter(history => history.players.includes(props.playerEntityId))
+    const playerHistory = await fetchPlayerHistoryLogs(props.playerEntityId)
 
     let historyText = ``
 
-    playerInvolvement.forEach((item) => {
-      historyText += `${item.player_log}\n`
+    playerHistory.forEach((history) => {
+      historyText += `${history.player_log}\n`
     })
 
     const generatedHistory = await generateHistory(historyText)

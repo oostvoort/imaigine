@@ -14,7 +14,7 @@ export type LocationType = {
 
 export default function WorldMapScreen(){
 
-  const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
+  const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel } } = useMap()
   const [ isLocationOpen, setIsLocationOpen ] = React.useState<boolean>(false)
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
   const [destination, setDestination] = React.useState<number>(0)
@@ -33,7 +33,6 @@ export default function WorldMapScreen(){
 
   React.useEffect(() => {
     if (generateLocation.isSuccess) {
-      console.log('generateLocation.data', generateLocation.data)
       if (generateLocation.data) {
         setLocationData({
           name: generateLocation.data.name,
@@ -52,14 +51,12 @@ export default function WorldMapScreen(){
   }, [isLocationOpen])
 
   const handleTravel = () => {
-    console.info('Travelling...')
     prepareTravel.mutateAsync({ toLocation: destination }).then(() => generateTravel.mutate())
   }
-
   return(
     <SubLayout.MapViewLayout>
       <Map
-        className={'w-full h-full'}
+        className={'w-full h-full mt-40'}
         myPlayer={myPlayer}
         isMyPlayerComplete={isMyPlayerComplete}
         players={players}
