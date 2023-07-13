@@ -238,6 +238,5 @@ export interface LocationObject {
 }
 
 export interface PlayerHistoryProps {
-  playerEntityId: string,
-  locationId: string
+  playerEntityId: string
 }
