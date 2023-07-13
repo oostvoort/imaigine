@@ -24,6 +24,7 @@ async function getHistory(playerEntityId: string): Promise<PlayerHistory | undef
 }
 
 export const useGetPlayerHistory = (playerEntityId?: string) => {
+  if (!playerEntityId) throw new Error('No Player Entity ID')
   return useQuery([`player-history-${playerEntityId}`], async () => {
     if(playerEntityId === undefined) throw new Error("Undefined playerEntityId")
     if(!playerEntityId) throw new Error("No player entity id!")
@@ -35,7 +36,8 @@ export const useGetPlayerHistory = (playerEntityId?: string) => {
       return playerHistory.history
     }
   }, {
-    enabled: Boolean(playerEntityId),
+    refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
     cacheTime: 1000 * 60 * 2,
     staleTime: 1000 * 60 * 5
   })
