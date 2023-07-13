@@ -35,7 +35,6 @@ RUN pnpm install:deps
 COPY ./packages ./packages
 RUN pnpm build
 
-
 RUN cp -r ./packages/client/dist/* ./packages/server/public/
 
 
