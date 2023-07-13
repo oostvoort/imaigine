@@ -56,7 +56,8 @@ export default function usePlayer() {
         return {
           ipfsHash: data.ipfsHash,
           visualSummary: data.visualSummary,
-          locationId: data.locationId
+          locationId: data.locationId,
+          cellId: data.cellId
         } as GeneratePlayerResponse
       } catch (error) {
         console.error('[generatePlayer]', generatePlayer)

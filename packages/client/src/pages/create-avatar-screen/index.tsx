@@ -135,6 +135,7 @@ export default function CreateAvatarScreen() {
         ipfsHash: player.ipfsHash,
         visualSummary: player.visualSummary,
         locationId: player.locationId,
+        cellId: player.cellId
       })
 
       const imageHash = await generatePlayerImage.mutateAsync({ visualSummary: player.visualSummary })
@@ -164,7 +165,8 @@ export default function CreateAvatarScreen() {
       playerId: playerEntity,
       imageIpfsHash: imageHashes[imageHashes.length - 1],
       locationId: generatedPlayer.locationId,
-      ipfsHash: generatedPlayer.ipfsHash
+      ipfsHash: generatedPlayer.ipfsHash,
+      cellId: generatedPlayer.cellId,
     })
   }
 
