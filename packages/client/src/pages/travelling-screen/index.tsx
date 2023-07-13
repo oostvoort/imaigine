@@ -2,13 +2,34 @@ import SubLayout from '@/components/layouts/MainLayout/SubLayout'
 import { Footer, HourglassLoader } from '@/components/base/Footer'
 import React from 'react'
 import { Button } from '@/components/base/Button'
+import { useMap } from '@/hooks/v1/useMap'
+import Map from '@/components/shared/Map'
 
 export default function TravellingScreen() {
+
+  const { myPlayer, isMyPlayerComplete, functions: { travel }, travelData } = useMap()
+
+  if (travelData) {
+    console.log('TRAVEL', travelData.status)
+    if (travelData.status >= 2){
+      setInterval(() => {
+        console.log('Player is travelling...')
+        travel.mutate();
+      }, 15000); // 15 seconds interval
+    }
+  }
+
   return (
     <React.Fragment>
       <SubLayout>
         <SubLayout.VisualSummaryLayout>
-          <p className={'m-auto text-[30px] font-amiri'}>Map Here...</p>
+          <p className={'m-auto text-[30px] font-amiri'}>
+            <Map
+              className={'w-full h-full'}
+              myPlayer={myPlayer}
+              isMyPlayerComplete={isMyPlayerComplete}
+            />
+          </p>
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
       <Footer>

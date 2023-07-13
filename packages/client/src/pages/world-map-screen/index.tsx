@@ -15,28 +15,21 @@ export type LocationType = {
 export default function WorldMapScreen(){
 
   const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
-  const { generateTravel } =  useTravel()
-
-
   const [ isLocationOpen, setIsLocationOpen ] = React.useState<boolean>(false)
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
+  const [destination, setDestination] = React.useState<number>(0)
 
-
-  const [cellNumber, setCellNumber] = React.useState<number>(0)
-  const {generateLocation } = useLocation(cellNumber)
-
-  const handleSelectCell = (newCellNumber: number) => setCellNumber(newCellNumber)
-
-  React.useEffect(() => {
-    if (!isLocationOpen) {
-      setLocationData({} as LocationType)
-    }
-  }, [isLocationOpen])
-
+  const { generateTravel } =  useTravel()
+  const {generateLocation } = useLocation(destination)
+  function travelPlayer(cellId: number) {
+    setIsLocationOpen(true)
+    setDestination(cellId)
+  }
 
   React.useEffect(() => {
-    generateLocation.mutate({ id: cellNumber })
-  }, [cellNumber])
+    if (!destination) return
+    generateLocation.mutate({ id: destination })
+  }, [destination])
 
   React.useEffect(() => {
     if (generateLocation.isSuccess) {
@@ -51,25 +44,16 @@ export default function WorldMapScreen(){
     }
   }, [generateLocation.isSuccess])
 
-  console.log({travelData})
-
-  // prepareTravel.mutateAsync({ toLocation: params.locationId }).then(() => generateTravel.mutate())
-  //
-  //
-  // useEffect(() => {
-  //   if(!travelData) return
-  //   if (travelData.status >= 2){
-  //     setInterval(() => {
-  //       console.log('Player is travelling...')
-  //       travel.mutate();
-  //       showMyPlayer()
-  //     }, 15000); // 15 seconds interval
-  //   }
-  // }, [travelData])
+  React.useEffect(() => {
+    if (!isLocationOpen) {
+      setLocationData({} as LocationType)
+      setDestination(0)
+    }
+  }, [isLocationOpen])
 
   const handleTravel = () => {
     console.info('Travelling...')
-    prepareTravel.mutateAsync({ toLocation: cellNumber }).then(() => generateTravel.mutate())
+    prepareTravel.mutateAsync({ toLocation: destination }).then(() => generateTravel.mutate())
   }
 
   return(
@@ -79,8 +63,7 @@ export default function WorldMapScreen(){
         myPlayer={myPlayer}
         isMyPlayerComplete={isMyPlayerComplete}
         players={players}
-        setIsLocationOpen={setIsLocationOpen}
-        setCellNumber={handleSelectCell}
+        travelPlayer={(value) => travelPlayer(value)}
       />
       <LocationDialog
         isOpen={isLocationOpen}

@@ -323,7 +323,7 @@ app.post('/api/v1/generate-player-image', async (req: Request, res: Response, ne
 
 app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
   const props: CreatePlayerProps = req.body
-
+  console.log('server', props)
   try {
     try {
       console.info("- getting revealedCells...")
