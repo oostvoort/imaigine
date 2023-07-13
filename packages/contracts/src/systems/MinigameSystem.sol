@@ -139,7 +139,8 @@ contract MinigameSystem is System {
   function beginMatch(bytes32 player1, bytes32 player2, bytes32 locationId) internal {
     BattleComponent.set(player1, player2, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, "");
     BattleComponent.set(player2, player1, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, "");
-
+    BattlePreResultsComponents.set(player1, BattleOptions.NONE, "");
+    BattlePreResultsComponents.set(player2, BattleOptions.NONE, "");
     BattleQueueComponent.set(locationId, 0);
   }
 
