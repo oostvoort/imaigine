@@ -5,3 +5,4 @@
 ./packages/client/.env
 ./packages/contracts/.env
 ./packages/server/.env
+./packages/server/logs.sqlite
