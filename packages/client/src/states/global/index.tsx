@@ -23,3 +23,5 @@ export const npcConversation_atom = atom<InteractNpcResponse>({} as InteractNpcR
 export const currentLocation_atom = atom<any>({} as any)
 
 export const myPlayerMarkerId_atom = atom<string | null>(null)
+
+export const markerId_atom = atom<number | null>(null)

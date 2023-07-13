@@ -73,7 +73,17 @@ function getNextTown(cellId, exploredCells) {
   return window.Routes.findNearestBurgs(cellId, exploredCells)
 }
 
+function deleteMarkerPlayer(markerId) {
+  const element = document.getElementById(`marker${markerId}`);
+  const marker = pack.markers.find(({i}) => i === markerId);
+  if (!marker || !element) return
+
+  Markers.deleteMarker(marker.i)
+  element.remove();
+}
+
 function showPlayers(players) {
+  let markerIds = []
   for (const player of players) {
 
     // adding player's marker
@@ -96,7 +106,9 @@ function showPlayers(players) {
     const markersElement = document.getElementById('markers')
     const rescale = +markersElement.getAttribute('rescale')
     markersElement.insertAdjacentHTML('beforeend', drawMarker(marker, rescale))
+    markerIds.push(marker.i)
   }
+  return markerIds
 }
 
 function getAllBurgs() {
@@ -125,8 +137,14 @@ window.addEventListener('message', ({ data }) => {
     showPlayers(data.params.players)
 
   } else if (data.cmd === 'showMyPlayer') {
+    // Remove old marker if there is
+    if (data.params.marker) {
+      deleteMarkerPlayer(data.params.marker)
+    }
     // Create myPlayer marker
-    showPlayers([data.params.player])
+    const id = (showPlayers([data.params.player]))[0]
+    // Send to parent the markerId
+    window.parent.postMessage({ cmd: 'PlayerMarkerId', params: {id: id} })
     // Reveal cells
     hideCells('myFogId')
     revealCells(data.params.player.revealedCell)

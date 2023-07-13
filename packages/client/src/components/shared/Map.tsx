@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
-import { useAtomValue } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
+import { useAtom, useAtomValue } from 'jotai'
+import { activeScreen_atom, markerId_atom, SCREENS } from '@/states/global'
 
 type PropType = {
   className?: string
@@ -21,6 +21,7 @@ const Map: React.FC<PropType> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
   const activeScreen = useAtomValue(activeScreen_atom)
+  const [markerId, setMarkerId] =  useAtom(markerId_atom)
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
       const iframeWindow = iframeRef.current.contentWindow
@@ -31,13 +32,11 @@ const Map: React.FC<PropType> = ({
     }
   }
   // const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId}})}
 
   // Display myPlayer marker on the map
   React.useEffect(() => {
     if(isMyPlayerComplete && myPlayer && isMapRendered) {
-      console.log('show player', myPlayer.revealedCell)
-      console.log('player current cell', myPlayer.cell)
       showMyPlayer()
     }
   },[myPlayer, isMyPlayerComplete, isMapRendered])
@@ -58,7 +57,10 @@ const Map: React.FC<PropType> = ({
         if (activeScreen === 3 && travelPlayer) {
           travelPlayer(params.locationId)
         }
-      }else{
+      } else if(cmd === "PlayerMarkerId"){
+        // Save player's marker id
+        setMarkerId(params.id)
+      } else{
         console.log('Other message received from iframe:', event.data)
       }
     }
