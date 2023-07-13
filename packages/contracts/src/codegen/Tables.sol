@@ -5,16 +5,11 @@ pragma solidity >=0.8.0;
 
 import { StoryComponent, StoryComponentTableId } from "./tables/StoryComponent.sol";
 import { ConfigComponent, ConfigComponentTableId } from "./tables/ConfigComponent.sol";
-import { ItemComponent, ItemComponentTableId } from "./tables/ItemComponent.sol";
 import { OwnerComponent, OwnerComponentTableId } from "./tables/OwnerComponent.sol";
 import { AliveComponent, AliveComponentTableId } from "./tables/AliveComponent.sol";
-import { NameComponent, NameComponentTableId } from "./tables/NameComponent.sol";
-import { SummaryComponent, SummaryComponentTableId } from "./tables/SummaryComponent.sol";
 import { ImageComponent, ImageComponentTableId } from "./tables/ImageComponent.sol";
 import { PriceComponent, PriceComponentTableId } from "./tables/PriceComponent.sol";
 import { CharacterComponent, CharacterComponentTableId } from "./tables/CharacterComponent.sol";
-import { TangibleComponent, TangibleComponentTableId } from "./tables/TangibleComponent.sol";
-import { CountComponent, CountComponentTableId } from "./tables/CountComponent.sol";
 import { PlayerComponent, PlayerComponentTableId } from "./tables/PlayerComponent.sol";
 import { LocationComponent, LocationComponentTableId } from "./tables/LocationComponent.sol";
 import { MapCellComponent, MapCellComponentTableId } from "./tables/MapCellComponent.sol";

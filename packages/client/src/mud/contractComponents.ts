@@ -35,21 +35,6 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    ItemComponent: (() => {
-      const tableId = new TableId("", "ItemComponent");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.Boolean,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
     OwnerComponent: (() => {
       const tableId = new TableId("", "OwnerComponent");
       return defineComponent(
@@ -71,36 +56,6 @@ export function defineContractComponents(world: World) {
         world,
         {
           value: RecsType.Boolean,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    NameComponent: (() => {
-      const tableId = new TableId("", "NameComponent");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    SummaryComponent: (() => {
-      const tableId = new TableId("", "SummaryComponent");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
         },
         {
           metadata: {
@@ -146,36 +101,6 @@ export function defineContractComponents(world: World) {
         world,
         {
           value: RecsType.Boolean,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    TangibleComponent: (() => {
-      const tableId = new TableId("", "TangibleComponen");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.Boolean,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    CountComponent: (() => {
-      const tableId = new TableId("", "CountComponent");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.BigInt,
         },
         {
           metadata: {

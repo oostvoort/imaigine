@@ -11,11 +11,9 @@ const optimismTestnet = {
   rpcUrls: {
     default: {
       http: ["https://goerli.optimism.io"],
-      webSocket: ["wss://goerli.optimism.io"],
     },
     public: {
-      http: ["https://goerli.optimism.io"],
-      webSocket: ["wss://goerli.optimism.io"],
+      http: ["https://goerli.optimism.io"]
     }
   },
   blockExplorers: {
