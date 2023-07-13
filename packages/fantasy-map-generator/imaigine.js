@@ -127,12 +127,9 @@ window.addEventListener('message', ({ data }) => {
   } else if (data.cmd === 'showMyPlayer') {
     // Create myPlayer marker
     showPlayers([data.params.player])
-    // Get to reveal cellss
-    // const toReveal = getToRevealCells(data.params.player.cell, data.params.player.revealedCell)
     // Reveal cells
     hideCells('myFogId')
-    // todo: get toRevealCells from myPlayer
-    revealCells([2207, 2103, 2101, 1998, 1893, 1892])
+    revealCells(data.params.player.revealedCell)
 
   } else if (data.cmd === 'test') {
     const reveal = getToRevealCells(1892, [2207, 2103, 2101, 1998, 1893, 1892])

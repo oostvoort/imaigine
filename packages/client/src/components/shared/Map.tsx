@@ -1,27 +1,26 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
+import { useAtomValue } from 'jotai'
+import { activeScreen_atom } from '@/states/global'
 
 type PropType = {
   className?: string
   myPlayer?: MapPlayer
   isMyPlayerComplete: boolean
   players?: MapPlayer[]
-  setIsLocationOpen: React.Dispatch<React.SetStateAction<boolean>>
-  setCellNumber: (cell: number) => void
-  travelPlayer: (cellId: number) => void
+  travelPlayer?: (cellId: number) => void
 }
 const Map: React.FC<PropType> = ({
   className,
   myPlayer,
   isMyPlayerComplete,
   players,
-  setIsLocationOpen,
-  setCellNumber,
   travelPlayer
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
+  const activeScreen = useAtomValue(activeScreen_atom)
 
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
@@ -36,13 +35,13 @@ const Map: React.FC<PropType> = ({
   const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer}})}
 
   // Display myPlayer marker on the map
-  if(isMyPlayerComplete && myPlayer && isMapRendered) {
-    console.log('show player')
-    console.log('player current cell', myPlayer.cell)
-    showMyPlayer()
-  }
-
-  const handleSelectCell = (cell: number) => setCellNumber(cell)
+  React.useEffect(() => {
+    if(isMyPlayerComplete && myPlayer && isMapRendered) {
+      console.log('show player', myPlayer.revealedCell)
+      console.log('player current cell', myPlayer.cell)
+      showMyPlayer()
+    }
+  },[myPlayer, isMyPlayerComplete, isMapRendered])
 
   useEffect(() => {
     const handleMessage = (event: any) => {
@@ -56,11 +55,10 @@ const Map: React.FC<PropType> = ({
         setIsMapRendered(true)
       } else if(cmd === "BurgClicked"){
         // Travel
-        setIsLocationOpen(true)
-        handleSelectCell(params.locationId)
-        // test()
         if (myPlayer?.cell === params.locationId) return
-        travelPlayer(params.locationId)
+        if (activeScreen === 3 && travelPlayer) {
+          travelPlayer(params.locationId)
+        }
       }else{
         console.log('Other message received from iframe:', event.data)
       }
