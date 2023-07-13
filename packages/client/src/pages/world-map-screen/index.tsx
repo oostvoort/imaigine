@@ -33,7 +33,6 @@ export default function WorldMapScreen(){
 
   React.useEffect(() => {
     if (generateLocation.isSuccess) {
-      console.log('generateLocation.data', generateLocation.data)
       if (generateLocation.data) {
         setLocationData({
           name: generateLocation.data.name,
@@ -52,7 +51,6 @@ export default function WorldMapScreen(){
   }, [isLocationOpen])
 
   const handleTravel = () => {
-    console.info('Travelling...')
     prepareTravel.mutateAsync({ toLocation: destination }).then(() => generateTravel.mutate())
   }
   return(
