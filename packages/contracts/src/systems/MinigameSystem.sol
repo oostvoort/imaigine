@@ -84,8 +84,6 @@ contract MinigameSystem is System {
     if (opponentBattleData.status == BattleStatus.LOCKED_IN) {
       if (option == opponentBattleData.option) {
         logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, true);
-        BattlePreResultsComponents.setResult(playerID, "Draw");
-        BattlePreResultsComponents.setResult(battleComponentData.opponent, "Draw");
       } else if (option == BattleOptions.Sword) {
         if (opponentBattleData.option == BattleOptions.Scroll)
           logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
@@ -179,8 +177,10 @@ contract MinigameSystem is System {
       BattlePreResultsComponents.setResult(loser, "Lose");
       resultsBattle(1, 0, winner);
       resultsBattle(0, 1, loser);
+    } else {
+      BattlePreResultsComponents.setResult(playerID, "Draw");
+      BattlePreResultsComponents.setResult(battleComponentData.opponent, "Draw");
     }
-
   }
 
   function resultsBattle (uint32 win, uint32 lose, bytes32 playerId) internal {
