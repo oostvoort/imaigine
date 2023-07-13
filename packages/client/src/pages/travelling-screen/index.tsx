@@ -28,6 +28,7 @@ export default function TravellingScreen() {
             myPlayer={myPlayer}
             isMyPlayerComplete={isMyPlayerComplete}
           />
+          <p>Details ...</p>
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
       <Footer>

@@ -14,6 +14,7 @@ import { useAtom, useSetAtom } from 'jotai'
 import { currentLocation_atom, npcConversation_atom } from '@/states/global'
 import { useGetNpc } from '@/hooks/v1/useGetNpc'
 import useLocation from '@/hooks/v1/useLocation'
+import { SkeletonParagraph } from '@/components/base/Skeleton'
 
 export default function CurrentLocationScreen() {
   const {
@@ -111,13 +112,7 @@ export default function CurrentLocationScreen() {
   return (
     <React.Fragment>
       <SubLayout>
-        <SubLayout.VisualSummaryLayout
-          summary={locationDetails}
-          setIsOpen={() => {
-            setIsOpen(true)
-            handleInteractNPC()
-          }}
-        >
+        <SubLayout.VisualSummaryLayout>
             {
               location.data?.imgHash === undefined ?
                 <div className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'} >
@@ -134,6 +129,29 @@ export default function CurrentLocationScreen() {
                     'rounded-l-2xl', '',
                   ])}
                 />
+            }
+            {
+              locationDetails.scenario === undefined ? (
+                <SkeletonParagraph />
+              ) : (
+                <div className={clsx([
+                  'text-[30px] text-[#BAC5F1]',
+                  'font-amiri',
+                ])}>
+                  <p>{locationDetails.scenario}</p>
+                  <p className={clsx('mt-8')}>
+                    Nearby NPC:
+                    <span
+                      className={clsx('cursor-pointer text-[#24E1FF]')}
+                      onClick={() => {
+                        setIsOpen(true)
+                        handleInteractNPC()
+                      }}>
+                      {locationDetails.npc.name}
+                    </span>
+                  </p>
+                </div>
+              )
             }
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
