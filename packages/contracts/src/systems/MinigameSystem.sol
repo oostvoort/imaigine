@@ -204,7 +204,7 @@ contract MinigameSystem is System {
 
 
 
-    if(!draw && BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE) {
+    if(!draw && (BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE && BattleComponent.getStatus(loser) != BattleStatus.IN_BATTLE)) {
       uint256 winnerPoints = BattlePointsComponent.get(winner) + 1;
       uint256 loserPoints = BattlePointsComponent.get(loser);
       uint256 finalLoserPoints = loserPoints == 0 ? 0 : loserPoints - 1;
