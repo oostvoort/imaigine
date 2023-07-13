@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
 import { useAtomValue } from 'jotai'
-import { activeScreen_atom } from '@/states/global'
+import { activeScreen_atom, SCREENS } from '@/states/global'
 
 type PropType = {
   className?: string
@@ -15,13 +15,12 @@ const Map: React.FC<PropType> = ({
   myPlayer,
   isMyPlayerComplete,
   players,
-  travelPlayer
+  travelPlayer,
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
   const activeScreen = useAtomValue(activeScreen_atom)
-
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
       const iframeWindow = iframeRef.current.contentWindow
@@ -73,18 +72,17 @@ const Map: React.FC<PropType> = ({
     }
   }, [])
 
-  const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
-  const reloadIframe = () => {
-    if (iframeRef.current) {
-      iframeRef.current.src = iframeRef.current.src
-    }
-  }
+  // const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
+  // const reloadIframe = () => {
+  //   if (iframeRef.current) {
+  //     iframeRef.current.src = iframeRef.current.src
+  //   }
+  // }
 
   return (
     <div className={'w-full h-full'}>
-      <br /><br /><br /><br /><br /><br />
-      <button onClick={() => {setUnFog('myFogId')}}>unFog</button>
-      | <button onClick={reloadIframe}>Reload Iframe</button>
+      {/*<button onClick={() => {setUnFog('myFogId')}}>unFog</button>*/}
+      {/*| <button onClick={reloadIframe}>Reload Iframe</button>*/}
       <iframe
         ref={iframeRef}
         width={'w-[inherit]'}
