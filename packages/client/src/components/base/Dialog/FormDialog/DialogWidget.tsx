@@ -46,11 +46,11 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
           isAvatar ?
             <div
               className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'z-50', 'overflow-hidden' ])}>
-              <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
+              <img src={'/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
                    className={clsx([ 'h-[128px] w-[128px]' ])} />
 
               {/*karma points*/}
-              <img ref={avatarRef} src={`/src/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`} alt={'frame background'}
+              <img ref={avatarRef} src={`/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`} alt={'frame background'}
                    className={clsx([ 'absolute left-0 right-0 bottom-[5px] w-full object-cover transition-all duration-500'])}  />
 
               {
@@ -63,7 +63,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                        draggable={false} />
               }
 
-              <img src={'/src/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
+              <img src={'/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
                        className={'absolute z-50'} draggable={false} />
             </div>
 
@@ -83,7 +83,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
           className={clsx([ 'fixed inset-0 backdrop-blur', 'flex items-center justify-center' ])}
         >
           <DialogPrimitive.Close className={'absolute right-4 top-4 p-2'}>
-            <img src={'/src/assets/svg/close.svg'} alt={'Close Icon'} />
+            <img src={'/assets/svg/close.svg'} alt={'Close Icon'} />
           </DialogPrimitive.Close>
 
           <DialogPrimitive.Content

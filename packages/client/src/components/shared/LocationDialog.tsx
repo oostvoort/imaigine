@@ -42,7 +42,7 @@ export default function LocationDialog({ isOpen, setOpen, location }: PropType) 
             className={'absolute right-4 top-4 p-1'}
             onClick={() => setOpen && setOpen(false)}
           >
-            <img src={'/src/assets/svg/close.svg'} alt={'Close Icon'} />
+            <img src={'/assets/svg/close.svg'} alt={'Close Icon'} />
           </DialogPrimitive.Close>
           <DialogPrimitive.Content
             className={clsx([
@@ -59,7 +59,7 @@ export default function LocationDialog({ isOpen, setOpen, location }: PropType) 
                 <div className={clsx('flex h-full gap-x-6')}>
                   <div className={clsx('w-5/12')}>
                     <img
-                      src={`${location.imgHash ? `${IPFS_URL_PREFIX}/${location.imgHash}` : '/src/assets/background/bg1.jpg'}`}
+                      src={`${location.imgHash ? `${IPFS_URL_PREFIX}/${location.imgHash}` : '/assets/background/bg1.jpg'}`}
                       alt={'Location'}
                       className={clsx([
                         'w-full h-full object-cover',

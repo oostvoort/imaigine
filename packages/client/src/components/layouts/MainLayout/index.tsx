@@ -36,7 +36,7 @@ const MinigameLayout = ({ children, className }: { children: React.ReactNode, cl
       if(currentLocation.image){
         minigameLayoutRef.current.style.backgroundImage = `url(${IPFS_URL_PREFIX}/${currentLocation.image})`
       }else{
-        minigameLayoutRef.current.style.backgroundImage = `url('/src/assets/background/bg1.jpg')`
+        minigameLayoutRef.current.style.backgroundImage = `url('/assets/background/bg1.jpg')`
       }
     }
   }, [currentLocation.image])

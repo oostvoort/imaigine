@@ -126,32 +126,32 @@
 }
 
 @font-face {
-  src: url("./assets/fonts/Jost-VariableFont_wght.ttf");
+  src: url("/assets/fonts/Jost-VariableFont_wght.ttf");
   font-family: Jost;
 }
 
 @font-face {
-  src: url("./assets/fonts/Rancho-Regular.ttf");
+  src: url("/assets/fonts/Rancho-Regular.ttf");
   font-family: Rancho;
 }
 
 @font-face {
-  src: url("./assets/fonts/Amiri-Regular.ttf");
+  src: url("/assets/fonts/Amiri-Regular.ttf");
   font-family: Amiri;
 }
 
 @font-face {
-  src: url("./assets/fonts/Inkfree.ttf");
+  src: url("/assets/fonts/Inkfree.ttf");
   font-family: InkFree;
 }
 
 @font-face {
-  src: url("./assets/fonts/Segoe UI.ttf");
+  src: url("/assets/fonts/Segoe UI.ttf");
   font-family: Segoe UI;
 }
 
 @font-face {
-  src: url("./assets/fonts/Segoe UI Bold.ttf");
+  src: url("/assets/fonts/Segoe UI Bold.ttf");
   font-family: Segoe UI Bold;
 }
 

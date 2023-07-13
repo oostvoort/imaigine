@@ -26,7 +26,7 @@ const BackgroundCarousel = ({ children }: PropType) => {
   return (
     <React.Fragment>
       <img
-        src={`/src/assets/background/${BACKGROUND_IMAGES[currentBackground]}`}
+        src={`/assets/background/${BACKGROUND_IMAGES[currentBackground]}`}
         alt={BACKGROUND_IMAGES ? BACKGROUND_IMAGES[currentBackground] : 'Background Images'}
         className={clsx([
           'absolute w-full h-full',

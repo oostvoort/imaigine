@@ -1,4 +1,4 @@
-FROM node:18 AS builder
+FROM node:18
 WORKDIR /app
 
 # Install prerequisites
@@ -35,5 +35,7 @@ RUN pnpm install:deps
 COPY ./packages ./packages
 RUN ls -la
 RUN pnpm build
+
+COPY /packages/client/dist /packages/server/public
 
 ENTRYPOINT ["pnpm", "dev:server"]

@@ -9,7 +9,7 @@ export default function Location() {
         <div className="w-[430px]">
           <img
             className="w-full h-full rounded rounded-xl object-cover"
-            src={'/src/assets/background/bg1.jpg'}
+            src={'/assets/background/bg1.jpg'}
             alt={'RPG 40 Image'}
           />
         </div>

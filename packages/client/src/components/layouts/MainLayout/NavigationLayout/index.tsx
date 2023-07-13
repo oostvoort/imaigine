@@ -67,7 +67,7 @@ export default function Header() {
 
           <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
             <img
-              src={'/src/assets/svg/icon_map.png'}
+              src={'/assets/svg/icon_map.png'}
               alt="Map/Story"
               className={'h-[67px] w-[68px]'}
               draggable={false}
@@ -79,7 +79,7 @@ export default function Header() {
             variant: 'menu',
             size: 'menu',
             title: 'History',
-            imgSrc: '/src/assets/svg/history.png',
+            imgSrc: '/assets/svg/history.png',
             imgAlt: 'History',
             imgClassName: 'h-[59px] w-[71px]',
           }} isAvatar={false}>
@@ -90,7 +90,7 @@ export default function Header() {
             variant: 'menu',
             size: 'menu',
             title: 'Settings',
-            imgSrc: '/src/assets/svg/settings.png',
+            imgSrc: '/assets/svg/settings.png',
             imgAlt: 'Settings',
             imgClassName: 'h-[59px] w-[59px]',
           }} isAvatar={false}>

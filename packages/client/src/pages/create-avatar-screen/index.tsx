@@ -338,7 +338,7 @@ export default function CreateAvatarScreen() {
                       generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary)
                     }}>
                       <img
-                        src={`/src/assets/svg/refresh.svg`}
+                        src={`/assets/svg/refresh.svg`}
                         alt={'Avatar Img'}
                         className={clsx([
                           'object-cover w-[22px] h-[22px]',
