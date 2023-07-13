@@ -178,8 +178,8 @@ contract MinigameSystem is System {
       resultsBattle(1, 0, winner);
       resultsBattle(0, 1, loser);
     } else {
-      BattlePreResultsComponents.setResult(playerID, "Draw");
-      BattlePreResultsComponents.setResult(battleComponentData.opponent, "Draw");
+      BattlePreResultsComponents.setResult(winner, "Draw");
+      BattlePreResultsComponents.setResult(loser, "Draw");
     }
   }
 
