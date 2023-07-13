@@ -14,7 +14,7 @@ interface IMinigameSystem {
 
   function preResult(BattleOptions option) external;
 
-  function rematch() external;
+  function rematch(bool resetTimestamp) external;
 
   function lockIn(string memory hashSalt, BattleOptions option) external;
 
