@@ -72,7 +72,7 @@ export default mudConfig({
             hashedOption: "bytes32",
             status: "BattleStatus",
             timestamp: "uint256",
-            hashSalt: "string",
+            hashSalt: "string"
           }
         },
         BattleHistoryComponent: {
@@ -92,6 +92,15 @@ export default mudConfig({
           schema: "uint256"
         },
         BattlePointsComponent: "uint256",
+        BattlePreResultsComponents: {
+          keySchema: {
+            playerId: "bytes32",
+          },
+          schema: {
+            option: "BattleOptions",
+            result: "string",
+          }
+        },
         BattleResultsComponents: {
           keySchema: {
             playerID: "bytes32"
@@ -101,16 +110,6 @@ export default mudConfig({
             totalLoses: "uint32",
           }
         },
-        BattlePlayerHistoryComponent: {
-          keySchema: {
-            playerID: "bytes32"
-          },
-          schema: {
-            option: "BattleOptions",
-            opponent: "bytes32",
-            results: "string"
-          }
-        }
     },
     modules: [
         {

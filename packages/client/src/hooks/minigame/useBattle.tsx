@@ -19,7 +19,8 @@ export default function useBattle(playerId: Entity) {
       ConfigComponent,
       ImageComponent,
       LocationComponent,
-      BattleResultsComponents
+      BattleResultsComponents,
+      BattlePreResultsComponents
     },
     network: {
       worldSend,
@@ -47,7 +48,8 @@ export default function useBattle(playerId: Entity) {
    */
   const useBattleData = (playerId: Entity) => {
     return {
-      battle: useComponentValue(BattleComponent, playerId)
+      battle: useComponentValue(BattleComponent, playerId),
+      battlePreResults: useComponentValue(BattlePreResultsComponents, playerId)
     }
   }
 
@@ -89,7 +91,7 @@ export default function useBattle(playerId: Entity) {
       image: useComponentValue(ImageComponent, playerId),
       location: useComponentValue(LocationComponent, playerId),
       battlePoints: useComponentValue(BattlePointsComponent, playerId, DEFAULT_BATTLE_POINTS as ComponentValue),
-      battleResults: useComponentValue(BattleResultsComponents, playerId)
+      battleResults: useComponentValue(BattleResultsComponents, playerId),
     }
   }
 
@@ -223,6 +225,6 @@ export default function useBattle(playerId: Entity) {
     opponentInfo,
     setLockBattle,
     opponentBattleData,
-    setBattlePreResult
+    setBattlePreResult,
   }
 }

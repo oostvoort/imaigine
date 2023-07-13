@@ -445,13 +445,13 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    BattleResultsComponents: (() => {
-      const tableId = new TableId("", "BattleResultsCom");
+    BattlePreResultsComponents: (() => {
+      const tableId = new TableId("", "BattlePreResults");
       return defineComponent(
         world,
         {
-          totalWins: RecsType.Number,
-          totalLoses: RecsType.Number,
+          option: RecsType.Number,
+          result: RecsType.String,
         },
         {
           metadata: {
@@ -461,14 +461,13 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    BattlePlayerHistoryComponent: (() => {
-      const tableId = new TableId("", "BattlePlayerHist");
+    BattleResultsComponents: (() => {
+      const tableId = new TableId("", "BattleResultsCom");
       return defineComponent(
         world,
         {
-          option: RecsType.Number,
-          opponent: RecsType.String,
-          results: RecsType.String,
+          totalWins: RecsType.Number,
+          totalLoses: RecsType.Number,
         },
         {
           metadata: {

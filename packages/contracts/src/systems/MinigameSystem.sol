@@ -12,8 +12,7 @@ import {
   BattleHistoryComponent,
   BattlePointsComponent,
   BattleResultsComponents,
-  BattlePlayerHistoryComponent,
-  BattlePlayerHistoryComponentData
+  BattlePreResultsComponents
 } from "../codegen/Tables.sol";
 
 import { BattleStatus, BattleOptions } from "../codegen/Types.sol";
@@ -63,7 +62,7 @@ contract MinigameSystem is System {
     require(option != BattleOptions.NONE, "option cannot be none");
 
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    BattleComponent.setOption(playerID, option);
+    BattlePreResultsComponents.setOption(playerID, option);
   }
 
   /// @notice called by the player to evaluate battle
@@ -174,6 +173,8 @@ contract MinigameSystem is System {
       uint256 finalLoserPoints = loserPoints == 0 ? 0 : loserPoints - 1;
       BattlePointsComponent.set(winner, winnerPoints);
       BattlePointsComponent.set(loser, loserPoints);
+      BattlePreResultsComponents.setResult(winner, "Win");
+      BattlePreResultsComponents.setResult(loser, "Lose");
       resultsBattle(1, 0, winner);
       resultsBattle(0, 1, loser);
     }
@@ -185,5 +186,6 @@ contract MinigameSystem is System {
     uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
 
     BattleResultsComponents.set(playerId, (totalWin + win), (totalLose + lose));
+    BattlePreResultsComponents.set(playerId, "", "");
   }
 }
