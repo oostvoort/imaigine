@@ -195,7 +195,9 @@ contract MinigameSystem is System {
     if (!draw) {
       BattleComponent.setOutcome(winner, BattleOutcomeType.WIN);
       BattleComponent.setOutcome(loser, BattleOutcomeType.LOSE);
-    } else {
+    }
+
+    if (!!draw) {
       BattleComponent.setOutcome(winner, BattleOutcomeType.DRAW);
       BattleComponent.setOutcome(loser, BattleOutcomeType.DRAW);
     }
