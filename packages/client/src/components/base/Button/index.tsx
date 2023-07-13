@@ -23,11 +23,12 @@ const buttonVariants = cva(
         neutral: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center hover:bg-btnNeutralHover' ]),
         good: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnGood bg-no-repeat bg-center hover:bg-btnGoodHover' ]),
         evil: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnEvil bg-no-repeat bg-center hover:bg-btnEvilHover' ]),
-        modalClose: clsx(['']),
-        menu: clsx(['text-option-8 text-left text-xl', 'font-amiri', 'leading-8']),
-        loading: clsx(['animate-pulse bg-muted text-muted']),
-        refresh: clsx(['p-3 ', 'font-segoe', 'text-[14px] leading-8 text-option-11']),
-        icon: ''
+        modalClose: clsx([ '' ]),
+        menu: clsx([ 'text-option-8 text-left text-xl', 'font-amiri', 'leading-8' ]),
+        loading: clsx([ 'animate-pulse bg-muted text-muted' ]),
+        refresh: clsx([ 'p-3 ', 'font-segoe', 'text-[14px] leading-8 text-option-11' ]),
+        icon: '',
+        battle: clsx([ 'bg-battleBtn ', 'gap-x-[10px] text-option-8 text-left text-xl', 'font-amiri', 'leading-8' ]),
       },
       size: {
         sm: 'h-9 px-3 rounded-md text-sm',
@@ -37,7 +38,8 @@ const buttonVariants = cva(
         '2xl': 'h-20 px-12',
         'btnWithBgImg': 'w-[518px] h-[88px]',
         'menu': 'w-[170px] h-[67px] gap-x-2',
-        'icon': 'w-[24px] h-[24px]'
+        'icon': 'w-[24px] h-[24px]',
+        'battle': 'w-[297px] h-full',
       },
       isHighlighted: {
         true: 'outline outline-accent text-primary-foreground',

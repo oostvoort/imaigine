@@ -1,4 +1,4 @@
-import React, { ImgHTMLAttributes, useRef } from 'react'
+import React, { useRef } from 'react'
 import { clsx } from 'clsx'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Dialog, DialogTrigger } from '@/components/base/Dialog'
@@ -44,30 +44,41 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
       <DialogTrigger asChild>
         {
           isAvatar ?
-            <div
-              className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'z-50', 'overflow-hidden' ])}>
-              <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
-                   className={clsx([ 'h-[128px] w-[128px]' ])} />
+            <React.Fragment>
+              <div
+                className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'z-50', 'overflow-hidden' ])}>
+                <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
+                     className={clsx([ 'h-[128px] w-[128px]' ])} />
 
-              {/*karma points*/}
-              <img ref={avatarRef} src={`/src/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`} alt={'frame background'}
-                   className={clsx([ 'absolute left-0 right-0 bottom-[5px] w-full object-cover transition-all duration-500'])}  />
+                {/*karma points*/}
+                <img ref={avatarRef}
+                     src={`/src/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`}
+                     alt={'frame background'}
+                     className={clsx([ 'absolute left-0 right-0 bottom-[5px] w-full object-cover transition-all duration-500' ])} />
 
-              {
-                !avatar
-                  ?
-                  <div className={'h-[94px] w-[94px] mx-auto absolute left-[17px] animate-pulse rounded-full bg-[#485476]'} />
-                  :
-                  <img src={avatar && `${IPFS_URL_PREFIX}/${avatar}`} alt={'Avatar Icon'}
-                       className={'h-[94px] w-[94px] mx-auto absolute left-[17px] rounded-full object-cover'}
-                       draggable={false} />
-              }
+                {
+                  !avatar
+                    ?
+                    <div
+                      className={'h-[94px] w-[94px] mx-auto absolute left-[17px] animate-pulse rounded-full bg-[#485476]'} />
+                    :
+                    <>
+                      <img src={avatar && `${IPFS_URL_PREFIX}/${avatar}`} alt={'Avatar Icon'}
+                           className={'h-[94px] w-[94px] mx-auto absolute left-[17px] rounded-full object-cover'}
+                           draggable={false} />
+                    </>
 
-              <img src={'/src/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
-                       className={'absolute z-50'} draggable={false} />
-            </div>
+                }
+
+                <img src={'/src/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
+                     className={'absolute z-50'} draggable={false} />
+              </div>
+
+              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>Alice</p>
+            </React.Fragment>
 
             :
+
             <Button variant={button.variant} className={button.className} size={button.size}>
               <img src={button.imgSrc} alt={button.imgSrc}
                    className={clsx([ { 'hidden': button.imgSrc === '' }, button.imgClassName ])} draggable={false} />

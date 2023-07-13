@@ -53,9 +53,9 @@ export default function Header() {
   return (
     <div
       className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80' ])}>
-      <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between items-center', 'px-md' ])}>
+      <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between items-center', 'pl-md' ])}>
         {/*Menu Wrapper*/}
-        <div className={clsx([ 'flex items-center space-x-md' ])}>
+        <div className={clsx([ 'flex items-center first:gap-x-0  gap-x-md' ])}>
           <DialogWidget button={{
             variant: 'default',
             title: 'Profile',
@@ -65,15 +65,18 @@ export default function Header() {
             <Profile />
           </DialogWidget>
 
-          <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
-            <img
-              src={'/src/assets/svg/icon_map.png'}
-              alt="Map/Story"
-              className={'h-[67px] w-[68px]'}
-              draggable={false}
-            />
-            {activeScreen === SCREENS.CURRENT_LOCATION ? 'World Map' : 'Story Mode'}
-          </Button>
+          <div className={'px-md h-[67px]'}>
+            <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
+              <img
+                src={'/src/assets/svg/icon_map.png'}
+                alt="Map/Story"
+                className={'h-[67px] w-[68px]'}
+                draggable={false}
+              />
+              {activeScreen === SCREENS.CURRENT_LOCATION ? 'World Map' : 'Story Mode'}
+            </Button>
+          </div>
+
 
           <DialogWidget  button={{
             variant: 'menu',
@@ -101,12 +104,16 @@ export default function Header() {
         </div>
         {/*End of Menu Wrapper*/}
 
-        <Button
-          variant={'outline'}
-          onClick={ activeScreen === SCREENS.MINIGAME ? handleLeaveBattle : handleStartBattle }
-        >
-          {activeScreen === SCREENS.MINIGAME ? 'LEAVE BATTLE' : 'START BATTLE'}
-        </Button>
+        {/*<div className={clsx(['h-full max-w-[297px] w-full', 'border border-b-[25px] border-b-black border-l-[20px] border-l-transparent ', 'flex items-center', 'px-md', 'cursor-pointer', ])}>*/}
+          <Button
+            variant={'battle'} size={'battle'}
+            onClick={ activeScreen == SCREENS.MINIGAME ? handleLeaveBattle : handleStartBattle }
+          >
+            <img src={`${activeScreen === SCREENS.MINIGAME ? '/src/assets/minigame/icon_whiteFlag.png' : '/src/assets/minigame/icon_redFlag.png' }`} alt={'Battle Flag Icon'} className={'object-top ml-[10px]'}/>
+
+            {activeScreen === SCREENS.MINIGAME ? 'LEAVE BATTLE' : 'START BATTLE'}
+          </Button>
+        {/*</div>*/}
       </div>
 
 

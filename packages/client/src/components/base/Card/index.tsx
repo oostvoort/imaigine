@@ -83,19 +83,17 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = 'CardFooter'
 
-const CardTimer = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({
-// eslint-disable-next-line react/prop-types
-  className,
-  ...props
-}, ref) => (
-  <div className={clsx([ 'text-center', className ])} ref={ref} {...props}>
-    <p
-      className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Time
-      Limit</p>
-    <h1
-      className={clsx([ 'text-accent text-[76px] leading-[121px]', 'uppercase font-amiri' ])}>01:00</h1>
-  </div>
-))
+const CardTimer = ({timer}: {timer: string}) => {
+  return (
+    <div className={clsx([ 'text-center'])}>
+      <p
+        className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Time
+        Limit</p>
+      <h1
+        className={clsx([ 'text-accent text-[76px] leading-[121px]', 'uppercase font-amiri' ])}>{timer}</h1>
+    </div>
+  )
+}
 
 CardTimer.displayName = 'CardTimer'
 

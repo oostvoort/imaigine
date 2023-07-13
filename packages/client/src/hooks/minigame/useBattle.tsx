@@ -146,8 +146,8 @@ export default function useBattle(playerId: Entity) {
   const setLockBattle = useMutation({
     mutationKey: ["setLockBattle"],
     mutationFn: async () => {
-      const tx = await worldSend('battleLock', [])
-      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      // const tx = await worldSend('battleLock', [])
+      // // await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return battleData
     }
   })
