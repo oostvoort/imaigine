@@ -167,6 +167,11 @@ contract MinigameSystem is System {
     BattleHistoryComponent.set(id, winner, winnerOption, loser, loserOption, draw);
     BattleHistoryCounter.set(id + 1);
 
+    if (draw) {
+      BattlePreResultsComponents.setResult(winner, "Draw");
+      BattlePreResultsComponents.setResult(loser, "Draw");
+    }
+
     if(!draw && BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE) {
       uint256 winnerPoints = BattlePointsComponent.get(winner) + 1;
       uint256 loserPoints = BattlePointsComponent.get(loser);
@@ -178,6 +183,7 @@ contract MinigameSystem is System {
       resultsBattle(1, 0, winner);
       resultsBattle(0, 1, loser);
     }
+
   }
 
   function resultsBattle (uint32 win, uint32 lose, bytes32 playerId) internal {
