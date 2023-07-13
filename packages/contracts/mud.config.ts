@@ -8,6 +8,7 @@ export default mudConfig({
       TravelStatus: ["NOT_TRAVELLING", "PREPARING", "READY_TO_TRAVEL", "TRAVELLING"],
       BattleStatus: ["NOT_IN_BATTLE", "IN_BATTLE", "DONE_SELECTING", "LOCKED_IN"],
       BattleOptions: ["NONE", "Sword", "Scroll", "Potion"],
+      BattleOutcomeType: ["NONE", "WIN", "LOSE", "DRAW"]
     },
     tables: {
         StoryComponent: "bool",
@@ -72,9 +73,11 @@ export default mudConfig({
             hashedOption: "bytes32",
             status: "BattleStatus",
             timestamp: "uint256",
+            outcome: "BattleOutcomeType",
             hashSalt: "string"
           }
         },
+        BattleTimeComponent: "uint256",
         BattleHistoryComponent: {
           keySchema: {
             id: "uint256"

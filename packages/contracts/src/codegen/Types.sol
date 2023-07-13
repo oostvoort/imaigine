@@ -28,3 +28,10 @@ enum BattleOptions {
   Scroll,
   Potion
 }
+
+enum BattleOutcomeType {
+  NONE,
+  WIN,
+  LOSE,
+  DRAW
+}

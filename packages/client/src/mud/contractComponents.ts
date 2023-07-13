@@ -386,6 +386,7 @@ export function defineContractComponents(world: World) {
           hashedOption: RecsType.String,
           status: RecsType.Number,
           timestamp: RecsType.BigInt,
+          outcome: RecsType.Number,
           hashSalt: RecsType.String,
         },
         {

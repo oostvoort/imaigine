@@ -12,10 +12,11 @@ import {
   BattleHistoryComponent,
   BattlePointsComponent,
   BattleResultsComponents,
-  BattlePreResultsComponents
+  BattlePreResultsComponents,
+  BattleTimeComponent
 } from "../codegen/Tables.sol";
 
-import { BattleStatus, BattleOptions } from "../codegen/Types.sol";
+import { BattleStatus, BattleOptions, BattleOutcomeType } from "../codegen/Types.sol";
 
 contract MinigameSystem is System {
 
@@ -66,6 +67,15 @@ contract MinigameSystem is System {
     BattlePreResultsComponents.setOption(playerID, option);
   }
 
+  function rematch() public {
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
+    require(battleComponentData.status == BattleStatus.LOCKED_IN, "player has not locked in");
+    BattleComponentData memory opponentBattleData = BattleComponent.get(battleComponentData.opponent);
+    require(opponentBattleData.status == BattleStatus.LOCKED_IN, "opponent has not locked in");
+    beginMatch(playerID, battleComponentData.opponent, 0);
+  }
+
   /// @notice called by the player to evaluate battle
   /// @param hashSalt was the salt used to hash the option
   /// @param option is the actual option the player gave
@@ -101,7 +111,10 @@ contract MinigameSystem is System {
         else
           logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
       }
-      beginMatch(playerID, battleComponentData.opponent, 0);
+      BattleComponent.setOption(playerID, option);
+      BattleComponent.setHashSalt(playerID, hashSalt);
+      BattleComponent.setTimestamp(playerID, block.timestamp);
+      BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
     } else {
       if (opponentBattleData.timestamp + FORFEIT_TIME <= block.timestamp) {
         bytes32 locationId = LocationComponent.get(playerID);
@@ -115,6 +128,7 @@ contract MinigameSystem is System {
           battleComponentData.hashedOption,
           BattleStatus.LOCKED_IN,
           block.timestamp,
+          BattleOutcomeType.NONE,
           hashSalt
         );
       }
@@ -137,22 +151,24 @@ contract MinigameSystem is System {
   }
 
   function beginMatch(bytes32 player1, bytes32 player2, bytes32 locationId) internal {
-    BattleComponent.set(player1, player2, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, "");
-    BattleComponent.set(player2, player1, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, "");
+    BattleComponent.set(player1, player2, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, BattleOutcomeType.NONE, "");
+    BattleComponent.set(player2, player1, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, BattleOutcomeType.NONE, "");
     BattlePreResultsComponents.set(player1, BattleOptions.NONE, "");
     BattlePreResultsComponents.set(player2, BattleOptions.NONE, "");
     BattleQueueComponent.set(locationId, 0);
+    BattleTimeComponent.set(player1, block.timestamp);
+    BattleTimeComponent.set(player2, block.timestamp);
   }
 
   function kickOutPlayer(bytes32 playerToKickOut, bytes32 stayingPlayer, bytes32 playerInQueue, bytes32 locationId) internal {
     logHistory(stayingPlayer, playerToKickOut, BattleOptions.NONE, BattleOptions.NONE, false);
-    BattleComponent.set(playerToKickOut, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
+    BattleComponent.set(playerToKickOut, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
 
     if (playerInQueue != 0) {
       beginMatch(stayingPlayer, playerInQueue, locationId);
     } else {
       BattleQueueComponent.set(locationId, stayingPlayer);
-      BattleComponent.set(stayingPlayer, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, "");
+      BattleComponent.set(stayingPlayer, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
     }
   }
 
@@ -173,6 +189,16 @@ contract MinigameSystem is System {
       BattlePreResultsComponents.setResult(winner, "Draw");
       BattlePreResultsComponents.setResult(loser, "Draw");
     }
+
+    if (!draw) {
+      BattleComponent.setOutcome(winner, BattleOutcomeType.WIN);
+      BattleComponent.setOutcome(loser, BattleOutcomeType.LOSE);
+    } else {
+      BattleComponent.setOutcome(winner, BattleOutcomeType.DRAW);
+      BattleComponent.setOutcome(loser, BattleOutcomeType.DRAW);
+    }
+
+
 
     if(!draw && BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE) {
       uint256 winnerPoints = BattlePointsComponent.get(winner) + 1;

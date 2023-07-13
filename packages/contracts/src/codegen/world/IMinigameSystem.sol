@@ -14,6 +14,8 @@ interface IMinigameSystem {
 
   function preResult(BattleOptions option) external;
 
+  function rematch() external;
+
   function lockIn(string memory hashSalt, BattleOptions option) external;
 
   function leave() external returns (bytes32);
