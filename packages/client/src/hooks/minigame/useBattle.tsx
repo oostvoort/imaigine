@@ -216,6 +216,15 @@ export default function useBattle(playerId: Entity) {
     }
   })
 
+  const rematch = useMutation({
+    mutationKey: ["rematch"],
+    mutationFn: async () => {
+      const tx = await worldSend('rematch', [])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      return battleData
+    }
+  })
+
   return {
     battleData,
     setBattle,
@@ -226,5 +235,6 @@ export default function useBattle(playerId: Entity) {
     setLockBattle,
     opponentBattleData,
     setBattlePreResult,
+    rematch,
   }
 }
