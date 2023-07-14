@@ -36,6 +36,20 @@ export default function useHistory(playerId: Entity) {
     entity => getComponentValueStrict(BattleHistoryComponent, entity)
   )
 
+  /**
+   * Gets player battle results and determines if it was a win.
+   *
+   * @param battleData.playerInfo.battleResults?.totalWins - The total wins for the player.
+   * @param battleData.playerInfo.battleResults?.totalLoses - The total loses for the player.
+   *
+   * usePlayerResults extracts the total wins and loses for the player from the battleData.
+   *
+   * getBattleResult then checks if total wins is greater than loses to determine if it was a win.
+   * If wins and loses are equal, isWin is set to undefined.
+   *
+   * This allows determining if the battle was a win for the player based on their results data.
+   */
+
   const usePlayerResults = {
     totalWins: battleData.playerInfo.battleResults?.totalWins ?? 0,
     totalLoses: battleData.playerInfo?.battleResults?.totalLoses ?? 0,
