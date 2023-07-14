@@ -137,8 +137,8 @@ function getAllBurgs() {
   return locations
 }
 
-function focusMapOnPlayer(cellID, scale){
-  focusOnPlayer(cellID, scale)
+function focusMapOnPlayer(cellID, scale, travelling){
+  focusOnPlayer(cellID, scale, travelling)
 }
 
 // from iframe
@@ -152,6 +152,7 @@ window.addEventListener('message', ({ data }) => {
     showPlayers(data.params.players)
 
   } else if (data.cmd === 'showMyPlayer') {
+    let travelling = false
     // Remove old marker if there is
     if (data.params.marker) {
       deleteMarkerPlayer(data.params.marker)
@@ -159,7 +160,11 @@ window.addEventListener('message', ({ data }) => {
     // Create myPlayer marker
     const id = (showPlayers([data.params.player]))[0]
     // Focus the map on Player's location
-    focusMapOnPlayer(data.params.player.cell, 24)
+    if (data.params.screen === 4){
+      travelling = true
+    }
+    console.log('trave', travelling)
+    focusMapOnPlayer(data.params.player.cell, 24, travelling)
     // Send to parent the markerId
     window.parent.postMessage({ cmd: 'PlayerMarkerId', params: {id: id} })
     // Reveal cells
