@@ -33,7 +33,7 @@ export default function useTravel() {
 
         const data = await response.json()
         return {
-          travelStory: data
+          travelStory: data.travelStory
         } as GenerateTravelResponse
       } catch (error) {
         console.error('[generateTravel]', error)

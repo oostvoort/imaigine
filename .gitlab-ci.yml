@@ -1,17 +1,23 @@
+#   
+#   stage: deploy
+#   tags:
+#     - docker-node12
+
 stages:
   - deploy
+
 deploy_development:
+  image: oostvoort/node-alpine-aws:node12
   stage: deploy
   only:
     refs:
       - dev
     changes:
-      - "./**/*"
+      - "./**"
 
   before_script:
-  - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
   - eval $(ssh-agent -s)
-  - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+  - echo "$DEPLOY_KEY" | base64 -d | tr -d '\r' | ssh-add -
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan -p 22 174.138.22.99 >> ~/.ssh/known_hosts
