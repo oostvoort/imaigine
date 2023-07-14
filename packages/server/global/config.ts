@@ -10,7 +10,7 @@ export const JSON_RPC_URL = supportedChains.find(({id}) => id === parseInt(CHAIN
 
 
 /* IPFS */
-export const BASE_CONFIG_IPFS = "QmW8bo43CN712gS1s5hiQSJBHfrJyHtBhqWLcTWf8noCMb"
+export const BASE_CONFIG_IPFS = "QmVXhy2Gr115f23cVBr1buyCXF85S6umT2mQeh3567UsuH"
 export const LOCATION_LIST_IPFS = "QmTasufyKYeJut6uuZCQe962sKfD1RD19JwyMZfPGq7yTD"
 
 /* SETTINGS */

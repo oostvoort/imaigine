@@ -381,7 +381,7 @@ export default function CreateAvatarScreen() {
                 ])}
                    onClick={() => handleRandomCharacter()}
                 >
-                  Randomize All Feature
+                  Randomize All Features
                 </p>
               )
             }
