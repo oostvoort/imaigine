@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
 import { useAtom, useAtomValue } from 'jotai'
-import { activeScreen_atom, markerId_atom, SCREENS } from '@/states/global'
+import { activeScreen_atom, markerId_atom } from '@/states/global'
 
 type PropType = {
   className?: string
@@ -31,7 +31,7 @@ const Map: React.FC<PropType> = ({
       }
     }
   }
-  // const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
+  const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
   const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId}})}
 
   // Display myPlayer marker on the map
@@ -40,6 +40,12 @@ const Map: React.FC<PropType> = ({
       showMyPlayer()
     }
   },[myPlayer, isMyPlayerComplete, isMapRendered])
+
+  React.useEffect(() => {
+    if (players && isMapRendered){
+      showPlayers()
+    }
+  },[players, isMapRendered])
 
   useEffect(() => {
     const handleMessage = (event: any) => {
