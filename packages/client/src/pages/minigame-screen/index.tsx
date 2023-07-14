@@ -14,6 +14,7 @@ import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
 import { useAtom } from 'jotai'
 import { hash_options_set_value } from '@/states/minigame'
+import useHistory from '@/hooks/minigame/useHistory'
 
 const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(
@@ -36,6 +37,7 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
+  const { getPlayerBattleLogs, getBattleResult } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const {
     battleData,
@@ -120,7 +122,7 @@ export default function MinigameScreen() {
   // console.log("minigame playdata", playdata);
   // console.log('minigame battle data', battleData.battle)
   // console.log('minigame opponentHasNotSelectedWeapon', opponentHasNotSelectedWeapon)
-  // console.log('minigame playerInfo', playerInfo)
+  console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
   // console.log('minigame _opponentInfo', _opponentInfo.data)
   // console.log('minigame _playerInfo', _playerInfo.data)
@@ -136,7 +138,8 @@ export default function MinigameScreen() {
   // console.log("minigame oppponent", opponentBattleData.battle?.option);
   // console.log("minigame player", battleData.battle?.option);
   // console.log("minigame result",  matchResultStatus);
-  console.log("minigame timer", battleTime);
+  // console.log("minigame history getPlayerEntity", getPlayerBattleLogs);
+  console.log("minigame isWin ", getBattleResult)
 
   function displayWeapon(battleOption: number | undefined) {
     if (battleOption === 1) return '/src/assets/minigame/icon_rps_sword.jpg'
