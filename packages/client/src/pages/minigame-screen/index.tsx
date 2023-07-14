@@ -47,6 +47,7 @@ export default function MinigameScreen() {
     opponentBattleData,
     setBattlePreResult,
     rematch,
+    battleTime
   } = useBattle(player.id as Entity)
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
   const [ countdown, setCountdown ] = React.useState<number>(10)
@@ -135,6 +136,7 @@ export default function MinigameScreen() {
   // console.log("minigame oppponent", opponentBattleData.battle?.option);
   // console.log("minigame player", battleData.battle?.option);
   // console.log("minigame result",  matchResultStatus);
+  console.log("minigame timer", battleTime);
 
   function displayWeapon(battleOption: number | undefined) {
     if (battleOption === 1) return '/src/assets/minigame/icon_rps_sword.jpg'

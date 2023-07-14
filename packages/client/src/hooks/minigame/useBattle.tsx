@@ -36,10 +36,13 @@ export default function useBattle(playerId: Entity) {
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
 
+  const timer = useComponentValue(BattleTimeComponent, playerId);
 
   const battleTime = {
-      timer: useComponentValue(BattleTimeComponent, playerId)
+      start: Number(timer?.value),
+      end: Number(timer?.value) + 6000
   }
+
   /**
    * Custom hook to get battle data for a player.
    *
