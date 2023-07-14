@@ -18,3 +18,5 @@ export const DB_SOURCE = "logs.sqlite"
 
 /* MAP */
 export const MAP_SEED = 962218354
+
+export const HOST_NAME = process.env.HOST_NAME ?? 'http://localhost:3000'

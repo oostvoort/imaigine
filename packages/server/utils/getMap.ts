@@ -2,14 +2,14 @@ import puppeteer, { Page } from 'puppeteer'
 import { RouteObject } from 'types'
 import { getPlayerRevealedCells } from '../lib/contract'
 import * as dotenv from 'dotenv'
-import { MAP_SEED } from '../global/config'
+import { HOST_NAME, MAP_SEED } from '../global/config'
 
 
 dotenv.config()
 export async function launchAndNavigateMap(seed: number): Promise<Page> {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   const page: Page = await browser.newPage();
-  await page.goto(`http://localhost:3001/map/index.html?maplink=http://localhost:3000/mapdata?seed=${seed}`);
+  await page.goto(`${HOST_NAME}/map/index.html?maplink=${HOST_NAME}/mapdata?seed=${seed}`);
   await delay(2000);
 
   return page
