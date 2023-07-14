@@ -25,7 +25,7 @@ contract TravelSystem is System {
   using BitMapLib for uint256[];
 
   /// @dev the rate at which the player travels a cell
-  uint256 private constant TRAVEL_SPEED = 15;
+  uint256 private constant TRAVEL_SPEED = 5;
 
   /// @notice called by the player to signal that the player would like to travel
   /// @param destination pertains to the cell number of location
