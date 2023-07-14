@@ -1,4 +1,3 @@
-
 stages:
   - deploy
 deploy_development:
@@ -6,6 +5,9 @@ deploy_development:
   only:
     refs:
       - dev
+    changes:
+      - "./**/*"
+
   before_script:
     - apk add --update openssh-client 
     - eval $(ssh-agent -s)
