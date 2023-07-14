@@ -163,7 +163,6 @@ window.addEventListener('message', ({ data }) => {
     if (data.params.screen === 4){
       travelling = true
     }
-    console.log('trave', travelling)
     focusMapOnPlayer(data.params.player.cell, 24, travelling)
     // Send to parent the markerId
     window.parent.postMessage({ cmd: 'PlayerMarkerId', params: {id: id} })
