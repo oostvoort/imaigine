@@ -83,6 +83,8 @@ export default mudConfig({
             id: "uint256"
           },
           schema: {
+            player: "bytes32",
+            opponent: "bytes32",
             winner: "bytes32",
             winnerOption: "BattleOptions",
             loser: "bytes32",
