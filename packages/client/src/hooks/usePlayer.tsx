@@ -38,8 +38,6 @@ export default function usePlayer () {
 
     const battleComponent = useComponentValue(BattleComponent, playerEntity)
 
-    console.log({ battleComponent })
-
     const player = {
         id: playerEntity,
         player: useComponentValue(PlayerComponent, playerEntity),
