@@ -155,9 +155,6 @@ window.addEventListener('message', ({ data }) => {
     hideCells('myFogId')
     revealCells(data.params.player.revealedCell)
 
-  } else if (data.cmd === 'test') {
-    const reveal = getToRevealCells(1892, [2207, 2103, 2101, 1998, 1893, 1892])
-    console.log('reveal', reveal)
   } else {
     console.log('else', data)
   }
