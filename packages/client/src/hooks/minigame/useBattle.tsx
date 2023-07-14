@@ -155,6 +155,7 @@ export default function useBattle(playerId: Entity) {
   }
 
   /**
+   * ### @DEPRECATED!
    * Defines a mutation hook to set battle lock.
    * @param mutationKey The key for the mutation.
    * @param mutationFn The function to execute the mutation.
