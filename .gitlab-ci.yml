@@ -10,7 +10,7 @@ deploy_development:
 
   before_script:
   - eval $(ssh-agent -s)
-  - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+  - echo "$SSH_KEY" | ssh-add -
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan -p 22 174.138.22.99 >> ~/.ssh/known_hosts
