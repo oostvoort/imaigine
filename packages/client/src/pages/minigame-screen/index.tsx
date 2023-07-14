@@ -39,7 +39,7 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const { getPlayerBattleLogs, getBattleResult } = useHistory(player.id as Entity)
+  const {getWinnerInfo } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
@@ -164,6 +164,14 @@ export default function MinigameScreen() {
   // console.log("minigame player", battleData.battle?.option);
   // console.log("minigame result",  matchResultStatus);
   // console.log('minigame isMatchResultComponent', isMatchResultComponent)
+  // console.log("minigame getPlayerBattleLogs: ", getPlayerBattleLogs)
+  // console.log("minigame getPlayerBattleInfor: ", )
+  getWinnerInfo.map((data) => {
+    data.then((res) => {
+      console.log("minigame getWinnerInfo: ", res)
+    })
+  })
+
 
   function handleLeaveBattle() {
     try {

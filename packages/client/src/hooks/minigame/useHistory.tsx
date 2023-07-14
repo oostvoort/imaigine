@@ -2,11 +2,14 @@ import { useMUD } from '@/MUDContext'
 import { Entity, getComponentValueStrict, HasValue, runQuery } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import React from 'react'
+import usePlayer from '@/hooks/usePlayer'
+import { parsePlayerConfig } from '@/global/utils'
 
 export default function useHistory(playerId: Entity) {
   const {
     components: {
       BattleHistoryComponent,
+      ConfigComponent,
     }
   } = useMUD()
 
@@ -36,6 +39,17 @@ export default function useHistory(playerId: Entity) {
     entity => getComponentValueStrict(BattleHistoryComponent, entity)
   )
 
+  const getWinnerInfo = getPlayerBattleLogs.map( async (data) => {
+    const winner = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, data?.winner as Entity)?.value as string)
+
+    return {
+      winnerInfo: winner,
+      isDraw: data?.draw,
+      winnerOption: data?.winnerOption,
+    }
+  })
+
+
   /**
    * Gets player battle results and determines if it was a win.
    *
@@ -60,7 +74,7 @@ export default function useHistory(playerId: Entity) {
   }
 
   return {
-    getPlayerBattleLogs,
-    getBattleResult
+    getBattleResult,
+    getWinnerInfo
   }
 }

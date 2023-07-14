@@ -83,3 +83,13 @@ export const formatTime = (time: number) => {
   const seconds = (time % 60).toString().padStart(2, '0');
   return `${minutes}:${seconds}`;
 };
+
+export const parsePlayerConfig = async (config: string) => {
+  const data = await getFromIPFS(config)
+  const result = await data.json()
+  return {
+    image: `${IPFS_URL_PREFIX}/${result.image?.value}`,
+    name: result.name,
+    description: result.description
+  }
+}
