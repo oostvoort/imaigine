@@ -4,14 +4,21 @@ import React from 'react'
 import { Button } from '@/components/base/Button'
 import { useMap } from '@/hooks/v1/useMap'
 import Map from '@/components/shared/Map'
-import { useAtom } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
+import { useAtom, useSetAtom } from 'jotai'
+import { activeScreen_atom, SCREENS, travelStory_atom } from '@/states/global'
+import { clsx } from 'clsx'
 
 export default function TravellingScreen() {
 
   const { myPlayer, isMyPlayerComplete, functions: { travel }, travelData } = useMap()
 
-  const [, setActiveScreen] = useAtom(activeScreen_atom)
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+  const [travelStory, setTravelStory] = useAtom(travelStory_atom)
+
+  const handleEnterLocation = () => {
+    setTravelStory({ name: '', travelStory: ''})
+    setActiveScreen(SCREENS.CURRENT_LOCATION)
+  }
 
   React.useEffect(() => {
     let intervalId: any;
@@ -36,14 +43,26 @@ export default function TravellingScreen() {
             myPlayer={myPlayer}
             isMyPlayerComplete={isMyPlayerComplete}
           />
-          <p>Details ...</p>
+          <div className={clsx('overflow-y-auto h-[650px]')}>
+            <p className={clsx([
+              'text-[30px] text-[#BAC5F1]',
+              'font-amiri',
+            ])}>
+              {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}
+            </p>
+          </div>
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
       <Footer>
-        <div className={'flex justify-center my-auto w-[989px] h-[63px]'}>
-          <HourglassLoader>Travelling to Location ...</HourglassLoader>
-        </div>
-        {/*<Button variant={'neutral'} size={'btnWithBgImg'}>Enter Location</Button>*/}
+        {
+          travelData?.status === 0 ? (
+            <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleEnterLocation}>Enter {travelStory.name}</Button>
+          ) : (
+            <div className={'flex justify-center my-auto w-[989px] h-[63px]'}>
+              <HourglassLoader>Travelling to Location ...</HourglassLoader>
+            </div>
+          )
+        }
       </Footer>
     </React.Fragment>
   )

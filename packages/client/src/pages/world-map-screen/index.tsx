@@ -5,6 +5,8 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
+import { useSetAtom } from 'jotai'
+import { travelStory_atom } from '@/states/global'
 
 export type LocationType = {
   name: string,
@@ -18,6 +20,8 @@ export default function WorldMapScreen(){
   const [ isLocationOpen, setIsLocationOpen ] = React.useState<boolean>(false)
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
   const [destination, setDestination] = React.useState<number>(0)
+
+  const setTravelStory = useSetAtom(travelStory_atom)
 
   const { generateTravel } =  useTravel()
   const {generateLocation } = useLocation(destination)
@@ -51,8 +55,21 @@ export default function WorldMapScreen(){
   }, [isLocationOpen])
 
   const handleTravel = () => {
-    prepareTravel.mutateAsync({ toLocation: destination }).then(() => generateTravel.mutate())
+    prepareTravel.mutateAsync({ toLocation: destination })
+      .then(() => {
+        generateTravel.mutateAsync()
+          .then((result) => {
+            if (result) {
+              console.log({result})
+              setTravelStory({
+                name: locationData.name,
+                travelStory:  result.travelStory,
+              })
+            }
+        })
+      })
   }
+
   return(
     <SubLayout.MapViewLayout>
       <Map
