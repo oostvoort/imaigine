@@ -1,6 +1,13 @@
+#   
+#   stage: deploy
+#   tags:
+#     - docker-node12
+
 stages:
   - deploy
+
 deploy_development:
+  image: oostvoort/node-alpine-aws:node12
   stage: deploy
   only:
     refs:
