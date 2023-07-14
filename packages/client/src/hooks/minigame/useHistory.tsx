@@ -1,9 +1,9 @@
+import React from 'react'
 import { useMUD } from '@/MUDContext'
 import { Entity, getComponentValueStrict, HasValue, runQuery } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
-import React from 'react'
-import usePlayer from '@/hooks/usePlayer'
 import { parsePlayerConfig } from '@/global/utils'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useHistory(playerId: Entity) {
   const {
@@ -31,23 +31,38 @@ export default function useHistory(playerId: Entity) {
    * This returns an array of battle log entries for the player against the given opponent.
    */
 
-  const getBattleLogsEntity = runQuery([
-    HasValue(BattleHistoryComponent, { player : playerId, opponent: battleData.battleData.battle?.opponent })
-  ])
+  // const getBattleLogsEntity = runQuery([
+  //   HasValue(BattleHistoryComponent, { player : playerId, opponent: battleData.battleData.battle?.opponent })
+  // ])
 
-  const getPlayerBattleLogs = Array.from(getBattleLogsEntity).map(
-    entity => getComponentValueStrict(BattleHistoryComponent, entity)
-  )
+  // const getPlayerBattleLogs = Array.from(getBattleLogsEntity).map(
+  //   entity => getComponentValueStrict(BattleHistoryComponent, entity)
+  // )
 
-  const getWinnerInfo = getPlayerBattleLogs.map( async (data) => {
-    const winner = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, data?.winner as Entity)?.value as string)
+  // useQuery
+  // const getWinnerInfo = useQuery({
+  //   queryKey: ['winner-info-new'],
+  //   queryFn: async () => {
+  //     if (!getPlayerBattleLogs) throw new Error('!!!')
+  //
+  //     const winners: any = []
+  //
+  //     getPlayerBattleLogs.map(async data => {
+  //       const winner = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, data?.winner as Entity)?.value as string)
+  //       console.log({ winner, data })
+  //       winners.push({
+  //         winnerInfo: winner,
+  //         isDraw: data?.draw,
+  //         winnerOption: data?.winnerOption,
+  //       })
+  //     })
+  //
+  //     console.log({ x: JSON.stringify(winners) })
+  //     return winners
+  //   },
+  //   enabled: Boolean(getPlayerBattleLogs)
+  // })
 
-    return {
-      winnerInfo: winner,
-      isDraw: data?.draw,
-      winnerOption: data?.winnerOption,
-    }
-  })
 
 
   /**
@@ -70,11 +85,11 @@ export default function useHistory(playerId: Entity) {
   }
 
   const getBattleResult = {
-    isWin: usePlayerResults.totalWins != usePlayerResults.totalLoses ? usePlayerResults.totalWins > usePlayerResults.totalLoses : undefined,
+    isWin: usePlayerResults.totalWins != usePlayerResults.totalLoses ? usePlayerResults.totalWins > usePlayerResults.totalLoses : 'Draw',
   }
 
   return {
     getBattleResult,
-    getWinnerInfo
+    // getWinnerInfo
   }
 }

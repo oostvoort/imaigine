@@ -1,0 +1,20 @@
+stages:
+  - deploy
+deploy_development:
+  stage: deploy
+  only:
+    refs:
+      - dev
+    changes:
+      - "./**/*"
+
+  before_script:
+  - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+  - eval $(ssh-agent -s)
+  - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan -p 22 174.138.22.99 >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  script:
+    - rsync -arv -e 'ssh -o StrictHostKeyChecking=no -p 22' . "root"@"174.138.22.99":/root/imaigine-gameplay/

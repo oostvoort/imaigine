@@ -39,7 +39,7 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const {getWinnerInfo } = useHistory(player.id as Entity)
+  const {  getBattleResult } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
@@ -89,13 +89,10 @@ export default function MinigameScreen() {
 
   React.useEffect(() => {
     if (selectedWeapon !== 3 && !opponentHasNotSelectedWeapon) {
-      // console.log("minigame selected weapon");
       setIsChooseWeaponComponent(false)
 
       setLockBattle.mutateAsync().then(() => {
-        // console.log("minigame set lock battle");
         setBattlePreResult.mutateAsync().then(() => {
-          // console.log("minigame set battle result");
           setShowWeapon(true)
 
           lockIn.mutate()
@@ -104,7 +101,6 @@ export default function MinigameScreen() {
             setShowPrompt(true)
           }, 1000)
 
-          // console.log("minigame set lock battle");
           const nextRound = setTimeout(() => {
             setSelectedWeapon(3)
             setShowWeapon(false)
@@ -141,14 +137,17 @@ export default function MinigameScreen() {
         }
       }, 1000)
 
-      return () => clearInterval(interval)
+      return () => {
+        clearInterval(interval)
+      }
     }
   }, [ battleTime.end, playersInMatch ])
+
 
   // console.log("minigame playdata", playdata);
   // console.log('minigame battle data', battleData.battle)
   // console.log('minigame opponentHasNotSelectedWeapon', opponentHasNotSelectedWeapon)
-  console.log('minigame playerInfo', playerInfo)
+  // console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
   // console.log('minigame _opponentInfo', _opponentInfo.data)
   // console.log('minigame _playerInfo', _playerInfo.data)
@@ -166,11 +165,6 @@ export default function MinigameScreen() {
   // console.log('minigame isMatchResultComponent', isMatchResultComponent)
   // console.log("minigame getPlayerBattleLogs: ", getPlayerBattleLogs)
   // console.log("minigame getPlayerBattleInfor: ", )
-  getWinnerInfo.map((data) => {
-    data.then((res) => {
-      console.log("minigame getWinnerInfo: ", res)
-    })
-  })
 
 
   function handleLeaveBattle() {
@@ -182,6 +176,21 @@ export default function MinigameScreen() {
     }
   }
 
+  // function handleRematchBattle() {
+  //   try {
+  //     rematch.mutate(true)
+  //     setIsMatchResultComponent(false)
+  //   } catch (e) {
+  //     console.error(e)
+  //   }
+  // }
+
+  function displayGameResult() {
+    if (getBattleResult.isWin == 'Draw') return 'Draw'
+    if (getBattleResult.isWin) return 'You Win!'
+    if (!getBattleResult.isWin) return 'You Loss!'
+  }
+
   function displayWeapon(battleOption: number | undefined) {
     if (battleOption === 1) return '/src/assets/minigame/icon_rps_sword.jpg'
     if (battleOption === 2) return '/src/assets/minigame/icon_rps_scroll.jpg'
@@ -190,9 +199,9 @@ export default function MinigameScreen() {
     return ''
   }
 
-  function displayMatchResult(battleDataOutcome: number) {
-    if (battleDataOutcome === 1) return 'Win'
-    if (battleDataOutcome === 2) return 'Loss'
+  function displayRoundResult(battleDataOutcome: number) {
+    if (battleDataOutcome === 1) return 'You Win!'
+    if (battleDataOutcome === 2) return 'You Loss!'
     if (battleDataOutcome === 3) return 'Draw'
 
     return ''
@@ -224,6 +233,27 @@ export default function MinigameScreen() {
       },
     },
   ]
+
+  // const { data, isSuccess } = getWinnerInfo
+
+  // const info = React.useMemo(async () => {
+  //   if(!getWinnerInfo) throw new Error('Winner Info Missing')
+  //   return getWinnerInfo.map(async (data) => {
+  //     return await (await data)
+  //   })
+  // }, [getWinnerInfo])
+
+
+
+  // getWinnerInfo.map((data) => {
+  //   return data.then((res) => {
+  //     return (
+  //       <p className={clsx([ 'pt-sm px-3' ])}>{res.winnerInfo.name}</p>
+  //     )
+  //   })
+  // })
+
+
 
   return (
     <React.Fragment>
@@ -338,9 +368,9 @@ export default function MinigameScreen() {
                 <div
                   className={clsx([ { 'zoomHidden': !showPrompt }, { 'zoomActive': showPrompt }, 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[46%] ' ])}>
                   <p
-                    className={clsx([ 'text-[68px]  text-option-8 ', 'font-amiri uppercase leading-[36px] mt-4' ])}>{displayMatchResult(Number(battleData.battle?.outcome))}</p>
+                    className={clsx([ 'text-[68px]', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': Number(battleData.battle?.outcome) === 2 }, { 'text-option-8': Number(battleData.battle?.outcome) !== 2 } ])}>{displayRoundResult(Number(battleData.battle?.outcome))}</p>
                   <p
-                    className={clsx([ 'text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>Next
+                    className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>Next
                     Round Starts in 3...</p>
                 </div>
               </Template.MinigameLayout.MatchComparison>
@@ -351,14 +381,14 @@ export default function MinigameScreen() {
                 <div
                   className={clsx([ 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute left-1/2 top-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
                   <p
-                    className={clsx([ 'text-[68px]  text-option-8 ', 'font-amiri uppercase leading-[36px] mt-4' ])}>Forfeit</p>
+                    className={clsx([ 'text-[68px]  ', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': !getBattleResult?.isWin }, { 'text-option-8': getBattleResult?.isWin || getBattleResult?.isWin == 'Draw' } ])}>{displayGameResult()}</p>
                   <p
-                    className={clsx([ 'text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>{`You've earned 100 battle points!`}</p>
+                    className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>{`You've earned 100 battle points!`}</p>
                 </div>
 
                 <div
                   className={clsx([ 'flex flex-col gap-md', 'absolute -bottom-[10%] left-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
-                  <Button variant={'neutral'} size={'btnWithBgImg'}>Wait for New Opponent</Button>
+                  {/*<Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleRematchBattle}>Rematch</Button>*/}
                   <div className={clsx([ { 'hidden': !isMatchResultComponent } ])}>
                     <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleLeaveBattle}>Leave Battle</Button>
                   </div>
@@ -430,8 +460,17 @@ export default function MinigameScreen() {
                     </Button>
                   </div>
 
-                  <div className={clsx(['h-[648px]', 'overflow-y-auto', 'flex flex-col', 'mt-sm', 'rounded-lg bg-option-13', 'text-[20px] leading-[32px] text-left text-option-11', 'font-segoe', 'tracking-[0.4px]'])}>
-                    <p className={clsx([ 'pt-sm px-3' ])}>{`You've set up a battle camp.`}</p>
+                  <div
+                    className={clsx([ 'h-[648px]', 'overflow-y-auto', 'flex flex-col', 'mt-sm', 'rounded-lg bg-option-13', 'text-[20px] leading-[32px] text-left text-option-11', 'font-segoe', 'tracking-[0.4px]' ])}>
+                    {/*{*/}
+                    {/*  return getWinnerInfo.map((data) => {*/}
+                    {/*    return data.then((res) => {*/}
+                    {/*      return (*/}
+                    {/*        <p className={clsx([ 'pt-sm px-3' ])}>{res.winnerInfo.name}</p>*/}
+                    {/*      )*/}
+                    {/*    })*/}
+                    {/*  })*/}
+                    {/*}*/}
                   </div>
                 </div>
               </Card>
