@@ -13,11 +13,11 @@ deploy_development:
     refs:
       - dev
     changes:
-      - "./**/*"
+      - "./**"
 
   before_script:
   - eval $(ssh-agent -s)
-  - echo "$SSH_KEY" | ssh-add -
+  - echo "$DEPLOY_KEY" | base64 -d | tr -d '\r' | ssh-add -
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan -p 22 174.138.22.99 >> ~/.ssh/known_hosts
