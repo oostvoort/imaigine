@@ -1,5 +1,5 @@
 import { getFromIpfs } from './getFromIpfs'
-import * as process from 'process'
+import { LOCATION_LIST_IPFS } from '../global/config'
 
 interface Location {
   name: string
@@ -7,7 +7,7 @@ interface Location {
 }
 export async function getLocationList(): Promise<Array<Location>> {
 
-  const result = await getFromIpfs(process.env.LOCATION_LIST_IPFS)
+  const result = await getFromIpfs(LOCATION_LIST_IPFS)
 
   return result.locations as Location[]
 }

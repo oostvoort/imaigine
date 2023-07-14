@@ -26,7 +26,7 @@ const HourglassLoader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
     className={clsx([ 'flex items-center gap-x-sm', className ])}
     {...props}
   >
-    <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'animate-custom-spin h-[30px] w-[18px]'} />
+    <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'animate-custom-spin h-[30px] w-[18px]'} />
     <h2 className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>{children}</h2>
   </div>
 ))

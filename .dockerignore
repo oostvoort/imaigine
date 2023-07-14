@@ -1,0 +1,8 @@
+./packages/contracts/broadcast
+./packages/contracts/cache
+./packages/contracts/out
+./packages/contracts/types
+./packages/client/.env
+./packages/contracts/.env
+./packages/server/.env
+./packages/server/logs.sqlite

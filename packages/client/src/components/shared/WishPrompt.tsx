@@ -12,7 +12,7 @@ export default function WishPrompt() {
       <div
         className={clsx([ 'flex gap-6', 'h-[75%] w-[calc(100%-25rem)]', 'border border-option-10 rounded-2xl shadow-lg', 'bg-modal', 'p-md' ])}>
         <div className={clsx([ 'w-[468px] h-full'])}>
-          <img src={isGood ? '/src/assets/avatar/img_good_npc.jpg' : '/src/assets/avatar/img_evil_npc.jpg'} alt={'NPC Image'} className={'object-cover w-full h-full rounded-lg'}/>
+          <img src={isGood ? '/assets/avatar/img_good_npc.jpg' : '/assets/avatar/img_evil_npc.jpg'} alt={'NPC Image'} className={'object-cover w-full h-full rounded-lg'}/>
         </div>
 
         <div className={clsx([ 'flex flex-col justify-between flex-1' ])}>

@@ -5,6 +5,7 @@ import { Dialog, DialogTrigger } from '@/components/base/Dialog'
 import { Button, ButtonProps } from '@/components/base/Button'
 import usePlayer from '@/hooks/usePlayer'
 import { IPFS_URL_PREFIX } from '@/global/constants'
+import useIpfs from '@/hooks/useIpfs'
 
 type PropType = {
   children: React.ReactNode
@@ -30,6 +31,8 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
 
   const karmaPoints = player.karmaPoints?.value ?? 0
 
+  const ipfs = useIpfs<{name: string, summary: string}>(player.config?.value ?? '')
+
   const percentage = (Math.abs(karmaPoints) / 100).toFixed(1)
 
   React.useEffect(() => {
@@ -47,12 +50,12 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
             <React.Fragment>
               <div
                 className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'z-50', 'overflow-hidden' ])}>
-                <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
+                <img src={'/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
                      className={clsx([ 'h-[128px] w-[128px]' ])} />
 
                 {/*karma points*/}
                 <img ref={avatarRef}
-                     src={`/src/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`}
+                     src={`/assets/avatar/frames/${karmaPoints < 0 ? 'bg_karmaMeter_evil' : 'bg_karmaMeter_good'}.svg`}
                      alt={'frame background'}
                      className={clsx([ 'absolute left-0 right-0 bottom-[5px] w-full object-cover transition-all duration-500' ])} />
 
@@ -70,11 +73,11 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
 
                 }
 
-                <img src={'/src/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
+                <img src={'/assets/avatar/frames/outer_frame.png'} alt={'frame background'}
                      className={'absolute z-50'} draggable={false} />
               </div>
 
-              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>Alice</p>
+              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>{ipfs.data?.name ?? 'Loading Name'}</p>
             </React.Fragment>
 
             :
@@ -94,7 +97,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
           className={clsx([ 'fixed inset-0 backdrop-blur', 'flex items-center justify-center' ])}
         >
           <DialogPrimitive.Close className={'absolute right-4 top-4 p-2'}>
-            <img src={'/src/assets/svg/close.svg'} alt={'Close Icon'} />
+            <img src={'/assets/svg/close.svg'} alt={'Close Icon'} />
           </DialogPrimitive.Close>
 
           <DialogPrimitive.Content

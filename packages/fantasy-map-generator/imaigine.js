@@ -89,8 +89,19 @@ function showPlayers(players) {
     // adding player's marker
     const name = player.name
     const icon = name.charAt(0)
-    const x = Math.round(pack.cells.p[player.cell][0])
-    const y = Math.round(pack.cells.p[player.cell][1])
+
+    // check if the cell has burg
+    let x = 0
+    let y = 0
+    if (pack.cells.burg[player.cell] > 0){
+      const burgId = pack.cells.burg[player.cell]
+      x = Math.round(pack.burgs[burgId].x)
+      y = Math.round(pack.burgs[burgId].y)
+    } else{
+      x = Math.round(pack.cells.p[player.cell][0])
+      y = Math.round(pack.cells.p[player.cell][1])
+    }
+
     const cell = player.cell
     const baseMarker = { type: 'player', icon: icon }
     const marker = Markers.add({ ...baseMarker, x, y, cell })
@@ -126,6 +137,10 @@ function getAllBurgs() {
   return locations
 }
 
+function focusMapOnPlayer(cellID, scale){
+  focusOnPlayer(cellID, scale)
+}
+
 // from iframe
 window.addEventListener('message', ({ data }) => {
   if (data.cmd === 'unFog') {
@@ -143,15 +158,14 @@ window.addEventListener('message', ({ data }) => {
     }
     // Create myPlayer marker
     const id = (showPlayers([data.params.player]))[0]
+    // Focus the map on Player's location
+    focusMapOnPlayer(data.params.player.cell, 24)
     // Send to parent the markerId
     window.parent.postMessage({ cmd: 'PlayerMarkerId', params: {id: id} })
     // Reveal cells
     hideCells('myFogId')
     revealCells(data.params.player.revealedCell)
 
-  } else if (data.cmd === 'test') {
-    const reveal = getToRevealCells(1892, [2207, 2103, 2101, 1998, 1893, 1892])
-    console.log('reveal', reveal)
   } else {
     console.log('else', data)
   }

@@ -68,7 +68,7 @@ export default function Header() {
           <div className={'px-md h-[67px]'}>
             <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
               <img
-                src={'/src/assets/svg/icon_map.png'}
+                src={'/assets/svg/icon_map.png'}
                 alt="Map/Story"
                 className={'h-[67px] w-[68px]'}
                 draggable={false}
@@ -82,7 +82,7 @@ export default function Header() {
             variant: 'menu',
             size: 'menu',
             title: 'History',
-            imgSrc: '/src/assets/svg/history.png',
+            imgSrc: '/assets/svg/history.png',
             imgAlt: 'History',
             imgClassName: 'h-[59px] w-[71px]',
           }} isAvatar={false}>
@@ -93,7 +93,7 @@ export default function Header() {
             variant: 'menu',
             size: 'menu',
             title: 'Settings',
-            imgSrc: '/src/assets/svg/settings.png',
+            imgSrc: '/assets/svg/settings.png',
             imgAlt: 'Settings',
             imgClassName: 'h-[59px] w-[59px]',
           }} isAvatar={false}>
@@ -109,7 +109,7 @@ export default function Header() {
             variant={'battle'} size={'battle'}
             onClick={ activeScreen == SCREENS.MINIGAME ? handleLeaveBattle : handleStartBattle }
           >
-            <img src={`${activeScreen === SCREENS.MINIGAME ? '/src/assets/minigame/icon_whiteFlag.png' : '/src/assets/minigame/icon_redFlag.png' }`} alt={'Battle Flag Icon'} className={'object-top ml-[10px]'}/>
+            <img src={`${activeScreen === SCREENS.MINIGAME ? '/assets/minigame/icon_whiteFlag.png' : '/assets/minigame/icon_redFlag.png' }`} alt={'Battle Flag Icon'} className={'object-top ml-[10px]'}/>
 
             {activeScreen === SCREENS.MINIGAME ? 'LEAVE BATTLE' : 'START BATTLE'}
           </Button>

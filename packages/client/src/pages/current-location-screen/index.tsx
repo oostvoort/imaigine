@@ -117,7 +117,7 @@ export default function CurrentLocationScreen() {
               location.data?.imgHash === undefined ?
                 <div className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'} >
                   <div className={'border border-4 rounded-full p-10 text-center'}>
-                    <img src={'src/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'}/>
+                    <img src={'/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'}/>
                   </div>
                 </div>
                 :

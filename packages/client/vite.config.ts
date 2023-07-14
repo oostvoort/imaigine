@@ -14,6 +14,16 @@ export default defineConfig({
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/map/, ''),
       },
+      '/api': {
+        target: 'http://localhost:3000/',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/map/, ''),
+      },
+      '/mapdata': {
+        target: 'http://localhost:3000/',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/map/, ''),
+      },
     },
   },
   build: {

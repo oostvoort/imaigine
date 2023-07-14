@@ -34,7 +34,7 @@ export default function TitleScreen() {
       <BackgroundCarousel>
         <section className="flex flex-col items-center gap-2 z-10">
           <img
-            src={`/src/assets/logo/imaigine_logo.svg`}
+            src={`/assets/logo/imaigine_logo.svg`}
             alt={'Imaigine Logo'}
             className="w-[31.8em] h-[9.5em] mb-5"
             draggable={false}

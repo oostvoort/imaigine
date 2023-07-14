@@ -1,5 +1,4 @@
 import React from 'react'
-import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import { Card, CardContent } from '@/components/base/Card'
@@ -200,8 +199,8 @@ export default function CreateAvatarScreen() {
           ])}>
             <section className={clsx('flex flex-col gap-2')}>
               <img
-                src={imaigineIcon}
-                alt={String(imaigineIcon)}
+                src={"/assets/logo/imaigine_logo.svg"}
+                alt={"imaigine icon"}
                 className={clsx('aspect-auto w-[225px]')}
                 draggable={false}
               />
@@ -341,7 +340,7 @@ export default function CreateAvatarScreen() {
                       generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary)
                     }}>
                       <img
-                        src={`/src/assets/svg/refresh.svg`}
+                        src={`/assets/svg/refresh.svg`}
                         alt={'Avatar Img'}
                         className={clsx([
                           'object-cover w-[22px] h-[22px]',

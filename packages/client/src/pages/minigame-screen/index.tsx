@@ -137,9 +137,9 @@ export default function MinigameScreen() {
   // console.log("minigame result",  matchResultStatus);
 
   function displayWeapon(battleOption: number | undefined) {
-    if (battleOption === 1) return '/src/assets/minigame/icon_rps_sword.jpg'
-    if (battleOption === 2) return '/src/assets/minigame/icon_rps_scroll.jpg'
-    if (battleOption === 3) return '/src/assets/minigame/icon_rps_potion.jpg'
+    if (battleOption === 1) return '/assets/minigame/icon_rps_sword.jpg'
+    if (battleOption === 2) return '/assets/minigame/icon_rps_scroll.jpg'
+    if (battleOption === 3) return '/assets/minigame/icon_rps_potion.jpg'
 
     return ''
   }
@@ -154,7 +154,7 @@ export default function MinigameScreen() {
 
   const weapons = [
     {
-      src: '/src/assets/minigame/icon_rps_sword.jpg',
+      src: '/assets/minigame/icon_rps_sword.jpg',
       alt: 'Sword Icon',
       onClick: async () => {
         setSelectedWeapon(0)
@@ -162,7 +162,7 @@ export default function MinigameScreen() {
       },
     },
     {
-      src: '/src/assets/minigame/icon_rps_scroll.jpg',
+      src: '/assets/minigame/icon_rps_scroll.jpg',
       alt: 'Scroll Icon',
       onClick: async () => {
         setSelectedWeapon(1)
@@ -170,7 +170,7 @@ export default function MinigameScreen() {
       },
     },
     {
-      src: '/src/assets/minigame/icon_rps_potion.jpg',
+      src: '/assets/minigame/icon_rps_potion.jpg',
       alt: 'Potion Icon',
       onClick: async () => {
         setSelectedWeapon(2)
@@ -217,7 +217,7 @@ export default function MinigameScreen() {
 
             <div className={clsx([ 'w-full h-full text-center', 'flex-1', 'relative' ])}>
               {/*Chair*/}
-              <img src={'/src/assets/minigame/img_battle_chair.png'} alt={'Chair Icon'}
+              <img src={'/assets/minigame/img_battle_chair.png'} alt={'Chair Icon'}
                    className={clsx('absolute left-1/2 top-[39%] -translate-y-1/2 -translate-x-1/2 w-[740px] h-auto')}
                    draggable={false} />
 
@@ -233,7 +233,7 @@ export default function MinigameScreen() {
               }
 
               {/*Table*/}
-              <img src={'/src/assets/minigame/img_battle_table.png'} alt={'Chair Icon'}
+              <img src={'/assets/minigame/img_battle_table.png'} alt={'Chair Icon'}
                    className={'absolute left-1/2 bottom-[14%] translate-y-1/2 -translate-x-1/2 w-[965px] h-auto'}
                    draggable={false} />
 
@@ -244,7 +244,7 @@ export default function MinigameScreen() {
                     <React.Fragment>
                       <div
                         className={clsx([ ' bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                        <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                        <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
                              className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
                         <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5', '' ])}>Waiting for the other
                           player</p>
@@ -291,7 +291,7 @@ export default function MinigameScreen() {
 
                 <div
                   className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': selectedWeapon !== 3 && !opponentHasNotSelectedWeapon } ])}>
-                  <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                  <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
                        className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { hidden: !opponentHasNotSelectedWeapon || selectedWeapon === 3 } ])}
                        draggable={false} />
                   <p
@@ -370,7 +370,7 @@ export default function MinigameScreen() {
                   <div className={clsx(['flex items-center justify-between'])}>
                     <p className={clsx(['text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]'])}>Battle Logs</p>
                     <Button size={'icon'} variant={'icon'}>
-                      <img src={'/src/assets/minigame/icon_help.svg'} alt={'Guide Icon'} />
+                      <img src={'/assets/minigame/icon_help.svg'} alt={'Guide Icon'} />
                     </Button>
                   </div>
 

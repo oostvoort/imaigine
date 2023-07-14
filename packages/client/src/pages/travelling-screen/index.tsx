@@ -26,7 +26,7 @@ export default function TravellingScreen() {
       setActiveScreen(SCREENS.TRAVELLING)
       intervalId = setInterval(() => {
         travel.mutate();
-      }, 15000); // 15 seconds interval
+      }, 5000); // 5 seconds interval
     }
 
     return () => {

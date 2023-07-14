@@ -36,7 +36,7 @@ contract InteractionSystem is MudV2Test {
   bytes32 private zeroBytes = keccak256(abi.encodePacked(new bytes(0)));
   address private constant PLAYER_1 = address(1);
 
-  uint256 private constant TRAVEL_SPEED = 1_000 * 15;
+  uint256 private constant TRAVEL_SPEED = 5;
 
   function setUp() public override {
     vm.deal(PLAYER_1, 1000000);

@@ -17,14 +17,17 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("ItemComponent")));
-bytes32 constant ItemComponentTableId = _tableId;
+// Import user types
+import { InteractionType } from "./../Types.sol";
 
-library ItemComponent {
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("InteractionTypeC")));
+bytes32 constant InteractionTypeComponentTableId = _tableId;
+
+library InteractionTypeComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.BOOL;
+    _schema[0] = SchemaType.UINT8;
 
     return SchemaLib.encode(_schema);
   }
@@ -40,7 +43,7 @@ library ItemComponent {
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
     _fieldNames[0] = "value";
-    return ("ItemComponent", _fieldNames);
+    return ("InteractionTypeComponent", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -66,41 +69,41 @@ library ItemComponent {
   }
 
   /** Get value */
-  function get(bytes32 key) internal view returns (bool value) {
+  function get(bytes32 key) internal view returns (InteractionType value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
-    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+    return InteractionType(uint8(Bytes.slice1(_blob, 0)));
   }
 
   /** Get value (using the specified store) */
-  function get(IStore _store, bytes32 key) internal view returns (bool value) {
+  function get(IStore _store, bytes32 key) internal view returns (InteractionType value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
-    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+    return InteractionType(uint8(Bytes.slice1(_blob, 0)));
   }
 
   /** Set value */
-  function set(bytes32 key, bool value) internal {
+  function set(bytes32 key, InteractionType value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(value)));
   }
 
   /** Set value (using the specified store) */
-  function set(IStore _store, bytes32 key, bool value) internal {
+  function set(IStore _store, bytes32 key, InteractionType value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(value)));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(bool value) internal view returns (bytes memory) {
+  function encode(InteractionType value) internal view returns (bytes memory) {
     return abi.encodePacked(value);
   }
 
@@ -124,11 +127,5 @@ library ItemComponent {
     _keyTuple[0] = key;
 
     _store.deleteRecord(_tableId, _keyTuple);
-  }
-}
-
-function _toBool(uint8 value) pure returns (bool result) {
-  assembly {
-    result := value
   }
 }

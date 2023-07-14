@@ -145,6 +145,7 @@ contract MinigameSystem is System {
     else {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
       kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
+      BattleResultsComponents.set(battleData.opponent, 0, 0);
     }
     BattleResultsComponents.set(playerID, 0, 0);
     return locationId;

@@ -90,7 +90,7 @@ export default function ConversationDialog({
       <DialogPrimitive.Portal
         className={'fixed inset-0 z-50  flex items-start justify-center relative'}>
         <DialogPrimitive.Overlay
-          style={{ backgroundImage: `url(${currentLocation.image ? `${IPFS_URL_PREFIX}/${currentLocation.image}` : '/src/assets/background/bg1.jpg' })` }}
+          style={{ backgroundImage: `url(${currentLocation.image ? `${IPFS_URL_PREFIX}/${currentLocation.image}` : '/assets/background/bg1.jpg' })` }}
           className={clsx([
             'fixed inset-0',
             'flex items-start justify-center',
@@ -107,7 +107,7 @@ export default function ConversationDialog({
               setOpen && setOpen(false)
             }}
           >
-            <img src={'/src/assets/svg/close.svg'} alt={'Close Icon'} />
+            <img src={'/assets/svg/close.svg'} alt={'Close Icon'} />
           </DialogPrimitive.Close>
 
           {/*IF MULTIPLAYER*/}
@@ -123,7 +123,7 @@ export default function ConversationDialog({
           {/*          <span className={'absolute -bottom-4 rounded-md py-0.5 px-1.5 bg-[#000000A8] text-[14px] leading-[32px] font-segoe tracking-[0.28]'}>{player.avatarName}</span>*/}
 
           {/*          <div className={'absolute -right-[15%] z-10 flex justify-center items-center  rounded-full h-11 w-11 bg-red-400 bg-accent'}>*/}
-          {/*            <img src={'src/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'rotate-180'}/>*/}
+          {/*            <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'rotate-180'}/>*/}
           {/*          </div>*/}
           {/*        </div>*/}
           {/*      ))*/}
@@ -147,7 +147,7 @@ export default function ConversationDialog({
             ])}>
               <div className={clsx('w-4/12')}>
                 <img
-                  src={`${currentLocation.npc ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                  src={`${currentLocation.npc ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/assets/avatar/avatar1.jpg'}`}
                   alt={'NPC Image'}
                   className="w-full h-full rounded rounded-xl object-cover"
                 />
@@ -167,7 +167,7 @@ export default function ConversationDialog({
                   {
                     interactNPC.isLoading && (
                       <ConversationLayout.TypingBubble
-                        authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                        authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/assets/avatar/avatar1.jpg'}`}
                       />
                     )
                   }
@@ -178,7 +178,7 @@ export default function ConversationDialog({
                           <ConversationLayout.ReceiverBubble
                             key={conversation.logId}
                             authorName={currentLocation.npc.config.name ?? 'NPC Name'}
-                            authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/src/assets/avatar/avatar1.jpg'}`}
+                            authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/assets/avatar/avatar1.jpg'}`}
                             text={conversation.text}
                           />
                         )

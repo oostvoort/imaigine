@@ -1,5 +1,4 @@
 import { Card, CardContent } from '@/components/base/Card'
-import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
 import React from 'react'
 import { clsx } from 'clsx'
 import AILoader from '@/components/shared/AILoader'
@@ -17,7 +16,7 @@ export default function LoadingScreen({ message }: Props) {
     ])}>
       <section className="flex-1 flex flex-col gap-10">
         <div className='flex flex-col gap-5'>
-          <img src={imaigineIcon} alt={String(imaigineIcon)} className="w-[225px] mx-auto" />
+          <img src={"/assets/logo/imaigine_logo.svg"} alt={"imaigine icon"} className="w-[225px] mx-auto" />
           <p className={clsx([
             'text-white text-sm text-center',
             'font-inkFree  tracking-wider',

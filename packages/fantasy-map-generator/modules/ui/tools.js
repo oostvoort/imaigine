@@ -923,3 +923,11 @@ async function overviewCharts() {
   const Overview = await import("../dynamic/overview/charts-overview.js?v=1.89.24");
   Overview.open();
 }
+function focusOnPlayer(cellID, scale){
+  if (scale || cellID) {
+    const newScale = +scale || 8;
+    const cell = +cellID;
+    const [x, y] = pack.cells.p[cell];
+    zoomTo(x, y, newScale, 1600);
+  }
+}

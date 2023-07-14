@@ -1,5 +1,4 @@
 import React from 'react'
-import imaigineIcon from '@/assets/logo/imaigine_logo.svg'
 import { clsx } from 'clsx'
 
 type PropType = {
@@ -14,8 +13,8 @@ const LoadingStory = ({ message, isLoading }: PropType) => {
       'flex flex-col justify-between',
     ])}>
       <img
-        src={imaigineIcon}
-        alt={String(imaigineIcon)}
+        src={"/assets/logo/imaigine_logo.svg"}
+        alt={"imaigine icon"}
         className={clsx('aspect-auto w-[15em]')}
       />
       <div className={clsx('flex justify-between')}>

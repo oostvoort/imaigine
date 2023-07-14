@@ -1,0 +1,8 @@
+services:
+  imaigine:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./packages/server/.env
+    container_name: imaigine

@@ -17,14 +17,14 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("SummaryComponent")));
-bytes32 constant SummaryComponentTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("RevealedCells")));
+bytes32 constant RevealedCellsTableId = _tableId;
 
-library SummaryComponent {
+library RevealedCells {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.STRING;
+    _schema[0] = SchemaType.BYTES;
 
     return SchemaLib.encode(_schema);
   }
@@ -40,7 +40,7 @@ library SummaryComponent {
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
     _fieldNames[0] = "value";
-    return ("SummaryComponent", _fieldNames);
+    return ("RevealedCells", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -66,25 +66,25 @@ library SummaryComponent {
   }
 
   /** Get value */
-  function get(bytes32 key) internal view returns (string memory value) {
+  function get(bytes32 key) internal view returns (bytes memory value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
-    return (string(_blob));
+    return (bytes(_blob));
   }
 
   /** Get value (using the specified store) */
-  function get(IStore _store, bytes32 key) internal view returns (string memory value) {
+  function get(IStore _store, bytes32 key) internal view returns (bytes memory value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
-    return (string(_blob));
+    return (bytes(_blob));
   }
 
   /** Set value */
-  function set(bytes32 key, string memory value) internal {
+  function set(bytes32 key, bytes memory value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -92,7 +92,7 @@ library SummaryComponent {
   }
 
   /** Set value (using the specified store) */
-  function set(IStore _store, bytes32 key, string memory value) internal {
+  function set(IStore _store, bytes32 key, bytes memory value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -118,25 +118,25 @@ library SummaryComponent {
   }
 
   /** Get an item of value (unchecked, returns invalid data if index overflows) */
-  function getItem(bytes32 key, uint256 _index) internal view returns (string memory) {
+  function getItem(bytes32 key, uint256 _index) internal view returns (bytes memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 0, getSchema(), _index * 1, (_index + 1) * 1);
-    return (string(_blob));
+    return (bytes(_blob));
   }
 
   /** Get an item of value (using the specified store) (unchecked, returns invalid data if index overflows) */
-  function getItem(IStore _store, bytes32 key, uint256 _index) internal view returns (string memory) {
+  function getItem(IStore _store, bytes32 key, uint256 _index) internal view returns (bytes memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
     bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 0, getSchema(), _index * 1, (_index + 1) * 1);
-    return (string(_blob));
+    return (bytes(_blob));
   }
 
   /** Push a slice to value */
-  function push(bytes32 key, string memory _slice) internal {
+  function push(bytes32 key, bytes memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -144,7 +144,7 @@ library SummaryComponent {
   }
 
   /** Push a slice to value (using the specified store) */
-  function push(IStore _store, bytes32 key, string memory _slice) internal {
+  function push(IStore _store, bytes32 key, bytes memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -168,7 +168,7 @@ library SummaryComponent {
   }
 
   /** Update a slice of value at `_index` */
-  function update(bytes32 key, uint256 _index, string memory _slice) internal {
+  function update(bytes32 key, uint256 _index, bytes memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -176,7 +176,7 @@ library SummaryComponent {
   }
 
   /** Update a slice of value (using the specified store) at `_index` */
-  function update(IStore _store, bytes32 key, uint256 _index, string memory _slice) internal {
+  function update(IStore _store, bytes32 key, uint256 _index, bytes memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -184,7 +184,7 @@ library SummaryComponent {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(string memory value) internal view returns (bytes memory) {
+  function encode(bytes memory value) internal view returns (bytes memory) {
     uint40[] memory _counters = new uint40[](1);
     _counters[0] = uint40(bytes(value).length);
     PackedCounter _encodedLengths = PackedCounterLib.pack(_counters);
