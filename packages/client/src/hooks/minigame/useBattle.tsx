@@ -40,7 +40,7 @@ export default function useBattle(playerId: Entity) {
 
   const battleTime = {
       start: Number(timer?.value),
-      end: Number(timer?.value) + 6000
+      end: Number(timer?.value) + 60
   }
 
   /**
