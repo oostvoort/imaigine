@@ -12,6 +12,7 @@
   "dependencies": {
     "@pinata/sdk": "^2.1.0",
     "@types/fs-extra": "^11.0.1",
+    "@wagmi/chains": "^0.2.22",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",

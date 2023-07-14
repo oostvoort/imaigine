@@ -5,6 +5,7 @@ import { Dialog, DialogTrigger } from '@/components/base/Dialog'
 import { Button, ButtonProps } from '@/components/base/Button'
 import usePlayer from '@/hooks/usePlayer'
 import { IPFS_URL_PREFIX } from '@/global/constants'
+import useIpfs from '@/hooks/useIpfs'
 
 type PropType = {
   children: React.ReactNode
@@ -29,6 +30,8 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
   const avatarRef = useRef<HTMLImageElement>(null)
 
   const karmaPoints = player.karmaPoints?.value ?? 0
+
+  const ipfs = useIpfs<{name: string, summary: string}>(player.config?.value ?? '')
 
   const percentage = (Math.abs(karmaPoints) / 100).toFixed(1)
 
@@ -74,7 +77,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                      className={'absolute z-50'} draggable={false} />
               </div>
 
-              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>Alice</p>
+              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>{ipfs.data?.name ?? 'Loading Name'}</p>
             </React.Fragment>
 
             :

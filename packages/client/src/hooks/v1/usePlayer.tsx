@@ -9,6 +9,7 @@ import {
 } from '../../../../types'
 import { useMUD } from '@/MUDContext'
 import { useComponentValue } from '@latticexyz/react'
+import useIpfs from '@/hooks/useIpfs'
 
 export default function usePlayer() {
   const {
@@ -126,5 +127,7 @@ export default function usePlayer() {
     },
   })
 
-  return { generatePlayer, generatePlayerImage, createPlayer, player }
+  const ipfsData = useIpfs<{name: string, summary: string}>(player.config?.value ?? '')
+
+  return { generatePlayer, generatePlayerImage, createPlayer, player, ipfsData }
 }

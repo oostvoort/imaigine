@@ -18,6 +18,9 @@ RUN curl -L https://foundry.paradigm.xyz | bash
 RUN source ~/.bashrc
 ENV PATH="/root/.foundry/bin:${PATH}"
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Copy the necessary files
 COPY ./pnpm-lock.yaml ./
 COPY ./pnpm-workspace.yaml ./
@@ -28,11 +31,11 @@ COPY ./packages/contracts/package.json ./packages/contracts/package.json
 COPY ./packages/types/package.json ./packages/types/package.json
 
 # Install dependencies
-RUN npm install -g pnpm
 RUN pnpm install:deps
 
 # Build the project
 COPY ./packages ./packages
+RUN pnpm prepare
 RUN pnpm build
 
 RUN cp -r ./packages/client/dist/* ./packages/server/public/

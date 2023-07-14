@@ -137,9 +137,9 @@ export default function MinigameScreen() {
   // console.log("minigame result",  matchResultStatus);
 
   function displayWeapon(battleOption: number | undefined) {
-    if (battleOption === 1) return '/src/assets/minigame/icon_rps_sword.jpg'
-    if (battleOption === 2) return '/src/assets/minigame/icon_rps_scroll.jpg'
-    if (battleOption === 3) return '/src/assets/minigame/icon_rps_potion.jpg'
+    if (battleOption === 1) return '/assets/minigame/icon_rps_sword.jpg'
+    if (battleOption === 2) return '/assets/minigame/icon_rps_scroll.jpg'
+    if (battleOption === 3) return '/assets/minigame/icon_rps_potion.jpg'
 
     return ''
   }

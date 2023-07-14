@@ -1,8 +1,9 @@
 import sqlite3 from 'sqlite3'
 
 import { InsertHistoryLogsParams, InsertInteractionParams, InteractSQLResult, LogSqlResult } from 'types'
+import { DB_SOURCE } from '../../global/config'
 
-const database = new sqlite3.Database(`${process.env.DB_SOURCE}`, err => {
+const database = new sqlite3.Database(`${DB_SOURCE}`, err => {
   if (err) {
     console.error(err.message)
     throw err

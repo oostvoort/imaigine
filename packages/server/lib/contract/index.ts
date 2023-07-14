@@ -9,12 +9,11 @@ import {
   toUtf8Bytes,
   toUtf8String,
 } from 'ethers/lib/utils'
+import { CHAIN_ID, JSON_RPC_URL } from '../../global/config'
 const worlds = worldsJson as Partial<Record<string, { address: string; blockNumber?: number }>>;
 
 if (!process.env.PRIVATE_KEY) throw new Error('No private key provided')
 const PRIVATE_KEY = process.env.PRIVATE_KEY
-const JSON_RPC_URL = process.env.JSON_RPC_URL ?? 'http://127.0.0.1:8545'
-const CHAIN_ID = process.env.CHAIN_ID ?? '31337'
 
 console.info('Setting up Contract')
 console.info('JSON_RPC_URL:', JSON_RPC_URL)

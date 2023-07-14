@@ -2,7 +2,7 @@ import puppeteer, { Page } from 'puppeteer'
 import { RouteObject } from 'types'
 import { getPlayerRevealedCells } from '../lib/contract'
 import * as dotenv from 'dotenv'
-import * as process from 'process'
+import { MAP_SEED } from '../global/config'
 
 
 dotenv.config()
@@ -56,7 +56,7 @@ export async function getLocations(mapSeed: number) {
 }
 
 export async function getToRevealCells(from: number, exploredCells: number[]) {
-  const page = await launchAndNavigateMap(Number(process.env.MAP_SEED))
+  const page = await launchAndNavigateMap(Number(MAP_SEED))
   // Access the function on the page
   return await page.evaluate((from, exploredCells) => {
     // Call the function on the page to get all burgs

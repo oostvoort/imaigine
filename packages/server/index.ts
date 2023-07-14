@@ -65,6 +65,7 @@ import {
 } from './lib/db'
 import { removeParentheses } from './utils/removeParentheses'
 import * as process from 'process'
+import { MAP_SEED } from './global/config'
 
 dotenv.config()
 
@@ -157,7 +158,7 @@ app.post('/get-revealed-cells', (req, res) => {
 })
 
 app.get('/get-route', async (req: Request, res: Response) => {
-  const seed = Number(process.env.MAP_SEED)
+  const seed = Number(MAP_SEED)
   try {
     const result = await getRoute(seed, "1",2207, 1892)
     res.send(result)
@@ -168,7 +169,7 @@ app.get('/get-route', async (req: Request, res: Response) => {
 })
 
 app.get('/get-locations', async (req: Request, res: Response) => {
-  const seed = Number(process.env.MAP_SEED)
+  const seed = Number(MAP_SEED)
   try {
     const result = await getLocations(seed)
     res.send(result)
@@ -696,7 +697,7 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
     // const playerDestinationLocationId = 1514
 
     console.info("- getting route ...")
-    const data = await getRoute(Number(process.env.MAP_SEED), props.playerEntityId, playerCurrentLocationId, playerDestinationLocationId)
+    const data = await getRoute(Number(MAP_SEED), props.playerEntityId, playerCurrentLocationId, playerDestinationLocationId)
     console.info("- done getting route", data)
 
     await startTravel(props.playerEntityId, data.routeData.map(route => route.cell), data.toRevealAtDestination)
