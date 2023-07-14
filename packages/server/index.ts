@@ -278,7 +278,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
     console.info('generating player')
     try {
 
-      const startingLocation = getRandomLocation(baseConfig.startingLocations)
+      const startingLocation = baseConfig.startingLocations[0]
 
       const startingLocationDetails: Based = await getFromIpfs(startingLocation.config)
 
