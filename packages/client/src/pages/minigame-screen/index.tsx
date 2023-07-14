@@ -14,6 +14,7 @@ import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
 import { useAtom } from 'jotai'
 import { hash_options_set_value } from '@/states/minigame'
+import useHistory from '@/hooks/minigame/useHistory'
 import useLeave from '@/hooks/minigame/useLeave'
 import { activeScreen_atom, SCREENS } from '@/states/global'
 
@@ -38,6 +39,7 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
+  const { getPlayerBattleLogs, getBattleResult } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
@@ -58,7 +60,6 @@ export default function MinigameScreen() {
   const [ , setHashAtom ] = useAtom(hash_options_set_value)
   const [ showWeapon, setShowWeapon ] = React.useState<boolean>(false)
   const [ showPrompt, setShowPrompt ] = React.useState<boolean>(false)
-
   const [ isChooseWeaponComponent, setIsChooseWeaponComponent ] = React.useState<boolean>(true)
   const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
 
@@ -147,7 +148,7 @@ export default function MinigameScreen() {
   // console.log("minigame playdata", playdata);
   // console.log('minigame battle data', battleData.battle)
   // console.log('minigame opponentHasNotSelectedWeapon', opponentHasNotSelectedWeapon)
-  // console.log('minigame playerInfo', playerInfo)
+  console.log('minigame playerInfo', playerInfo)
   // console.log('minigame opponentInfo', opponentInfo)
   // console.log('minigame _opponentInfo', _opponentInfo.data)
   // console.log('minigame _playerInfo', _playerInfo.data)
