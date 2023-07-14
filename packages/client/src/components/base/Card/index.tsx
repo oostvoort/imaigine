@@ -83,23 +83,31 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = 'CardFooter'
 
-const CardTimer = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({
-// eslint-disable-next-line react/prop-types
-  className,
-  ...props
-}, ref) => (
-  <div className={clsx([ 'text-center', className ])} ref={ref} {...props}>
-    <p
-      className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Time
-      Limit</p>
-    <h1
-      className={clsx([ 'text-accent text-[76px] leading-[121px]', 'uppercase font-amiri' ])}>01:00</h1>
-  </div>
-))
+const CardTimer = ({timer}: {timer: string}) => {
+  return (
+    <div className={clsx([ 'text-center'])}>
+      <p
+        className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Time
+        Limit</p>
+      <h1
+        className={clsx([ 'text-accent text-[76px] leading-[121px]', 'uppercase font-amiri' ])}>{timer}</h1>
+    </div>
+  )
+}
 
 CardTimer.displayName = 'CardTimer'
 
-const PlayerScoreBoard = ({ imgSrc, name, battlePoints, isLoading }: { className?: string, name?: string, imgSrc?: string, battlePoints: number | string, isLoading:boolean }) => {
+type PlayerScoreBoardProps = {
+  className?: string,
+  name?: string,
+  imgSrc?: string,
+  battlePoints: number | string,
+  isLoading: boolean
+  win: string
+  loss: string
+}
+
+const PlayerScoreBoard = ({ imgSrc, name, battlePoints, win, loss }: PlayerScoreBoardProps) => {
   //TODO: ADD ANIMATION AND LOADING EFFECT
   return (
     <React.Fragment>
@@ -120,13 +128,13 @@ const PlayerScoreBoard = ({ imgSrc, name, battlePoints, isLoading }: { className
               <div
                 className={clsx([ 'flex flex-row', 'text-[30px] text-left leading-[48px] text-accent', 'font-amiri' ])}>
                 <h3 className={clsx([ 'basis-11/12', 'ml-md' ])}>Win</h3>
-                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>0</h3>
+                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>{win}</h3>
               </div>
 
               <div
                 className={clsx([ 'flex flex-row', 'text-[30px] leading-[48px] text-dangerAccent', 'font-amiri' ])}>
                 <h3 className={clsx([ 'basis-11/12', 'ml-md' ])}>Loss</h3>
-                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>0</h3>
+                <h3 className={clsx([ 'px-2', 'basis-1/12' ])}>{loss}</h3>
               </div>
             </div>
           </div>

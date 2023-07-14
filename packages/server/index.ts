@@ -49,14 +49,20 @@ import {
   worldContract,
 } from './lib/contract'
 import { BigNumber } from 'ethers'
-import { getLocations, getRoute } from './utils/getMap'
+import { getLocations, getRoute, getToRevealCells } from './utils/getMap'
 import {
   generateMockLocationInteraction,
   generateMockNpcInteraction,
   generateMockPlayer,
   generateMockPlayerImage,
 } from './lib/mock'
-import { fetchHistoryLogs, fetchInteraction, insertHistoryLogs, insertInteraction } from './lib/db'
+import {
+  fetchHistoryLogs,
+  fetchInteraction,
+  fetchPlayerHistoryLogs,
+  insertHistoryLogs,
+  insertInteraction,
+} from './lib/db'
 import { removeParentheses } from './utils/removeParentheses'
 import * as process from 'process'
 
@@ -297,6 +303,7 @@ app.post('/api/v1/generate-player', async (req: Request, res: Response, next) =>
         ipfsHash: playerIpfsHash,
         visualSummary: player.visualSummary,
         locationId: startingLocation.id,
+        cellId: startingLocation.cell
       } as GeneratePlayerResponse)
 
     } catch (e) {
@@ -323,11 +330,16 @@ app.post('/api/v1/generate-player-image', async (req: Request, res: Response, ne
 
 app.post('/api/v1/create-player', async (req: Request, res: Response, next) => {
   const props: CreatePlayerProps = req.body
-
+  console.log('server', props)
   try {
     try {
-      console.info("Writing player to contract...")
-      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId)).wait()
+      console.info("- getting revealedCells...")
+      const revealedCells = await getToRevealCells(props.cellId, [props.cellId])
+      console.info("- done getting revealedCells")
+
+      console.info(" - writing player to contract...")
+      await (await worldContract.createPlayer(props.playerId, props.ipfsHash, props.imageIpfsHash, props.locationId, revealedCells)).wait()
+      console.info("- done creating player")
       res.send('Player Created!')
     } catch (e) {
       next(e)
@@ -397,6 +409,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
 
           // checking of choice
           const choice = await worldContract.getPlayerChoiceInSingleInteraction(props.playerEntityId)
+
 
           if (choice.toNumber()) {
 
@@ -675,7 +688,6 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
 app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) => {
   const props: GenerateTravelProps = req.body
 
-  console.log(props)
 
   try {
 
@@ -706,6 +718,7 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
     console.info("- done generating travel")
 
     res.send({
+      paths: data,
       travelStory: travelStory
     } as GenerateTravelResponse)
 
@@ -718,14 +731,12 @@ app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
   const props: PlayerHistoryProps = req.body
 
   try {
-    const locationHistory = await fetchHistoryLogs(props.locationId)
-
-    const playerInvolvement = locationHistory.filter(history => history.players.includes(props.playerEntityId))
+    const playerHistory = await fetchPlayerHistoryLogs(props.playerEntityId)
 
     let historyText = ``
 
-    playerInvolvement.forEach((item) => {
-      historyText += `${item.player_log}\n`
+    playerHistory.forEach((history) => {
+      historyText += `${history.player_log}\n`
     })
 
     const generatedHistory = await generateHistory(historyText)
@@ -737,6 +748,7 @@ app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
     next(e)
   }
 })
+
 app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
   const props: StoreToIPFS = req.body
 

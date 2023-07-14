@@ -23,6 +23,9 @@ import { MultiInteractionComponent, MultiInteractionComponentData, MultiInteract
 import { TravelComponent, TravelComponentData, TravelComponentTableId } from "./tables/TravelComponent.sol";
 import { BattleQueueComponent, BattleQueueComponentTableId } from "./tables/BattleQueueComponent.sol";
 import { BattleComponent, BattleComponentData, BattleComponentTableId } from "./tables/BattleComponent.sol";
+import { BattleTimeComponent, BattleTimeComponentTableId } from "./tables/BattleTimeComponent.sol";
 import { BattleHistoryComponent, BattleHistoryComponentData, BattleHistoryComponentTableId } from "./tables/BattleHistoryComponent.sol";
 import { BattleHistoryCounter, BattleHistoryCounterTableId } from "./tables/BattleHistoryCounter.sol";
 import { BattlePointsComponent, BattlePointsComponentTableId } from "./tables/BattlePointsComponent.sol";
+import { BattlePreResultsComponents, BattlePreResultsComponentsData, BattlePreResultsComponentsTableId } from "./tables/BattlePreResultsComponents.sol";
+import { BattleResultsComponents, BattleResultsComponentsData, BattleResultsComponentsTableId } from "./tables/BattleResultsComponents.sol";

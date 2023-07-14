@@ -3,29 +3,18 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Dialog } from '@/components/base/Dialog'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
-import { Entity } from '@latticexyz/recs'
 import { IPFS_URL_PREFIX } from '@/global/constants'
-
-type LocationType = {
-  name: string,
-  summary: string,
-  imgHash: string,
-}
+import { LocationType } from '@/pages/world-map-screen'
+import AILoader from '@/components/shared/AILoader'
 
 type PropType = {
   isOpen?: boolean,
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>,
   location: LocationType,
+  travelFunc: () => void
 }
 
-export default function LocationDialog({ isOpen, setOpen, location }: PropType) {
-  const handleTravel = () => {
-    console.log(location)
-    console.info('Travelling...')
-  }
-
-  // console.log('LOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD', location)
-
+export default function LocationDialog({ isOpen, setOpen, location, travelFunc }: PropType) {
   return (
     <Dialog open={isOpen} onOpenChange={() => null}>
       <DialogPrimitive.Portal>
@@ -54,7 +43,12 @@ export default function LocationDialog({ isOpen, setOpen, location }: PropType) 
           >
             {
               !location.name ? (
-                <h1 className={'m-auto text-4xl'}>Loading...</h1>
+                <div className={clsx([
+                  'w-full h-full mx-auto p-10',
+                  'flex flex-col justify-center items-center gap-10',
+                ])}>
+                 <AILoader message={'Fetching Location...'} />
+                </div>
               ) : (
                 <div className={clsx('flex h-full gap-x-6')}>
                   <div className={clsx('w-5/12')}>
@@ -86,7 +80,7 @@ export default function LocationDialog({ isOpen, setOpen, location }: PropType) 
                       <Button
                         variant={'neutral'}
                         size={'btnWithBgImg'}
-                        onClick={handleTravel}
+                        onClick={travelFunc}
                       >
                         Travel to {location.name}
                       </Button>

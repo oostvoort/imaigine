@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { IS_MOCK, SERVER_API } from '@/global/constants'
 import {
   GenerateLocationInteractionResponse,
@@ -20,6 +20,8 @@ export default function useLocationInteraction() {
       playerEntity,
     }
   } = useMUD()
+
+  const queryClient = useQueryClient()
 
   const { player } = usePlayer()
 
@@ -45,6 +47,9 @@ export default function useLocationInteraction() {
     return await response.json() as InteractSingleDoneResponse
   }, {
     mutationKey: ["generateLocationInteraction"],
+    onSuccess: () => {
+      queryClient.invalidateQueries([`player-history-${playerEntity}`])
+    }
   })
 
 

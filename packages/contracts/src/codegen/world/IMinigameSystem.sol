@@ -10,6 +10,12 @@ interface IMinigameSystem {
 
   function battle(bytes32 hashedOption) external;
 
+  function battleLock() external;
+
+  function preResult(BattleOptions option) external;
+
+  function rematch(bool resetTimestamp) external;
+
   function lockIn(string memory hashSalt, BattleOptions option) external;
 
   function leave() external returns (bytes32);

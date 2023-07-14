@@ -32,7 +32,8 @@ export default {
       "modal": "url('/assets/background/bg_gray.jpg')",
       "lining": "url('/assets/minigame/bg_lining.svg')",
       "liningBig": "url('/assets/minigame/bg_lining_big.svg')",
-      "noLining": "url('/assets/minigame/bg_lining_noFrames.svg')"
+      "noLining": "url('/assets/minigame/bg_lining_noFrames.svg')",
+      "battleBtn": "url('/assets/minigame/bg_battleButton.svg')",
     },
     container: {
       center: true,

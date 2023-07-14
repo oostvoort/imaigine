@@ -38,6 +38,16 @@ export function shuffleArray<T>(array: T[]): T[] {
   return array
 }
 
+export function generateSecretId() {
+  const bytes = new Uint8Array(16);
+  if (window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(bytes);
+  } else {
+    throw new Error('Your browser does not support a secure random number generator.');
+  }
+  return bytes.map(byte => byte.toString(16)).join('');
+}
+
 export const verifyPrivateKey = (value: string) => {
   if (ethers.utils.isHexString(value)) {
     return true;
@@ -66,3 +76,10 @@ export const convertLocationNumberToLocationId = (locationNumber: number) => {
     )
   )
 }
+
+
+export const formatTime = (time: number) => {
+  const minutes = Math.floor(time / 60).toString().padStart(2, '0');
+  const seconds = (time % 60).toString().padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
