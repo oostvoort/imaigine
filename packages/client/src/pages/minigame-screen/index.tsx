@@ -169,7 +169,7 @@ export default function MinigameScreen() {
   // console.log('minigame isMatchResultComponent', isMatchResultComponent)
   // console.log("minigame getPlayerBattleLogs: ", getPlayerBattleLogs)
   // console.log("minigame getPlayerBattleInfor: ", getWinnerInfo)
-  console.log("minigame getAllPlayers: ", getAllPlayersBattlePoints)
+  // console.log("minigame getAllPlayers: ", getAllPlayersBattlePoints)
   // getWinnerInfo.map(({data}) => console.log("minigame data", data))
 
 
@@ -194,7 +194,7 @@ export default function MinigameScreen() {
   function displayGameResult() {
     if (getBattleResult.isWin == 'Draw') return 'Draw'
     if (getBattleResult.isWin) return 'You Win!'
-    if (!getBattleResult.isWin) return 'You Loss!'
+    if (!getBattleResult.isWin) return 'You Lost!'
   }
 
   function displayWeapon(battleOption: number | undefined) {
@@ -207,7 +207,7 @@ export default function MinigameScreen() {
 
   function displayRoundResult(battleDataOutcome: number) {
     if (battleDataOutcome === 1) return 'You Win!'
-    if (battleDataOutcome === 2) return 'You Loss!'
+    if (battleDataOutcome === 2) return 'You Lost!'
     if (battleDataOutcome === 3) return 'Draw'
 
     return ''
@@ -240,27 +240,6 @@ export default function MinigameScreen() {
 
     },
   ]
-
-  // const { data, isSuccess } = getWinnerInfo
-
-  // const info = React.useMemo(async () => {
-  //   if(!getWinnerInfo) throw new Error('Winner Info Missing')
-  //   return getWinnerInfo.map(async (data) => {
-  //     return await (await data)
-  //   })
-  // }, [getWinnerInfo])
-
-
-
-  // getWinnerInfo.map((data) => {
-  //   return data.then((res) => {
-  //     return (
-  //       <p className={clsx([ 'pt-sm px-3' ])}>{res.winnerInfo.name}</p>
-  //     )
-  //   })
-  // })
-
-
 
   return (
     <React.Fragment>
@@ -442,11 +421,13 @@ export default function MinigameScreen() {
                     weapons.map((weapon, key) => {
                       const isSelectedWeapon = selectedWeapon === key
                       return (
-                        <button key={key} onClick={weapon.onClick}
+                        <button key={key} onClick={weapon.onClick} disabled={rematch.isLoading}
                                 className={clsx([ 'w-[160px] h-[160px]', 'rounded-full border border-[2px] border-[#2C3B47]',
                                   { 'scale-100 opacity-100': selectedWeapon === 3 },
                                   { 'scale-100 opacity-100 border-[5px] border-option-9': isSelectedWeapon && selectedWeapon !== 3 },
-                                  { 'scale-[0.8] opacity-80': !isSelectedWeapon && selectedWeapon !== 3 } ])}>
+                                  { 'scale-[0.8] opacity-50': rematch.isLoading },
+                                ])}
+                        >
                           <img src={weapon.src} alt={weapon.alt} className={clsx([ 'rounded-full' ])}
                                draggable={false} />
                         </button>
