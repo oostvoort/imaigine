@@ -14,7 +14,7 @@ import { IPFS_URL_PREFIX } from '@/global/constants'
 
 type PropType = {
   isOpen?: boolean,
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
   conversations?: any
 }
 export default function ConversationDialog({
@@ -86,7 +86,7 @@ export default function ConversationDialog({
 
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => null}>
+    <Dialog open={isOpen} onOpenChange={() => setOpen(false)}>
       <DialogPrimitive.Portal
         className={'fixed inset-0 z-50  flex items-start justify-center relative'}>
         <DialogPrimitive.Overlay
@@ -95,7 +95,8 @@ export default function ConversationDialog({
             'fixed inset-0',
             'flex items-start justify-center',
             'bg-cover bg-no-repeat',
-            'duration-[3000ms] delay-1000 ease-in-out',
+            'duration-[3000ms] delay-1000 ease-in-out z-50',
+            'cursor-pointer'
           ])}
         >
           <div className={'backdrop-blur h-screen w-screen'} />
@@ -212,13 +213,15 @@ export default function ConversationDialog({
                   conversations.option && (
                     <div className={clsx('flex gap-x-3')}>
                       <Button
-                        variant={'neutral'}
+                        // className={clsx([{'text-sm': conversations.option.evil.evilChoise.length >= 30}])}
+                        variant={conversations.option.evil.evilChoise.length >= 30 ? 'neutralSm' : 'neutral'}
                         size={'btnWithBgImg'}
                         onClick={() => handlePlayerResponse(1, conversations.option.evil.evilResponse)}
                       >
                         {conversations.option.evil.evilChoise}
                       </Button>
                       <Button
+                        // className={clsx([{'text-sm': conversations.option.neutral.good.goodChoise >= 30}])}
                         variant={'neutral'}
                         size={'btnWithBgImg'}
                         onClick={() => handlePlayerResponse(2, conversations.option.good.goodResponse)}
@@ -226,6 +229,7 @@ export default function ConversationDialog({
                         {conversations.option.good.goodChoise}
                       </Button>
                       <Button
+                        // className={clsx([{'text-sm': conversations.option.neutral.neutralChoise.length >= 30}])}
                         variant={'neutral'}
                         size={'btnWithBgImg'}
                         onClick={() => handlePlayerResponse(3, conversations.option.neutral.neutralResponse)}

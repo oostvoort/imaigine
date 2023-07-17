@@ -21,6 +21,7 @@ const buttonVariants = cva(
         accent: 'bg-white text-accent-3 hover:bg-white/80',
         selective: 'bg-primary font-normal tracking-wide font-sans hover:bg-primary/80',
         neutral: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center hover:bg-btnNeutralHover' ]),
+        neutralSm: clsx([ 'text-center text-xl leading-[32px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center hover:bg-btnNeutralHover' ]),
         good: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnGood bg-no-repeat bg-center hover:bg-btnGoodHover' ]),
         evil: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnEvil bg-no-repeat bg-center hover:bg-btnEvilHover' ]),
         modalClose: clsx([ '' ]),
