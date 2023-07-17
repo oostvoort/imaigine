@@ -169,9 +169,6 @@ export default function MinigameScreen() {
   // console.log("minigame getPlayerBattleLogs: ", getPlayerBattleLogs)
   // console.log("minigame getPlayerBattleInfor: ", getWinnerInfo)
 
-  getWinnerInfo.map(({data}) => console.log("minigame data", data))
-
-
   function handleLeaveBattle() {
     try {
       leave.mutate()
@@ -475,7 +472,11 @@ export default function MinigameScreen() {
                   <div
                     className={clsx([ 'h-[648px]', 'overflow-y-auto', 'flex flex-col', 'mt-sm', 'rounded-lg bg-option-13', 'text-[16px] leading-[32px] text-left text-option-11', 'font-segoe', 'tracking-[0.4px]' ])}>
                     {
-                      getWinnerInfo.map(({data}, index) => <p key={index} className={clsx([ 'pt-sm px-3' ])}>  {`Round ${index + 1} winner : ${data?.winnerInfo.name}` }</p>)
+                      getWinnerInfo.map(({ data }, index) => <p key={index}
+                                                                className={clsx([ 'pt-sm px-3' ])}>  {`Round ${index + 1} ${data?.isDraw ? 'draw' : 'winner'} ${data?.isDraw ? '' : ':'} `}
+                        <span
+                          className={clsx([ { 'hidden': data?.isDraw } ])}>{player.id === data?.winnerId ? 'YOU' : data?.winnerInfo.name}</span>
+                      </p>)
                     }
                   </div>
                 </div>

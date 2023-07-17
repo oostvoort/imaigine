@@ -67,7 +67,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                     :
                     <>
                       <img src={avatar && `${IPFS_URL_PREFIX}/${avatar}`} alt={'Avatar Icon'}
-                           className={'h-[94px] w-[94px] mx-auto absolute left-[17px] rounded-full object-cover'}
+                           className={'h-[94px] w-[94px] mx-auto absolute left-[17px] rounded-full object-cover object-top'}
                            draggable={false} />
                     </>
 

@@ -81,7 +81,7 @@ export default function CreateAvatarScreen() {
       playerEntity
     },
   } = useMUD()
-
+console.log("playerEntity", playerEntity);
   const { generatePlayer, generatePlayerImage, createPlayer, player} = usePlayer()
 
   const [ step, setStep ] = React.useState(1)
@@ -189,7 +189,7 @@ export default function CreateAvatarScreen() {
       {
         isLoading ? (
           <BackgroundCarousel>
-            {activeLoader == 'loadingAvatar' && <LoadingScreen message={'Generating Avatars...'} />}
+            {activeLoader == 'loadingAvatar' && <LoadingScreen message={'Generating Avatar...'} />}
             {activeLoader == 'loadingStory' && <LoadingStory message={'Summary Story'} isLoading={false} />}
           </BackgroundCarousel>
         ) : (
