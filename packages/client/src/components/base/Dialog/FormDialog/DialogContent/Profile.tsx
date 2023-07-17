@@ -1,35 +1,17 @@
 import { clsx } from 'clsx'
 import React from 'react'
-import usePlayer from '@/hooks/usePlayer'
-import { getFromIPFS } from '@/global/utils'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import { Skeleton, SkeletonParagraph } from '@/components/base/Skeleton'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 export function Profile() {
-  const { player } = usePlayer()
-  const [ playerInformation, setPlayerInformation ] = React.useState<{
-    image: string,
-    name: string,
-    description: string,
-  }>({
-    image: '',
-    name: '',
-    description: '',
-  })
+  const { player, ipfsData } = usePlayer()
 
-  React.useMemo(async () => {
-    if (player) {
-      if (player.config) {
-        const data = await getFromIPFS(player.config.value as string)
-        const result = await data.json()
-        setPlayerInformation({
-          image: `${IPFS_URL_PREFIX}/${player.image?.value}`,
-          name: result.name,
-          description: result.description,
-        })
-      }
-    }
-  }, [ player ])
+  const playerInformation = {
+    image: `${IPFS_URL_PREFIX}/${player.image?.value}`,
+    name: ipfsData.data?.name,
+    description: ipfsData.data?.description,
+  }
 
   return (
     <div className={clsx([ 'md:w-[1186px] h-full w-full', 'p-sm' ])}>
