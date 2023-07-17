@@ -69,6 +69,7 @@ export default function useHistory(playerId: Entity) {
           return {
             isWin: data?.winner === playerId,
             playerId: data?.player,
+            winnerId: data?.winner,
             winnerInfo: winner,
             isDraw: data?.draw,
             winnerOption: data?.winnerOption
