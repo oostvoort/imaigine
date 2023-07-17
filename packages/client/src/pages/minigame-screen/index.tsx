@@ -3,7 +3,6 @@ import { clsx } from 'clsx'
 import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
 import { Button } from '@/components/base/Button'
 import { IPFS_URL_PREFIX } from '@/global/constants'
-import usePlayer from '@/hooks/usePlayer'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
 import { Entity } from '@latticexyz/recs'
@@ -14,6 +13,7 @@ import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
 import { useAtom } from 'jotai'
 import { hash_options_set_value } from '@/states/minigame'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(

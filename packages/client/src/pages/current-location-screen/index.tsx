@@ -5,7 +5,6 @@ import { ButtonWrapper, Footer, HourglassLoader } from '@/components/base/Footer
 import { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { Button } from '@/components/base/Button'
 import SubLayout from '@/components/layouts/MainLayout/SubLayout'
-import usePlayer from '@/hooks/usePlayer'
 import useLocationInteraction from '@/hooks/useLocationInteraction'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
@@ -15,6 +14,7 @@ import { currentLocation_atom, npcConversation_atom } from '@/states/global'
 import { useGetNpc } from '@/hooks/v1/useGetNpc'
 import useLocation from '@/hooks/v1/useLocation'
 import { SkeletonParagraph } from '@/components/base/Skeleton'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 export default function CurrentLocationScreen() {
   const {

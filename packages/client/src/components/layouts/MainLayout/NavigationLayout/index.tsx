@@ -4,7 +4,6 @@ import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings'
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
-import usePlayer from '@/hooks/usePlayer'
 import { activeScreen_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
 import { useAtom } from 'jotai'
@@ -13,6 +12,7 @@ import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
 import useLeave from '@/hooks/minigame/useLeave'
 import useBattle from '@/hooks/minigame/useBattle'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 export default function Header() {
   const { player } = usePlayer()
