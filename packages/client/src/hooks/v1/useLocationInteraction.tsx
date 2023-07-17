@@ -3,7 +3,7 @@ import usePlayer from '@/hooks/v1/usePlayer'
 import useLocation from '@/hooks/v1/useLocation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { IS_MOCK, SERVER_API } from '@/global/constants'
-import { InteractSingleDoneResponse } from '../../../../types'
+import { LocationInteractionResponse } from '../../../../types'
 import { BigNumber } from 'ethers'
 import { awaitStreamValue } from '@latticexyz/utils'
 
@@ -41,7 +41,7 @@ export default function useLocationInteraction() {
           body: JSON.stringify({ ...data, mock: IS_MOCK }),
         })
 
-        return await response.json() as InteractSingleDoneResponse
+        return await response.json() as LocationInteractionResponse
       } catch (error) {
         console.error('[generateLocationInteraction]', error)
       }

@@ -5,7 +5,6 @@ import { ButtonWrapper, Footer, HourglassLoader } from '@/components/base/Footer
 import { ButtonPropType } from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { Button } from '@/components/base/Button'
 import SubLayout from '@/components/layouts/MainLayout/SubLayout'
-import useLocationInteraction from '@/hooks/useLocationInteraction'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { useMUD } from '@/MUDContext'
@@ -15,6 +14,7 @@ import { useGetNpc } from '@/hooks/v1/useGetNpc'
 import useLocation from '@/hooks/v1/useLocation'
 import { SkeletonParagraph } from '@/components/base/Skeleton'
 import usePlayer from '@/hooks/v1/usePlayer'
+import useLocationInteraction from '@/hooks/v1/useLocationInteraction'
 
 export default function CurrentLocationScreen() {
   const {
@@ -45,19 +45,19 @@ export default function CurrentLocationScreen() {
 
   const buttonOptions: Array<ButtonPropType> = [
     {
-      title: generateLocationInteraction.data && generateLocationInteraction.data?.options.good.choice,
+      title: generateLocationInteraction.data && generateLocationInteraction.data?.choice.good,
       variant: 'neutral',
       size: 'btnWithBgImg',
       action: () => handleInteraction(3),
     },
     {
-      title: generateLocationInteraction.data && generateLocationInteraction.data?.options.neutral.choice,
+      title: generateLocationInteraction.data && generateLocationInteraction.data?.choice.neutral,
       variant: 'neutral',
       size: 'btnWithBgImg',
       action: () => handleInteraction(2),
     },
     {
-      title: generateLocationInteraction.data && generateLocationInteraction.data?.options.evil.choice,
+      title: generateLocationInteraction.data && generateLocationInteraction.data?.choice.evil,
       variant: 'neutral',
       size: 'btnWithBgImg',
       action: () => handleInteraction(1),
