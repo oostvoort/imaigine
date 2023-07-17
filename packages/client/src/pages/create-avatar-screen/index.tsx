@@ -99,6 +99,7 @@ export default function CreateAvatarScreen() {
   const [ imageHashes, setImageHashes ] = React.useState<Array<string>>([])
 
   const [ isLoading, setIsLoading ] = React.useState<boolean>(false)
+  const [ isRegeneratingImage, setIsRegeneratingImage ] = React.useState<boolean>(false)
   const [ activeLoader, setActiveLoader ] = useAtom(currentLoader_atom)
   const setActiveScreen = useSetAtom(activeScreen_atom)
 
@@ -148,12 +149,14 @@ export default function CreateAvatarScreen() {
   }
 
   const handleGenerateImage = async (visualSummary: string) => {
+    setIsRegeneratingImage(true)
     if (player) {
       const imageHash = await generatePlayerImage.mutateAsync({ visualSummary: visualSummary })
       if (imageHash !== undefined) {
         setImageHashes(prevState => [...prevState, imageHash.imageIpfsHash])
       }
     }
+    setIsRegeneratingImage(false)
   }
 
   const handleCreatePlayer = async () => {
@@ -336,19 +339,22 @@ export default function CreateAvatarScreen() {
                   </Card>
 
                   <div className={'w-full flex justify-center mt-md'}>
-                    <Button variant={'refresh'} onClick={() => {
-                      generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary)
-                    }}>
+                    <Button
+                      variant={'refresh'}
+                      onClick={() => { generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary) }}
+                      disabled={isRegeneratingImage ? true : false}
+                    >
                       <img
                         src={`/assets/svg/refresh.svg`}
                         alt={'Avatar Img'}
                         className={clsx([
                           'object-cover w-[22px] h-[22px]',
-                          'mr-2 cursor-pointer',
+                          'mr-4 cursor-pointer',
+                          `${isRegeneratingImage ? 'animate-loading-spin' : ''}`,
                         ])}
                         draggable={false}
                       />
-                      Regenerate Avatar
+                      {isRegeneratingImage ? 'Regenerating avatar' : 'Regenerate Avatar'}
                     </Button>
                   </div>
 
@@ -356,23 +362,27 @@ export default function CreateAvatarScreen() {
               )
             }
 
+            {
+              !isRegeneratingImage && (
+                <Button
+                  variant="accent"
+                  size="lg"
+                  className={clsx([
+                    'min-w-[360px] h-20 rounded-full',
+                    'text-xl tracking-wider',
+                    'rounded-full',
+                  ])}
+                  onClick={() => {
+                    if (step == 1) setStep(2)
+                    if (step == 2) handleGeneratePlayer()
+                    if (step == 3) handleCreatePlayer()
+                  }}
+                >
+                  {step == 3 ? `LET'S GO!` : 'NEXT'}
+                </Button>
+              )
+            }
 
-            <Button
-              variant="accent"
-              size="lg"
-              className={clsx([
-                'min-w-[360px] h-20 rounded-full',
-                'text-xl tracking-wider',
-                'rounded-full',
-              ])}
-              onClick={() => {
-                if (step == 1) setStep(2)
-                if (step == 2) handleGeneratePlayer()
-                if (step == 3) handleCreatePlayer()
-              }}
-            >
-              {step == 3 ? `LET'S GO!` : 'NEXT'}
-            </Button>
             {
               step == 1 && (
                 <p className={clsx([
