@@ -17,6 +17,8 @@ import { hash_options_set_value } from '@/states/minigame'
 import useHistory from '@/hooks/minigame/useHistory'
 import useLeave from '@/hooks/minigame/useLeave'
 import { activeScreen_atom, SCREENS } from '@/states/global'
+import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
+import { BattleGuide } from '@/components/base/Dialog/FormDialog/DialogContent/BattleGuide'
 
 const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(
@@ -453,11 +455,17 @@ export default function MinigameScreen() {
             <div className={clsx(['w-[375px]', 'flex-none'])}>
               <Card className={clsx(['max-h-[678px] h-full', 'border border-accent rounded-2xl', 'bg-modal bg-cover bg-center bg-no-repeat'])}>
                 <div className={clsx(['h-full', 'px-sm py-md', 'flex flex-col'])}>
-                  <div className={clsx(['flex items-center justify-between'])}>
-                    <p className={clsx(['text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]'])}>Battle Logs</p>
-                    <Button size={'icon'} variant={'icon'}>
-                      <img src={'/src/assets/minigame/icon_help.svg'} alt={'Guide Icon'} />
-                    </Button>
+                  <div className={clsx([ 'flex items-center justify-between', 'z-10' ])}>
+                    <p
+                      className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Battle
+                      Logs</p>
+                    <DialogWidget button={{
+                      size: 'icon',
+                      variant: 'icon',
+                      imgSrc: '/src/assets/minigame/icon_help.svg',
+                    }} isAvatar={false}>
+                      <BattleGuide/>
+                    </DialogWidget>
                   </div>
 
                   <div
