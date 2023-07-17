@@ -49,7 +49,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
           isAvatar ?
             <React.Fragment>
               <div
-                className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'z-50', 'overflow-hidden' ])}>
+                className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'cursor-pointer', 'overflow-hidden' ])}>
                 <img src={'/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
                      className={clsx([ 'h-[128px] w-[128px]' ])} />
 
@@ -77,7 +77,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                      className={'absolute z-50'} draggable={false} />
               </div>
 
-              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>{ipfs.data?.name ?? 'Loading Name'}</p>
+              <p className={clsx(['pl-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>{ipfs.data?.name ?? 'Loading Name'}</p>
             </React.Fragment>
 
             :
@@ -94,7 +94,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
         className={clsx([ 'fixed inset-0 z-50' ])}
       >
         <DialogPrimitive.Overlay
-          className={clsx([ 'fixed inset-0 backdrop-blur', 'flex items-center justify-center' ])}
+          className={clsx([ 'fixed inset-0 backdrop-blur', 'flex items-center justify-center z-50' ])}
         >
           <DialogPrimitive.Close className={'absolute right-4 top-4 p-2'}>
             <img src={'/assets/svg/close.svg'} alt={'Close Icon'} />
@@ -102,7 +102,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
 
           <DialogPrimitive.Content
             // onPointerDownOutside={e => e.preventDefault()}
-            className={clsx([ 'min-h-[20%] max-h-[75%]', 'fixed z-50', 'bg-modal', 'rounded-[36px] shadow-lg', 'p-md', 'border border-option-10 !outline-0' ])}>
+            className={clsx([ 'min-h-[20%]', 'fixed z-50', 'bg-modal', 'rounded-[36px] shadow-lg', 'p-md', 'border border-option-10 !outline-0' ])}>
             {children}
           </DialogPrimitive.Content>
         </DialogPrimitive.Overlay>

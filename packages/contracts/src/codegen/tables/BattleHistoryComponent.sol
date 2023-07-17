@@ -24,6 +24,8 @@ bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("Battl
 bytes32 constant BattleHistoryComponentTableId = _tableId;
 
 struct BattleHistoryComponentData {
+  bytes32 player;
+  bytes32 opponent;
   bytes32 winner;
   BattleOptions winnerOption;
   bytes32 loser;
@@ -34,12 +36,14 @@ struct BattleHistoryComponentData {
 library BattleHistoryComponent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](5);
+    SchemaType[] memory _schema = new SchemaType[](7);
     _schema[0] = SchemaType.BYTES32;
-    _schema[1] = SchemaType.UINT8;
+    _schema[1] = SchemaType.BYTES32;
     _schema[2] = SchemaType.BYTES32;
     _schema[3] = SchemaType.UINT8;
-    _schema[4] = SchemaType.BOOL;
+    _schema[4] = SchemaType.BYTES32;
+    _schema[5] = SchemaType.UINT8;
+    _schema[6] = SchemaType.BOOL;
 
     return SchemaLib.encode(_schema);
   }
@@ -53,12 +57,14 @@ library BattleHistoryComponent {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](5);
-    _fieldNames[0] = "winner";
-    _fieldNames[1] = "winnerOption";
-    _fieldNames[2] = "loser";
-    _fieldNames[3] = "loserOption";
-    _fieldNames[4] = "draw";
+    string[] memory _fieldNames = new string[](7);
+    _fieldNames[0] = "player";
+    _fieldNames[1] = "opponent";
+    _fieldNames[2] = "winner";
+    _fieldNames[3] = "winnerOption";
+    _fieldNames[4] = "loser";
+    _fieldNames[5] = "loserOption";
+    _fieldNames[6] = "draw";
     return ("BattleHistoryComponent", _fieldNames);
   }
 
@@ -84,12 +90,80 @@ library BattleHistoryComponent {
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
+  /** Get player */
+  function getPlayer(uint256 id) internal view returns (bytes32 player) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
+    return (Bytes.slice32(_blob, 0));
+  }
+
+  /** Get player (using the specified store) */
+  function getPlayer(IStore _store, uint256 id) internal view returns (bytes32 player) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
+    return (Bytes.slice32(_blob, 0));
+  }
+
+  /** Set player */
+  function setPlayer(uint256 id, bytes32 player) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((player)));
+  }
+
+  /** Set player (using the specified store) */
+  function setPlayer(IStore _store, uint256 id, bytes32 player) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((player)));
+  }
+
+  /** Get opponent */
+  function getOpponent(uint256 id) internal view returns (bytes32 opponent) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
+    return (Bytes.slice32(_blob, 0));
+  }
+
+  /** Get opponent (using the specified store) */
+  function getOpponent(IStore _store, uint256 id) internal view returns (bytes32 opponent) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    return (Bytes.slice32(_blob, 0));
+  }
+
+  /** Set opponent */
+  function setOpponent(uint256 id, bytes32 opponent) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((opponent)));
+  }
+
+  /** Set opponent (using the specified store) */
+  function setOpponent(IStore _store, uint256 id, bytes32 opponent) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((opponent)));
+  }
+
   /** Get winner */
   function getWinner(uint256 id) internal view returns (bytes32 winner) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
     return (Bytes.slice32(_blob, 0));
   }
 
@@ -98,7 +172,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
     return (Bytes.slice32(_blob, 0));
   }
 
@@ -107,7 +181,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((winner)));
+    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((winner)));
   }
 
   /** Set winner (using the specified store) */
@@ -115,7 +189,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((winner)));
+    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((winner)));
   }
 
   /** Get winnerOption */
@@ -123,7 +197,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
     return BattleOptions(uint8(Bytes.slice1(_blob, 0)));
   }
 
@@ -132,7 +206,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
     return BattleOptions(uint8(Bytes.slice1(_blob, 0)));
   }
 
@@ -141,7 +215,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked(uint8(winnerOption)));
+    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(winnerOption)));
   }
 
   /** Set winnerOption (using the specified store) */
@@ -149,7 +223,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked(uint8(winnerOption)));
+    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(winnerOption)));
   }
 
   /** Get loser */
@@ -157,7 +231,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
     return (Bytes.slice32(_blob, 0));
   }
 
@@ -166,7 +240,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
     return (Bytes.slice32(_blob, 0));
   }
 
@@ -175,7 +249,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((loser)));
+    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((loser)));
   }
 
   /** Set loser (using the specified store) */
@@ -183,7 +257,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((loser)));
+    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((loser)));
   }
 
   /** Get loserOption */
@@ -191,7 +265,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 5);
     return BattleOptions(uint8(Bytes.slice1(_blob, 0)));
   }
 
@@ -200,7 +274,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 5);
     return BattleOptions(uint8(Bytes.slice1(_blob, 0)));
   }
 
@@ -209,7 +283,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(loserOption)));
+    StoreSwitch.setField(_tableId, _keyTuple, 5, abi.encodePacked(uint8(loserOption)));
   }
 
   /** Set loserOption (using the specified store) */
@@ -217,7 +291,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(loserOption)));
+    _store.setField(_tableId, _keyTuple, 5, abi.encodePacked(uint8(loserOption)));
   }
 
   /** Get draw */
@@ -225,7 +299,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 6);
     return (_toBool(uint8(Bytes.slice1(_blob, 0))));
   }
 
@@ -234,7 +308,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 6);
     return (_toBool(uint8(Bytes.slice1(_blob, 0))));
   }
 
@@ -243,7 +317,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((draw)));
+    StoreSwitch.setField(_tableId, _keyTuple, 6, abi.encodePacked((draw)));
   }
 
   /** Set draw (using the specified store) */
@@ -251,7 +325,7 @@ library BattleHistoryComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((draw)));
+    _store.setField(_tableId, _keyTuple, 6, abi.encodePacked((draw)));
   }
 
   /** Get the full data */
@@ -275,13 +349,15 @@ library BattleHistoryComponent {
   /** Set the full data using individual values */
   function set(
     uint256 id,
+    bytes32 player,
+    bytes32 opponent,
     bytes32 winner,
     BattleOptions winnerOption,
     bytes32 loser,
     BattleOptions loserOption,
     bool draw
   ) internal {
-    bytes memory _data = encode(winner, winnerOption, loser, loserOption, draw);
+    bytes memory _data = encode(player, opponent, winner, winnerOption, loser, loserOption, draw);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -293,13 +369,15 @@ library BattleHistoryComponent {
   function set(
     IStore _store,
     uint256 id,
+    bytes32 player,
+    bytes32 opponent,
     bytes32 winner,
     BattleOptions winnerOption,
     bytes32 loser,
     BattleOptions loserOption,
     bool draw
   ) internal {
-    bytes memory _data = encode(winner, winnerOption, loser, loserOption, draw);
+    bytes memory _data = encode(player, opponent, winner, winnerOption, loser, loserOption, draw);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -314,24 +392,40 @@ library BattleHistoryComponent {
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, uint256 id, BattleHistoryComponentData memory _table) internal {
-    set(_store, id, _table.winner, _table.winnerOption, _table.loser, _table.loserOption, _table.draw);
+    set(
+      _store,
+      id,
+      _table.player,
+      _table.opponent,
+      _table.winner,
+      _table.winnerOption,
+      _table.loser,
+      _table.loserOption,
+      _table.draw
+    );
   }
 
   /** Decode the tightly packed blob using this table's schema */
   function decode(bytes memory _blob) internal pure returns (BattleHistoryComponentData memory _table) {
-    _table.winner = (Bytes.slice32(_blob, 0));
+    _table.player = (Bytes.slice32(_blob, 0));
 
-    _table.winnerOption = BattleOptions(uint8(Bytes.slice1(_blob, 32)));
+    _table.opponent = (Bytes.slice32(_blob, 32));
 
-    _table.loser = (Bytes.slice32(_blob, 33));
+    _table.winner = (Bytes.slice32(_blob, 64));
 
-    _table.loserOption = BattleOptions(uint8(Bytes.slice1(_blob, 65)));
+    _table.winnerOption = BattleOptions(uint8(Bytes.slice1(_blob, 96)));
 
-    _table.draw = (_toBool(uint8(Bytes.slice1(_blob, 66))));
+    _table.loser = (Bytes.slice32(_blob, 97));
+
+    _table.loserOption = BattleOptions(uint8(Bytes.slice1(_blob, 129)));
+
+    _table.draw = (_toBool(uint8(Bytes.slice1(_blob, 130))));
   }
 
   /** Tightly pack full data using this table's schema */
   function encode(
+    bytes32 player,
+    bytes32 opponent,
     bytes32 winner,
     BattleOptions winnerOption,
     bytes32 loser,

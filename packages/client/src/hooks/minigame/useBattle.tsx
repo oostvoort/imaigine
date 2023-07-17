@@ -36,10 +36,29 @@ export default function useBattle(playerId: Entity) {
 
   const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
 
+  /**
+   * Gets the battle start time component value for the player.
+   *
+   * @param BattleTimeComponent - The battle start time component to get the value from.
+   * @param playerId - The ID of the player to get the battle start time for.
+   *
+   * The useComponentValue hook is used to get the latest value from the BattleTimeComponent for the player.
+   *
+   * The returned value is a timestamp number.
+   *
+   * battleTime then calculates the start and end times for the battle:
+   * - start: The start time component value.
+   * - end: The start time plus 6000 milliseconds (battle length).
+   *
+   * So this allows getting the start and end times for a battle given the player ID.
+   */
+  const timer = useComponentValue(BattleTimeComponent, playerId);
 
   const battleTime = {
-      timer: useComponentValue(BattleTimeComponent, playerId)
+      start: Number(timer?.value),
+      end: Number(timer?.value) + 60
   }
+
   /**
    * Custom hook to get battle data for a player.
    *
@@ -136,6 +155,7 @@ export default function useBattle(playerId: Entity) {
   }
 
   /**
+   * ### @DEPRECATED!
    * Defines a mutation hook to set battle lock.
    * @param mutationKey The key for the mutation.
    * @param mutationFn The function to execute the mutation.
@@ -221,6 +241,15 @@ export default function useBattle(playerId: Entity) {
     }
   })
 
+
+  /**
+   * Defines a mutation hook to rematch in battle.
+   * @param mutationKey The key for the mutation.
+   * @param mutationFn The function to execute the mutation.
+   * Sends a transaction to rematch in the battle.
+   * Waits for the transaction to be confirmed.
+   * Returns the battle data.
+   */
   const rematch = useMutation({
     mutationKey: ["rematch"],
     mutationFn: async (options: boolean) => {
