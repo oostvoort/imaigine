@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import SubLayout from '@/components/layouts/MainLayout/SubLayout'
 import Map from '@/components/shared/Map'
 import { useMap } from '@/hooks/v1/useMap'
@@ -7,6 +7,7 @@ import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
 import { useSetAtom } from 'jotai'
 import { travelStory_atom } from '@/states/global'
+import useLocationLists from '@/hooks/v1/useLocationLists'
 
 export type LocationType = {
   name: string,
@@ -24,11 +25,20 @@ export default function WorldMapScreen(){
   const setTravelStory = useSetAtom(travelStory_atom)
 
   const { generateTravel } =  useTravel()
-  const {generateLocation } = useLocation(destination)
+  const { generateLocation } = useLocation(destination)
+
+  const { locationToGenerate } = useLocationLists(myPlayer?.revealedCell ?? [])
+
   function travelPlayer(cellId: number) {
     setIsLocationOpen(true)
     setDestination(cellId)
   }
+
+  React.useEffect(() => {
+    if (locationToGenerate && locationToGenerate?.length > 0) {
+      setDestination(locationToGenerate[0]?.cell)
+    }
+  }, [locationToGenerate])
 
   React.useEffect(() => {
     if (!destination) return
