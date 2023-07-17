@@ -6,9 +6,9 @@ import {
 import { useMUD } from '@/MUDContext'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { InteractSingleDoneResponse } from '../../../types'
-import usePlayer from '@/hooks/usePlayer'
 import { BigNumber } from 'ethers'
 import useLocation from '@/hooks/v1/useLocation'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 export default function useLocationInteraction() {
 

@@ -127,7 +127,7 @@ export default function usePlayer() {
     },
   })
 
-  const ipfsData = useIpfs<{name: string, summary: string}>(player.config?.value ?? '')
+  const ipfsData = useIpfs<{name: string, description: string}>(player.config?.value ?? '')
 
   return { generatePlayer, generatePlayerImage, createPlayer, player, ipfsData }
 }

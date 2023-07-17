@@ -3,9 +3,9 @@ import { clsx } from 'clsx'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Dialog, DialogTrigger } from '@/components/base/Dialog'
 import { Button, ButtonProps } from '@/components/base/Button'
-import usePlayer from '@/hooks/usePlayer'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import useIpfs from '@/hooks/useIpfs'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 type PropType = {
   children: React.ReactNode

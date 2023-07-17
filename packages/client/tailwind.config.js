@@ -137,12 +137,17 @@ export default {
           '50%': { transform: 'rotate(180deg)' },
           '50%, 75%': { transform: 'rotate(180deg)' },
           '100%': { transform: 'rotate(360deg)' },
-        }
+        },
+        "loading-spin": {
+          "0%": { transform: 'rotate(0deg)' },
+          "100%": { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "custom-spin": "custom-spin 3s infinite"
+        "custom-spin": "custom-spin 3s infinite",
+        "loading-spin": "loading-spin 1s linear infinite",
       },
       spacing: {
         sm: '15px',

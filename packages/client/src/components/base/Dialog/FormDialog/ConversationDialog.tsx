@@ -9,8 +9,8 @@ import { useMUD } from '@/MUDContext'
 import usePlayer from '@/hooks/v1/usePlayer'
 import { currentLocation_atom, npcConversation_atom } from '@/states/global'
 import { useAtomValue, useSetAtom } from 'jotai'
-import useLocationInteraction from '@/hooks/useLocationInteraction'
 import { IPFS_URL_PREFIX } from '@/global/constants'
+import useLocationInteraction from '@/hooks/v1/useLocationInteraction'
 
 type PropType = {
   isOpen?: boolean,
