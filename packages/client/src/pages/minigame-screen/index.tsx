@@ -20,6 +20,7 @@ import { activeScreen_atom, SCREENS } from '@/states/global'
 import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { BattleGuide } from '@/components/base/Dialog/FormDialog/DialogContent/BattleGuide'
 
+
 const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(
     {
@@ -41,7 +42,7 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const {  getBattleResult, getWinnerInfo } = useHistory(player.id as Entity)
+  const {  getBattleResult, getWinnerInfo, getAllPlayersBattlePoints } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
@@ -168,6 +169,9 @@ export default function MinigameScreen() {
   // console.log('minigame isMatchResultComponent', isMatchResultComponent)
   // console.log("minigame getPlayerBattleLogs: ", getPlayerBattleLogs)
   // console.log("minigame getPlayerBattleInfor: ", getWinnerInfo)
+  console.log("minigame getAllPlayers: ", getAllPlayersBattlePoints)
+  // getWinnerInfo.map(({data}) => console.log("minigame data", data))
+
 
   function handleLeaveBattle() {
     try {
