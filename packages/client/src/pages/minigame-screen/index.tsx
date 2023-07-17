@@ -19,7 +19,6 @@ import useLeave from '@/hooks/minigame/useLeave'
 import { activeScreen_atom, SCREENS } from '@/states/global'
 import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { BattleGuide } from '@/components/base/Dialog/FormDialog/DialogContent/BattleGuide'
-import { logger } from 'ethers'
 
 const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(
@@ -285,7 +284,7 @@ export default function MinigameScreen() {
                     />
 
                     <div className={clsx([ 'w-full h-full', 'relative', 'mt-[1.8rem]' ])}>
-                      <img src={'src/assets/minigame/icon_battle.png'} alt={'Battle Icon'}
+                      <img src={'/assets/minigame/icon_battle.png'} alt={'Battle Icon'}
                            className={clsx([ 'w-[64px] h-[64px] object-cover', 'absolute left-1/2 top-1/2', { 'zoomHidden': playerWaiting }, { 'zoomActive': !playerWaiting } ])} />
                     </div>
 
