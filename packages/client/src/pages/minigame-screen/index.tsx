@@ -455,7 +455,7 @@ export default function MinigameScreen() {
 
             <div className={clsx(['w-[375px]', 'flex-none'])}>
               <Card className={clsx(['max-h-[678px] h-full', 'border border-accent rounded-2xl', 'bg-modal bg-cover bg-center bg-no-repeat'])}>
-                <div className={clsx(['h-full', 'px-sm py-md', 'flex flex-col'])}>
+                <div className={clsx(['h-full', 'max-h-[678px] h-full overflow-y-auto', 'px-sm py-md', 'flex flex-col'])}>
                   <div className={clsx([ 'flex items-center justify-between', 'z-10' ])}>
                     <p
                       className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Battle
