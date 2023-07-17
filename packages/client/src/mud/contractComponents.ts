@@ -342,6 +342,8 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
+          player: RecsType.String,
+          opponent: RecsType.String,
           winner: RecsType.String,
           winnerOption: RecsType.Number,
           loser: RecsType.String,

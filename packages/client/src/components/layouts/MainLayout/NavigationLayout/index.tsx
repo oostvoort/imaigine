@@ -4,6 +4,7 @@ import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings'
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
+import usePlayer from '@/hooks/usePlayer'
 import { activeScreen_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
 import { useAtom } from 'jotai'
@@ -11,14 +12,12 @@ import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
 import useLeave from '@/hooks/minigame/useLeave'
-import useBattle from '@/hooks/minigame/useBattle'
-import usePlayer from '@/hooks/v1/usePlayer'
+import Leaderboard from '@/components/base/Dialog/FormDialog/DialogContent/Leaderboard'
 
 export default function Header() {
   const { player } = usePlayer()
   const activeScreen = useGameState()
-  const { battleData } = useBattle(player.id as Entity)
-  const { play, playdata } = usePlay(player.location?.value as Entity)
+  const { play } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
 
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
@@ -46,16 +45,12 @@ export default function Header() {
     }
   }
 
-  // console.log('minigame player', player)
-  // console.log('minigame playdata', playdata)
-  // console.log('minigame battleData', battleData)
-
   return (
     <div
       className={clsx([ 'flex items-center', 'fixed top-0 pb-[2px]', 'w-full h-20', 'bg-gold-to-dark', 'z-20 opacity-80' ])}>
       <div className={clsx([ 'w-full h-full', 'bg-header-gradient', 'flex justify-between items-center', 'pl-md' ])}>
         {/*Menu Wrapper*/}
-        <div className={clsx([ 'flex items-center first:gap-x-0  gap-x-md' ])}>
+        <div className={clsx([ 'flex items-center first:space-x-[0]  space-x-md' ])}>
           <DialogWidget button={{
             variant: 'default',
             title: 'Profile',
@@ -65,7 +60,7 @@ export default function Header() {
             <Profile />
           </DialogWidget>
 
-          <div className={'px-md h-[67px]'}>
+          <div className={'pl-md h-[67px]'}>
             <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
               <img
                 src={'/assets/svg/icon_map.png'}
@@ -77,7 +72,6 @@ export default function Header() {
             </Button>
           </div>
 
-
           <DialogWidget  button={{
             variant: 'menu',
             size: 'menu',
@@ -87,6 +81,17 @@ export default function Header() {
             imgClassName: 'h-[59px] w-[71px]',
           }} isAvatar={false}>
             <History />
+          </DialogWidget>
+
+          <DialogWidget  button={{
+            variant: 'menu',
+            size: 'menu',
+            title: 'Leaderboard',
+            imgSrc: '/assets/minigame/icon_leaderboard.png',
+            imgAlt: 'Leaderboard',
+            imgClassName: 'h-[59px] w-[71px]',
+          }} isAvatar={false}>
+            <Leaderboard />
           </DialogWidget>
 
           <DialogWidget  button={{
@@ -104,7 +109,6 @@ export default function Header() {
         </div>
         {/*End of Menu Wrapper*/}
 
-        {/*<div className={clsx(['h-full max-w-[297px] w-full', 'border border-b-[25px] border-b-black border-l-[20px] border-l-transparent ', 'flex items-center', 'px-md', 'cursor-pointer', ])}>*/}
           <Button
             variant={'battle'} size={'battle'}
             onClick={ activeScreen == SCREENS.MINIGAME ? handleLeaveBattle : handleStartBattle }
@@ -113,10 +117,7 @@ export default function Header() {
 
             {activeScreen === SCREENS.MINIGAME ? 'LEAVE BATTLE' : 'START BATTLE'}
           </Button>
-        {/*</div>*/}
       </div>
-
-
     </div>
   )
 }

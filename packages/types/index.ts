@@ -240,3 +240,12 @@ export interface LocationObject {
 export interface PlayerHistoryProps {
   playerEntityId: string
 }
+
+export interface LocationInteractionResponse {
+  scenario: string,
+  choice: {
+    good: string,
+    evil: string,
+    neutral: string
+  }
+}
