@@ -36,6 +36,7 @@ export default function useHistory(playerId: Entity) {
 
   const getBattleLogs = Array.from(getBattleLogsPlayerEntity).concat(Array.from(getBattleLogsOpponentEntity))
 
+  getBattleLogs.sort();
   /**
    * getPlayerBattleLogs maps the entities returned by getBattleLogsEntity to the
    * BattleHistoryComponent value for each entity.
