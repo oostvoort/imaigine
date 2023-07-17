@@ -3,7 +3,7 @@ import { useMUD } from '@/MUDContext'
 import { Entity, getComponentValueStrict, HasValue, runQuery } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { parsePlayerConfig } from '@/global/utils'
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 
 export default function useHistory(playerId: Entity) {
   const {
@@ -15,54 +15,60 @@ export default function useHistory(playerId: Entity) {
 
   const battleData = useBattle(playerId)
 
+
   /**
-   * Queries for battle log entities matching the player and opponent.
+   * getBattleLogsEntity queries for entities with the BattleHistoryComponent
+   * that match the provided playerId and opponent.
    *
-   * @param BattleHistoryComponent - The battle log component to query.
-   * @param playerId - The player entity ID to match.
-   * @param battleData.battle?.opponent - The opponent to match from battle data.
+   * @param {Entity} playerId - The player entity to query for.
+   * @param {Entity} battleData.battleData.battle?.opponent - The opponent entity to query for.
    *
-   * Uses a HasValue query to find entities with the BattleHistoryComponent that match
-   * the given playerId and opponent.
-   *
-   * The query result entities are then mapped to extract the component value for each one using
-   * getComponentValueStrict.
-   *
-   * This returns an array of battle log entries for the player against the given opponent.
+   * @returns {Entity[]} An array of entities with matching BattleHistoryComponents.
    */
 
-  // const getBattleLogsEntity = runQuery([
-  //   HasValue(BattleHistoryComponent, { player : playerId, opponent: battleData.battleData.battle?.opponent })
-  // ])
+  const getBattleLogsEntity = runQuery([
+    HasValue(BattleHistoryComponent, { player : playerId, opponent: battleData.battleData.battle?.opponent })
+  ])
 
-  // const getPlayerBattleLogs = Array.from(getBattleLogsEntity).map(
-  //   entity => getComponentValueStrict(BattleHistoryComponent, entity)
-  // )
+  /**
+   * getPlayerBattleLogs maps the entities returned by getBattleLogsEntity to the
+   * BattleHistoryComponent value for each entity.
+   *
+   * @param {Entity[]} getBattleLogsEntity - Array of entities from previous query.
+   *
+   * @returns {BattleHistoryComponent[]} Extracted BattleHistoryComponent values.
+   */
+  const getPlayerBattleLogs = Array.from(getBattleLogsEntity).map(
+    entity => getComponentValueStrict(BattleHistoryComponent, entity)
+  )
 
-  // useQuery
-  // const getWinnerInfo = useQuery({
-  //   queryKey: ['winner-info-new'],
-  //   queryFn: async () => {
-  //     if (!getPlayerBattleLogs) throw new Error('!!!')
-  //
-  //     const winners: any = []
-  //
-  //     getPlayerBattleLogs.map(async data => {
-  //       const winner = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, data?.winner as Entity)?.value as string)
-  //       console.log({ winner, data })
-  //       winners.push({
-  //         winnerInfo: winner,
-  //         isDraw: data?.draw,
-  //         winnerOption: data?.winnerOption,
-  //       })
-  //     })
-  //
-  //     console.log({ x: JSON.stringify(winners) })
-  //     return winners
-  //   },
-  //   enabled: Boolean(getPlayerBattleLogs)
-  // })
-
+  /**
+   * getWinnerInfo runs async queries to get winner info for each battle log.
+   *
+   * The map callback does the following:
+   * - Gets ConfigComponent for winner entity
+   * - Parses player config value
+   * - Returns winnerInfo, isDraw flag, winnerOption
+   *
+   * @param {BattleHistoryComponent[]} getPlayerBattleLogs - Battle logs to get winner info for.
+   *
+   * @returns {Promise[]} Winner info promises for each battle log.
+   */
+  const getWinnerInfo = useQueries({
+    queries: getPlayerBattleLogs.map((data, index) => {
+      return {
+        queryKey: ['winner-info', index],
+        queryFn: async () => {
+          const winner = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, data?.winner as Entity)?.value as string)
+          return {
+            winnerInfo: winner,
+            isDraw: data?.draw,
+            winnerOption: data?.winnerOption
+          }
+        }
+      }
+    })
+  })
 
 
   /**
@@ -90,6 +96,6 @@ export default function useHistory(playerId: Entity) {
 
   return {
     getBattleResult,
-    // getWinnerInfo
+    getWinnerInfo
   }
 }
