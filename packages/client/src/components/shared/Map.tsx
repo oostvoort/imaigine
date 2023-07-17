@@ -32,7 +32,7 @@ const Map: React.FC<PropType> = ({
     }
   }
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, screen: activeScreen}})}
 
   // Display myPlayer marker on the map
   React.useEffect(() => {

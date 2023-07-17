@@ -28,10 +28,10 @@ contract InteractionSystem is System {
   using ArrayLib for uint256[];
 
   /// @dev counts if the vote has timed out without player voting
-  uint256 private constant VOTING_TIMEOUT = 1_000 * 15;
+  uint256 private constant VOTING_TIMEOUT = 15;
 
   /// @dev counts if the process timed out without making interaction available
-  uint256 private constant PROCESSING_TIMEOUT = 1_000 * 60 * 60;
+  uint256 private constant PROCESSING_TIMEOUT = 15;
 
   /// @dev returned in multiInteract when a winningChoice is not yet available
   uint256 private constant NOT_YET_AVAILABLE = 0;
