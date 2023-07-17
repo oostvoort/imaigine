@@ -1,29 +1,72 @@
 import React from 'react'
 import { useMUD } from '@/MUDContext'
-import { Entity, getComponentValueStrict, HasValue, runQuery } from '@latticexyz/recs'
+import { Entity, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { parsePlayerConfig } from '@/global/utils'
 import { useQueries, useQuery } from '@tanstack/react-query'
+import { useRows } from '@latticexyz/react'
 
 export default function useHistory(playerId: Entity) {
   const {
     components: {
       BattleHistoryComponent,
       ConfigComponent,
+      BattlePointsComponent
+    },
+    network: {
+      storeCache,
     }
   } = useMUD()
 
   const battleData = useBattle(playerId)
 
+  /**
+   * Queries for all entities that have the BattlePointsComponent.
+   *
+   * getAllPlayersBattlePointsEntity returns all entities with BattlePointsComponent.
+   *
+   * getAllPlayersBattlePoints maps the entities to async queries that:
+   * - Get the ConfigComponent value
+   * - Parse the player config
+   * - Return player ID, BattlePointsComponent value, and parsed config
+   *
+   * @returns {Promise[]} An array of promises that resolve to player battle points info.
+   */
+
+  const getAllPlayersBattlePointsEntity = runQuery([
+    Has(BattlePointsComponent)
+  ])
+
+  const getAllPlayersBattlePoints = useQueries({
+    queries: Array.from(getAllPlayersBattlePointsEntity).map((entity) => {
+      return {
+        queryKey: ["getAllPlayersBattlePoints", entity],
+        queryFn: async () => {
+          const playerInfo = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, entity as Entity)?.value as string)
+
+          return {
+            playerID: entity,
+            pleyerBP: getComponentValueStrict(BattlePointsComponent, entity as Entity),
+            playerInfo: playerInfo
+          }
+        }
+      }
+    })
+  })
 
   /**
-   * getBattleLogsEntity queries for entities with the BattleHistoryComponent
-   * that match the provided playerId and opponent.
+   * Queries for battle log entities matching the player and opponent.
    *
-   * @param {Entity} playerId - The player entity to query for.
-   * @param {Entity} battleData.battleData.battle?.opponent - The opponent entity to query for.
+   * @param playerId - The player entity to query for
+   * @param battleData.battleData.battle?.opponent - The opponent entity to query for
    *
-   * @returns {Entity[]} An array of entities with matching BattleHistoryComponents.
+   * getBattleLogsPlayerEntity queries for logs where playerId is the player.
+   *
+   * getBattleLogsOpponentEntity queries for logs where playerId is the opponent.
+   *
+   * getBattleLogs concatenates the results into one array.
+   *
+   * Sorts the combined array.
    */
 
   const getBattleLogsPlayerEntity = runQuery([
@@ -37,6 +80,7 @@ export default function useHistory(playerId: Entity) {
   const getBattleLogs = Array.from(getBattleLogsPlayerEntity).concat(Array.from(getBattleLogsOpponentEntity))
 
   getBattleLogs.sort();
+
   /**
    * getPlayerBattleLogs maps the entities returned by getBattleLogsEntity to the
    * BattleHistoryComponent value for each entity.
@@ -45,6 +89,7 @@ export default function useHistory(playerId: Entity) {
    *
    * @returns {BattleHistoryComponent[]} Extracted BattleHistoryComponent values.
    */
+
   const getPlayerBattleLogs = getBattleLogs.map(
     entity => getComponentValueStrict(BattleHistoryComponent, entity)
   )
@@ -106,6 +151,7 @@ export default function useHistory(playerId: Entity) {
 
   return {
     getBattleResult,
-    getWinnerInfo
+    getWinnerInfo,
+    getAllPlayersBattlePoints
   }
 }
