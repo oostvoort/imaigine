@@ -26,9 +26,15 @@ export default function useHistory(playerId: Entity) {
    * @returns {Entity[]} An array of entities with matching BattleHistoryComponents.
    */
 
-  const getBattleLogsEntity = runQuery([
-    HasValue(BattleHistoryComponent, { player : playerId, opponent: battleData.battleData.battle?.opponent })
+  const getBattleLogsPlayerEntity = runQuery([
+    HasValue(BattleHistoryComponent, { player : playerId, opponent: battleData.battleData.battle?.opponent }),
   ])
+
+  const getBattleLogsOpponentEntity = runQuery([
+    HasValue(BattleHistoryComponent, { player : battleData.battleData.battle?.opponent, opponent: playerId })
+  ])
+
+  const getBattleLogs = Array.from(getBattleLogsPlayerEntity).concat(Array.from(getBattleLogsOpponentEntity))
 
   /**
    * getPlayerBattleLogs maps the entities returned by getBattleLogsEntity to the
@@ -38,7 +44,7 @@ export default function useHistory(playerId: Entity) {
    *
    * @returns {BattleHistoryComponent[]} Extracted BattleHistoryComponent values.
    */
-  const getPlayerBattleLogs = Array.from(getBattleLogsEntity).map(
+  const getPlayerBattleLogs = getBattleLogs.map(
     entity => getComponentValueStrict(BattleHistoryComponent, entity)
   )
 
@@ -61,6 +67,8 @@ export default function useHistory(playerId: Entity) {
         queryFn: async () => {
           const winner = await parsePlayerConfig(getComponentValueStrict(ConfigComponent, data?.winner as Entity)?.value as string)
           return {
+            isWin: data?.winner === playerId,
+            playerId: data?.player,
             winnerInfo: winner,
             isDraw: data?.draw,
             winnerOption: data?.winnerOption
