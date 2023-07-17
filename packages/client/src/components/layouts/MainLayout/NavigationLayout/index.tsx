@@ -87,7 +87,7 @@ export default function Header() {
             variant: 'menu',
             size: 'menu',
             title: 'Leaderboard',
-            imgSrc: '/src/assets/minigame/icon_leaderboard.png',
+            imgSrc: '/assets/minigame/icon_leaderboard.png',
             imgAlt: 'Leaderboard',
             imgClassName: 'h-[59px] w-[71px]',
           }} isAvatar={false}>

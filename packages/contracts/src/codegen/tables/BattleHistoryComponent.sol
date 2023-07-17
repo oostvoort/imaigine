@@ -387,7 +387,16 @@ library BattleHistoryComponent {
 
   /** Set the full data using the data struct */
   function set(uint256 id, BattleHistoryComponentData memory _table) internal {
-    set(id, _table.winner, _table.winnerOption, _table.loser, _table.loserOption, _table.draw);
+    set(
+      id,
+      _table.player,
+      _table.opponent,
+      _table.winner,
+      _table.winnerOption,
+      _table.loser,
+      _table.loserOption,
+      _table.draw
+    );
   }
 
   /** Set the full data using the data struct (using the specified store) */
@@ -432,7 +441,7 @@ library BattleHistoryComponent {
     BattleOptions loserOption,
     bool draw
   ) internal view returns (bytes memory) {
-    return abi.encodePacked(winner, winnerOption, loser, loserOption, draw);
+    return abi.encodePacked(player, opponent, winner, winnerOption, loser, loserOption, draw);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

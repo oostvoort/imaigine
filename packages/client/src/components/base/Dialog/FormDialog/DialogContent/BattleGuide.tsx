@@ -15,7 +15,7 @@ export function BattleGuide(){
       </p>
 
       <div className={clsx([ 'flex flex-col items-center', 'my-md' ])}>
-        <img src={'src/assets/minigame/img_guide.png'} alt={'Battle Guide Image'}
+        <img src={'/assets/minigame/img_guide.png'} alt={'Battle Guide Image'}
              className={clsx([ 'w-[330px] h-[305px]' ])} />
       </div>
 

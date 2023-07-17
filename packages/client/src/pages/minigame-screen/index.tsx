@@ -467,7 +467,7 @@ export default function MinigameScreen() {
                     <DialogWidget button={{
                       size: 'icon',
                       variant: 'icon',
-                      imgSrc: '/src/assets/minigame/icon_help.svg',
+                      imgSrc: '/assets/minigame/icon_help.svg',
                     }} isAvatar={false}>
                       <BattleGuide/>
                     </DialogWidget>
