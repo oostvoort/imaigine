@@ -46,7 +46,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
           isAvatar ?
             <React.Fragment>
               <div
-                className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'z-50', 'overflow-hidden' ])}>
+                className={clsx([ 'relative', 'mt-16 text-center', 'flex items-center', 'h-[128px] w-[128px]', 'rounded-full', 'cursor-pointer', 'overflow-hidden' ])}>
                 <img src={'/src/assets/avatar/frames/frame_bg.png'} alt={'frame background'}
                      className={clsx([ 'h-[128px] w-[128px]' ])} />
 
@@ -74,7 +74,7 @@ export default function DialogWidget({ children, button, isAvatar, avatar }: Pro
                      className={'absolute z-50'} draggable={false} />
               </div>
 
-              <p className={clsx(['ml-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>Alice</p>
+              <p className={clsx(['pl-2 text-option-8 text-left text-xl', 'font-amiri', 'leading-8'])}>Alice</p>
             </React.Fragment>
 
             :
