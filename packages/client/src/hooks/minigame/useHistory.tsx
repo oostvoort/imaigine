@@ -46,7 +46,7 @@ export default function useHistory(playerId: Entity) {
 
           return {
             playerID: entity,
-            pleyerBP: getComponentValueStrict(BattlePointsComponent, entity as Entity),
+            playerBP: getComponentValueStrict(BattlePointsComponent, entity as Entity),
             playerInfo: playerInfo
           }
         }

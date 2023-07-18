@@ -83,7 +83,7 @@ export default function WorldMapScreen(){
   return(
     <SubLayout.MapViewLayout>
       <Map
-        className={'w-full h-full mt-40'}
+        className={'w-full h-full'}
         myPlayer={myPlayer}
         isMyPlayerComplete={isMyPlayerComplete}
         players={players}

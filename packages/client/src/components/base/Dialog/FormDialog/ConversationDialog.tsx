@@ -86,7 +86,7 @@ export default function ConversationDialog({
 
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => setOpen(false)}>
+    <Dialog open={isOpen} onOpenChange={() => null}>
       <DialogPrimitive.Portal
         className={'fixed inset-0 z-50  flex items-start justify-center relative'}>
         <DialogPrimitive.Overlay
