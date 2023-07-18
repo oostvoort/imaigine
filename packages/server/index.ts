@@ -28,12 +28,11 @@ import {
 } from 'types'
 import {
   generateHistory,
-  generateLocation, generateLocationInteraction,
+  generateLocation,
   generateNonPlayerCharacter,
-  generateNpcInteraction,
   generatePlayerCharacter,
   generateStory,
-  generateTravel, summarizeText,
+  generateTravel,
 } from './lib/langchain'
 import { generateLocationImage, generatePlayerImage } from './lib/leonardo'
 import { storeJson } from './lib/ipfs'
@@ -70,6 +69,12 @@ import { removeParentheses } from './utils/removeParentheses'
 import * as process from 'process'
 import { MAP_SEED } from './global/config'
 import { generateEffect, generateInteractLocation } from './lib/langchain/locationInteraction'
+import { summarizeText } from './lib/langchain/utils'
+import {
+  generateActions,
+  generateActionsMessages,
+  generateNpcMessage,
+} from './lib/langchain/nonPlayerCharacterInteraction'
 
 dotenv.config()
 
@@ -415,7 +420,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             players: `${props.playerEntityId}`,
             player_log: effect,
             by: 'player',
-            mode: 'action'
+            mode: 'action',
           })
 
           let history = ``
@@ -444,7 +449,7 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             neutral_choice: generatedInteractionWithChoice.actions.neutral,
             neutral_effect: '-',
             evil_effect: '-',
-            good_effect: '-'
+            good_effect: '-',
           })
 
           await worldContract.openInteraction(props.playerEntityId)
@@ -454,11 +459,11 @@ app.post('/api/v1/interact-location', async (req: Request, res: Response, next: 
             choice: {
               good: generatedInteractionWithChoice.actions.positive,
               evil: generatedInteractionWithChoice.actions.negative,
-              neutral: generatedInteractionWithChoice.actions.neutral
-            }
+              neutral: generatedInteractionWithChoice.actions.neutral,
+            },
           } as LocationInteractionResponse)
         } else {
-          res.send("Invalid choice!")
+          res.send('Invalid choice!')
         }
       }
     }
@@ -475,44 +480,33 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
   else {
     try {
       const npc: Based = await getFromIpfs(props.npcIpfsHash)
+      const interaction = await fetchInteraction(props.npcEntityId)
+      if (interaction.length <= 0) {
+        const message = await generateNpcMessage(npc)
+        const actions = await generateActions(message)
+        const messages = await generateActionsMessages(npc, message, actions)
 
-      const conversations = await fetchHistoryLogs(props.npcEntityId)
-
-      let history = ''
-
-      if (conversations.length <= 0) {
-        const npcInteraction = await generateNpcInteraction({
-          storyName: storyConfig.name,
-          storySummary: storyConfig.summary,
-          npcName: npc.name,
-          npcSummary: npc.summary,
-          conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
-        })
 
         await insertInteraction({
           interactable_id: props.npcEntityId,
-          scenario: npcInteraction.response,
-          good_choice: npcInteraction.goodChoice,
-          good_effect: npcInteraction.goodResponse,
-          evil_choice: npcInteraction.evilChoice,
-          evil_effect: npcInteraction.evilResponse,
-          neutral_choice: npcInteraction.neutralChoice,
-          neutral_effect: npcInteraction.neutralResponse,
+          scenario: message,
+          good_choice: actions.positive,
+          good_effect: messages.positive,
+          evil_choice: actions.negative,
+          evil_effect: messages.negative,
+          neutral_choice: actions.neutral,
+          neutral_effect: messages.neutral,
         })
-        console.info('- done inserting npc interaction')
 
         await insertHistoryLogs({
           interactable_id: props.npcEntityId,
+          player_log: message,
           by: 'interactable',
-          players: `NPC: ${npc.name}`,
           mode: 'dialog',
-          player_log: `${npcInteraction.response}`,
+          players: `${props.playerEntityId}}`,
         })
 
-        console.info('- done inserting initial conversation history')
-
         const historyLogs = await fetchHistoryLogs(props.npcEntityId)
-
         res.send({
           conversationHistory: historyLogs.map((convo: any) => {
             return {
@@ -522,31 +516,18 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
             }
           }),
           option: {
-            good: {
-              goodChoise: npcInteraction.goodChoice,
-              goodResponse: npcInteraction.goodResponse,
-            },
-            evil: {
-              evilChoise: npcInteraction.evilChoice,
-              evilResponse: npcInteraction.evilResponse,
-            },
-            neutral: {
-              neutralChoise: npcInteraction.neutralChoice,
-              neutralResponse: npcInteraction.neutralResponse,
-            },
+            evil: { evilChoise: actions.negative, evilResponse: messages.negative },
+            good: { goodChoise: actions.positive, goodResponse: messages.positive },
+            neutral: { neutralChoise: actions.neutral, neutralResponse: messages.neutral },
           },
         } as InteractNpcResponse)
       } else {
-        const choice = await worldContract.winningChoice(props.npcEntityId)
+        const choice = BigNumber.from(1)
 
         if (choice.toNumber() === 0) {
-          // not yet available
-          // return conversation and history
-          const historyLogs = await fetchHistoryLogs(props.npcEntityId)
-          const interaction = await fetchInteraction(props.npcEntityId)
-
+          const logs = await fetchHistoryLogs(props.npcEntityId)
           res.send({
-            conversationHistory: historyLogs.map((convo: any) => {
+            conversationHistory: logs.map((convo: any) => {
               return {
                 logId: convo.log_id,
                 by: convo.by,
@@ -554,84 +535,57 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
               }
             }),
             option: {
-              good: {
-                goodChoise: interaction[0].good_choice,
-                goodResponse: interaction[0].good_effect,
-              },
-              evil: {
-                evilChoise: interaction[0].evil_choice,
-                evilResponse: interaction[0].evil_effect,
-              },
-              neutral: {
-                neutralChoise: interaction[0].neutral_choice,
-                neutralResponse: interaction[0].neutral_effect,
-              },
+              evil: { evilChoise: interaction[0].evil_choice, evilResponse: interaction[0].evil_effect },
+              good: { goodChoise: interaction[0].good_choice, goodResponse: interaction[0].good_effect },
+              neutral: { neutralChoise: interaction[0].neutral_choice, neutralResponse: interaction[0].neutral_effect },
             },
           } as InteractNpcResponse)
-
         } else if (choice.toNumber() >= 1 && choice.toNumber() <= 3) {
-          // choosing between 1 to 3
-          // call here the interaction
+          const pastLogs = await fetchHistoryLogs(props.npcEntityId)
+          const textLogs: string[] = []
+          let prePastConversation = ``
 
-          const currentInteractionOnThisBlock = await fetchInteraction(props.npcEntityId)
+          const effect = `${interaction[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`]}`
+
+          // TODO: limit for last conversation and the conversation to be summarized!
+          pastLogs.map((convo: any) => textLogs.push(`${convo.by === 'interactable' ? npc.name : 'adventurer'}: ${convo.player_log}`))
+          textLogs.push(`adventurer: ${effect}`)
+          textLogs.map((convo: any) => prePastConversation += `${convo}\n`)
+
+          const newMessage = await generateNpcMessage(npc, prePastConversation)
+          const newActions = await generateActions(newMessage)
+          const newActionsMessages = await generateActionsMessages(npc, newMessage, newActions)
 
           await insertHistoryLogs({
             interactable_id: props.npcEntityId,
             by: 'player',
-            players: `${props.playerIpfsHash}`,
             mode: 'dialog',
-            player_log: currentInteractionOnThisBlock[0][`${choice.toNumber() === 1 ? 'evil' : choice.toNumber() === 2 ? 'neutral' : 'good'}_effect`],
+            player_log: effect,
+            players: `${props.playerEntityId}`,
           })
-
-          console.info('- done inserting new history')
-
-          const conversations = await fetchHistoryLogs(props.npcEntityId)
-
-          console.info('- done getting history')
-
-          conversations.forEach((item) => {
-            history += `
-            ${item.by}: ${item.player_log},
-        `
-          })
-
-          const newNpcInteraction = await generateNpcInteraction({
-            storyName: storyConfig.name,
-            storySummary: storyConfig.summary,
-            npcName: npc.name,
-            npcSummary: npc.summary,
-            conversationHistory: history ? `Consider a conversation history: \n ${history}` : '',
-          })
-
-          await insertInteraction({
-            interactable_id: props.npcEntityId,
-            scenario: newNpcInteraction.response,
-            good_choice: newNpcInteraction.goodChoice,
-            good_effect: newNpcInteraction.goodResponse,
-            evil_choice: newNpcInteraction.evilChoice,
-            evil_effect: newNpcInteraction.evilResponse,
-            neutral_choice: newNpcInteraction.neutralChoice,
-            neutral_effect: newNpcInteraction.neutralResponse,
-          })
-          console.info('- done inserting new npc interaction')
 
           await insertHistoryLogs({
             interactable_id: props.npcEntityId,
             by: 'interactable',
-            players: `NPC: ${npc.name}`,
             mode: 'dialog',
-            player_log: `${newNpcInteraction.response}`,
+            player_log: newMessage,
+            players: `${props.playerEntityId}`,
           })
 
-          console.info('- done inserting new conversation')
+          await insertInteraction({
+            interactable_id: props.npcEntityId,
+            scenario: newMessage,
+            good_choice: newActions.positive,
+            good_effect: newActionsMessages.positive,
+            evil_choice: newActions.negative,
+            evil_effect: newActionsMessages.negative,
+            neutral_choice: newActions.neutral,
+            neutral_effect: newActionsMessages.neutral,
+          })
 
-          const newConversation = await fetchHistoryLogs(props.npcEntityId)
-          const latestInteraction = await fetchInteraction(props.npcEntityId)
-
-          await worldContract.openInteraction(props.playerEntityId[0])
-
+          const conversations = await fetchHistoryLogs(props.npcEntityId)
           res.send({
-            conversationHistory: newConversation.map((convo: any) => {
+            conversationHistory: conversations.map((convo: any) => {
               return {
                 logId: convo.log_id,
                 by: convo.by,
@@ -639,23 +593,11 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
               }
             }),
             option: {
-              good: {
-                goodChoise: latestInteraction[0].good_choice,
-                goodResponse: latestInteraction[0].good_effect,
-              },
-              evil: {
-                evilChoise: latestInteraction[0].evil_choice,
-                evilResponse: latestInteraction[0].evil_effect,
-              },
-              neutral: {
-                neutralChoise: latestInteraction[0].neutral_choice,
-                neutralResponse: latestInteraction[0].neutral_effect,
-              },
+              evil: { evilChoise: newActions.negative, evilResponse: newActionsMessages.negative },
+              good: { goodChoise: newActions.positive, goodResponse: newActionsMessages.positive },
+              neutral: { neutralChoise: newActions.neutral, neutralResponse: newActionsMessages.neutral },
             },
           } as InteractNpcResponse)
-
-        } else {
-          throw new Error(`Error on choice ${choice}`)
         }
       }
     } catch (e) {
@@ -738,43 +680,6 @@ app.post('/api/v1/pin-to-ipfs', async (req: Request, res: Response, next) => {
       ipfsHash: hash,
     })
   } catch (e) {
-    next(e)
-  }
-})
-
-app.post('/api/v1/ai-location-interaction', async (req: Request, res: Response, next) => {
-
-
-  try {
-    // const dummy = {
-    //   storyName: 'Xelva',
-    //   storySummary: 'Xelva is an ancient and mysterious fantasy world, populated by elves, orcs, and humans. It has two moons, one of which is often shrouded in mist and bathed in a kaleidoscope of soft and colorful light. Xelva’s technology varies from primitive magic to aetherpunk – a mix of modern and arcane technology. Its currency circulates around gold, and it has seven beautiful continents, each with its own culture and stories.But Xelva is a world at war; between the Demon King and The Church, battles rage daily. It is said that the church is blessed by a powerful angel, and that the Demon King is partnered with a powerful force of darkness. Whatever the truth may be, Xelva is a place full of adventure and mystery, ready to be explored. Visitors to Xelva can expect to discover ancient caves, enchanted jungles, and hidden tombs filled with treasure. They will see magnificent monuments soaring high into the sky, and perhaps even witness one of the legendary battles between the Demon King and The Church. Magical creatures dwell within dense forests, untold secrets await to be unraveled, and riches exist for those brave enough to seek them. Xelva awaits adventurers, ready to explore and discover its wonders. ',
-    //   locationName: 'Eternal Springs',
-    //   locationSummary: 'Eternal Springs is a beautiful oasis located in the estuary of Xelva. It\'s a moderately safe and wealthy metropolis consisting of clear waters, lush vegetation, and magical artifacts and creatures. The population of the city is diverse, with humans and elves living in harmony alongside adventurers, merchants, and explorers of all kinds. The city\'s wealth is drawn from multiple sources, including the river riches from the estuary and the magical secrets it harbors. Much of its population worships an ancient god known as the \'bringer of the springs\', and tales of the city\'s grandeur often appear in ancient legends and folklore. Visitors of Eternal Springs can expect to find a city of vibrant culture and grand spectacles, from the mornings when the residents celebrate beautiful sunrise rituals to the cool evenings when the moonlight illuminates their music and dance. Even the most seasoned adventurers will find a unique and immersive experience within the city.',
-    //   playerName: 'Dyaella Blueleaf',
-    //   playerSummary: 'Dyaella Blueleaf is a young adult elf who hails from Forsune Citadel, a fortress located in Xelva\'s boreal forests. She is acrobatic, healthy, genius, persuasive, and insightful. She has a light skin color, and an average body type. Dyaella loves adventure and secrets and seeks treasures in ancient caves, enchanted jungles, and hidden tombs. She is loyal to the community of her citadel and is colorful, always thinking of ways to make it a better home. Her favorite color is blue.',
-    //   locationHistory: ``,
-    //
-    // }
-    //
-    // const summary = await summarizeText(dummy.locationHistory)
-    //
-    // const text = `
-    //   The world name is ${dummy.storyName}, ${dummy.storySummary}\n
-    //   There is a location named ${dummy.locationName}, ${dummy.locationSummary}\n
-    //   ${dummy.playerName} a adventurer, ${dummy.playerSummary}\n
-    //
-    //   Location History: ${dummy.locationHistory}
-    // `
-    //
-    // const scenario = await interactLocation({inputText: text})
-    // const actions = await generateActions(scenario)
-    // // const effect = await generateEffect(scenario, actions.negative)
-    // const effect = ''
-    // res.send({ scenario, actions, effect })
-
-  } catch (e) {
-    console.info(e)
     next(e)
   }
 })
