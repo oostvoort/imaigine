@@ -33,3 +33,27 @@ export async function summarizeText(text: string) {
 
   return response.output.summary
 }
+
+export async function summarizedHistory(text: string) {
+  const summarySchema = z.object({
+    summary: z.string().describe("the generated summary")
+  })
+
+  const prompt = new ChatPromptTemplate({
+    promptMessages: [
+      SystemMessagePromptTemplate.fromTemplate('You are a story teller'),
+      SystemMessagePromptTemplate.fromTemplate("Generate a summary based on the following text"),
+      HumanMessagePromptTemplate.fromTemplate('{text}')
+    ],
+    inputVariables: ['text']
+  })
+
+  const chain = createStructuredOutputChainFromZod(summarySchema, {
+    prompt,
+    llm,
+  })
+
+  const response = await chain.call({text: text})
+
+  return response.output.summary
+}

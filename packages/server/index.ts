@@ -69,7 +69,7 @@ import { removeParentheses } from './utils/removeParentheses'
 import * as process from 'process'
 import { MAP_SEED } from './global/config'
 import { generateEffect, generateInteractLocation } from './lib/langchain/locationInteraction'
-import { summarizeText } from './lib/langchain/utils'
+import { summarizedHistory, summarizeText } from './lib/langchain/utils'
 import {
   generateActions,
   generateActionsMessages,
@@ -666,11 +666,9 @@ app.post('/api/v1/get-history', async (req: Request, res: Response, next) => {
       historyText += `${history.player_log}\n`
     })
 
-    const generatedHistory = await generateHistory(historyText)
+    const generatedHistory = await summarizedHistory(historyText)
 
-    const data: { output: { history: string } } = JSON.parse(generatedHistory)
-
-    res.send({ history: data.output.history })
+    res.send({ history: generatedHistory })
   } catch (e) {
     next(e)
   }
