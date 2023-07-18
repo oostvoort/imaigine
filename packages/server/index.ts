@@ -522,7 +522,7 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
           },
         } as InteractNpcResponse)
       } else {
-        const choice = BigNumber.from(1)
+        const choice = await worldContract.winningChoice(props.npcEntityId)
 
         if (choice.toNumber() === 0) {
           const logs = await fetchHistoryLogs(props.npcEntityId)
@@ -584,6 +584,9 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
           })
 
           const conversations = await fetchHistoryLogs(props.npcEntityId)
+
+          await worldContract.openInteraction(props.playerEntityId[0])
+
           res.send({
             conversationHistory: conversations.map((convo: any) => {
               return {
@@ -598,6 +601,8 @@ app.post('/api/v1/interact-npc', async (req: Request, res: Response, next) => {
               neutral: { neutralChoise: newActions.neutral, neutralResponse: newActionsMessages.neutral },
             },
           } as InteractNpcResponse)
+        }else {
+          res.send("Choice no 4")
         }
       }
     } catch (e) {
