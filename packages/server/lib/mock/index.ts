@@ -21,70 +21,34 @@ export const generateMockPlayerImage = () => {
 const RANDOM_SCENARIOS = [
   {
     scenario: 'A cat on the side is drowning',
-    options: {
-      good: {
-        choice: 'Try and rescue it',
-        effect: 'The cat is saved and you are hailed as the hero of the year'
-      },
-      evil: {
-        choice: 'Throw electric eels',
-        effect: 'The cat dies and its owner sues you'
-      },
-      neutral: {
-        choice: 'Ignore it',
-        effect: 'The cat dies and the owner grieves'
-      }
+    choice: {
+      good: 'Try and rescue it',
+      evil: 'Throw electric eels',
+      neutral: 'Ignore it'
     }
   },
   {
     scenario: 'You arrive in the wondrous land of this place and see a bunch of prancing elves',
-    options: {
-      good: {
-        choice: 'Dance with the elves',
-        effect: 'They grant you wisdom beyond compare'
-      },
-      evil: {
-        choice: 'Make fun of the elves',
-        effect: 'You go into a slumber of two weeks'
-      },
-      neutral: {
-        choice: 'Ignore them',
-        effect: 'Nothing happens'
-      }
+    choice: {
+      good: 'Dance with the elves',
+      evil: 'Make fun of the elves',
+      neutral: 'Ignore them'
     }
   },
   {
     scenario: 'You arrive at a house and you go inside. Suddenly, you go hungry. There are three porridges on the table.',
-    options: {
-      good: {
-        choice: 'Add more ingridients to the porridge',
-        effect: 'The bears living inside become your friend'
-      },
-      evil: {
-        choice: 'Add poison to the porridge',
-        effect: 'The bears die and you now own the house'
-      },
-      neutral: {
-        choice: 'Eat the porridge',
-        effect: 'You\'re now full'
-      }
+    choice: {
+      good: 'Add more ingridients to the porridge',
+      evil: 'Add poison to the porridge',
+      neutral: 'Eat the porridge'
     }
   },
   {
     scenario: 'You become entralled with a pretty bird on the side and suddenly crash into some ogres.',
-    options: {
-      good: {
-        choice: 'Apologize',
-        effect: 'The ogres demand you give them the bird'
-      },
-      evil: {
-        choice: 'Kill them',
-        effect: 'You become a hero to the terrorized nearby villagers'
-      },
-      neutral: {
-        choice: 'Run away',
-        effect: 'You lose the bird'
-      }
+    choice: {
+      good: 'Apologize',
+      evil: 'Kill them',
+      neutral: 'Run away'
     }
   },
 ]
