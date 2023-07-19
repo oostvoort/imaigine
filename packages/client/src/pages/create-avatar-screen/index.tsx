@@ -81,7 +81,7 @@ export default function CreateAvatarScreen() {
       playerEntity
     },
   } = useMUD()
-console.log("playerEntity", playerEntity);
+
   const { generatePlayer, generatePlayerImage, createPlayer, player} = usePlayer()
 
   const [ step, setStep ] = React.useState(1)

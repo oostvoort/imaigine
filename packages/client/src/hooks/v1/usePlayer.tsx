@@ -66,10 +66,6 @@ export default function usePlayer() {
     },
     retry: 5,
     retryDelay: 1000,
-    onSuccess: async (data: any) => {
-      console.info('character', data)
-      console.info('Done creating character/s')
-    },
     onError: (err) => {
       console.error(err)
     },
@@ -97,9 +93,6 @@ export default function usePlayer() {
     },
     retry: 5,
     retryDelay: 1000,
-    onSuccess: async (data: any) => {
-      console.info('character-image', data)
-    },
     onError: (err) => {
       console.error(err)
     },

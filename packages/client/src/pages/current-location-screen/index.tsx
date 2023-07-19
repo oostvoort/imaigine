@@ -73,7 +73,6 @@ export default function CurrentLocationScreen() {
     if (!npc.isSuccess) throw new Error('There is no NPC')
     createNPCInteraction.mutate({ choiceId: 0, npcId: npc.data[0].npcId })
     if (!player.config) throw new Error('No generated Player')
-    console.info("interact npc running....")
     interactNPC.mutate({
       playerIpfsHash: [`${player.config.value}`],
       npcEntityId: npc.data[0].npcId,
@@ -100,7 +99,6 @@ export default function CurrentLocationScreen() {
   React.useEffect(() => {
     if (interactNPC.isSuccess) {
       if (interactNPC.data !== undefined) {
-        console.info("setting npc conversation ...")
         setNPCConversation({
           conversationHistory: interactNPC.data.conversationHistory.reverse(),
           option: interactNPC.data.option

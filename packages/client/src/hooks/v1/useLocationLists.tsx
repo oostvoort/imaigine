@@ -53,7 +53,5 @@ export default function useLocationLists(revealedCells?: Array<number>) {
     !locationIds.some((entityId) => entityId === element.id)
   )
 
-  console.info({locationLists})
-
   return { locationToGenerate }
 }

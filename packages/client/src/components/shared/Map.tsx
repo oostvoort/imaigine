@@ -67,7 +67,7 @@ const Map: React.FC<PropType> = ({
         // Save player's marker id
         setMarkerId(params.id)
       } else{
-        console.log('Other message received from iframe:', event.data)
+        console.info('Other message received from iframe:', event.data)
       }
     }
 

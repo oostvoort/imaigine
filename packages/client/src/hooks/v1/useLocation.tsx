@@ -23,7 +23,6 @@ export default function useLocation(locationIdParam?: LocationParam) {
     [ `location-${locationIdParam}` ],
     async () => {
       if (!locationIdInContract) throw new Error('No location id')
-      console.info('getting location')
       const locationIds = runQuery([
         Has(ConfigComponent),
         Has(SceneComponent),
@@ -97,9 +96,6 @@ export default function useLocation(locationIdParam?: LocationParam) {
     },
     retry: 5,
     retryDelay: 1000,
-    onSuccess: async (data: any) => {
-      console.info('location', data)
-    },
     onError: (err) => {
       console.error(err)
     },

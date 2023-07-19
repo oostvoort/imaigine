@@ -4,7 +4,6 @@ import Template from '@/components/layouts/MainLayout'
 import CreateAvatarScreen from '@/pages/create-avatar-screen'
 import CurrentLocationScreen from '@/pages/current-location-screen'
 import WorldMapScreen from '@/pages/world-map-screen'
-import TestScreen from '@/pages/test-screen'
 import useGameState from '@/hooks/useGameState'
 import TravellingScreen from '@/pages/travelling-screen'
 import MinigameScreen from '@/pages/minigame-screen'
@@ -41,12 +40,6 @@ export const App = () => {
         <Template.ContentLayout className={'px-10 pt-28'}>
           <TravellingScreen />
         </Template.ContentLayout>
-      }
-
-      {activeScreen === SCREENS.TEST &&
-        <Template.FullScreenLayout>
-          <TestScreen />
-        </Template.FullScreenLayout>
       }
 
       {activeScreen === SCREENS.MINIGAME &&

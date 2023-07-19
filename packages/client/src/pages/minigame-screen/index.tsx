@@ -145,34 +145,6 @@ export default function MinigameScreen() {
       }
     }
   }, [ battleTime.end, playersInMatch ])
-
-
-  // console.log("minigame playdata", playdata);
-  // console.log('minigame battle data', battleData.battle)
-  // console.log('minigame opponentHasNotSelectedWeapon', opponentHasNotSelectedWeapon)
-  // console.log('minigame playerInfo', playerInfo)
-  // console.log('minigame opponentInfo', opponentInfo)
-  // console.log('minigame _opponentInfo', _opponentInfo.data)
-  // console.log('minigame _playerInfo', _playerInfo.data)
-  // console.log('minigame battleData', battleData)
-  // console.log('minigame playerWaiting', playerWaiting)
-  // console.log("minigame playersInMatch",  playersInMatch);
-  // console.log('minigame countdown', countdown)
-  // console.log('minigame setBattlePreResult', setBattlePreResult)
-  // console.log('minigame opponentBattleData', opponentBattleData)
-  // console.log('minigame showWeapon', showWeapon)
-  // console.log('minigame showPrompt', showPrompt)
-  // console.log("minigame matchResultStatus", matchResultStatus);
-  // console.log("minigame oppponent", opponentBattleData.battle?.option);
-  // console.log("minigame player", battleData.battle?.option);
-  // console.log("minigame result",  matchResultStatus);
-  // console.log('minigame isMatchResultComponent', isMatchResultComponent)
-  // console.log("minigame getPlayerBattleLogs: ", getPlayerBattleLogs)
-  // console.log("minigame getPlayerBattleInfor: ", getWinnerInfo)
-  // console.log("minigame getAllPlayers: ", getAllPlayersBattlePoints)
-  // getWinnerInfo.map(({data}) => console.log("minigame data", data))
-
-
   function handleLeaveBattle() {
     try {
       leave.mutate()

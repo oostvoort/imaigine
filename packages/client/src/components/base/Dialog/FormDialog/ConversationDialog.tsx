@@ -78,13 +78,6 @@ export default function ConversationDialog({
     createLocationInteraction.mutate({ choiceId: 0, })
   }
 
-  React.useEffect(() => {
-    if (createLocationInteraction.isSuccess) {
-      console.log({createLocationInteraction})
-    }
-  }, [createLocationInteraction.isSuccess])
-
-
   return (
     <Dialog open={isOpen} onOpenChange={() => null}>
       <DialogPrimitive.Portal

@@ -70,7 +70,6 @@ export default function WorldMapScreen(){
         generateTravel.mutateAsync()
           .then((result) => {
             if (result) {
-              console.log({result})
               setTravelStory({
                 name: locationData.name,
                 travelStory:  result.travelStory,
