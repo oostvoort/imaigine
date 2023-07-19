@@ -1,10 +1,8 @@
-import React from 'react'
 import { useMUD } from '@/MUDContext'
 import { Entity, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { parsePlayerConfig } from '@/global/utils'
-import { useQueries, useQuery } from '@tanstack/react-query'
-import { useRows } from '@latticexyz/react'
+import { useQueries } from '@tanstack/react-query'
 
 export default function useHistory(playerId: Entity) {
   const {
@@ -12,9 +10,6 @@ export default function useHistory(playerId: Entity) {
       BattleHistoryComponent,
       ConfigComponent,
       BattlePointsComponent
-    },
-    network: {
-      storeCache,
     }
   } = useMUD()
 
@@ -152,6 +147,7 @@ export default function useHistory(playerId: Entity) {
   return {
     getBattleResult,
     getWinnerInfo,
-    getAllPlayersBattlePoints
+    getAllPlayersBattlePoints,
+    getBattleLogs
   }
 }
