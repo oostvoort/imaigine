@@ -7,6 +7,9 @@ import WorldMapScreen from '@/pages/world-map-screen'
 import useGameState from '@/hooks/useGameState'
 import TravellingScreen from '@/pages/travelling-screen'
 import MinigameScreen from '@/pages/minigame-screen'
+import LoadingScreen from '@/components/shared/LoadingScreen'
+import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
+import React from 'react'
 
 export const App = () => {
   const activeScreen = useGameState()
@@ -46,6 +49,14 @@ export const App = () => {
         <Template.MinigameLayout>
           <MinigameScreen />
         </Template.MinigameLayout>
+      }
+
+      {activeScreen === SCREENS.LOADING &&
+        <Template.FullScreenLayout>
+          <BackgroundCarousel>
+            <LoadingScreen message={'Imagining'} />
+          </BackgroundCarousel>
+        </Template.FullScreenLayout>
       }
     </Template>
   )

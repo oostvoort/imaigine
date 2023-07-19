@@ -8,7 +8,7 @@ export enum SCREENS {
   WORLD_MAP,
   TRAVELLING,
   MINIGAME,
-  TEST
+  LOADING
 }
 
 export const activeScreen_atom = atom<number>(SCREENS.TITLE)
