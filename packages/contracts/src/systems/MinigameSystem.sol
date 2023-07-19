@@ -136,18 +136,24 @@ contract MinigameSystem is System {
   }
 
   /// @notice called by the player to leave rps
-  function leave() public returns (bytes32) {
+  function leave(uint256[] memory battleHistoryArray) public returns (bytes32) {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
     bytes32 locationId = LocationComponent.get(playerID);
     bytes32 playerInQueue = BattleQueueComponent.get(locationId);
 
+    for (uint i = 0; i < battleHistoryArray.length; i++) {
+      BattleHistoryComponent.deleteRecord(battleHistoryArray[i]);
+    }
+
     if (playerID == playerInQueue) BattleQueueComponent.set(locationId, 0);
+
     else {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
       kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
       BattleResultsComponents.set(battleData.opponent, 0, 0);
     }
     BattleResultsComponents.set(playerID, 0, 0);
+
     return locationId;
   }
 
@@ -186,13 +192,7 @@ contract MinigameSystem is System {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
 
     BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
-    BattleHistoryComponent.set(id, playerID, battleComponentData.opponent, winner, winnerOption, loser, loserOption, draw);
     BattleHistoryCounter.set(id + 1);
-
-    if (!draw) {
-      BattlePreResultsComponents.setResult(winner, "Draw");
-      BattlePreResultsComponents.setResult(loser, "Draw");
-    }
 
     if (!draw) {
       BattleComponent.setOutcome(winner, BattleOutcomeType.WIN);
@@ -202,6 +202,9 @@ contract MinigameSystem is System {
     if (!!draw) {
       BattleComponent.setOutcome(winner, BattleOutcomeType.DRAW);
       BattleComponent.setOutcome(loser, BattleOutcomeType.DRAW);
+      BattlePreResultsComponents.setResult(winner, "Draw");
+      BattlePreResultsComponents.setResult(loser, "Draw");
+      BattleHistoryComponent.set(id, playerID, battleComponentData.opponent, winner, winnerOption, loser, loserOption, draw);
     }
 
 
@@ -216,6 +219,7 @@ contract MinigameSystem is System {
       BattlePreResultsComponents.setResult(loser, "Lose");
       resultsBattle(1, 0, winner);
       resultsBattle(0, 1, loser);
+      BattleHistoryComponent.set(id, playerID, battleComponentData.opponent, winner, winnerOption, loser, loserOption, draw);
     }
   }
 
