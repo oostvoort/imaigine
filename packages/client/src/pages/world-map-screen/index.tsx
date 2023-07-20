@@ -8,6 +8,9 @@ import useLocation from '@/hooks/v1/useLocation'
 import { useAtom, useSetAtom } from 'jotai'
 import { activeScreen_atom, SCREENS, travelStory_atom } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
+import { clsx } from 'clsx'
+import { Button } from '@/components/base/Button'
+import { Footer, HourglassLoader } from '@/components/base/Footer'
 
 export type LocationType = {
   name: string,
@@ -100,20 +103,43 @@ export default function WorldMapScreen(){
   }
 
   return(
-    <SubLayout.MapViewLayout>
-      <Map
-        className={'w-full h-full'}
-        myPlayer={myPlayer}
-        isMyPlayerComplete={isMyPlayerComplete}
-        players={players}
-        travelPlayer={(value) => travelPlayer(value)}
-      />
-      <LocationDialog
-        isOpen={isLocationOpen}
-        setOpen={setIsLocationOpen}
-        location={locationData}
-        travelFunc={handleTravel}
-      />
-    </SubLayout.MapViewLayout>
+    <React.Fragment>
+      <SubLayout.MapViewLayout>
+        <Map
+          className={'w-full h-full'}
+          myPlayer={myPlayer}
+          isMyPlayerComplete={isMyPlayerComplete}
+          players={players}
+          travelPlayer={(value) => travelPlayer(value)}
+        />
+        <LocationDialog
+          isOpen={isLocationOpen}
+          setOpen={setIsLocationOpen}
+          location={locationData}
+          travelFunc={handleTravel}
+        />
+      </SubLayout.MapViewLayout>
+      <div className={clsx(
+        'w-[800px] max-h-[800px] h-[800px] z-10',
+        'absolute top-28 right-20',
+        'bg-content-bg-gray bg-no-repeat bg-cover',
+        'rounded-3xl p-[30px]'
+      )}>
+        <div className={clsx('overflow-y-auto h-[650px]')}>
+          <p className={clsx([
+            'text-[30px] text-[#BAC5F1]',
+            'font-amiri',
+          ])}>
+            Please wait..
+          </p>
+        </div>
+        <Footer>
+          {/*<Button variant={'neutral'} size={'btnWithBgImg'}>Enter Location</Button>*/}
+          {/*<div className={'flex justify-center my-auto w-[989px] h-[63px]'}>*/}
+          {/*  <HourglassLoader>Travelling to Location ...</HourglassLoader>*/}
+          {/*</div>*/}
+        </Footer>
+      </div>
+    </React.Fragment>
   )
 }
