@@ -191,7 +191,7 @@ export interface Conversation {
   text: string,
 }
 
-export interface GenerateTravelProps extends Dev {
+export interface GenerateTravelProps {
   playerEntityId: string
 }
 
