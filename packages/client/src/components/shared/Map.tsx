@@ -9,6 +9,7 @@ type PropType = {
   isMyPlayerComplete: boolean
   players?: MapPlayer[]
   travelPlayer?: (cellId: number) => void
+  isTraveling: boolean
 }
 const Map: React.FC<PropType> = ({
   className,
@@ -16,6 +17,7 @@ const Map: React.FC<PropType> = ({
   isMyPlayerComplete,
   players,
   travelPlayer,
+  isTraveling
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -32,7 +34,7 @@ const Map: React.FC<PropType> = ({
     }
   }
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, screen: activeScreen}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, travelling: isTraveling}})}
 
   // Display myPlayer marker on the map
   React.useEffect(() => {

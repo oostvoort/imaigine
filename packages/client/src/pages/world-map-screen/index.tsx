@@ -5,7 +5,7 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { activeScreen_atom, SCREENS, travelStory_atom } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
 import { clsx } from 'clsx'
@@ -113,6 +113,7 @@ export default function WorldMapScreen(){
           isMyPlayerComplete={isMyPlayerComplete}
           players={players}
           travelPlayer={(value) => travelPlayer(value)}
+          isTraveling={isTravelling}
         />
         <LocationDialog
           isOpen={isLocationOpen}
