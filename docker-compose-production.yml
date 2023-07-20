@@ -1,0 +1,8 @@
+services:
+  imaigine:
+    image: imaigine_gameplay:0.1.0
+    container_name: imaigine_gameplay_production
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.server
