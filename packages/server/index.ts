@@ -641,7 +641,7 @@ app.post('/api/v1/generate-travel', async (req: Request, res: Response, next) =>
     })
 
     console.info('- generating travel ...')
-    const travelStory = await generateTravel(locationDetails)
+    const travelStory = props.mock ? 'You are now travelling' : await generateTravel(locationDetails)
     console.info('- done generating travel')
 
     res.send({
