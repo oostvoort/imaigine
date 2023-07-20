@@ -30,11 +30,11 @@ deploy_production:
     - docker save -o ./imaigine_gameplay.tar "imaigine_gameplay:0.1.0"
 
     # rsyncing image tar file to server
-    - rsync -arv -e 'ssh -o StrictHostKeyChecking=no -p 22' ./imaigine_gameplay.tar "root"@"174.138.22.99":/root/imaigine-gameplay-production/
+    - rsync -arv --progress -e 'ssh -o StrictHostKeyChecking=no -p 22' ./imaigine_gameplay.tar "root"@"174.138.22.99":/root/imaigine-gameplay-production/
     - ssh "root"@"174.138.22.99" 'docker load -i /root/imaigine-gameplay-production/imaigine_gameplay.tar'
 
     # rsyncing docker-compose.yml to server
-    - rsync -arv -e 'ssh -o StrictHostKeyChecking=no -p 22' ./docker-compose-production.yml "root"@"174.138.22.99":/root/imaigine-gameplay-production/
+    - rsync -arv --progress -e 'ssh -o StrictHostKeyChecking=no -p 22' ./docker-compose-production.yml "root"@"174.138.22.99":/root/imaigine-gameplay-production/
 
     # running docker compose
     - ssh "root"@"174.138.22.99" 'docker compose -f /root/imaigine-gameplay-production/docker-compose-production.yml up -d'
