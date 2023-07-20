@@ -106,14 +106,16 @@ export default function WorldMapScreen(){
     setActiveScreen(SCREENS.CURRENT_LOCATION)
   }
 
+  console.info({ players })
+
   return(
     <React.Fragment>
       <SubLayout.MapViewLayout>
         <Map
-          className={'w-full h-full'}
+          className={'w-full h-full mt-20'}
           myPlayer={myPlayer}
           isMyPlayerComplete={isMyPlayerComplete}
-          players={players}
+          // players={isTravelling ? undefined : players}
           travelPlayer={(value) => travelPlayer(value)}
           isTraveling={isTravelling}
         />
@@ -128,7 +130,7 @@ export default function WorldMapScreen(){
         isTravelling && (
           <div className={clsx(
             'w-[800px] max-h-[800px] h-[800px] z-10',
-            'absolute top-28 right-20',
+            'absolute top-28 right-12',
             'bg-content-bg-gray bg-no-repeat bg-cover',
             'rounded-3xl p-[30px]'
           )}>
@@ -140,17 +142,15 @@ export default function WorldMapScreen(){
                 {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}
               </p>
             </div>
-            <Footer>
+            <div className={'flex justify-center'}>
               {
                 travelData?.status === 0 ? (
                   <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleEnterLocation}>Enter {travelStory.name}</Button>
                 ) : (
-                  <div className={'flex justify-center my-auto w-[989px] h-[63px]'}>
-                    <HourglassLoader>Travelling to Location ...</HourglassLoader>
-                  </div>
+                  <HourglassLoader>Travelling to Location ...</HourglassLoader>
                 )
               }
-            </Footer>
+            </div>
           </div>
         )
       }

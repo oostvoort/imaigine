@@ -929,7 +929,7 @@ function focusOnPlayer(cellID, scale, travelling){
     const cell = +cellID;
     const [x, y] = pack.cells.p[cell];
     if(travelling) {
-      zoomTo(x+20, y, newScale, 1600);
+      zoomTo(x+18, y, newScale, 1600);
     } else {
       zoomTo(x, y, newScale, 1600);
     }
