@@ -25,7 +25,7 @@ services:
       - "traefik.http.routers.imaigine_http.middlewares=imaigine_http@docker"
 
       # Redirect Middleware
-      - "traefik.http.middlewares.forkserver_http.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.imaigine_http.redirectscheme.scheme=https"
 
 networks:
   traefik:
