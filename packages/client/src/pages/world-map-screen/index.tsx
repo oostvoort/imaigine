@@ -5,8 +5,8 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
-import { useSetAtom } from 'jotai'
-import { travelStory_atom } from '@/states/global'
+import { useAtom, useSetAtom } from 'jotai'
+import { activeScreen_atom, SCREENS, travelStory_atom } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
 
 export type LocationType = {
@@ -17,12 +17,13 @@ export type LocationType = {
 
 export default function WorldMapScreen(){
 
-  const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel } } = useMap()
+  const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
   const [ isLocationOpen, setIsLocationOpen ] = React.useState<boolean>(false)
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
   const [destination, setDestination] = React.useState<number>(0)
 
-  const setTravelStory = useSetAtom(travelStory_atom)
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+  const [travelStory, setTravelStory] = useAtom(travelStory_atom)
 
   const { generateTravel } =  useTravel()
   const { generateLocation } = useLocation(destination)
@@ -64,6 +65,20 @@ export default function WorldMapScreen(){
     }
   }, [isLocationOpen])
 
+  React.useEffect(() => {
+    let intervalId: any;
+    if (travelData && travelData.status >= 2){
+      setActiveScreen(SCREENS.TRAVELLING)
+      intervalId = setInterval(() => {
+        travel.mutate();
+      }, 5000); // 5 seconds interval
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  },[travelData])
+
   const handleTravel = () => {
     prepareTravel.mutateAsync({ toLocation: destination })
       .then(() => {
@@ -77,6 +92,11 @@ export default function WorldMapScreen(){
             }
         })
       })
+  }
+
+  const handleEnterLocation = () => {
+    setTravelStory({ name: '', travelStory: ''})
+    setActiveScreen(SCREENS.CURRENT_LOCATION)
   }
 
   return(

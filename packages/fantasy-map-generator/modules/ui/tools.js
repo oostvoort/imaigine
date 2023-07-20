@@ -932,7 +932,6 @@ function focusOnPlayer(cellID, scale, travelling){
       zoomTo(x+20, y, newScale, 1600);
     } else {
       zoomTo(x, y, newScale, 1600);
-
     }
   }
 }
