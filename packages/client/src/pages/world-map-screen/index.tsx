@@ -27,6 +27,7 @@ export default function WorldMapScreen(){
 
   const [activeScreen, setActiveScreen] = useAtom(activeScreen_atom)
   const [travelStory, setTravelStory] = useAtom(travelStory_atom)
+  const [isTravelling, setIsTravelling] = React.useState<boolean>(false)
 
   const { generateTravel } =  useTravel()
   const { generateLocation } = useLocation(destination)
@@ -71,7 +72,7 @@ export default function WorldMapScreen(){
   React.useEffect(() => {
     let intervalId: any;
     if (travelData && travelData.status >= 2){
-      setActiveScreen(SCREENS.TRAVELLING)
+      // setActiveScreen(SCREENS.TRAVELLING)
       intervalId = setInterval(() => {
         travel.mutate();
       }, 5000); // 5 seconds interval
@@ -83,6 +84,7 @@ export default function WorldMapScreen(){
   },[travelData])
 
   const handleTravel = () => {
+    setIsTravelling(true)
     prepareTravel.mutateAsync({ toLocation: destination })
       .then(() => {
         generateTravel.mutateAsync()
@@ -120,7 +122,7 @@ export default function WorldMapScreen(){
         />
       </SubLayout.MapViewLayout>
       {
-        activeScreen === SCREENS.TRAVELLING && (
+        isTravelling && (
           <div className={clsx(
             'w-[800px] max-h-[800px] h-[800px] z-10',
             'absolute top-28 right-20',
@@ -136,10 +138,15 @@ export default function WorldMapScreen(){
               </p>
             </div>
             <Footer>
-              {/*<Button variant={'neutral'} size={'btnWithBgImg'}>Enter Location</Button>*/}
-              {/*<div className={'flex justify-center my-auto w-[989px] h-[63px]'}>*/}
-              {/*  <HourglassLoader>Travelling to Location ...</HourglassLoader>*/}
-              {/*</div>*/}
+              {
+                travelData?.status === 0 ? (
+                  <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleEnterLocation}>Enter {travelStory.name}</Button>
+                ) : (
+                  <div className={'flex justify-center my-auto w-[989px] h-[63px]'}>
+                    <HourglassLoader>Travelling to Location ...</HourglassLoader>
+                  </div>
+                )
+              }
             </Footer>
           </div>
         )
