@@ -25,7 +25,7 @@ export default function WorldMapScreen(){
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
   const [destination, setDestination] = React.useState<number>(0)
 
-  const setActiveScreen = useSetAtom(activeScreen_atom)
+  const [activeScreen, setActiveScreen] = useAtom(activeScreen_atom)
   const [travelStory, setTravelStory] = useAtom(travelStory_atom)
 
   const { generateTravel } =  useTravel()
@@ -119,27 +119,31 @@ export default function WorldMapScreen(){
           travelFunc={handleTravel}
         />
       </SubLayout.MapViewLayout>
-      <div className={clsx(
-        'w-[800px] max-h-[800px] h-[800px] z-10',
-        'absolute top-28 right-20',
-        'bg-content-bg-gray bg-no-repeat bg-cover',
-        'rounded-3xl p-[30px]'
-      )}>
-        <div className={clsx('overflow-y-auto h-[650px]')}>
-          <p className={clsx([
-            'text-[30px] text-[#BAC5F1]',
-            'font-amiri',
-          ])}>
-            Please wait..
-          </p>
-        </div>
-        <Footer>
-          {/*<Button variant={'neutral'} size={'btnWithBgImg'}>Enter Location</Button>*/}
-          {/*<div className={'flex justify-center my-auto w-[989px] h-[63px]'}>*/}
-          {/*  <HourglassLoader>Travelling to Location ...</HourglassLoader>*/}
-          {/*</div>*/}
-        </Footer>
-      </div>
+      {
+        activeScreen === SCREENS.TRAVELLING && (
+          <div className={clsx(
+            'w-[800px] max-h-[800px] h-[800px] z-10',
+            'absolute top-28 right-20',
+            'bg-content-bg-gray bg-no-repeat bg-cover',
+            'rounded-3xl p-[30px]'
+          )}>
+            <div className={clsx('overflow-y-auto h-[650px]')}>
+              <p className={clsx([
+                'text-[30px] text-[#BAC5F1]',
+                'font-amiri',
+              ])}>
+                Please wait..
+              </p>
+            </div>
+            <Footer>
+              {/*<Button variant={'neutral'} size={'btnWithBgImg'}>Enter Location</Button>*/}
+              {/*<div className={'flex justify-center my-auto w-[989px] h-[63px]'}>*/}
+              {/*  <HourglassLoader>Travelling to Location ...</HourglassLoader>*/}
+              {/*</div>*/}
+            </Footer>
+          </div>
+        )
+      }
     </React.Fragment>
   )
 }
