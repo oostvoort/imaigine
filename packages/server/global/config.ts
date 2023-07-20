@@ -1,7 +1,23 @@
-import { foundry, optimismGoerli } from '@wagmi/chains'
+import { foundry, optimismGoerli, mainnet } from '@wagmi/chains'
+
+const mainnet_forkserver = {
+  ...mainnet,
+  id: 88,
+  name: 'Forkserver',
+  network: 'forkserver',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ethereum',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    public: { http: ['https://fork.oostvoort.work/'] },
+    default: { http: ['https://fork.oostvoort.work/'] },
+  }
+}
 
 /* CONTRACTS */
-export const supportedChains = [foundry, optimismGoerli]
+export const supportedChains = [mainnet_forkserver, foundry, optimismGoerli]
 export const CHAIN_ID = process.env.CHAIN_ID ?? '31337'
 
 if (supportedChains.findIndex(({id}) => id === parseInt(CHAIN_ID)) === -1) throw new Error("Unsupported CHAIN_ID")
