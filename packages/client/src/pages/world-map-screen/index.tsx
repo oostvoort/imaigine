@@ -5,7 +5,7 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { activeScreen_atom, SCREENS, travelStory_atom } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
 import { clsx } from 'clsx'
@@ -25,9 +25,10 @@ export default function WorldMapScreen(){
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
   const [destination, setDestination] = React.useState<number>(0)
 
-  const [activeScreen, setActiveScreen] = useAtom(activeScreen_atom)
-  const [travelStory, setTravelStory] = useAtom(travelStory_atom)
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+  // const [travelStory, setTravelStory] = useAtom(travelStory_atom)
   const [isTravelling, setIsTravelling] = React.useState<boolean>(false)
+  const [travelStory, setTravelStory] = React.useState<any>({} as any)
 
   const { generateTravel } =  useTravel()
   const { generateLocation } = useLocation(destination)
@@ -85,6 +86,7 @@ export default function WorldMapScreen(){
 
   const handleTravel = () => {
     setIsTravelling(true)
+    setIsLocationOpen(false)
     prepareTravel.mutateAsync({ toLocation: destination })
       .then(() => {
         generateTravel.mutateAsync()
@@ -135,7 +137,7 @@ export default function WorldMapScreen(){
                 'text-[30px] text-[#BAC5F1]',
                 'font-amiri',
               ])}>
-                Please wait..
+                {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}
               </p>
             </div>
             <Footer>
