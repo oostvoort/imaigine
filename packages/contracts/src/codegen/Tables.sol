@@ -29,3 +29,4 @@ import { BattleHistoryCounter, BattleHistoryCounterTableId } from "./tables/Batt
 import { BattlePointsComponent, BattlePointsComponentTableId } from "./tables/BattlePointsComponent.sol";
 import { BattlePreResultsComponents, BattlePreResultsComponentsData, BattlePreResultsComponentsTableId } from "./tables/BattlePreResultsComponents.sol";
 import { BattleResultsComponents, BattleResultsComponentsData, BattleResultsComponentsTableId } from "./tables/BattleResultsComponents.sol";
+import { BattleRoundTimeComponent, BattleRoundTimeComponentData, BattleRoundTimeComponentTableId } from "./tables/BattleRoundTimeComponent.sol";

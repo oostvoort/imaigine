@@ -13,7 +13,9 @@ import {
   BattlePointsComponent,
   BattleResultsComponents,
   BattlePreResultsComponents,
-  BattleTimeComponent
+  BattleTimeComponent,
+  BattleRoundTimeComponent,
+  BattleRoundTimeComponentData
 } from "../codegen/Tables.sol";
 
 import { BattleStatus, BattleOptions, BattleOutcomeType } from "../codegen/Types.sol";
@@ -229,5 +231,28 @@ contract MinigameSystem is System {
     uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
 
     BattleResultsComponents.set(playerId, (totalWin + win), (totalLose + lose));
+  }
+
+  function startBattleRoundTime(bytes32 opponent) public returns (uint8) {
+      bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+
+      BattleRoundTimeComponentData memory battleRound = BattleRoundTimeComponent.get(playerId);
+
+      BattleRoundTimeComponent.set(playerId, opponent, 10);
+      return BattleRoundTimeComponent.get(playerId).remainingTime;
+  }
+
+  function updateBattleRoundTime(bytes32 opponent, uint8 roundTime) public returns (uint8) {
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+
+    require(BattleRoundTimeComponent.get(playerId).opponent != opponent, "Opponent doesn't exist");
+
+    BattleRoundTimeComponentData memory battleRound = BattleRoundTimeComponent.get(playerId);
+
+    if (battleRound.remainingTime != roundTime && battleRound.remainingTime > roundTime) {
+      BattleRoundTimeComponent.setRemainingTime(playerId, roundTime);
+    }
+
+    return BattleRoundTimeComponent.get(playerId).remainingTime;
   }
 }
