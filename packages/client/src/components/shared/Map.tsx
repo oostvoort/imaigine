@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
 import { useAtom, useAtomValue } from 'jotai'
-import { activeScreen_atom, isTravelling_atom, markerId_atom } from '@/states/global'
+import { isTravelling_atom, markerId_atom } from '@/states/global'
 
 type PropType = {
   className?: string
@@ -32,13 +32,16 @@ const Map: React.FC<PropType> = ({
     }
   }
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, travelling: isTravelling}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, travelling: isTravelling}})}
   // Display myPlayer marker on the map
   React.useEffect(() => {
     if(isMyPlayerComplete && myPlayer && isMapRendered) {
+      if (isTravelling && markerId) {
+        sendMessageToIframe({cmd: "deletePlayerMarker", params: { marker: markerId}})
+      }
       showMyPlayer()
     }
-  },[myPlayer, isMyPlayerComplete, isMapRendered])
+  },[isTravelling, myPlayer?.cell, isMyPlayerComplete, isMapRendered])
 
   React.useEffect(() => {
     if (players && isMapRendered){
@@ -59,7 +62,7 @@ const Map: React.FC<PropType> = ({
       } else if(cmd === "BurgClicked"){
         // Travel
         if (myPlayer?.cell === params.locationId) return
-        if (!isTravelling && travelPlayer) {
+        if (travelPlayer) {
           travelPlayer(params.locationId)
         }
       } else if(cmd === "PlayerMarkerId"){
@@ -79,7 +82,7 @@ const Map: React.FC<PropType> = ({
     }
   }, [])
 
-  // const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: id}})}
+  // const setUnFog = (id: string) => {sendMessageToIframe({cmd: "unFog", params: {id: 'myFogId'}})}
   // const reloadIframe = () => {
   //   if (iframeRef.current) {
   //     iframeRef.current.src = iframeRef.current.src
@@ -88,6 +91,7 @@ const Map: React.FC<PropType> = ({
 
   return (
     <div className={'w-full h-full'}>
+      {/*<br/><br/><br/>*/}
       {/*<button onClick={() => {setUnFog('myFogId')}}>unFog</button>*/}
       {/*| <button onClick={reloadIframe}>Reload Iframe</button>*/}
       <iframe
