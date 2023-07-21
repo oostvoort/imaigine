@@ -33,3 +33,5 @@ export const travelStory_atom = atom<{
 export const myPlayerMarkerId_atom = atom<string | null>(null)
 
 export const markerId_atom = atom<number | null>(null)
+
+export const isTravelling_atom = atom<boolean>(false)

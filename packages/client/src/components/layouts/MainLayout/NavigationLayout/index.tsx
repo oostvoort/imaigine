@@ -5,9 +5,9 @@ import Settings from '@/components/base/Dialog/FormDialog/DialogContent/Settings
 import History from '@/components/base/Dialog/FormDialog/DialogContent/History'
 import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profile'
 import usePlayer from '@/hooks/usePlayer'
-import { activeScreen_atom, SCREENS } from '@/states/global'
+import { activeScreen_atom, isTravelling_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
-import { useAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
@@ -20,7 +20,8 @@ export default function Header() {
   const { play } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
 
-  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+  const isTravelling = useAtomValue(isTravelling_atom)
 
 
   const handleButtonClick = () => {
@@ -61,7 +62,7 @@ export default function Header() {
           </DialogWidget>
 
           <div className={'pl-md h-[67px]'}>
-            <Button variant={'menu'} onClick={handleButtonClick} size={'menu'}>
+            <Button variant={'menu'} onClick={handleButtonClick} size={'menu'} disabled={isTravelling}>
               <img
                 src={'/assets/svg/icon_map.png'}
                 alt="Map/Story"
@@ -112,6 +113,7 @@ export default function Header() {
           <Button
             variant={'battle'} size={'battle'}
             onClick={ activeScreen == SCREENS.MINIGAME ? handleLeaveBattle : handleStartBattle }
+            disabled={isTravelling}
           >
             <img src={`${activeScreen === SCREENS.MINIGAME ? '/assets/minigame/icon_whiteFlag.png' : '/assets/minigame/icon_redFlag.png' }`} alt={'Battle Flag Icon'} className={'object-top ml-[10px]'}/>
 

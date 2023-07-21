@@ -5,12 +5,12 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
-import { useSetAtom } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
+import { useAtom, useSetAtom } from 'jotai'
+import { activeScreen_atom, isTravelling_atom, SCREENS } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
-import { Footer, HourglassLoader } from '@/components/base/Footer'
+import { HourglassLoader } from '@/components/base/Footer'
 
 export type LocationType = {
   name: string,
@@ -32,7 +32,7 @@ export default function WorldMapScreen(){
 
   const setActiveScreen = useSetAtom(activeScreen_atom)
 
-  const [isTravelling, setIsTravelling] = React.useState<boolean>(false)
+  const [isTravelling, setIsTravelling] = useAtom(isTravelling_atom)
   const [travelStory, setTravelStory] = React.useState<TravelStory>({ locationName: '', travelStory: '' })
 
   const { generateTravel } =  useTravel()
@@ -108,6 +108,7 @@ export default function WorldMapScreen(){
 
   const handleEnterLocation = () => {
     setTravelStory({ locationName: '', travelStory: ''})
+    setIsTravelling(false)
     setActiveScreen(SCREENS.CURRENT_LOCATION)
   }
 
