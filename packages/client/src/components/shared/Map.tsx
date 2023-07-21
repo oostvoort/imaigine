@@ -22,7 +22,6 @@ const Map: React.FC<PropType> = ({
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
-  const activeScreen = useAtomValue(activeScreen_atom)
   const [markerId, setMarkerId] =  useAtom(markerId_atom)
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {

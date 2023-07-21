@@ -923,15 +923,14 @@ async function overviewCharts() {
   const Overview = await import("../dynamic/overview/charts-overview.js?v=1.89.24");
   Overview.open();
 }
-function focusOnPlayer(cellID, scale, travelling){
-  if (scale || cellID) {
-    const newScale = +scale || 8;
+function focusOnPlayer(cellID, travelling){
+  if (cellID) {
     const cell = +cellID;
     const [x, y] = pack.cells.p[cell];
     if(travelling) {
-      zoomTo(x+18, y, newScale, 1600);
+      zoomTo(x+18, y, 24, 1600);
     } else {
-      zoomTo(x, y, newScale, 1600);
+      zoomTo(x, y, 12, 1600);
     }
   }
 }
