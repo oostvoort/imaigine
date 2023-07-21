@@ -9,6 +9,7 @@ type PropType = {
   isMyPlayerComplete: boolean
   players?: MapPlayer[]
   travelPlayer?: (cellId: number) => void
+  isTraveling: boolean
 }
 const Map: React.FC<PropType> = ({
   className,
@@ -16,11 +17,11 @@ const Map: React.FC<PropType> = ({
   isMyPlayerComplete,
   players,
   travelPlayer,
+  isTraveling
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
-  const activeScreen = useAtomValue(activeScreen_atom)
   const [markerId, setMarkerId] =  useAtom(markerId_atom)
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
@@ -32,8 +33,7 @@ const Map: React.FC<PropType> = ({
     }
   }
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, screen: activeScreen}})}
-
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, travelling: isTraveling}})}
   // Display myPlayer marker on the map
   React.useEffect(() => {
     if(isMyPlayerComplete && myPlayer && isMapRendered) {
@@ -60,7 +60,7 @@ const Map: React.FC<PropType> = ({
       } else if(cmd === "BurgClicked"){
         // Travel
         if (myPlayer?.cell === params.locationId) return
-        if (activeScreen === 3 && travelPlayer) {
+        if (!isTraveling && travelPlayer) {
           travelPlayer(params.locationId)
         }
       } else if(cmd === "PlayerMarkerId"){

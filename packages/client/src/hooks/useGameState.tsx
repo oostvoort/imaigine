@@ -32,7 +32,7 @@ const useGameState = () => {
   const activeScreen = useAtomValue(activeScreen_atom)
 
   if (query.isLoading || (query.data && !player.player)) return SCREENS.LOADING
-  else if (player.travel?.status ?? 0 >= 2) return SCREENS.TRAVELLING
+  // else if (player.travel?.status ?? 0 >= 2) return SCREENS.TRAVELLING
   else if (
     !player.player ||
     activeScreen === SCREENS.WORLD_MAP ||

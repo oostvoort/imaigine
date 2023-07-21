@@ -36,34 +36,34 @@ export default function TravellingScreen() {
 
   return (
     <React.Fragment>
-      <SubLayout>
-        <SubLayout.VisualSummaryLayout>
-          <Map
-            className={'w-full h-full'}
-            myPlayer={myPlayer}
-            isMyPlayerComplete={isMyPlayerComplete}
-          />
-          <div className={clsx('overflow-y-auto h-[650px]')}>
-            <p className={clsx([
-              'text-[30px] text-[#BAC5F1]',
-              'font-amiri',
-            ])}>
-              {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}
-            </p>
-          </div>
-        </SubLayout.VisualSummaryLayout>
-      </SubLayout>
-      <Footer>
-        {
-          travelData?.status === 0 ? (
-            <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleEnterLocation}>Enter {travelStory.name}</Button>
-          ) : (
-            <div className={'flex justify-center my-auto w-[989px] h-[63px]'}>
-              <HourglassLoader>Travelling to Location ...</HourglassLoader>
-            </div>
-          )
-        }
-      </Footer>
+      {/*<SubLayout>*/}
+      {/*  <SubLayout.VisualSummaryLayout>*/}
+      {/*    <Map*/}
+      {/*      className={'w-full h-full'}*/}
+      {/*      myPlayer={myPlayer}*/}
+      {/*      isMyPlayerComplete={isMyPlayerComplete}*/}
+      {/*    />*/}
+      {/*    <div className={clsx('overflow-y-auto h-[650px]')}>*/}
+      {/*      <p className={clsx([*/}
+      {/*        'text-[30px] text-[#BAC5F1]',*/}
+      {/*        'font-amiri',*/}
+      {/*      ])}>*/}
+      {/*        {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}*/}
+      {/*      </p>*/}
+      {/*    </div>*/}
+      {/*  </SubLayout.VisualSummaryLayout>*/}
+      {/*</SubLayout>*/}
+      {/*<Footer>*/}
+      {/*  {*/}
+      {/*    travelData?.status === 0 ? (*/}
+      {/*      <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleEnterLocation}>Enter {travelStory.name}</Button>*/}
+      {/*    ) : (*/}
+      {/*      <div className={'flex justify-center my-auto w-[989px] h-[63px]'}>*/}
+      {/*        <HourglassLoader>Travelling to Location ...</HourglassLoader>*/}
+      {/*      </div>*/}
+      {/*    )*/}
+      {/*  }*/}
+      {/*</Footer>*/}
     </React.Fragment>
   )
 }

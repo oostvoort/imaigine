@@ -6,8 +6,11 @@ import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
 import { useSetAtom } from 'jotai'
-import { travelStory_atom } from '@/states/global'
+import { activeScreen_atom, SCREENS } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
+import { clsx } from 'clsx'
+import { Button } from '@/components/base/Button'
+import { Footer, HourglassLoader } from '@/components/base/Footer'
 
 export type LocationType = {
   name: string,
@@ -15,14 +18,22 @@ export type LocationType = {
   imgHash: string,
 }
 
+type TravelStory = {
+  locationName: string,
+  travelStory: string,
+}
+
 export default function WorldMapScreen(){
 
-  const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel } } = useMap()
+  const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
   const [ isLocationOpen, setIsLocationOpen ] = React.useState<boolean>(false)
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
   const [destination, setDestination] = React.useState<number>(0)
 
-  const setTravelStory = useSetAtom(travelStory_atom)
+  const setActiveScreen = useSetAtom(activeScreen_atom)
+
+  const [isTravelling, setIsTravelling] = React.useState<boolean>(false)
+  const [travelStory, setTravelStory] = React.useState<TravelStory>({ locationName: '', travelStory: '' })
 
   const { generateTravel } =  useTravel()
   const { generateLocation } = useLocation(destination)
@@ -64,14 +75,30 @@ export default function WorldMapScreen(){
     }
   }, [isLocationOpen])
 
+  React.useEffect(() => {
+    let intervalId: any;
+    if (travelData && travelData.status >= 2){
+      // setActiveScreen(SCREENS.TRAVELLING)
+      intervalId = setInterval(() => {
+        travel.mutate();
+      }, 5000); // 5 seconds interval
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  },[travelData])
+
   const handleTravel = () => {
+    setIsTravelling(true)
+    setIsLocationOpen(false)
     prepareTravel.mutateAsync({ toLocation: destination })
       .then(() => {
         generateTravel.mutateAsync()
           .then((result) => {
             if (result) {
               setTravelStory({
-                name: locationData.name,
+                locationName: locationData.name,
                 travelStory:  result.travelStory,
               })
             }
@@ -79,21 +106,64 @@ export default function WorldMapScreen(){
       })
   }
 
+  const handleEnterLocation = () => {
+    setTravelStory({ locationName: '', travelStory: ''})
+    setActiveScreen(SCREENS.CURRENT_LOCATION)
+  }
+
   return(
-    <SubLayout.MapViewLayout>
-      <Map
-        className={'w-full h-full'}
-        myPlayer={myPlayer}
-        isMyPlayerComplete={isMyPlayerComplete}
-        players={players}
-        travelPlayer={(value) => travelPlayer(value)}
-      />
-      <LocationDialog
-        isOpen={isLocationOpen}
-        setOpen={setIsLocationOpen}
-        location={locationData}
-        travelFunc={handleTravel}
-      />
-    </SubLayout.MapViewLayout>
+    <React.Fragment>
+      <SubLayout.MapViewLayout>
+        <Map
+          className={'w-full h-full mt-20'}
+          myPlayer={myPlayer}
+          isMyPlayerComplete={isMyPlayerComplete}
+          players={isTravelling ? undefined : players}
+          travelPlayer={(value) => travelPlayer(value)}
+          isTraveling={isTravelling}
+        />
+        <LocationDialog
+          isOpen={isLocationOpen}
+          setOpen={setIsLocationOpen}
+          location={locationData}
+          travelFunc={handleTravel}
+        />
+      </SubLayout.MapViewLayout>
+      {
+        isTravelling && (
+          <div className={clsx(
+            'w-[800px] max-h-[800px] h-[800px] z-10',
+            'absolute top-28 right-12',
+            'flex flex-col justify-between',
+            'bg-content-bg-gray bg-no-repeat bg-cover',
+            'rounded-3xl p-8 animate-fade',
+          )}>
+            <div className={clsx('overflow-y-auto h-[85%]')}>
+              <p className={clsx([
+                'text-[30px] text-[#BAC5F1]',
+                'font-amiri',
+              ])}>
+                {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}
+              </p>
+            </div>
+            <div className={'flex justify-center'}>
+              {
+                travelData?.status === 0 ? (
+                  <Button
+                    variant={'neutral'}
+                    size={'btnWithBgImg'}
+                    onClick={handleEnterLocation}
+                  >
+                    Enter {travelStory.locationName}
+                  </Button>
+                ) : (
+                  <HourglassLoader>Travelling to {locationData.name}</HourglassLoader>
+                )
+              }
+            </div>
+          </div>
+        )
+      }
+    </React.Fragment>
   )
 }

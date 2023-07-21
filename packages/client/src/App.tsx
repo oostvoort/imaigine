@@ -39,11 +39,11 @@ export const App = () => {
         </Template.ContentLayout>
       }
 
-      {activeScreen === SCREENS.TRAVELLING &&
-        <Template.ContentLayout className={'px-10 pt-28'}>
-          <TravellingScreen />
-        </Template.ContentLayout>
-      }
+      {/*{activeScreen === SCREENS.TRAVELLING &&*/}
+      {/*  <Template.ContentLayout className={'px-10 pt-28'}>*/}
+      {/*    <TravellingScreen />*/}
+      {/*  </Template.ContentLayout>*/}
+      {/*}*/}
 
       {activeScreen === SCREENS.MINIGAME &&
         <Template.MinigameLayout>
