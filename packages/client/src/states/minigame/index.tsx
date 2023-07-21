@@ -20,3 +20,5 @@ export const hash_options_set_value = atom(
     })
   }
 )
+
+export const countdown_atom = atom<number>(10)
