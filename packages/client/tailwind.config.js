@@ -146,13 +146,18 @@ export default {
           "0%": { opacity: '0' },
           "100%": { opacity: '100' },
         },
+        "typing": {
+          "0%": { width: '0' },
+          "100%": { width: '100' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "custom-spin": "custom-spin 3s infinite",
         "loading-spin": "loading-spin 1s linear infinite",
-        "fade": "fade 2s ease-in-out",
+        "fade": "fade 1s ease-in-out",
+        "typing": "typing 3s steps(40, end)",
       },
       spacing: {
         sm: '15px',
