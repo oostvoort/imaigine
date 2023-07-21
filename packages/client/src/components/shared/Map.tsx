@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { MapPlayer } from '@/global/types'
 import { useAtom, useAtomValue } from 'jotai'
-import { activeScreen_atom, markerId_atom } from '@/states/global'
+import { activeScreen_atom, isTravelling_atom, markerId_atom } from '@/states/global'
 
 type PropType = {
   className?: string
@@ -9,7 +9,6 @@ type PropType = {
   isMyPlayerComplete: boolean
   players?: MapPlayer[]
   travelPlayer?: (cellId: number) => void
-  isTraveling: boolean
 }
 const Map: React.FC<PropType> = ({
   className,
@@ -17,12 +16,12 @@ const Map: React.FC<PropType> = ({
   isMyPlayerComplete,
   players,
   travelPlayer,
-  isTraveling
 }: PropType) => {
   const mapSeed = 962218354
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isMapRendered, setIsMapRendered] = React.useState(false)
   const [markerId, setMarkerId] =  useAtom(markerId_atom)
+  const isTravelling = useAtomValue(isTravelling_atom)
   const sendMessageToIframe = (msg: { cmd: string; params: any }) => {
     if (iframeRef.current) {
       const iframeWindow = iframeRef.current.contentWindow
@@ -33,7 +32,7 @@ const Map: React.FC<PropType> = ({
     }
   }
   const showPlayers = () => {sendMessageToIframe({cmd: "showPlayers", params: {players}})}
-  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, travelling: isTraveling}})}
+  const showMyPlayer = () => {sendMessageToIframe({cmd: "showMyPlayer", params: {player: myPlayer, marker: markerId, travelling: isTravelling}})}
   // Display myPlayer marker on the map
   React.useEffect(() => {
     if(isMyPlayerComplete && myPlayer && isMapRendered) {
@@ -60,7 +59,7 @@ const Map: React.FC<PropType> = ({
       } else if(cmd === "BurgClicked"){
         // Travel
         if (myPlayer?.cell === params.locationId) return
-        if (!isTraveling && travelPlayer) {
+        if (!isTravelling && travelPlayer) {
           travelPlayer(params.locationId)
         }
       } else if(cmd === "PlayerMarkerId"){

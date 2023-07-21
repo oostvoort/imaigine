@@ -121,7 +121,6 @@ export default function WorldMapScreen(){
           isMyPlayerComplete={isMyPlayerComplete}
           players={isTravelling ? undefined : players}
           travelPlayer={(value) => travelPlayer(value)}
-          isTraveling={isTravelling}
         />
         <LocationDialog
           isOpen={isLocationOpen}
