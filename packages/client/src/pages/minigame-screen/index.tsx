@@ -114,7 +114,7 @@ export default function MinigameScreen() {
 
               setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
               rematch.mutate(false)
-            }, 1000)
+            }, 4000)
 
             return () => {
               clearTimeout(delayRoundResultPromt)
@@ -127,11 +127,18 @@ export default function MinigameScreen() {
   }, [ playersInMatch, battleTime.end, selectedWeapon, hasOpponentSelectedWeapon ])
 
   React.useEffect(() => {
-    if (countdown <= 1 && !hasOpponentSelectedWeapon) {
+    if(!playersInMatch) return
+
+    if (countdown == 1 && !hasOpponentSelectedWeapon) {
       //Forfeit
+      lockIn.mutate()
       setSelectedWeapon(3)
       setShowWeapon(false)
       setShowPrompt(false)
+      setIsChooseWeaponComponent(true)
+      setCountdown(10)
+      setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+      rematch.mutate(true)
       leave.mutate()
       setActiveScreen(SCREENS.CURRENT_LOCATION)
     }
@@ -146,10 +153,6 @@ export default function MinigameScreen() {
         const timeDifference = battleTime.end - currentTime
 
         setCountdown(prevCountdown => (prevCountdown > 1 ? prevCountdown - 1 : 10))
-
-        if (selectedWeapon === 3 && !hasOpponentSelectedWeapon && rematch.isSuccess) {
-          setCountdown(10)
-        }
 
         if (timeDifference > 0) {
           setRemainingTime(timeDifference)
@@ -226,10 +229,6 @@ export default function MinigameScreen() {
 
     },
   ]
-
-  // console.log('minigame', playdata.opponent?.playerId === player.id)
-  console.log('minigame battle', battleData.battle?.opponent)
-  console.log('minigame', battleData.battle?.opponent === '0x0000000000000000000000000000000000000000000000000000000000000000')
 
   return (
     <React.Fragment>
