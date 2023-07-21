@@ -3,6 +3,8 @@ import { awaitStreamValue } from '@latticexyz/utils'
 import { useMUD } from '@/MUDContext'
 import { Entity } from '@latticexyz/recs'
 import usePlay from '@/hooks/minigame/usePlay'
+import useHistory from '@/hooks/minigame/useHistory'
+import usePlayer from '@/hooks/v1/usePlayer'
 
 export default function useLeave(locationId: Entity) {
 
@@ -14,7 +16,8 @@ export default function useLeave(locationId: Entity) {
   } = useMUD()
 
   const { playdata } = usePlay(locationId)
-
+  const { player } = usePlayer()
+  const { getBattleLogs} = useHistory(player.id as Entity)
   /**
    * Defines a mutation hook to leave a location.
    * @param mutationKey The key for the mutation.
@@ -26,7 +29,7 @@ export default function useLeave(locationId: Entity) {
   const leave = useMutation({
     mutationKey: [ 'leave' ],
     mutationFn: async () => {
-      const tx = await worldSend('leave', [])
+      const tx = await worldSend('leave', [getBattleLogs])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return playdata
     }

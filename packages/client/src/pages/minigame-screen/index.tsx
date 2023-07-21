@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query'
 import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
 import { useAtom } from 'jotai'
-import { hash_options_set_value } from '@/states/minigame'
+import { countdown_atom, hash_options_set_value } from '@/states/minigame'
 import useHistory from '@/hooks/minigame/useHistory'
 import useLeave from '@/hooks/minigame/useLeave'
 import { activeScreen_atom, SCREENS } from '@/states/global'
@@ -42,39 +42,40 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const {  getBattleResult, getWinnerInfo, getAllPlayersBattlePoints } = useHistory(player.id as Entity)
+  const { getBattleResult, getWinnerInfo } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
-  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
   const {
     battleData,
+    battleTime,
     playerInfo,
     opponentInfo,
-    onSelectOptions,
-    setLockBattle,
-    lockIn,
     opponentBattleData,
-    setBattlePreResult,
+    lockIn,
     rematch,
-    battleTime
+    setBattlePreResult,
+    setLockBattle,
+    onSelectOptions,
   } = useBattle(player.id as Entity)
-  const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
 
+  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
   const [ , setHashAtom ] = useAtom(hash_options_set_value)
+  const [ countdown, setCountdown ] = useAtom(countdown_atom)
+
+  const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
   const [ showWeapon, setShowWeapon ] = React.useState<boolean>(false)
   const [ showPrompt, setShowPrompt ] = React.useState<boolean>(false)
+  const [ remainingTime, setRemainingTime ] = React.useState<number>(0)
   const [ isChooseWeaponComponent, setIsChooseWeaponComponent ] = React.useState<boolean>(true)
   const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
 
-  const [ remainingTime, setRemainingTime ] = React.useState<number>(0)
-
-  const playerWaiting = playdata.opponent?.playerId === player.id
   const playersInMatch = playdata.opponent?.playerId !== player.id
+  const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === '0x0000000000000000000000000000000000000000000000000000000000000000'
 
   const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '', 'opponent')
   const _playerInfo = useGetFromIPFS(playerInfo?.config?.value ?? '', 'player')
 
-  const opponentHasNotSelectedWeapon = opponentBattleData.battle?.hashedOption === '0x0000000000000000000000000000000000000000000000000000000000000000'
+  const hasOpponentSelectedWeapon = opponentBattleData.battle?.hashedOption === '0x0000000000000000000000000000000000000000000000000000000000000000'
 
   if (_opponentInfo.isSuccess) {
     _opponentInfo.data.image = opponentInfo?.image?.value ?? ''
@@ -91,37 +92,56 @@ export default function MinigameScreen() {
   }
 
   React.useEffect(() => {
-    if (selectedWeapon !== 3 && !opponentHasNotSelectedWeapon) {
-      setIsChooseWeaponComponent(false)
+    if (playersInMatch) {
+      if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon || countdown <= 1 && selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
+        setIsChooseWeaponComponent(false)
 
-      setLockBattle.mutateAsync().then(() => {
-        setBattlePreResult.mutateAsync().then(() => {
-          setShowWeapon(true)
+        setLockBattle.mutateAsync().then(() => {
+          setBattlePreResult.mutateAsync().then(() => {
+            setShowWeapon(true)
 
-          lockIn.mutate()
+            lockIn.mutate()
 
-          const delay = setTimeout(() => {
-            setShowPrompt(true)
-          }, 1000)
+            const delayRoundResultPromt = setTimeout(() => {
+              setShowPrompt(true)
+            }, 1000)
 
-          const nextRound = setTimeout(() => {
-            setSelectedWeapon(3)
-            setShowWeapon(false)
-            setShowPrompt(false)
-            setIsChooseWeaponComponent(true)
+            const nextRound = setTimeout(() => {
+              setSelectedWeapon(3)
+              setShowWeapon(false)
+              setShowPrompt(false)
+              setIsChooseWeaponComponent(true)
 
-            setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-            rematch.mutate(false)
-          }, 4000)
+              setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+              rematch.mutate(false)
+            }, 4000)
 
-          return () => {
-            clearTimeout(delay)
-            clearTimeout(nextRound)
-          }
+            return () => {
+              clearTimeout(delayRoundResultPromt)
+              clearTimeout(nextRound)
+            }
+          })
         })
-      })
+      }
     }
-  }, [ selectedWeapon, opponentHasNotSelectedWeapon ])
+  }, [ playersInMatch, battleTime.end, selectedWeapon, hasOpponentSelectedWeapon ])
+
+  // React.useEffect(() => {
+  //   if(!playersInMatch) return
+  //
+  //   if (countdown == 1 && !hasOpponentSelectedWeapon) {
+  //     //Forfeit
+  //     lockIn.mutate()
+  //     setSelectedWeapon(3)
+  //     setShowWeapon(false)
+  //     setShowPrompt(false)
+  //     setCountdown(10)
+  //     setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+  //     rematch.mutate(true)
+  //     leave.mutate()
+  //     setActiveScreen(SCREENS.CURRENT_LOCATION)
+  //   }
+  // }, [ countdown, hasOpponentSelectedWeapon ])
 
   React.useEffect(() => {
     if (!playersInMatch) setRemainingTime(0)
@@ -130,6 +150,8 @@ export default function MinigameScreen() {
       const interval = setInterval(() => {
         const currentTime = Math.floor(Date.now() / 1000)
         const timeDifference = battleTime.end - currentTime
+
+        setCountdown(prevCountdown => (prevCountdown > 1 ? prevCountdown - 1 : 10))
 
         if (timeDifference > 0) {
           setRemainingTime(timeDifference)
@@ -145,42 +167,36 @@ export default function MinigameScreen() {
       }
     }
   }, [ battleTime.end, playersInMatch ])
+
   function handleLeaveBattle() {
     try {
       leave.mutate()
       setActiveScreen(SCREENS.CURRENT_LOCATION)
+      setCountdown(10)
     } catch (e) {
       console.error(e)
     }
   }
 
-  // function handleRematchBattle() {
-  //   try {
-  //     rematch.mutate(true)
-  //     setIsMatchResultComponent(false)
-  //   } catch (e) {
-  //     console.error(e)
-  //   }
-  // }
-
   function displayGameResult() {
+    // if (hasOpponentSelectedWeapon) return 'Forfeit'
     if (getBattleResult.isWin == 'Draw') return 'Draw'
-    if (getBattleResult.isWin) return 'You Win!'
-    if (!getBattleResult.isWin) return 'You Lost!'
-  }
-
-  function displayWeapon(battleOption: number | undefined) {
-    if (battleOption === 1) return '/assets/minigame/icon_rps_sword.jpg'
-    if (battleOption === 2) return '/assets/minigame/icon_rps_scroll.jpg'
-    if (battleOption === 3) return '/assets/minigame/icon_rps_potion.jpg'
-
-    return ''
+    if (getBattleResult.isWin) return 'Victory!'
+    if (!getBattleResult.isWin) return 'Defeat!'
   }
 
   function displayRoundResult(battleDataOutcome: number) {
     if (battleDataOutcome === 1) return 'You Win!'
     if (battleDataOutcome === 2) return 'You Lost!'
     if (battleDataOutcome === 3) return 'Draw'
+
+    return ''
+  }
+
+  function displayWeapon(battleOption: number | undefined) {
+    if (battleOption === 1) return '/assets/minigame/icon_rps_sword.jpg'
+    if (battleOption === 2) return '/assets/minigame/icon_rps_scroll.jpg'
+    if (battleOption === 3) return '/assets/minigame/icon_rps_potion.jpg'
 
     return ''
   }
@@ -237,7 +253,7 @@ export default function MinigameScreen() {
 
                     <div className={clsx([ 'w-full h-full', 'relative', 'mt-[1.8rem]' ])}>
                       <img src={'/assets/minigame/icon_battle.png'} alt={'Battle Icon'}
-                           className={clsx([ 'w-[64px] h-[64px] object-cover', 'absolute left-1/2 top-1/2', { 'zoomHidden': playerWaiting }, { 'zoomActive': !playerWaiting } ])} />
+                           className={clsx([ 'w-[64px] h-[64px] object-cover', 'absolute left-1/2 top-1/2', { 'zoomHidden': isWaitingForOpponent }, { 'zoomActive': !isWaitingForOpponent } ])} />
                     </div>
 
                     <PlayerScoreBoard
@@ -264,7 +280,7 @@ export default function MinigameScreen() {
               {
                 player.image?.value
                   ? <img src={`${IPFS_URL_PREFIX}/${_opponentInfo.data?.image}`} alt={''}
-                         className={clsx([ { 'hidden': _opponentInfo.data?.image === undefined }, 'h-[373px] w-[290px]', 'absolute left-1/2 top-[15%] -translate-y-1/2 -translate-x-1/2', 'rounded-3xl', { 'hidden': battleData.battle === undefined || playerWaiting } ])}
+                         className={clsx([ { 'hidden': _opponentInfo.data?.image === undefined }, 'h-[373px] w-[290px]', 'absolute left-1/2 top-[15%] -translate-y-1/2 -translate-x-1/2', 'rounded-3xl', { 'hidden': battleData.battle === undefined || isWaitingForOpponent } ])}
                          draggable={false} />
                   :
                   <div
@@ -279,10 +295,10 @@ export default function MinigameScreen() {
               {/*Waiting for opponent*/}
               <Template.MinigameLayout.WaitingForOpponent>
                 {
-                  battleData.battle === undefined || playerWaiting ?
+                  isWaitingForOpponent || isWaitingForOpponent ?
                     <React.Fragment>
                       <div
-                        className={clsx([ ' bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                        className={clsx(['bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
                         <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
                              className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
                         <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5', '' ])}>Waiting for the other
@@ -312,14 +328,14 @@ export default function MinigameScreen() {
                 {/*Opponent Weapon*/}
                 <div
                   className={clsx([ { 'zoomHidden': !showWeapon }, { 'zoomActive': showWeapon }, 'w-[136px] h-[136px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'absolute left-1/2 top-[33%] -translate-y-2/4 -translate-x-1/2' ])}>
-                  <img src={displayWeapon(opponentBattleData.battlePreResults?.option)} alt={'Weapon Icon'}
+                  <img src={displayWeapon(opponentBattleData.battlePreResults?.option)} alt={''} loading={'eager'}
                        className={clsx([ 'rounded-full' ])} draggable={false} />
                 </div>
 
                 {/*Player Weapon*/}
                 <div
                   className={clsx([ { 'zoomHidden': !showWeapon }, { 'zoomActive': showWeapon }, 'w-[190px] h-[190px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'absolute left-1/2 bottom-[10%] -translate-y-2/4 -translate-x-1/2' ])}>
-                  <img src={displayWeapon(battleData.battlePreResults?.option)} alt={'Weapon Icon'}
+                  <img src={displayWeapon(battleData.battlePreResults?.option)} alt={''}
                        className={clsx([ 'rounded-full' ])} draggable={false} />
                 </div>
 
@@ -355,12 +371,14 @@ export default function MinigameScreen() {
 
               {/*Choosing Weapon*/}
               <Template.MinigameLayout.ChooseWeapon
-                className={clsx([ { 'hidden': !playersInMatch || !isChooseWeaponComponent || isMatchResultComponent } ])}>
+                className={clsx([ { 'hidden': isWaitingForOpponent || !isChooseWeaponComponent || isMatchResultComponent } ])}>
                 <div
-                  className={clsx([ 'hidden h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                  className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
                   <CountdownCircleTimer
-                    isPlaying={true}
-                    duration={10}
+                    isPlaying={false}
+                    duration={countdown}
+                    updateInterval={countdown}
+                    initialRemainingTime={10}
                     colors={'#FFBB00'}
                     size={96}
                     strokeWidth={10}
@@ -377,14 +395,14 @@ export default function MinigameScreen() {
                 </div>
 
                 <div
-                  className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': selectedWeapon !== 3 && !opponentHasNotSelectedWeapon } ])}>
+                  className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': selectedWeapon !== 3 && !hasOpponentSelectedWeapon } ])}>
                   <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                       className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { hidden: !opponentHasNotSelectedWeapon || selectedWeapon === 3 } ])}
+                       className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { hidden: !hasOpponentSelectedWeapon || selectedWeapon === 3 } ])}
                        draggable={false} />
                   <p
                     className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon !== 3 } ])}>{'Choose your weapon'}</p>
                   <p
-                    className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon === 3 } ])}>{opponentHasNotSelectedWeapon && 'Waiting for opponent'}</p>
+                    className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon === 3 } ])}>{hasOpponentSelectedWeapon && 'Waiting for opponent'}</p>
                 </div>
 
                 <div
@@ -410,6 +428,7 @@ export default function MinigameScreen() {
               </Template.MinigameLayout.ChooseWeapon>
             </div>
 
+            {/*Battle Logs*/}
             <div className={clsx(['w-[375px]', 'flex-none'])}>
               <Card className={clsx(['max-h-[678px] h-full', 'border border-accent rounded-2xl', 'bg-modal bg-cover bg-center bg-no-repeat'])}>
                 <div className={clsx(['h-full', 'max-h-[678px] h-full overflow-y-auto', 'px-sm py-md', 'flex flex-col'])}>

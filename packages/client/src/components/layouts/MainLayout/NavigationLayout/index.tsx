@@ -13,6 +13,7 @@ import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
 import useLeave from '@/hooks/minigame/useLeave'
 import Leaderboard from '@/components/base/Dialog/FormDialog/DialogContent/Leaderboard'
+import { countdown_atom } from '@/states/minigame'
 
 export default function Header() {
   const { player } = usePlayer()
@@ -23,6 +24,8 @@ export default function Header() {
   const setActiveScreen = useSetAtom(activeScreen_atom)
   const isTravelling = useAtomValue(isTravelling_atom)
 
+  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
+  const [ , setCountdown ] = useAtom(countdown_atom)
 
   const handleButtonClick = () => {
     setActiveScreen(activeScreen === SCREENS.CURRENT_LOCATION ? SCREENS.WORLD_MAP : SCREENS.CURRENT_LOCATION)
@@ -41,6 +44,7 @@ export default function Header() {
     try {
       leave.mutate()
       setActiveScreen(SCREENS.CURRENT_LOCATION)
+      setCountdown(10)
     } catch (e) {
       console.error(e)
     }
