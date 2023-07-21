@@ -126,23 +126,22 @@ export default function MinigameScreen() {
     }
   }, [ playersInMatch, battleTime.end, selectedWeapon, hasOpponentSelectedWeapon ])
 
-  React.useEffect(() => {
-    if(!playersInMatch) return
-
-    if (countdown == 1 && !hasOpponentSelectedWeapon) {
-      //Forfeit
-      lockIn.mutate()
-      setSelectedWeapon(3)
-      setShowWeapon(false)
-      setShowPrompt(false)
-      setIsChooseWeaponComponent(true)
-      setCountdown(10)
-      setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-      rematch.mutate(true)
-      leave.mutate()
-      setActiveScreen(SCREENS.CURRENT_LOCATION)
-    }
-  }, [ countdown, hasOpponentSelectedWeapon ])
+  // React.useEffect(() => {
+  //   if(!playersInMatch) return
+  //
+  //   if (countdown == 1 && !hasOpponentSelectedWeapon) {
+  //     //Forfeit
+  //     lockIn.mutate()
+  //     setSelectedWeapon(3)
+  //     setShowWeapon(false)
+  //     setShowPrompt(false)
+  //     setCountdown(10)
+  //     setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+  //     rematch.mutate(true)
+  //     leave.mutate()
+  //     setActiveScreen(SCREENS.CURRENT_LOCATION)
+  //   }
+  // }, [ countdown, hasOpponentSelectedWeapon ])
 
   React.useEffect(() => {
     if (!playersInMatch) setRemainingTime(0)
@@ -299,7 +298,7 @@ export default function MinigameScreen() {
                   isWaitingForOpponent || isWaitingForOpponent ?
                     <React.Fragment>
                       <div
-                        className={clsx([ ' bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                        className={clsx(['bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
                         <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
                              className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
                         <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5', '' ])}>Waiting for the other
