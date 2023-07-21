@@ -7,7 +7,7 @@ import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profi
 import usePlayer from '@/hooks/usePlayer'
 import { activeScreen_atom, isTravelling_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
@@ -24,7 +24,6 @@ export default function Header() {
   const setActiveScreen = useSetAtom(activeScreen_atom)
   const isTravelling = useAtomValue(isTravelling_atom)
 
-  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
   const [ , setCountdown ] = useAtom(countdown_atom)
 
   const handleButtonClick = () => {
