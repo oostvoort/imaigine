@@ -42,9 +42,16 @@ export default function WorldMapScreen(){
 
   const { locationToGenerate } = useLocationLists(myPlayer?.revealedCell ?? [])
 
-  function travelPlayer(cellId: number) {
-    setIsLocationOpen(true)
-    setDestination(cellId)
+  const isTravellingRef = React.useRef(isTravelling);
+  React.useEffect(() => {
+    isTravellingRef.current = isTravelling;
+  }, [isTravelling]);
+
+  const travelPlayer = (cellId: number) => {
+    if (!isTravellingRef.current) {
+      setIsLocationOpen(true)
+      setDestination(cellId)
+    }
   }
 
   React.useEffect(() => {

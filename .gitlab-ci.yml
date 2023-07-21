@@ -13,7 +13,9 @@ deploy_production:
     refs:
       - dev
     changes:
-      - "./**"
+      - "./packages/"
+      - "./gitlab-ci.yml"
+      - "./Dockerfile"
 
   before_script:
   - eval $(ssh-agent -s)

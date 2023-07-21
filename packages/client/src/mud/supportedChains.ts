@@ -18,4 +18,4 @@ const mainnet_forkserver = {
 }
 
 // If you are deploying to chains other than anvil or Lattice testnet, add them here
-export const supportedChains: MUDChain[] = [mainnet_forkserver, foundry, latticeTestnet, optimismGoerli];
+export const supportedChains: MUDChain[] = [mainnet_forkserver, foundry, optimismGoerli];
