@@ -137,8 +137,8 @@ function getAllBurgs() {
   return locations
 }
 
-function focusMapOnPlayer(cellID, scale, travelling){
-  focusOnPlayer(cellID, scale, travelling)
+function focusMapOnPlayer(cellID, travelling){
+  focusOnPlayer(cellID, travelling)
 }
 
 // from iframe
@@ -159,7 +159,7 @@ window.addEventListener('message', ({ data }) => {
     // Create myPlayer marker
     const id = (showPlayers([data.params.player]))[0]
     // Focus the map on Player's location
-    focusMapOnPlayer(data.params.player.cell, 24, data.params.travelling)
+    focusMapOnPlayer(data.params.player.cell, data.params.travelling)
     // Send to parent the markerId
     window.parent.postMessage({ cmd: 'PlayerMarkerId', params: {id: id} })
     // Reveal cells
