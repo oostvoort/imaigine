@@ -5,8 +5,8 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
-import { useAtom, useSetAtom } from 'jotai'
-import { activeScreen_atom, SCREENS, travelStory_atom } from '@/states/global'
+import { useSetAtom } from 'jotai'
+import { activeScreen_atom, SCREENS } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
@@ -18,6 +18,11 @@ export type LocationType = {
   imgHash: string,
 }
 
+type TravelStory = {
+  locationName: string,
+  travelStory: string,
+}
+
 export default function WorldMapScreen(){
 
   const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
@@ -26,9 +31,9 @@ export default function WorldMapScreen(){
   const [destination, setDestination] = React.useState<number>(0)
 
   const setActiveScreen = useSetAtom(activeScreen_atom)
-  // const [travelStory, setTravelStory] = useAtom(travelStory_atom)
+
   const [isTravelling, setIsTravelling] = React.useState<boolean>(false)
-  const [travelStory, setTravelStory] = React.useState<any>({} as any)
+  const [travelStory, setTravelStory] = React.useState<TravelStory>({ locationName: '', travelStory: '' })
 
   const { generateTravel } =  useTravel()
   const { generateLocation } = useLocation(destination)
@@ -93,7 +98,7 @@ export default function WorldMapScreen(){
           .then((result) => {
             if (result) {
               setTravelStory({
-                name: locationData.name,
+                locationName: locationData.name,
                 travelStory:  result.travelStory,
               })
             }
@@ -102,11 +107,9 @@ export default function WorldMapScreen(){
   }
 
   const handleEnterLocation = () => {
-    setTravelStory({ name: '', travelStory: ''})
+    setTravelStory({ locationName: '', travelStory: ''})
     setActiveScreen(SCREENS.CURRENT_LOCATION)
   }
-
-  console.info({ players })
 
   return(
     <React.Fragment>
@@ -115,7 +118,7 @@ export default function WorldMapScreen(){
           className={'w-full h-full mt-20'}
           myPlayer={myPlayer}
           isMyPlayerComplete={isMyPlayerComplete}
-          // players={isTravelling ? undefined : players}
+          players={isTravelling ? undefined : players}
           travelPlayer={(value) => travelPlayer(value)}
           isTraveling={isTravelling}
         />
@@ -131,10 +134,11 @@ export default function WorldMapScreen(){
           <div className={clsx(
             'w-[800px] max-h-[800px] h-[800px] z-10',
             'absolute top-28 right-12',
+            'flex flex-col justify-between',
             'bg-content-bg-gray bg-no-repeat bg-cover',
-            'rounded-3xl p-[30px]'
+            'rounded-3xl p-8 animate-fade',
           )}>
-            <div className={clsx('overflow-y-auto h-[650px]')}>
+            <div className={clsx('overflow-y-auto h-[85%]')}>
               <p className={clsx([
                 'text-[30px] text-[#BAC5F1]',
                 'font-amiri',
@@ -145,9 +149,15 @@ export default function WorldMapScreen(){
             <div className={'flex justify-center'}>
               {
                 travelData?.status === 0 ? (
-                  <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleEnterLocation}>Enter {travelStory.name}</Button>
+                  <Button
+                    variant={'neutral'}
+                    size={'btnWithBgImg'}
+                    onClick={handleEnterLocation}
+                  >
+                    Enter {travelStory.locationName}
+                  </Button>
                 ) : (
-                  <HourglassLoader>Travelling to Location ...</HourglassLoader>
+                  <HourglassLoader>Travelling to {locationData.name}</HourglassLoader>
                 )
               }
             </div>

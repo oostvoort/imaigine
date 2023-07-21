@@ -26,7 +26,7 @@ export default function LocationDialog({ isOpen, setOpen, location, travelFunc }
             'duration-[3000ms] delay-1000 ease-in-out',
           ])}
         >
-          <div className={'backdrop-blur h-screen w-screen'} />
+          <div className={'backdrop-blur h-screen w-screen'} onClick={() => setOpen && setOpen(false)} />
           <DialogPrimitive.Close
             className={'absolute right-4 top-4 p-1'}
             onClick={() => setOpen && setOpen(false)}
