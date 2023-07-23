@@ -8,7 +8,8 @@ const useIpfs = <T>(ipfsHash: string, key?: string) => {
       const ipfsFile = await getFromIPFS(ipfsHash)
       return await ipfsFile.json() as T
     },
-    enabled: !!ipfsHash
+    enabled: !!ipfsHash,
+    refetchOnWindowFocus: false
   })
 }
 

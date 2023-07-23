@@ -19,7 +19,7 @@ export default function useLocation(locationIdParam?: LocationParam) {
   } = useMUD()
 
 
-  const location = useQuery(
+  const location= useQuery(
     [ `location-${locationIdParam}` ],
     async () => {
       if (!locationIdInContract) throw new Error('No location id')
@@ -54,7 +54,7 @@ export default function useLocation(locationIdParam?: LocationParam) {
       return null
     }, {
       enabled: Boolean(locationIdParam),
-      staleTime: Infinity
+      refetchOnWindowFocus: false,
     })
 
   const generateLocation = useMutation({
