@@ -11,6 +11,8 @@ import { currentLocation_atom, npcConversation_atom } from '@/states/global'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import useLocationInteraction from '@/hooks/v1/useLocationInteraction'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/base/Avatar'
+import useGetNPCPlayers from '@/hooks/v1/useGetNPCPlayers'
 
 type PropType = {
   isOpen?: boolean,
@@ -33,6 +35,8 @@ export default function ConversationDialog({
 
   const setNPCConversation = useSetAtom(npcConversation_atom)
   const currentLocation = useAtomValue(currentLocation_atom)
+
+  const { playersData } = useGetNPCPlayers(currentLocation.npc?.npcId)
 
   const handlePlayerResponse = (choiceId: number ,response: string) => {
     createNPCInteraction.mutate({ choiceId: choiceId, npcId: currentLocation.npc.npcId })
@@ -105,25 +109,29 @@ export default function ConversationDialog({
           </DialogPrimitive.Close>
 
           {/*IF MULTIPLAYER*/}
-          {/*<div className={clsx([ 'text-4xl absolute left-[4.5%] top-24', 'my-lg' ])}>*/}
-          {/*  <div className={clsx([ 'h-[75%]', 'flex flex-col' ])}>*/}
-          {/*    {*/}
-          {/*      players.map((player, key) => (*/}
-          {/*        <div key={key} className={'relative flex items-center z-10  justify-center my-sm border rounded-full w-[128px] h-[128px] border border-2 border-accent'}>*/}
-          {/*          <Avatar className={'h-full w-full'}>*/}
-          {/*            <AvatarImage src={player.imgSrc} alt={'Avatar Image'}/>*/}
-          {/*            <AvatarFallback>{player.avatarFallBack}</AvatarFallback>*/}
-          {/*          </Avatar>*/}
-          {/*          <span className={'absolute -bottom-4 rounded-md py-0.5 px-1.5 bg-[#000000A8] text-[14px] leading-[32px] font-segoe tracking-[0.28]'}>{player.avatarName}</span>*/}
+          {
+            playersData.data && (
+              <div className={clsx([ 'text-4xl absolute left-[4.5%] top-24', 'my-lg' ])}>
+                <div className={clsx([ 'h-[75%]', 'flex flex-col' ])}>
+                  {
+                    playersData.data.map((player, key) => (
+                      <div key={key} className={'relative flex items-center z-10  justify-center my-sm border rounded-full w-[128px] h-[128px] border border-2 border-accent'}>
+                        <Avatar className={'h-full w-full'}>
+                          <AvatarImage src={`${IPFS_URL_PREFIX}/${player.image.value}`} alt={'Avatar Image'}/>
+                          {/*<AvatarFallback>{player.avatarFallBack}</AvatarFallback>*/}
+                        </Avatar>
+                        <span className={'absolute -bottom-4 rounded-md py-0.5 px-1.5 bg-[#000000A8] text-[14px] leading-[32px] font-segoe tracking-[0.28]'}>{player.name}</span>
 
-          {/*          <div className={'absolute -right-[15%] z-10 flex justify-center items-center  rounded-full h-11 w-11 bg-red-400 bg-accent'}>*/}
-          {/*            <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'rotate-180'}/>*/}
-          {/*          </div>*/}
-          {/*        </div>*/}
-          {/*      ))*/}
-          {/*    }*/}
-          {/*  </div>*/}
-          {/*</div>*/}
+                        <div className={'absolute -right-[15%] z-10 flex justify-center items-center  rounded-full h-11 w-11 bg-red-400 bg-accent'}>
+                          <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'} className={'rotate-180'}/>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            )
+          }
 
 
           <DialogPrimitive.Content
@@ -171,7 +179,7 @@ export default function ConversationDialog({
                         return (
                           <ConversationLayout.ReceiverBubble
                             key={conversation.logId}
-                            authorName={currentLocation.npc.config.name ?? 'NPC Name'}
+                            authorName={currentLocation.npc.config?.name ?? 'NPC Name'}
                             authorIcon={`${currentLocation ? `${IPFS_URL_PREFIX}/${currentLocation.npc.image}` : '/assets/avatar/avatar1.jpg'}`}
                             text={conversation.text}
                           />
