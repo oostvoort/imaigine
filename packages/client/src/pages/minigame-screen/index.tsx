@@ -69,6 +69,9 @@ export default function MinigameScreen() {
   const [ isChooseWeaponComponent, setIsChooseWeaponComponent ] = React.useState<boolean>(true)
   const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
 
+  const [ key, setKey ] = React.useState<number>(0)
+  const [ timerSeconds, setTimerSeconds ] = React.useState<number>(0)
+
   const playersInMatch = playdata.opponent?.playerId !== player.id
   const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === '0x0000000000000000000000000000000000000000000000000000000000000000'
 
@@ -93,8 +96,9 @@ export default function MinigameScreen() {
 
   React.useEffect(() => {
     if (playersInMatch) {
-      if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon || countdown <= 1 && selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
+      if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
         setIsChooseWeaponComponent(false)
+        const currentTime = Math.floor(Date.now() / 1000)
 
         setLockBattle.mutateAsync().then(() => {
           setBattlePreResult.mutateAsync().then(() => {
@@ -102,9 +106,7 @@ export default function MinigameScreen() {
 
             lockIn.mutate()
 
-            const delayRoundResultPromt = setTimeout(() => {
-              setShowPrompt(true)
-            }, 1000)
+            const delayRoundResultPrompt = setTimeout(() => setShowPrompt(true), 1000)
 
             const nextRound = setTimeout(() => {
               setSelectedWeapon(3)
@@ -113,18 +115,62 @@ export default function MinigameScreen() {
               setIsChooseWeaponComponent(true)
 
               setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-              rematch.mutate(false)
-            }, 4000)
+              rematch.mutateAsync(false).finally(() => {
+                  setKey(prevkey => prevkey + 1)
+              })
+            }, 3000)
+
+            localStorage.setItem('test', JSON.stringify(currentTime + 10))
 
             return () => {
-              clearTimeout(delayRoundResultPromt)
+              clearTimeout(delayRoundResultPrompt)
               clearTimeout(nextRound)
             }
           })
         })
+
+        // const getTime = localStorage.getItem('test')
+        //
+        // if(Number(getTime) === currentTime){
+        // }
       }
     }
-  }, [ playersInMatch, battleTime.end, selectedWeapon, hasOpponentSelectedWeapon ])
+  }, [ playersInMatch, selectedWeapon, hasOpponentSelectedWeapon ])
+
+  // React.useEffect(() => {
+  //   if (playersInMatch) {
+  //     if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon || countdown <= 1 && selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
+  //       setIsChooseWeaponComponent(false)
+  //
+  //       setLockBattle.mutateAsync().then(() => {
+  //         setBattlePreResult.mutateAsync().then(() => {
+  //           setShowWeapon(true)
+  //
+  //           lockIn.mutate()
+  //
+  //           const delayRoundResultPromt = setTimeout(() => {
+  //             setShowPrompt(true)
+  //           }, 1000)
+  //
+  //           const nextRound = setTimeout(() => {
+  //             setSelectedWeapon(3)
+  //             setShowWeapon(false)
+  //             setShowPrompt(false)
+  //             setIsChooseWeaponComponent(true)
+  //
+  //             setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
+  //             rematch.mutate(false)
+  //           }, 4000)
+  //
+  //           return () => {
+  //             clearTimeout(delayRoundResultPromt)
+  //             clearTimeout(nextRound)
+  //           }
+  //         })
+  //       })
+  //     }
+  //   }
+  // }, [ playersInMatch, battleTime.end, selectedWeapon, hasOpponentSelectedWeapon ])
 
   // React.useEffect(() => {
   //   if(!playersInMatch) return
@@ -150,8 +196,6 @@ export default function MinigameScreen() {
       const interval = setInterval(() => {
         const currentTime = Math.floor(Date.now() / 1000)
         const timeDifference = battleTime.end - currentTime
-
-        setCountdown(prevCountdown => (prevCountdown > 1 ? prevCountdown - 1 : 10))
 
         if (timeDifference > 0) {
           setRemainingTime(timeDifference)
@@ -374,24 +418,37 @@ export default function MinigameScreen() {
                 className={clsx([ { 'hidden': isWaitingForOpponent || !isChooseWeaponComponent || isMatchResultComponent } ])}>
                 <div
                   className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                  <CountdownCircleTimer
-                    isPlaying={false}
-                    duration={countdown}
-                    updateInterval={countdown}
-                    initialRemainingTime={10}
-                    colors={'#FFBB00'}
-                    size={96}
-                    strokeWidth={10}
-                    trailColor={'#704E00'}
-                  >
-                    {({ remainingTime }) => {
-                      return (
-                        <p
-                          className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>
-                      )
-                    }
-                    }
-                  </CountdownCircleTimer>
+                  {
+                    playersInMatch &&
+                    <CountdownCircleTimer
+                      key={key}
+                      isPlaying={true}
+                      duration={10}
+
+                      // onComplete={(totalElapsedTime) => {
+                      //   setTotalElapsedTime(totalElapsedTime)
+                      //   setCountdownRemainingTime(10)
+                      // }}
+                      onUpdate={(remainingTime) => {
+                        setTimerSeconds(remainingTime)
+                      }}
+
+                      colors={'#FFBB00'}
+                      size={96}
+                      strokeWidth={10}
+                      trailColor={'#704E00'}
+                    >
+                      {({ remainingTime }) => {
+                        return (
+                          <p
+                            className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>
+                        )
+                      }
+                      }
+                    </CountdownCircleTimer>
+                  }
+
+
                 </div>
 
                 <div
