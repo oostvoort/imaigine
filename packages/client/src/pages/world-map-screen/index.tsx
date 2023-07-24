@@ -5,12 +5,14 @@ import { useMap } from '@/hooks/v1/useMap'
 import useTravel from '@/hooks/v1/useTravel'
 import LocationDialog from '@/components/shared/LocationDialog'
 import useLocation from '@/hooks/v1/useLocation'
-import { useSetAtom } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
+import { useAtom, useSetAtom } from 'jotai'
+import { activeScreen_atom, isTravelling_atom, SCREENS } from '@/states/global'
 import useLocationLists from '@/hooks/v1/useLocationLists'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
-import { Footer, HourglassLoader } from '@/components/base/Footer'
+import { HourglassLoader } from '@/components/base/Footer'
+import AILoader from '@/components/shared/AILoader'
+import TypingParagraph from '@/components/shared/TypingParagraph'
 
 export type LocationType = {
   name: string,
@@ -32,7 +34,7 @@ export default function WorldMapScreen(){
 
   const setActiveScreen = useSetAtom(activeScreen_atom)
 
-  const [isTravelling, setIsTravelling] = React.useState<boolean>(false)
+  const [isTravelling, setIsTravelling] = useAtom(isTravelling_atom)
   const [travelStory, setTravelStory] = React.useState<TravelStory>({ locationName: '', travelStory: '' })
 
   const { generateTravel } =  useTravel()
@@ -40,9 +42,16 @@ export default function WorldMapScreen(){
 
   const { locationToGenerate } = useLocationLists(myPlayer?.revealedCell ?? [])
 
-  function travelPlayer(cellId: number) {
-    setIsLocationOpen(true)
-    setDestination(cellId)
+  const isTravellingRef = React.useRef(isTravelling);
+  React.useEffect(() => {
+    isTravellingRef.current = isTravelling;
+  }, [isTravelling]);
+
+  const travelPlayer = (cellId: number) => {
+    if (!isTravellingRef.current) {
+      setIsLocationOpen(true)
+      setDestination(cellId)
+    }
   }
 
   React.useEffect(() => {
@@ -78,7 +87,6 @@ export default function WorldMapScreen(){
   React.useEffect(() => {
     let intervalId: any;
     if (travelData && travelData.status >= 2){
-      // setActiveScreen(SCREENS.TRAVELLING)
       intervalId = setInterval(() => {
         travel.mutate();
       }, 5000); // 5 seconds interval
@@ -91,16 +99,20 @@ export default function WorldMapScreen(){
 
   const handleTravel = () => {
     setIsTravelling(true)
+    setTravelStory(prevState => ({
+      ...prevState,
+      locationName: locationData.name,
+    }))
     setIsLocationOpen(false)
     prepareTravel.mutateAsync({ toLocation: destination })
       .then(() => {
         generateTravel.mutateAsync()
           .then((result) => {
             if (result) {
-              setTravelStory({
-                locationName: locationData.name,
-                travelStory:  result.travelStory,
-              })
+              setTravelStory(prevState => ({
+                ...prevState,
+                travelStory: result.travelStory,
+              }))
             }
         })
       })
@@ -108,6 +120,7 @@ export default function WorldMapScreen(){
 
   const handleEnterLocation = () => {
     setTravelStory({ locationName: '', travelStory: ''})
+    setIsTravelling(false)
     setActiveScreen(SCREENS.CURRENT_LOCATION)
   }
 
@@ -120,7 +133,6 @@ export default function WorldMapScreen(){
           isMyPlayerComplete={isMyPlayerComplete}
           players={isTravelling ? undefined : players}
           travelPlayer={(value) => travelPlayer(value)}
-          isTraveling={isTravelling}
         />
         <LocationDialog
           isOpen={isLocationOpen}
@@ -139,12 +151,24 @@ export default function WorldMapScreen(){
             'rounded-3xl p-8 animate-fade',
           )}>
             <div className={clsx('overflow-y-auto h-[85%]')}>
-              <p className={clsx([
+              <div className={clsx([
+                'h-full flex justify-center',
                 'text-[30px] text-[#BAC5F1]',
                 'font-amiri',
               ])}>
-                {travelStory.travelStory === '' ? 'Please wait...' : travelStory.travelStory}
-              </p>
+                {
+                  travelStory.travelStory === '' ? (
+                    <div className={clsx([
+                      'my-auto gap-10',
+                      'flex flex-col justify-center items-center',
+                    ])}>
+                      <AILoader message={'Please wait...'} />
+                    </div>
+                  ) : (
+                    <TypingParagraph text={travelStory.travelStory} typingSpeed={5} />
+                  )
+                }
+              </div>
             </div>
             <div className={'flex justify-center'}>
               {
@@ -157,7 +181,14 @@ export default function WorldMapScreen(){
                     Enter {travelStory.locationName}
                   </Button>
                 ) : (
-                  <HourglassLoader>Travelling to {locationData.name}</HourglassLoader>
+                  <div
+                    className={clsx([
+                      'bg-lining bg-no-repeat bg-cover h-[48px] w-[800px]',
+                      'flex justify-center gap-3',
+                    ])}
+                  >
+                    <HourglassLoader>Travelling to {travelStory.locationName}</HourglassLoader>
+                  </div>
                 )
               }
             </div>

@@ -13,8 +13,8 @@ function hook_onMapLoaded() {
  * Anything we want to run after the map was clicked.
  */
 function hook_onMapClick(el, p) {
-  console.log('Imaigine: hook_onMapClick', el, p)
-  console.log('pack', pack)
+  // console.log('Imaigine: hook_onMapClick', el, p)
+  // console.log('pack', pack)
 
   const parent = el.parentElement
   const grand = parent.parentElement
@@ -152,10 +152,6 @@ window.addEventListener('message', ({ data }) => {
     showPlayers(data.params.players)
 
   } else if (data.cmd === 'showMyPlayer') {
-    // Remove old marker if there is
-    if (data.params.marker) {
-      deleteMarkerPlayer(data.params.marker)
-    }
     // Create myPlayer marker
     const id = (showPlayers([data.params.player]))[0]
     // Focus the map on Player's location
@@ -166,6 +162,8 @@ window.addEventListener('message', ({ data }) => {
     hideCells('myFogId')
     revealCells(data.params.player.revealedCell)
 
+  } else if (data.cmd === 'deletePlayerMarker') {
+    deleteMarkerPlayer(data.params.marker)
   } else {
     console.log('else', data)
   }
