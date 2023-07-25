@@ -110,15 +110,6 @@ export default mudConfig({
             totalLoses: "uint32",
           }
         },
-        BattleRoundTimeComponent: {
-          keySchema: {
-            player: "bytes32",
-          },
-          schema: {
-            opponent: "bytes32",
-            remainingTime: "uint8"
-          }
-        }
     },
     modules: [
         {

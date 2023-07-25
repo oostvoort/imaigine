@@ -16,7 +16,7 @@ export default function Leaderboard() {
         className={clsx([ 'text-accent text-base', 'uppercase font-jost font-medium tracking-[1.4px]' ])}>Leaderboard</p>
       <ul>
         {
-          sortedPlayers.map((data, index) => {
+          sortedPlayers.length > 0 ? sortedPlayers.map((data, index) => {
 
               return (
                 <li
@@ -35,7 +35,11 @@ export default function Leaderboard() {
                 </li>
               )
             },
-          )
+          ) : <>
+            <div className={"w-full h-[5em] flex justify-center items-center"}>
+              <p className={clsx([ 'flex-1', 'ml-sm', 'text-[20px] leading-[32px] text-left text-option-11', 'font-segoe tracking-[0.4px]' ])}>NO PLAYERS</p>
+            </div>
+          </>
         }
       </ul>
 
