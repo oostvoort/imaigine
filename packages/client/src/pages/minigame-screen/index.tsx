@@ -2,7 +2,7 @@ import React from 'react'
 import { clsx } from 'clsx'
 import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
 import { Button } from '@/components/base/Button'
-import { IPFS_URL_PREFIX } from '@/global/constants'
+import { HEX_ZERO, IPFS_URL_PREFIX } from '@/global/constants'
 import usePlayer from '@/hooks/usePlayer'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
@@ -13,13 +13,12 @@ import { useQuery } from '@tanstack/react-query'
 import usePlay from '@/hooks/minigame/usePlay'
 import { BattleOptions } from '@/hooks/minigame/types/battle'
 import { useAtom } from 'jotai'
-import { countdown_atom, hash_options_set_value } from '@/states/minigame'
+import { hash_options_set_value } from '@/states/minigame'
 import useHistory from '@/hooks/minigame/useHistory'
 import useLeave from '@/hooks/minigame/useLeave'
 import { activeScreen_atom, SCREENS } from '@/states/global'
 import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { BattleGuide } from '@/components/base/Dialog/FormDialog/DialogContent/BattleGuide'
-
 
 const useGetFromIPFS = (ipfsHash: string, key?: string) => {
   return useQuery(
@@ -60,7 +59,6 @@ export default function MinigameScreen() {
 
   const [ , setActiveScreen ] = useAtom(activeScreen_atom)
   const [ , setHashAtom ] = useAtom(hash_options_set_value)
-  const [ countdown, setCountdown ] = useAtom(countdown_atom)
 
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
   const [ showWeapon, setShowWeapon ] = React.useState<boolean>(false)
@@ -70,15 +68,15 @@ export default function MinigameScreen() {
   const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
 
   const [ key, setKey ] = React.useState<number>(0)
-  const [ timerSeconds, setTimerSeconds ] = React.useState<number>(0)
+  const [ remainingCountdownTime, setRemainingCountdownTime ] = React.useState<number>(0)
 
-  const playersInMatch = playdata.opponent?.playerId !== player.id
-  const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === '0x0000000000000000000000000000000000000000000000000000000000000000'
+  const playersInMatch = playdata.playerInQueue?.playerId !== player.id
+  const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === HEX_ZERO
 
   const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '', 'opponent')
   const _playerInfo = useGetFromIPFS(playerInfo?.config?.value ?? '', 'player')
 
-  const hasOpponentSelectedWeapon = opponentBattleData.battle?.hashedOption === '0x0000000000000000000000000000000000000000000000000000000000000000'
+  const hasOpponentSelectedWeapon = opponentBattleData.battle?.hashedOption === HEX_ZERO
 
   if (_opponentInfo.isSuccess) {
     _opponentInfo.data.image = opponentInfo?.image?.value ?? ''
@@ -94,11 +92,11 @@ export default function MinigameScreen() {
     _playerInfo.data.battleLossResult = Number(playerInfo.battleResults?.totalLoses ?? '0')
   }
 
+  //IF BOTH PLAYERS CHOOSE A WEAPON WITH IN THE COUNTDOWN TIMER
   React.useEffect(() => {
     if (playersInMatch) {
       if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
         setIsChooseWeaponComponent(false)
-        const currentTime = Math.floor(Date.now() / 1000)
 
         setLockBattle.mutateAsync().then(() => {
           setBattlePreResult.mutateAsync().then(() => {
@@ -120,75 +118,39 @@ export default function MinigameScreen() {
               })
             }, 3000)
 
-            localStorage.setItem('test', JSON.stringify(currentTime + 10))
-
             return () => {
               clearTimeout(delayRoundResultPrompt)
               clearTimeout(nextRound)
             }
           })
         })
-
-        // const getTime = localStorage.getItem('test')
-        //
-        // if(Number(getTime) === currentTime){
-        // }
       }
     }
   }, [ playersInMatch, selectedWeapon, hasOpponentSelectedWeapon ])
 
-  // React.useEffect(() => {
-  //   if (playersInMatch) {
-  //     if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon || countdown <= 1 && selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
-  //       setIsChooseWeaponComponent(false)
-  //
-  //       setLockBattle.mutateAsync().then(() => {
-  //         setBattlePreResult.mutateAsync().then(() => {
-  //           setShowWeapon(true)
-  //
-  //           lockIn.mutate()
-  //
-  //           const delayRoundResultPromt = setTimeout(() => {
-  //             setShowPrompt(true)
-  //           }, 1000)
-  //
-  //           const nextRound = setTimeout(() => {
-  //             setSelectedWeapon(3)
-  //             setShowWeapon(false)
-  //             setShowPrompt(false)
-  //             setIsChooseWeaponComponent(true)
-  //
-  //             setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-  //             rematch.mutate(false)
-  //           }, 4000)
-  //
-  //           return () => {
-  //             clearTimeout(delayRoundResultPromt)
-  //             clearTimeout(nextRound)
-  //           }
-  //         })
-  //       })
-  //     }
-  //   }
-  // }, [ playersInMatch, battleTime.end, selectedWeapon, hasOpponentSelectedWeapon ])
+  //CALL LOCKIN IF ONE OF THE PLAYER NOT CHOOSE A WEAPON WITHIN THE ROUND TIME
+  React.useEffect(() => {
+    if(!isWaitingForOpponent){
+      if (remainingCountdownTime <= 0) {
+        console.log('minigame remaining time is less than equal to zero')
+        lockIn.mutate()
+      }
+    }
+  }, [ lockIn ])
 
-  // React.useEffect(() => {
-  //   if(!playersInMatch) return
-  //
-  //   if (countdown == 1 && !hasOpponentSelectedWeapon) {
-  //     //Forfeit
-  //     lockIn.mutate()
-  //     setSelectedWeapon(3)
-  //     setShowWeapon(false)
-  //     setShowPrompt(false)
-  //     setCountdown(10)
-  //     setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-  //     rematch.mutate(true)
-  //     leave.mutate()
-  //     setActiveScreen(SCREENS.CURRENT_LOCATION)
-  //   }
-  // }, [ countdown, hasOpponentSelectedWeapon ])
+  console.log("minigame lockin", lockIn.isLoading);
+  // KICKING PLAYER LISTENER: WHEN OPPONENT VALUES BECOMES $0$, CHECK IF YOU ARE IN QUEUE, SHOW QUEUEING MODAL, ELSE LEAVE ROOM
+  React.useEffect(() => {
+    if(!isWaitingForOpponent){
+      if (battleData.battle?.opponent == HEX_ZERO) {
+        if (playdata.playerInQueue?.playerId == player.id) {
+          console.log('minigame: show forfeit modal')
+        }
+      }
+    }
+  }, [ battleData, playdata])
 
+  //Game Timer
   React.useEffect(() => {
     if (!playersInMatch) setRemainingTime(0)
 
@@ -216,7 +178,6 @@ export default function MinigameScreen() {
     try {
       leave.mutate()
       setActiveScreen(SCREENS.CURRENT_LOCATION)
-      setCountdown(10)
     } catch (e) {
       console.error(e)
     }
@@ -417,22 +378,16 @@ export default function MinigameScreen() {
               <Template.MinigameLayout.ChooseWeapon
                 className={clsx([ { 'hidden': isWaitingForOpponent || !isChooseWeaponComponent || isMatchResultComponent } ])}>
                 <div
-                  className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                  className={clsx([ { 'hidden': rematch.isLoading }, 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
                   {
-                    playersInMatch &&
+                    !isWaitingForOpponent &&
                     <CountdownCircleTimer
                       key={key}
                       isPlaying={true}
                       duration={10}
-
-                      // onComplete={(totalElapsedTime) => {
-                      //   setTotalElapsedTime(totalElapsedTime)
-                      //   setCountdownRemainingTime(10)
-                      // }}
                       onUpdate={(remainingTime) => {
-                        setTimerSeconds(remainingTime)
+                        setRemainingCountdownTime(remainingTime)
                       }}
-
                       colors={'#FFBB00'}
                       size={96}
                       strokeWidth={10}
@@ -447,8 +402,6 @@ export default function MinigameScreen() {
                       }
                     </CountdownCircleTimer>
                   }
-
-
                 </div>
 
                 <div
@@ -468,7 +421,7 @@ export default function MinigameScreen() {
                     weapons.map((weapon, key) => {
                       const isSelectedWeapon = selectedWeapon === key
                       return (
-                        <button key={key} onClick={weapon.onClick} disabled={rematch.isLoading}
+                        <button key={key} onClick={weapon.onClick} disabled={rematch.isLoading || remainingCountdownTime == 1}
                                 className={clsx([ 'w-[160px] h-[160px]', 'rounded-full border border-[2px] border-[#2C3B47]',
                                   { 'scale-100 opacity-100': selectedWeapon === 3 },
                                   { 'scale-100 opacity-100 border-[5px] border-option-9': isSelectedWeapon && selectedWeapon !== 3 },

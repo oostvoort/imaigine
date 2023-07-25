@@ -7,13 +7,12 @@ import { Profile } from '@/components/base/Dialog/FormDialog/DialogContent/Profi
 import usePlayer from '@/hooks/usePlayer'
 import { activeScreen_atom, isTravelling_atom, SCREENS } from '@/states/global'
 import { Button } from '@/components/base/Button'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import useGameState from '@/hooks/useGameState'
 import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
 import useLeave from '@/hooks/minigame/useLeave'
 import Leaderboard from '@/components/base/Dialog/FormDialog/DialogContent/Leaderboard'
-import { countdown_atom } from '@/states/minigame'
 
 export default function Header() {
   const { player } = usePlayer()
@@ -24,8 +23,6 @@ export default function Header() {
   const setActiveScreen = useSetAtom(activeScreen_atom)
   const isTravelling = useAtomValue(isTravelling_atom)
 
-  const [ , setCountdown ] = useAtom(countdown_atom)
-
   const handleButtonClick = () => {
     setActiveScreen(activeScreen === SCREENS.CURRENT_LOCATION ? SCREENS.WORLD_MAP : SCREENS.CURRENT_LOCATION)
   }
@@ -33,7 +30,6 @@ export default function Header() {
   const handleStartBattle = () => {
     try {
       play.mutate()
-      setActiveScreen(SCREENS.MINIGAME)
     } catch (e) {
       console.error(e)
     }
@@ -42,8 +38,6 @@ export default function Header() {
   const handleLeaveBattle = () => {
     try {
       leave.mutate()
-      setActiveScreen(SCREENS.CURRENT_LOCATION)
-      setCountdown(10)
     } catch (e) {
       console.error(e)
     }
