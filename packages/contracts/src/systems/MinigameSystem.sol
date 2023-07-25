@@ -222,9 +222,17 @@ contract MinigameSystem is System {
   }
 
   function clearLogsHistory(uint[] memory battleHistoryArray) public {
+    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
+    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
+
     for (uint i = 0; i < battleHistoryArray.length; i++) {
       BattleHistoryComponent.deleteRecord(battleHistoryArray[i]);
     }
+
+    BattlePreResultsComponents.deleteRecord(playerID);
+    BattleResultsComponents.deleteRecord(playerID);
+    BattlePreResultsComponents.deleteRecord(battleComponentData.opponent);
+    BattleResultsComponents.deleteRecord(battleComponentData.opponent);
   }
 
   function resultsBattle (uint32 win, uint32 lose, bytes32 playerId) internal {
