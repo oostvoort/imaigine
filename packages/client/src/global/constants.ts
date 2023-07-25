@@ -3,3 +3,5 @@ export const SERVER_API = import.meta.env.VITE_API_ENDPOINT ?? ''
 export const IPFS_URL_PREFIX = import.meta.env.VITE_IPFS_URL_PREFIX
 
 export const IS_MOCK = import.meta.env.VITE_MOCK === 'true'
+
+export const HEX_ZERO = '0x0000000000000000000000000000000000000000000000000000000000000000'
