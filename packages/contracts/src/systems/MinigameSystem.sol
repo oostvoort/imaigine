@@ -22,7 +22,7 @@ import { BattleStatus, BattleOptions, BattleOutcomeType } from "../codegen/Types
 
 contract MinigameSystem is System {
 
-  uint256 private constant FORFEIT_TIME = 1_000 * 15; // the time elapsed wherein a user is considered forfeited
+  uint256 private constant FORFEIT_TIME = 10; // the time elapsed wherein a user is considered forfeited
 
   /// @notice called by the player to play rps
   function play() public returns (bytes32) {
@@ -50,7 +50,7 @@ contract MinigameSystem is System {
     bytes32 opponent = BattleComponent.getOpponent(playerID);
     BattleComponent.setHashedOption(playerID, hashedOption);
     BattleComponent.setStatus(playerID, BattleStatus.DONE_SELECTING);
-    BattleComponent.setTimestamp(playerID, block.timestamp);
+    // BattleComponent.setTimestamp(playerID, block.timestamp);
   }
 
   /// @notice called by the player to lock in a battle
@@ -115,7 +115,6 @@ contract MinigameSystem is System {
       }
       BattleComponent.setOption(playerID, option);
       BattleComponent.setHashSalt(playerID, hashSalt);
-      BattleComponent.setTimestamp(playerID, block.timestamp);
       BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
     } else {
       if (opponentBattleData.timestamp + FORFEIT_TIME <= block.timestamp) {
@@ -129,7 +128,7 @@ contract MinigameSystem is System {
           option,
           battleComponentData.hashedOption,
           BattleStatus.LOCKED_IN,
-          block.timestamp,
+          battleComponentData.timestamp,
           BattleOutcomeType.NONE,
           hashSalt
         );
