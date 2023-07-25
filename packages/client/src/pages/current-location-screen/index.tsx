@@ -10,11 +10,11 @@ import useNPCInteraction from '@/hooks/useNPCInteraction'
 import { useMUD } from '@/MUDContext'
 import { useAtom, useSetAtom } from 'jotai'
 import { currentLocation_atom, npcConversation_atom } from '@/states/global'
-import { useGetNpc } from '@/hooks/v1/useGetNpc'
 import useLocation from '@/hooks/v1/useLocation'
 import { SkeletonParagraph } from '@/components/base/Skeleton'
 import usePlayer from '@/hooks/v1/usePlayer'
 import useLocationInteraction from '@/hooks/v1/useLocationInteraction'
+import useNpc from '@/hooks/v1/useNpc'
 
 export default function CurrentLocationScreen() {
   const {
@@ -25,7 +25,7 @@ export default function CurrentLocationScreen() {
 
   const { player } = usePlayer()
   const { location } = useLocation(player.location?.value ?? undefined)
-  const npc = useGetNpc(player && player.location ? player.location.value : undefined)
+  const { npc } = useNpc(player && player.location ? player.location.value : undefined)
 
   const { generateLocationInteraction, createLocationInteraction } = useLocationInteraction()
 
@@ -35,12 +35,11 @@ export default function CurrentLocationScreen() {
   const [npcConversation, setNPCConversation] = useAtom(npcConversation_atom)
   const setCurrentLocation = useSetAtom(currentLocation_atom)
 
-  // TODO: wrap in a memo since its only a checker for the three data below
   const isDataReady = !!player.config?.value && !!location.data?.config.value && !!npc.data
 
   const locationDetails = {
     scenario: generateLocationInteraction.data?.scenario,
-    npc: { name: npc.data ? npc?.data[0].config.name : undefined }
+    npc: { name: npc.data ? npc?.data[0]?.config.name : undefined }
   }
 
   const buttonOptions: Array<ButtonPropType> = [
@@ -85,16 +84,19 @@ export default function CurrentLocationScreen() {
     if (isDataReady) {
       generateLocationInteraction.mutate()
       createLocationInteraction.mutate({ choiceId: 0 })
+    }
+  }, [isDataReady])
 
-      if (!npc.data) throw new Error('There is no NPC yet')
+  React.useEffect(() => {
+    if (npc.data) {
       setCurrentLocation({
-        name: '',
-        summary: '',
+        name: npc.data[0]?.config.name,
+        summary: npc.data[0]?.config.summary,
         image: location.data?.imgHash?.value,
         npc: { ...npc.data[0] }
       })
     }
-  }, [isDataReady])
+  }, [npc.data])
 
   React.useEffect(() => {
     if (interactNPC.isSuccess) {
@@ -138,9 +140,9 @@ export default function CurrentLocationScreen() {
                 ])}>
                   <p>{locationDetails.scenario}</p>
                   <p className={clsx('mt-8')}>
-                    Nearby NPC:
+                    Nearby NPC :
                     <span
-                      className={clsx('cursor-pointer text-[#24E1FF]')}
+                      className={clsx('cursor-pointer text-[#24E1FF] ml-3')}
                       onClick={() => {
                         setIsOpen(true)
                         handleInteractNPC()

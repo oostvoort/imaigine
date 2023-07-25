@@ -13,8 +13,11 @@ import { Button } from '@/components/base/Button'
 import { HourglassLoader } from '@/components/base/Footer'
 import AILoader from '@/components/shared/AILoader'
 import TypingParagraph from '@/components/shared/TypingParagraph'
+import useNpc from '@/hooks/v1/useNpc'
+import { convertLocationNumberToLocationId } from '@/global/utils'
 
 export type LocationType = {
+  ipfsHash: string,
   name: string,
   summary: string,
   imgHash: string,
@@ -39,6 +42,8 @@ export default function WorldMapScreen(){
 
   const { generateTravel } =  useTravel()
   const { generateLocation } = useLocation(destination)
+
+  const { generateNPC } = useNpc()
 
   const { locationToGenerate } = useLocationLists(myPlayer?.revealedCell ?? [])
 
@@ -69,6 +74,7 @@ export default function WorldMapScreen(){
     if (generateLocation.isSuccess) {
       if (generateLocation.data) {
         setLocationData({
+          ipfsHash: generateLocation.data.ipfsHash,
           name: generateLocation.data.name,
           summary: generateLocation.data.summary,
           imgHash: generateLocation.data.imageHash,
@@ -103,6 +109,10 @@ export default function WorldMapScreen(){
       ...prevState,
       locationName: locationData.name,
     }))
+    generateNPC.mutate({
+      locationIpfsHash: locationData.ipfsHash,
+      locationId: convertLocationNumberToLocationId(destination),
+    })
     setIsLocationOpen(false)
     prepareTravel.mutateAsync({ toLocation: destination })
       .then(() => {
