@@ -140,9 +140,7 @@ contract MinigameSystem is System {
     bytes32 locationId = LocationComponent.get(playerID);
     bytes32 playerInQueue = BattleQueueComponent.get(locationId);
 
-    for (uint i = 0; i < battleHistoryArray.length; i++) {
-      BattleHistoryComponent.deleteRecord(battleHistoryArray[i]);
-    }
+    clearLogsHistory(battleHistoryArray);
 
     if (playerID == playerInQueue) BattleQueueComponent.set(locationId, 0);
 
@@ -150,7 +148,6 @@ contract MinigameSystem is System {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
       kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
     }
-
     return locationId;
   }
 
@@ -221,6 +218,12 @@ contract MinigameSystem is System {
       resultsBattle(1, 0, winner);
       resultsBattle(0, 1, loser);
       BattleHistoryComponent.set(id, playerID, battleComponentData.opponent, winner, winnerOption, loser, loserOption, draw);
+    }
+  }
+
+  function clearLogsHistory(uint[] memory battleHistoryArray) public {
+    for (uint i = 0; i < battleHistoryArray.length; i++) {
+      BattleHistoryComponent.deleteRecord(battleHistoryArray[i]);
     }
   }
 

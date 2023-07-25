@@ -2,7 +2,8 @@ import { useMUD } from '@/MUDContext'
 import { Entity, getComponentValueStrict, Has, HasValue, runQuery } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
 import { parsePlayerConfig } from '@/global/utils'
-import { useQueries } from '@tanstack/react-query'
+import {useMutation, useQueries} from '@tanstack/react-query'
+import {awaitStreamValue} from "@latticexyz/utils";
 
 export default function useHistory(playerId: Entity) {
   const {
@@ -10,6 +11,10 @@ export default function useHistory(playerId: Entity) {
       BattleHistoryComponent,
       ConfigComponent,
       BattlePointsComponent
+    },
+    network: {
+      worldSend,
+      txReduced$
     }
   } = useMUD()
 
@@ -120,6 +125,16 @@ export default function useHistory(playerId: Entity) {
     })
   })
 
+  const clearLogsHistory = useMutation({
+    mutationKey: ["clearLogsHistory:"],
+    mutationFn: async () => {
+      const tx = await worldSend('clearLogsHistory', [getBattleLogs])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+      return getBattleLogs
+    }
+
+  })
+
 
   /**
    * Gets player battle results and determines if it was a win.
@@ -145,7 +160,7 @@ export default function useHistory(playerId: Entity) {
       && ((usePlayerResults.totalWins != null && usePlayerResults.totalLoses != null) && usePlayerResults.totalWins > usePlayerResults.totalLoses)
       ? true
       : (usePlayerResults.totalLoses == null && usePlayerResults.totalLoses == null)
-      ? (usePlayerResults.totalWins == 0 && usePlayerResults.totalLoses == 0)
+      ? undefined
       : false,
     isDraw: (usePlayerResults.totalWins != null && usePlayerResults.totalLoses != null)
       && usePlayerResults.totalLoses === usePlayerResults.totalWins ? true : undefined,
@@ -156,5 +171,6 @@ export default function useHistory(playerId: Entity) {
     getWinnerInfo,
     getAllPlayersBattlePoints,
     getBattleLogs,
+    clearLogsHistory,
   }
 }

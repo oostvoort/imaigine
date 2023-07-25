@@ -185,6 +185,8 @@ export default function MinigameScreen() {
     }
   }
 
+  // console.log("BATTLE RESULTS: ", getBattleResult)
+
   function displayGameResult() {
     // if (hasOpponentSelectedWeapon) return 'Forfeit'
     if (getBattleResult.isDraw) return 'Draw'
