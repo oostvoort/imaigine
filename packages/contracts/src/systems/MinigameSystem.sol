@@ -13,9 +13,7 @@ import {
   BattlePointsComponent,
   BattleResultsComponents,
   BattlePreResultsComponents,
-  BattleTimeComponent,
-  BattleRoundTimeComponent,
-  BattleRoundTimeComponentData
+  BattleTimeComponent
 } from "../codegen/Tables.sol";
 
 import { BattleStatus, BattleOptions, BattleOutcomeType } from "../codegen/Types.sol";
@@ -152,9 +150,7 @@ contract MinigameSystem is System {
     else {
       BattleComponentData memory battleData = BattleComponent.get(playerID);
       kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
-      BattleResultsComponents.set(battleData.opponent, 0, 0);
     }
-    BattleResultsComponents.set(playerID, 0, 0);
 
     return locationId;
   }
@@ -179,6 +175,10 @@ contract MinigameSystem is System {
       beginMatch(stayingPlayer, playerInQueue, locationId, true);
     } else {
       BattleQueueComponent.set(locationId, stayingPlayer);
+      BattlePreResultsComponents.deleteRecord(stayingPlayer);
+      BattleResultsComponents.deleteRecord(stayingPlayer);
+      BattlePreResultsComponents.deleteRecord(playerToKickOut);
+      BattleResultsComponents.deleteRecord(playerToKickOut);
       BattleComponent.set(stayingPlayer, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
     }
   }
@@ -231,28 +231,5 @@ contract MinigameSystem is System {
     uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
 
     BattleResultsComponents.set(playerId, (totalWin + win), (totalLose + lose));
-  }
-
-  function startBattleRoundTime(bytes32 opponent) public returns (uint8) {
-      bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
-
-      BattleRoundTimeComponentData memory battleRound = BattleRoundTimeComponent.get(playerId);
-
-      BattleRoundTimeComponent.set(playerId, opponent, 10);
-      return BattleRoundTimeComponent.get(playerId).remainingTime;
-  }
-
-  function updateBattleRoundTime(bytes32 opponent, uint8 roundTime) public returns (uint8) {
-    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
-
-    require(BattleRoundTimeComponent.get(playerId).opponent != opponent, "Opponent doesn't exist");
-
-    BattleRoundTimeComponentData memory battleRound = BattleRoundTimeComponent.get(playerId);
-
-    if (battleRound.remainingTime != roundTime && battleRound.remainingTime > roundTime) {
-      BattleRoundTimeComponent.setRemainingTime(playerId, roundTime);
-    }
-
-    return BattleRoundTimeComponent.get(playerId).remainingTime;
   }
 }

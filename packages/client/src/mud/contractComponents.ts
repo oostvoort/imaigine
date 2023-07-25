@@ -420,21 +420,5 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    BattleRoundTimeComponent: (() => {
-      const tableId = new TableId("", "BattleRoundTimeC");
-      return defineComponent(
-        world,
-        {
-          opponent: RecsType.String,
-          remainingTime: RecsType.Number,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
   };
 }

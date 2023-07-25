@@ -136,18 +136,25 @@ export default function useHistory(playerId: Entity) {
    */
 
   const usePlayerResults = {
-    totalWins: battleData.playerInfo.battleResults?.totalWins ?? 0,
-    totalLoses: battleData.playerInfo?.battleResults?.totalLoses ?? 0,
+    totalWins: battleData.playerInfo.battleResults?.totalWins ?? null,
+    totalLoses: battleData.playerInfo?.battleResults?.totalLoses ?? null,
   }
 
   const getBattleResult = {
-    isWin: usePlayerResults.totalWins != usePlayerResults.totalLoses ? usePlayerResults.totalWins > usePlayerResults.totalLoses : 'Draw',
+    isWin: (usePlayerResults.totalWins != null || usePlayerResults.totalLoses != null)
+      && ((usePlayerResults.totalWins != null && usePlayerResults.totalLoses != null) && usePlayerResults.totalWins > usePlayerResults.totalLoses)
+      ? true
+      : (usePlayerResults.totalLoses == null && usePlayerResults.totalLoses == null)
+      ? (usePlayerResults.totalWins == 0 && usePlayerResults.totalLoses == 0)
+      : false,
+    isDraw: (usePlayerResults.totalWins != null && usePlayerResults.totalLoses != null)
+      && usePlayerResults.totalLoses === usePlayerResults.totalWins ? true : undefined,
   }
 
   return {
     getBattleResult,
     getWinnerInfo,
     getAllPlayersBattlePoints,
-    getBattleLogs
+    getBattleLogs,
   }
 }

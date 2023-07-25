@@ -97,9 +97,9 @@ export default function MinigameScreen() {
   React.useEffect(() => {
     if (playersInMatch) {
       if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
-        setIsChooseWeaponComponent(false)
         const currentTime = Math.floor(Date.now() / 1000)
 
+        setIsChooseWeaponComponent(false)
         setLockBattle.mutateAsync().then(() => {
           setBattlePreResult.mutateAsync().then(() => {
             setShowWeapon(true)
@@ -190,6 +190,7 @@ export default function MinigameScreen() {
   // }, [ countdown, hasOpponentSelectedWeapon ])
 
   React.useEffect(() => {
+    setIsMatchResultComponent(false)
     if (!playersInMatch) setRemainingTime(0)
 
     if (playersInMatch) {
@@ -224,9 +225,10 @@ export default function MinigameScreen() {
 
   function displayGameResult() {
     // if (hasOpponentSelectedWeapon) return 'Forfeit'
-    if (getBattleResult.isWin == 'Draw') return 'Draw'
+    if (getBattleResult.isDraw) return 'Draw'
     if (getBattleResult.isWin) return 'Victory!'
-    if (!getBattleResult.isWin) return 'Defeat!'
+    if (getBattleResult.isWin != undefined && !getBattleResult.isWin) return 'Defeat!'
+    if (getBattleResult.isWin == undefined) return 'FORFEIT!'
   }
 
   function displayRoundResult(battleDataOutcome: number) {
@@ -399,7 +401,7 @@ export default function MinigameScreen() {
                 <div
                   className={clsx([ 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute left-1/2 top-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
                   <p
-                    className={clsx([ 'text-[68px]  ', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': !getBattleResult?.isWin }, { 'text-option-8': getBattleResult?.isWin || getBattleResult?.isWin == 'Draw' } ])}>{displayGameResult()}</p>
+                    className={clsx([ 'text-[68px]  ', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': !getBattleResult?.isWin }, { 'text-option-8': getBattleResult?.isWin || getBattleResult?.isWin == undefined } ])}>{displayGameResult()}</p>
                   <p
                     className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>{`You've earned 100 battle points!`}</p>
                 </div>
