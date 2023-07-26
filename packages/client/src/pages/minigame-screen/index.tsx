@@ -66,11 +66,11 @@ export default function MinigameScreen() {
 
   const [ isChooseWeaponComponent, setIsChooseWeaponComponent ] = React.useState<boolean>(true)
   const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
-
+  const [ isForefeit, setIsForfeit ] = React.useState<boolean>(false)
   //to reset the countdown circle timer component
   const [ key, setKey ] = React.useState<number>(0)
   const [ remainingGameTime, setRemainingGameTime ] = React.useState<number>(0)
-  const [ remainingCountdownTime, setRemainingCountdownTime ] = React.useState<number>(0)
+  const [ remainingCountdownTime, setRemainingCountdownTime ] = React.useState<number>(10)
 
   const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === HEX_ZERO
 
@@ -114,7 +114,7 @@ export default function MinigameScreen() {
 
               setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
               rematch.mutateAsync(false).finally(() => {
-                  setKey(prevkey => prevkey + 1)
+                setKey(prevkey => prevkey + 1)
               })
             }, 3000)
 
@@ -128,39 +128,12 @@ export default function MinigameScreen() {
     }
   }, [ isWaitingForOpponent, selectedWeapon, hasOpponentSelectedWeapon ])
 
-  //CALL LOCKIN IF ONE OF THE PLAYER NOT CHOOSE A WEAPON WITHIN THE ROUND TIME
-  React.useEffect(() => {
-    if(!isWaitingForOpponent){
-      if (remainingCountdownTime <= 0) {
-        console.log('minigame remaining time is less than equal to zero')
-        lockIn.mutate()
-        clearLogsHistory.mutate()
-        setSelectedWeapon(3)
-        setShowWeapon(false)
-        setShowPrompt(false)
-        setIsChooseWeaponComponent(true)
-
-        setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-      }
-    }
-  }, [ remainingCountdownTime ])
-
-
-  // KICKING PLAYER LISTENER: WHEN OPPONENT VALUES BECOMES $0$, CHECK IF YOU ARE IN QUEUE, SHOW QUEUEING MODAL, ELSE LEAVE ROOM
-  React.useEffect(() => {
-    if(!isWaitingForOpponent){
-      if (battleData.battle?.opponent == HEX_ZERO) {
-        if (playdata.playerInQueue?.playerId == player.id) {
-          console.log("minigame forfeited");
-        }
-      }
-    }
-  }, [ battleData, playdata])
-
   //Game Timer
   React.useEffect(() => {
-    // setIsMatchResultComponent(false)
-    if (isWaitingForOpponent) setRemainingGameTime(0)
+    if (isWaitingForOpponent) {
+      setRemainingGameTime(0)
+      setIsMatchResultComponent(false)
+    }
 
     if (!isWaitingForOpponent) {
       const interval = setInterval(() => {
@@ -190,8 +163,6 @@ export default function MinigameScreen() {
       console.error(e)
     }
   }
-
-  // console.log("BATTLE RESULTS: ", getBattleResult)
 
   function displayGameResult() {
     // if (hasOpponentSelectedWeapon) return 'Forfeit'
@@ -309,19 +280,18 @@ export default function MinigameScreen() {
                    draggable={false} />
 
               {/*Waiting for opponent*/}
+
+
               <Template.MinigameLayout.WaitingForOpponent>
                 {
                   isWaitingForOpponent ?
                     <React.Fragment>
                       <div
-                        className={clsx(['bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+                        className={clsx([ { 'hidden': lockIn.isLoading }, 'bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
                         <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
                              className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
                         <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5', '' ])}>Waiting for the other
                           player</p>
-
-                        {/*Note*/}
-
                       </div>
 
                       <div
@@ -333,7 +303,8 @@ export default function MinigameScreen() {
                           INCOMING PLAYERS.
                         </p>
                       </div>
-                    </React.Fragment> : null
+                    </React.Fragment>
+                    : null
                 }
               </Template.MinigameLayout.WaitingForOpponent>
 
@@ -367,17 +338,17 @@ export default function MinigameScreen() {
 
               {/*Status of match*/}
               <Template.MinigameLayout.MatchStatus
-                className={clsx([ { 'zoomHidden relative': isWaitingForOpponent || !isMatchResultComponent || playdata.playerInQueue?.playerId != player.id} ])}>
+                className={clsx([ { 'zoomHidden relative': !isMatchResultComponent }, { 'hidden': isForefeit && !hasOpponentSelectedWeapon} ])}>
                 <div
                   className={clsx([ 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute left-1/2 top-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
                   <p
-                    className={clsx([ 'text-[68px]  ', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': !getBattleResult?.isWin }, { 'text-option-8': getBattleResult?.isWin || getBattleResult?.isWin == undefined } ])}>{displayGameResult()}</p>
+                    className={clsx([ 'text-[68px]', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': !getBattleResult?.isWin }, { 'text-option-8': getBattleResult?.isWin || getBattleResult?.isWin == undefined || getBattleResult?.isDraw } ])}>{displayGameResult()}</p>
                   <p
                     className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>{`You've earned 100 battle points!`}</p>
                 </div>
 
                 <div
-                  className={clsx([ 'flex flex-col gap-md', 'absolute -bottom-[10%] left-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
+                  className={clsx([ 'flex flex-col gap-md', 'absolute -bottom-[10%] left-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent }, { 'hidden': isForefeit && hasOpponentSelectedWeapon} ])}>
                   {/*<Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleRematchBattle}>Rematch</Button>*/}
                   <div className={clsx([ { 'hidden': !isMatchResultComponent } ])}>
                     <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleLeaveBattle}>Leave Battle</Button>
@@ -396,6 +367,18 @@ export default function MinigameScreen() {
                       key={key}
                       isPlaying={true}
                       duration={10}
+                      onComplete={() => {
+                        if (!isWaitingForOpponent) {
+                          lockIn.mutate()
+                          clearLogsHistory.mutate()
+                          setSelectedWeapon(3)
+                          setShowWeapon(false)
+                          setShowPrompt(false)
+                          setIsMatchResultComponent(true)
+
+                          setIsForfeit(true)
+                        }
+                      }}
                       onUpdate={(remainingTime) => {
                         setRemainingCountdownTime(remainingTime)
                       }}
@@ -418,7 +401,7 @@ export default function MinigameScreen() {
                 <div
                   className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': selectedWeapon !== 3 && !hasOpponentSelectedWeapon } ])}>
                   <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                       className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { hidden: !hasOpponentSelectedWeapon || selectedWeapon === 3 } ])}
+                       className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { 'hidden': !hasOpponentSelectedWeapon || selectedWeapon === 3 } ])}
                        draggable={false} />
                   <p
                     className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon !== 3 } ])}>{'Choose your weapon'}</p>
