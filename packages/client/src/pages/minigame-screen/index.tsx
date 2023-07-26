@@ -1,4 +1,3 @@
-// force trigger pipeline
 import React from 'react'
 import { clsx } from 'clsx'
 import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
