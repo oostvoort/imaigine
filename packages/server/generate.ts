@@ -9,7 +9,7 @@ export async function generateMap(seed: number) : Promise<string>{
     page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
     // Set screen size
-    await page.setViewport({width: 768, height: 768});
+    await page.setViewport({width: 1862, height: 980});
 
     await page.goto(`http://localhost:3000/map/?seed=${seed}&options=default`);
 

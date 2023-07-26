@@ -259,7 +259,7 @@ async function checkLoadParameters() {
   const url = new URL(window.location.href);
   const params = url.searchParams;
 
-  // of there is a valid maplink, try to load .map file from URL
+  // if there is a valid maplink, try to load .map file from URL
   if (params.get("maplink")) {
 
     WARN && console.warn("Load map from URL");
