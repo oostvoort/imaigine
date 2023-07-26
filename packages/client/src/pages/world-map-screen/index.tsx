@@ -138,7 +138,7 @@ export default function WorldMapScreen(){
     <React.Fragment>
       <SubLayout.MapViewLayout>
         <Map
-          className={'w-full h-full mt-20'}
+          className={'w-full h-full'}
           myPlayer={myPlayer}
           isMyPlayerComplete={isMyPlayerComplete}
           players={isTravelling ? undefined : players}
