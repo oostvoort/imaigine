@@ -26,6 +26,8 @@ services:
 
       # Redirect Middleware
       - "traefik.http.middlewares.imaigine_http.redirectscheme.scheme=https"
+    networks:
+      - traefik      
 
 networks:
   traefik:
