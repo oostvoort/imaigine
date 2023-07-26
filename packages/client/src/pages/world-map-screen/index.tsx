@@ -29,7 +29,7 @@ type TravelStory = {
 }
 
 export default function WorldMapScreen(){
-
+  //test ci-cd
   const { players, myPlayer, isMyPlayerComplete, functions: { prepareTravel, travel }, travelData } = useMap()
   const [ isLocationOpen, setIsLocationOpen ] = React.useState<boolean>(false)
   const [locationData, setLocationData] = React.useState<LocationType>({} as LocationType)
