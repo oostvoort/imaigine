@@ -169,7 +169,7 @@ export default function MinigameScreen() {
     if (getBattleResult.isDraw) return 'Draw'
     if (getBattleResult.isWin) return 'Victory!'
     if (getBattleResult.isWin != undefined && !getBattleResult.isWin) return 'Defeat!'
-    if (getBattleResult.isWin == undefined || playdata.playerInQueue?.playerId == player.id) return 'FORFEIT!'
+    if (getBattleResult.isWin == undefined || isForefeit && hasOpponentSelectedWeapon) return 'FORFEIT!'
   }
 
   function displayRoundResult(battleDataOutcome: number) {

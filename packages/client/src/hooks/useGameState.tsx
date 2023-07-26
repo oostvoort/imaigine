@@ -9,7 +9,6 @@ import { useComponentValue } from '@latticexyz/react'
 import useBattle from '@/hooks/minigame/useBattle'
 import { HEX_ZERO } from '@/global/constants'
 
-
 const useGameState = () => {
   const {
     network: {
@@ -43,14 +42,6 @@ const useGameState = () => {
   } else if (data?.playerId === player.id) { // implicitly say battle.opponent is HEX_ZERO
     overrideState = SCREENS.MINIGAME
   }
-
-  // console.log("minigame battleData.battle", battleData.battle);
-  // console.log("minigame data?.playerId", battleData);
-  // console.log("minigame condition 1", battleData.battle && battleData.battle.opponent != HEX_ZERO);
-  // console.log("minigame condition 2", data?.playerId === player.id);
-  // console.log('minigame overrideState', overrideState)
-  // console.log('minigame lockIn', lockIn.isLoading)
-
 
   if (query.isLoading || (query.data && !player.player)) return SCREENS.LOADING
   // else if (player.travel?.status ?? 0 >= 2) return SCREENS.TRAVELLING
