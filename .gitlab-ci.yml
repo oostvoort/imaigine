@@ -12,11 +12,11 @@ deploy_production:
   only:
     refs:
       - dev
-    changes:
-      - "*"
-      # - "./packages/"
-      # - "./gitlab-ci.yml"
-      # - "./Dockerfile"
+    # changes:
+    #   - "*"
+    #   # - "./packages/"
+    #   # - "./gitlab-ci.yml"
+    #   # - "./Dockerfile"
 
   before_script:
   - eval $(ssh-agent -s)
