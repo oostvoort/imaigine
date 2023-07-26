@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { cn } from '@/global/utils'
 import { clsx } from 'clsx'
+import { IPFS_URL_PREFIX } from '@/global/constants'
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -108,7 +109,6 @@ type PlayerScoreBoardProps = {
 }
 
 const PlayerScoreBoard = ({ imgSrc, name, battlePoints, win, loss }: PlayerScoreBoardProps) => {
-  //TODO: ADD ANIMATION AND LOADING EFFECT
   return (
     <React.Fragment>
       {/*Player Opponent Card*/}
@@ -118,8 +118,8 @@ const PlayerScoreBoard = ({ imgSrc, name, battlePoints, win, loss }: PlayerScore
 
           <div
             className={clsx([ 'flex-none', 'w-[100px] h-[100px]', 'border border-[#2C3B47] rounded-full' ])}>
-            <img src={imgSrc} alt={''}
-                 className={clsx([ 'rounded-full', 'h-full w-full', 'object-cover object-top', { 'hidden': imgSrc === '' } ])} />
+            <img src={`${IPFS_URL_PREFIX}/${imgSrc}`} alt={''}
+                 className={clsx([ 'rounded-full', 'h-full w-full', 'object-cover object-top', { 'hidden': imgSrc === undefined } ])} />
           </div>
 
           {/*Player Status Win / Loss*/}

@@ -41,7 +41,7 @@ const useGetFromIPFS = (ipfsHash: string, key?: string) => {
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const { getBattleResult, getWinnerInfo } = useHistory(player.id as Entity)
+  const { getBattleResult, getWinnerInfo, clearLogsHistory } = useHistory(player.id as Entity)
   const { playdata } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
   const {
@@ -63,14 +63,15 @@ export default function MinigameScreen() {
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
   const [ showWeapon, setShowWeapon ] = React.useState<boolean>(false)
   const [ showPrompt, setShowPrompt ] = React.useState<boolean>(false)
-  const [ remainingTime, setRemainingTime ] = React.useState<number>(0)
+
   const [ isChooseWeaponComponent, setIsChooseWeaponComponent ] = React.useState<boolean>(true)
   const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
 
+  //to reset the countdown circle timer component
   const [ key, setKey ] = React.useState<number>(0)
+  const [ remainingGameTime, setRemainingGameTime ] = React.useState<number>(0)
   const [ remainingCountdownTime, setRemainingCountdownTime ] = React.useState<number>(0)
 
-  const playersInMatch = playdata.playerInQueue?.playerId !== player.id
   const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === HEX_ZERO
 
   const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '', 'opponent')
@@ -94,10 +95,8 @@ export default function MinigameScreen() {
 
   //IF BOTH PLAYERS CHOOSE A WEAPON WITH IN THE COUNTDOWN TIMER
   React.useEffect(() => {
-    if (playersInMatch) {
+    if (!isWaitingForOpponent) {
       if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
-
-
         setIsChooseWeaponComponent(false)
         setLockBattle.mutateAsync().then(() => {
           setBattlePreResult.mutateAsync().then(() => {
@@ -127,7 +126,7 @@ export default function MinigameScreen() {
         })
       }
     }
-  }, [ playersInMatch, selectedWeapon, hasOpponentSelectedWeapon ])
+  }, [ isWaitingForOpponent, selectedWeapon, hasOpponentSelectedWeapon ])
 
   //CALL LOCKIN IF ONE OF THE PLAYER NOT CHOOSE A WEAPON WITHIN THE ROUND TIME
   React.useEffect(() => {
@@ -135,17 +134,24 @@ export default function MinigameScreen() {
       if (remainingCountdownTime <= 0) {
         console.log('minigame remaining time is less than equal to zero')
         lockIn.mutate()
+        clearLogsHistory.mutate()
+        setSelectedWeapon(3)
+        setShowWeapon(false)
+        setShowPrompt(false)
+        setIsChooseWeaponComponent(true)
+
+        setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
       }
     }
-  }, [ lockIn ])
+  }, [ remainingCountdownTime ])
 
-  console.log("minigame lockin", lockIn.isLoading);
+
   // KICKING PLAYER LISTENER: WHEN OPPONENT VALUES BECOMES $0$, CHECK IF YOU ARE IN QUEUE, SHOW QUEUEING MODAL, ELSE LEAVE ROOM
   React.useEffect(() => {
     if(!isWaitingForOpponent){
       if (battleData.battle?.opponent == HEX_ZERO) {
         if (playdata.playerInQueue?.playerId == player.id) {
-          console.log('minigame: show forfeit modal')
+          console.log("minigame forfeited");
         }
       }
     }
@@ -153,18 +159,18 @@ export default function MinigameScreen() {
 
   //Game Timer
   React.useEffect(() => {
-    setIsMatchResultComponent(false)
-    if (!playersInMatch) setRemainingTime(0)
+    // setIsMatchResultComponent(false)
+    if (isWaitingForOpponent) setRemainingGameTime(0)
 
-    if (playersInMatch) {
+    if (!isWaitingForOpponent) {
       const interval = setInterval(() => {
         const currentTime = Math.floor(Date.now() / 1000)
         const timeDifference = battleTime.end - currentTime
 
         if (timeDifference > 0) {
-          setRemainingTime(timeDifference)
+          setRemainingGameTime(timeDifference)
         } else {
-          setRemainingTime(0)
+          setRemainingGameTime(0)
           clearInterval(interval)
           setIsMatchResultComponent(true)
         }
@@ -174,7 +180,7 @@ export default function MinigameScreen() {
         clearInterval(interval)
       }
     }
-  }, [ battleTime.end, playersInMatch ])
+  }, [ battleTime.end, isWaitingForOpponent ])
 
   function handleLeaveBattle() {
     try {
@@ -192,7 +198,7 @@ export default function MinigameScreen() {
     if (getBattleResult.isDraw) return 'Draw'
     if (getBattleResult.isWin) return 'Victory!'
     if (getBattleResult.isWin != undefined && !getBattleResult.isWin) return 'Defeat!'
-    if (getBattleResult.isWin == undefined) return 'FORFEIT!'
+    if (getBattleResult.isWin == undefined || playdata.playerInQueue?.playerId == player.id) return 'FORFEIT!'
   }
 
   function displayRoundResult(battleDataOutcome: number) {
@@ -249,13 +255,13 @@ export default function MinigameScreen() {
               <Card
                 className={clsx([ 'max-h-[684px] h-full', 'border border-accent rounded-2xl', 'bg-modal bg-cover bg-center bg-no-repeat' ])}>
                 <div className={clsx([ 'h-full', 'px-sm py-md', 'flex flex-col' ])}>
-                  <CardTimer timer={formatTime(remainingTime)} />
+                  <CardTimer timer={formatTime(remainingGameTime)} />
 
                   <div className={clsx([ ' mt-lg mb-md h-full', 'relative', 'flex flex-col justify-between' ])}>
                     <PlayerScoreBoard
                       isLoading={_opponentInfo.isLoading}
                       name={_opponentInfo.data ? _opponentInfo.data.name : '???'}
-                      imgSrc={`${IPFS_URL_PREFIX}/${_opponentInfo.data?.image}`}
+                      imgSrc={_opponentInfo.data?.image}
                       battlePoints={_opponentInfo.isSuccess ? Number(_opponentInfo.data?.battlePoints) : '?'}
                       win={_opponentInfo.isSuccess ? String(_opponentInfo.data?.battleWinResult) : '0'}
                       loss={_opponentInfo.isSuccess ? String(_opponentInfo.data?.battleLossResult) : '0'}
@@ -269,7 +275,7 @@ export default function MinigameScreen() {
                     <PlayerScoreBoard
                       isLoading={_playerInfo.isLoading}
                       name={_playerInfo.data ? 'YOU' : '???'}
-                      imgSrc={`${IPFS_URL_PREFIX}/${_playerInfo.data?.image}`}
+                      imgSrc={_playerInfo.data?.image}
                       battlePoints={_playerInfo.isSuccess ? Number(_playerInfo.data?.battlePoints) : '?'}
                       win={_playerInfo.isSuccess ? String(_playerInfo.data?.battleWinResult) : '0'}
                       loss={_playerInfo.isSuccess ? String(_playerInfo.data?.battleLossResult) : '0'}
@@ -305,7 +311,7 @@ export default function MinigameScreen() {
               {/*Waiting for opponent*/}
               <Template.MinigameLayout.WaitingForOpponent>
                 {
-                  isWaitingForOpponent || isWaitingForOpponent ?
+                  isWaitingForOpponent ?
                     <React.Fragment>
                       <div
                         className={clsx(['bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
@@ -361,7 +367,7 @@ export default function MinigameScreen() {
 
               {/*Status of match*/}
               <Template.MinigameLayout.MatchStatus
-                className={clsx([ { 'zoomHidden relative': !playersInMatch || !isMatchResultComponent } ])}>
+                className={clsx([ { 'zoomHidden relative': isWaitingForOpponent || !isMatchResultComponent || playdata.playerInQueue?.playerId != player.id} ])}>
                 <div
                   className={clsx([ 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute left-1/2 top-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
                   <p
