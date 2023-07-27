@@ -1,3 +1,4 @@
+import React from 'react'
 import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import useLocalStorage from '@/hooks/useLocalStorage'
@@ -5,9 +6,16 @@ import { Wallet } from 'ethers'
 
 const DUMMY_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 export default function Settings() {
-  const [privateKey, setPrivateKey] = useLocalStorage('mud:burnerWallet', DUMMY_PRIVATE_KEY)
+  const [ privateKey ] = useLocalStorage('mud:burnerWallet', DUMMY_PRIVATE_KEY)
 
   const wallet = new Wallet(privateKey)
+
+  const onClickLogOutHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    localStorage.removeItem("mud:burnerWallet")
+    location.reload()
+  }
+
   return (
     <div className={clsx([ 'md:w-[622px]  h-full w-full', 'p-sm' ])}>
       <h3 className={clsx([ 'text-accent text-jost', 'uppercase tracking-[1.4px] font-medium', 'mb-sm' ])}>History</h3>
@@ -38,10 +46,7 @@ export default function Settings() {
         <Button
           variant={'neutral'}
           size={'btnWithBgImg'}
-          onClick={() => {
-            setPrivateKey('')
-            window.location.reload()
-          }}>Logout</Button>
+          onClick={(e) => onClickLogOutHandler(e)}>Logout</Button>
       </div>
 
     </div>
