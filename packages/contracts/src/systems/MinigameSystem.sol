@@ -20,7 +20,7 @@ import { BattleStatus, BattleOptions, BattleOutcomeType } from "../codegen/Types
 
 contract MinigameSystem is System {
 
-  uint256 private constant FORFEIT_TIME = 10; // the time elapsed wherein a user is considered forfeited
+  uint256 private constant FORFEIT_TIME = 30; // the time elapsed wherein a user is considered forfeited
 
   /// @notice called by the player to play rps
   function play() public returns (bytes32) {
