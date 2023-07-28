@@ -1,11 +1,13 @@
 import React from 'react'
+import { clsx } from 'clsx'
 
 type PropType = {
   text: string
   typingSpeed: number
+  className?: string
 }
 
-export default function TypingParagraph({ text, typingSpeed }: PropType) {
+export default function TypingParagraph({ text, typingSpeed, className }: PropType) {
   const [displayedText, setDisplayedText] = React.useState('')
   const textLength = text.length
   const timeDelay = typingSpeed || 100 // Adjust the typing speed (in milliseconds) as needed
@@ -25,5 +27,5 @@ export default function TypingParagraph({ text, typingSpeed }: PropType) {
     return () => clearInterval(typingInterval)
   }, [text, textLength, timeDelay])
 
-  return <p className={'break-words w-full'}>{displayedText}</p>
+  return <p className={clsx(['break-words w-full', className])}>{displayedText}</p>
 }

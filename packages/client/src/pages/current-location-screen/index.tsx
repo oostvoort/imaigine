@@ -15,13 +15,14 @@ import { SkeletonParagraph } from '@/components/base/Skeleton'
 import usePlayer from '@/hooks/v1/usePlayer'
 import useLocationInteraction from '@/hooks/v1/useLocationInteraction'
 import useNpc from '@/hooks/v1/useNpc'
+import TypingParagraph from '@/components/shared/TypingParagraph'
 
 export default function CurrentLocationScreen() {
   const {
     network: {
-      playerEntity
+      playerEntity,
     },
-  } = useMUD();
+  } = useMUD()
 
   const { player } = usePlayer()
   const { location } = useLocation(player.location?.value ?? undefined)
@@ -103,67 +104,77 @@ export default function CurrentLocationScreen() {
       if (interactNPC.data !== undefined) {
         setNPCConversation({
           conversationHistory: interactNPC.data.conversationHistory.reverse(),
-          option: interactNPC.data.option
+          option: interactNPC.data.option,
         })
       }
     }
-  }, [interactNPC.isSuccess])
+  }, [ interactNPC.isSuccess ])
 
   return (
     <React.Fragment>
       <SubLayout>
         <SubLayout.VisualSummaryLayout>
-            {
-              location.data?.imgHash === undefined ?
-                <div className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'} >
-                  <div className={'border border-4 rounded-full p-10 text-center'}>
-                    <img src={'/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'}/>
-                  </div>
+          {
+            location.data?.imgHash === undefined ?
+              <div
+                className={'bg-[#485476] flex items-center justify-center w-full h-full rounded-l-2xl animate-pulse'}>
+                <div className={'border border-4 rounded-full p-10 text-center'}>
+                  <img src={'/assets/svg/ai-logo.svg'} alt={'AI Logo'} className={'h-10 w-10'} />
                 </div>
-                :
-                <img
-                  src={`${IPFS_URL_PREFIX}/${location.data.imgHash.value}`}
-                  alt={'Location'}
-                  className={clsx([
-                    'object-cover w-full h-full',
-                    'rounded-l-2xl', '',
-                  ])}
-                />
-            }
-            {
-              locationDetails.scenario === undefined ? (
-                <SkeletonParagraph />
-              ) : (
-                <div className={clsx([
-                  'text-[30px] text-[#BAC5F1]',
-                  'font-amiri',
-                ])}>
-                  <p>{locationDetails.scenario}</p>
-                  <p className={clsx('mt-8')}>
-                    Nearby NPC :
-                    <span
-                      className={clsx('cursor-pointer text-[#24E1FF] ml-3')}
-                      onClick={() => {
-                        setIsOpen(true)
-                        handleInteractNPC()
-                      }}>
+              </div>
+              :
+              <img
+                src={`${IPFS_URL_PREFIX}/${location.data.imgHash.value}`}
+                alt={'Location'}
+                className={clsx([
+                  'object-cover w-full h-full',
+                  'rounded-l-2xl', '',
+                ])}
+              />
+          }
+          {
+            !locationDetails.scenario || createLocationInteraction.isLoading ? (
+              <SkeletonParagraph />
+            ) : (
+              <div className={clsx([
+                'text-[30px] text-[#BAC5F1]',
+                'font-amiri',
+              ])}>
+                <TypingParagraph
+                  text={locationDetails.scenario} typingSpeed={5} />
+                <p className={clsx('mt-8')}>
+                  Nearby NPC :
+                  <span
+                    className={clsx('cursor-pointer text-[#24E1FF] ml-3')}
+                    onClick={() => {
+                      setIsOpen(true)
+                      handleInteractNPC()
+                    }}>
                       {locationDetails.npc.name}
                     </span>
-                  </p>
-                </div>
-              )
-            }
+                </p>
+              </div>
+            )
+          }
         </SubLayout.VisualSummaryLayout>
       </SubLayout>
+
       <Footer>
         {
-          generateLocationInteraction.isLoading || generateLocationInteraction.data === undefined ?
-            <HourglassLoader>Loading...</HourglassLoader>
-            :
-            <ButtonWrapper>
+          !generateLocationInteraction.data || generateLocationInteraction.isLoading || createLocationInteraction.isLoading
+            ? <HourglassLoader>Loading...</HourglassLoader>
+            : <ButtonWrapper className={clsx([ { 'hidden': createLocationInteraction.isLoading } ])}>
               {
                 buttonOptions.map((btn, key) => (
-                  <Button key={key} variant={btn.variant} size={btn.size} onClick={btn.action}>{btn.title}</Button>
+                  <Button
+                    key={key}
+                    size={btn.size}
+                    onClick={btn.action}
+                    variant={btn.variant}
+                    disabled={createLocationInteraction.isLoading}
+                  >
+                    <span>{btn.title}</span>
+                  </Button>
                 ))
               }
             </ButtonWrapper>

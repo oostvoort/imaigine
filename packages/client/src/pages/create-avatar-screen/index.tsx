@@ -6,74 +6,13 @@ import { camelCaseToTitle } from '@/global/utils'
 import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import LoadingScreen from '@/components/shared/LoadingScreen'
 import LoadingStory from '@/components/shared/LoadingStory'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { activeScreen_atom, currentLoader_atom, SCREENS } from '@/states/global'
-import { useSetAtom } from 'jotai'
 import usePlayer from '@/hooks/v1/usePlayer'
 import { GeneratePlayerProps, GeneratePlayerResponse } from '../../../../types'
-import { IPFS_URL_PREFIX } from '@/global/constants'
+import { colorPalette, IPFS_URL_PREFIX, setupOptions1, setupOptions2 } from '@/global/constants'
 import { useMUD } from '@/MUDContext'
-
-type SetupOptionType = Array<{
-  label: string,
-  store: keyof GeneratePlayerProps,
-  options: Array<string>
-}>
-
-const setupOptions1: SetupOptionType = [
-  {
-    label: 'Select your Age Group',
-    store: 'ageGroup',
-    options: [ 'child', 'adolescent', 'youngAdult', 'adult', 'elderly' ],
-  },
-  {
-    label: 'Select your Gender Identity',
-    store: 'genderIdentity',
-    options: [ 'male', 'female', 'nonbinary', 'others' ],
-  },
-]
-
-const setupOptions2: SetupOptionType = [
-  {
-    label: 'Select your Race',
-    store: 'race',
-    options: [ 'human', 'elf', 'dwarf', 'orc', 'gnome', 'halfling' ],
-  },
-  {
-    label: 'Skin Color',
-    store: 'skinColor',
-    options: [ 'light', 'tan', 'medium', 'dark', 'ebony' ],
-  },
-  {
-    label: 'Select your Body Type',
-    store: 'bodyType',
-    options: [ 'slim', 'average', 'athletic', 'burly', 'plump' ],
-  },
-]
-
-const colorPalette = [
-  {
-    'bg-option-1': 'green',
-  },
-  {
-    'bg-option-2': 'brown',
-  },
-  {
-    'bg-option-3': 'blue',
-  },
-  {
-    'bg-option-4': 'white',
-  },
-  {
-    'bg-option-5': 'yellow',
-  },
-  {
-    'bg-option-6': 'gray',
-  },
-  {
-    'bg-option-7': 'red',
-  },
-]
+import Spinner from '@/components/base/Spinner'
 
 export default function CreateAvatarScreen() {
   const {
@@ -149,14 +88,12 @@ export default function CreateAvatarScreen() {
   }
 
   const handleGenerateImage = async (visualSummary: string) => {
-    setIsRegeneratingImage(true)
     if (player) {
       const imageHash = await generatePlayerImage.mutateAsync({ visualSummary: visualSummary })
       if (imageHash !== undefined) {
         setImageHashes(prevState => [...prevState, imageHash.imageIpfsHash])
       }
     }
-    setIsRegeneratingImage(false)
   }
 
   const handleCreatePlayer = async () => {
@@ -338,11 +275,14 @@ export default function CreateAvatarScreen() {
                     </CardContent>
                   </Card>
 
-                  <div className={'w-full flex justify-center mt-md'}>
+                  <div
+                    className={clsx([ 'w-full flex justify-center mt-md ease-in duration-300', { 'hidden ease-out duration-300': createPlayer.isLoading } ])}>
                     <Button
                       variant={'refresh'}
-                      onClick={() => { generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary) }}
-                      disabled={isRegeneratingImage ? true : false}
+                      onClick={() => {
+                        generatedPlayer && handleGenerateImage(generatedPlayer?.visualSummary)
+                      }}
+                      disabled={generatePlayerImage.isLoading}
                     >
                       <img
                         src={`/assets/svg/refresh.svg`}
@@ -371,14 +311,20 @@ export default function CreateAvatarScreen() {
                     'min-w-[360px] h-20 rounded-full',
                     'text-xl tracking-wider',
                     'rounded-full',
+                    { '!cursor-not-allowed': createPlayer.isLoading },
                   ])}
+                  disabled={createPlayer.isLoading}
                   onClick={() => {
                     if (step == 1) setStep(2)
                     if (step == 2) handleGeneratePlayer()
                     if (step == 3) handleCreatePlayer()
                   }}
                 >
-                  {step == 3 ? `LET'S GO!` : 'NEXT'}
+                  {
+                    createPlayer.isLoading
+                      ? <Spinner text={'Loading'}/>
+                      : step == 3 ? `LET'S GO!` : 'NEXT'
+                  }
                 </Button>
               )
             }

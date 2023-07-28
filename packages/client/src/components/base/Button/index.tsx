@@ -5,7 +5,7 @@ import { clsx } from 'clsx'
 
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-0 disabled:opacity-50 disabled:pointer-events-none font-jost',
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-0 disabled:opacity-50 font-jost cursor-pointer disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
@@ -20,13 +20,13 @@ const buttonVariants = cva(
         link: 'underline-offset-4 hover:underline text-primary',
         accent: 'bg-white text-accent-3 hover:bg-white/80',
         selective: 'bg-primary font-normal tracking-wide font-sans hover:bg-primary/80',
-        neutral: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center hover:bg-btnNeutralHover' ]),
+        neutral: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center hover:bg-btnNeutralHover', 'disabled:animate-pulse' ]),
         neutralSm: clsx([ 'text-center text-xl leading-[32px] text-option-8', 'font-amiri', 'bg-btnNeutral bg-no-repeat bg-center hover:bg-btnNeutralHover' ]),
         good: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnGood bg-no-repeat bg-center hover:bg-btnGoodHover' ]),
         evil: clsx([ 'text-center text-3xl leading-[48px] text-option-8', 'font-amiri', 'bg-btnEvil bg-no-repeat bg-center hover:bg-btnEvilHover' ]),
         modalClose: clsx([ '' ]),
         menu: clsx([ 'text-option-8 text-left text-xl', 'font-amiri', 'leading-8' ]),
-        loading: clsx([ 'animate-pulse bg-muted text-muted' ]),
+        loading: clsx([ 'animate-pulse ', 'bg-btnNeutral ' ]),
         refresh: clsx([ 'p-3 ', 'font-segoe', 'text-[14px] leading-8 text-option-11' ]),
         icon: '',
         battle: clsx([ 'bg-battleBtn ', 'gap-x-[10px] text-option-8 text-left text-xl', 'font-amiri', 'leading-8' ]),

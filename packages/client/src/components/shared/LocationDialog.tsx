@@ -6,6 +6,7 @@ import { Button } from '@/components/base/Button'
 import { IPFS_URL_PREFIX } from '@/global/constants'
 import { LocationType } from '@/pages/world-map-screen'
 import AILoader from '@/components/shared/AILoader'
+import TypingParagraph from '@/components/shared/TypingParagraph'
 
 type PropType = {
   isOpen?: boolean,
@@ -52,28 +53,34 @@ export default function LocationDialog({ isOpen, setOpen, location, travelFunc }
               ) : (
                 <div className={clsx('flex h-full gap-x-6')}>
                   <div className={clsx('w-5/12')}>
+                    <div className={clsx([{'h-full w-full border border-ring rounded-lg bg-background animate-pulse': location.imgHash === undefined}])}/>
                     <img
                       src={`${location.imgHash ? `${IPFS_URL_PREFIX}/${location.imgHash}` : '/assets/background/bg1.jpg'}`}
                       alt={'Location'}
                       className={clsx([
                         'w-full h-full object-cover',
                         'rounded rounded-xl',
+                        {'hidden': location.imgHash === undefined}
                       ])}
                     />
                   </div>
                   <div className={clsx('flex flex-col justify-between w-7/12')}>
                     <div>
-                      <h1 className={clsx([
+                      <TypingParagraph
+                        className={clsx([
                         'text-4xl text-option-9',
                         'font-amiri',
-                        'leading-[48px] my-3',
-                      ])}>
-                        {location.name}
-                      </h1>
+                        'leading-[48px] my-3' ])}
+                        text={location.name}
+                        typingSpeed={10}
+                      />
+
                       <div className={clsx('overflow-y-auto h-[350px]')}>
-                        <p className={clsx('text-3xl text-option-11 font-amiri leading-10')}>
-                          {location.summary}
-                        </p>
+                        <TypingParagraph
+                          className={clsx('text-3xl text-option-11 font-amiri leading-10')}
+                          text={location.summary}
+                          typingSpeed={5}
+                        />
                       </div>
                     </div>
                     <div className={'flex justify-center'}>

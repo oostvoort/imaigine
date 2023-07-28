@@ -182,23 +182,23 @@ export default function WorldMapScreen(){
             </div>
             <div className={'flex justify-center'}>
               {
-                travelData?.status === 0 ? (
-                  <Button
-                    variant={'neutral'}
-                    size={'btnWithBgImg'}
-                    onClick={handleEnterLocation}
-                  >
-                    Enter {travelStory.locationName}
-                  </Button>
+                 travelData?.status !== 0 || travelStory.travelStory === '' ? (
+                     <div
+                       className={clsx([
+                         'bg-lining bg-no-repeat bg-cover h-[48px] w-[800px]',
+                         'flex justify-center gap-3',
+                       ])}
+                     >
+                       <HourglassLoader>Travelling to {travelStory.locationName}</HourglassLoader>
+                     </div>
                 ) : (
-                  <div
-                    className={clsx([
-                      'bg-lining bg-no-repeat bg-cover h-[48px] w-[800px]',
-                      'flex justify-center gap-3',
-                    ])}
-                  >
-                    <HourglassLoader>Travelling to {travelStory.locationName}</HourglassLoader>
-                  </div>
+                   <Button
+                     variant={'neutral'}
+                     size={'btnWithBgImg'}
+                     onClick={handleEnterLocation}
+                   >
+                     Enter {travelStory.locationName}
+                   </Button>
                 )
               }
             </div>
