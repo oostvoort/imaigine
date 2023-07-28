@@ -3,7 +3,7 @@ import { foundry, mainnet, optimismGoerli } from '@wagmi/chains'
 
 const mainnet_forkserver = {
   ...mainnet,
-  id: 88,
+  id: 1038,
   name: 'Forkserver',
   network: 'forkserver',
   nativeCurrency: {
