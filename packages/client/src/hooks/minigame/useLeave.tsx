@@ -5,6 +5,8 @@ import { Entity } from '@latticexyz/recs'
 import usePlay from '@/hooks/minigame/usePlay'
 import useHistory from '@/hooks/minigame/useHistory'
 import usePlayer from '@/hooks/v1/usePlayer'
+import { useSetAtom } from 'jotai'
+import { activeScreen_atom, SCREENS } from '@/states/global'
 
 export default function useLeave(locationId: Entity) {
 
@@ -14,6 +16,8 @@ export default function useLeave(locationId: Entity) {
       txReduced$,
     },
   } = useMUD()
+
+  const setActiveScreen = useSetAtom(activeScreen_atom)
 
   const { playdata } = usePlay(locationId)
   const { player } = usePlayer()
@@ -32,6 +36,9 @@ export default function useLeave(locationId: Entity) {
       const tx = await worldSend('leave', [getBattleLogs])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return playdata
+    },
+    onSuccess: () => {
+      setActiveScreen(SCREENS.CURRENT_LOCATION)
     }
   })
 
