@@ -2,7 +2,6 @@ import { MUDChain, latticeTestnet } from "@latticexyz/common/chains";
 import { foundry, mainnet, optimismGoerli } from '@wagmi/chains'
 
 const mainnet_forkserver = {
-  ...mainnet,
   id: 1,
   name: 'Forkserver',
   network: 'forkserver',
@@ -12,8 +11,26 @@ const mainnet_forkserver = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: { http: ['https://fork.oostvoort.work/'] },
-    default: { http: ['https://fork.oostvoort.work/'] },
+    public: {
+      http: ['https://fork.oostvoort.work/'],
+      webSocket: ["wss://fork.oostvoort.work/"],
+    },
+    default: {
+      http: ['https://fork.oostvoort.work/'],
+      webSocket: ["wss://fork.oostvoort.work/"],
+    },
+    blockExplorers: {
+      otterscan: {
+        name: "Otterscan",
+        url: "https://explorer.testnet-chain.linfra.xyz",
+      },
+      default: {
+        name: "Otterscan",
+        url: "https://explorer.testnet-chain.linfra.xyz",
+      },
+    },
+    modeUrl: "https://mode.testnet-mud-services.linfra.xyz",
+    faucetUrl: "https://faucet.testnet-mud-services.linfra.xyz",
   }
 }
 
