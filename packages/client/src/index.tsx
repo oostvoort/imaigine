@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-// import { mount as mountDevTools } from "@latticexyz/dev-tools";
+import { mount as mountDevTools } from "@latticexyz/dev-tools";
 import { App } from "./App";
 import { setup } from "./mud/setup";
 import Providers from '@/providers'
@@ -15,5 +15,7 @@ setup().then((result) => {
       <App />
     </Providers>,
   );
-  // mountDevTools();
+  if(process.env.NODE_ENV !== 'production'){
+    mountDevTools();
+  }
 });
