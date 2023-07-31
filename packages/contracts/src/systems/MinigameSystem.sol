@@ -70,9 +70,11 @@ contract MinigameSystem is System {
   function rematch(bool resetTimestamp) public {
     bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
     BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
-    require(battleComponentData.status == BattleStatus.LOCKED_IN, "player has not locked in");
+    if (battleComponentData.status == BattleStatus.LOCKED_IN) return;
+//    require(battleComponentData.status == BattleStatus.LOCKED_IN, "player has not locked in");
     BattleComponentData memory opponentBattleData = BattleComponent.get(battleComponentData.opponent);
-    require(opponentBattleData.status == BattleStatus.LOCKED_IN, "opponent has not locked in");
+    if(opponentBattleData.status == BattleStatus.LOCKED_IN) return;
+//    require(opponentBattleData.status == BattleStatus.LOCKED_IN, "opponent has not locked in");
     beginMatch(playerID, battleComponentData.opponent, 0, resetTimestamp);
   }
 
