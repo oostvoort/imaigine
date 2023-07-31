@@ -13,7 +13,6 @@ export default function TypingParagraph({ text, typingSpeed, className }: PropTy
   const timeDelay = typingSpeed || 100 // Adjust the typing speed (in milliseconds) as needed
 
   React.useEffect(() => {
-    console.info(1)
     let currentLength = 0
     const typingInterval = setInterval(() => {
       if (currentLength <= textLength) {
