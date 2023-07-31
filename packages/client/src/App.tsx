@@ -5,14 +5,17 @@ import CreateAvatarScreen from '@/pages/create-avatar-screen'
 import CurrentLocationScreen from '@/pages/current-location-screen'
 import WorldMapScreen from '@/pages/world-map-screen'
 import useGameState from '@/hooks/useGameState'
-// import TravellingScreen from '@/pages/travelling-screen'
 import MinigameScreen from '@/pages/minigame-screen'
 import LoadingScreen from '@/components/shared/LoadingScreen'
 import BackgroundCarousel from '@/components/shared/BackgroundCarousel'
 import React from 'react'
+import { useIsMutating } from '@tanstack/react-query'
 
 export const App = () => {
   const activeScreen = useGameState()
+  const isMutatingPlayFn = useIsMutating({ mutationKey: [ 'play' ] })
+  const isMutatingLeaveFn = useIsMutating({ mutationKey: [ 'leave' ] })
+
   return (
     <Template>
       {activeScreen === SCREENS.TITLE &&
@@ -28,9 +31,19 @@ export const App = () => {
       }
 
       {activeScreen === SCREENS.CURRENT_LOCATION &&
-        <Template.ContentLayout className={'px-10 pt-28'}>
-          <CurrentLocationScreen />
-        </Template.ContentLayout>
+        <React.Fragment>
+          {
+            isMutatingPlayFn ?
+              <BackgroundCarousel>
+                <LoadingScreen message={'Preparing Battle Field'} />
+              </BackgroundCarousel>
+              :
+              <Template.ContentLayout className={'px-10 pt-28'}>
+                <CurrentLocationScreen />
+              </Template.ContentLayout>
+          }
+        </React.Fragment>
+
       }
 
       {activeScreen === SCREENS.WORLD_MAP &&
@@ -39,16 +52,19 @@ export const App = () => {
         </Template.ContentLayout>
       }
 
-      {/*{activeScreen === SCREENS.TRAVELLING &&*/}
-      {/*  <Template.ContentLayout className={'px-10 pt-28'}>*/}
-      {/*    <TravellingScreen />*/}
-      {/*  </Template.ContentLayout>*/}
-      {/*}*/}
-
       {activeScreen === SCREENS.MINIGAME &&
-        <Template.MinigameLayout>
-          <MinigameScreen />
-        </Template.MinigameLayout>
+        <React.Fragment>
+          {
+            isMutatingLeaveFn ?
+              <BackgroundCarousel>
+                <LoadingScreen message={'Leaving Battle Field'} />
+              </BackgroundCarousel>
+              :
+              <Template.MinigameLayout>
+                <MinigameScreen />
+              </Template.MinigameLayout>
+          }
+        </React.Fragment>
       }
 
       {activeScreen === SCREENS.LOADING &&
