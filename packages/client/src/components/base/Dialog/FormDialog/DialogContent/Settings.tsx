@@ -3,6 +3,7 @@ import { clsx } from 'clsx'
 import { Button } from '@/components/base/Button'
 import useLocalStorage from '@/hooks/useLocalStorage'
 import { Wallet } from 'ethers'
+import { formatAddress } from '@/global/utils'
 
 const DUMMY_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 export default function Settings() {
@@ -23,13 +24,13 @@ export default function Settings() {
       <div
         className={clsx([ 'flex items-center justify-between', 'w-full', 'text-option-11 text-xl', 'leading-8 tracking-[0.4px] font-segoe' ])}>
         <p>Private Key: </p>
-        <p className={'truncate'}>{privateKey}</p>
+        <p className={'truncate w-1/2'}>{privateKey}</p>
       </div>
 
       <div
-        className={clsx([ 'flex items-center justify-between', 'w-full', 'text-option-11 text-xl', 'leading-8 tracking-[0.4px] font-segoe' ])}>
-        <p>Address: </p>
-        <p className={'truncate'}>{wallet.address}</p>
+        className={clsx([ 'mt-sm flex items-center justify-between', 'w-full', 'text-option-11 text-xl', 'leading-8 tracking-[0.4px] font-segoe' ])}>
+        <p>Wallet Address: </p>
+        <p>{formatAddress(wallet.address)}</p>
       </div>
 
       <div className={clsx([ 'my-lg', 'flex justify-center'])}>

@@ -93,3 +93,7 @@ export const parsePlayerConfig = async (config: string) => {
     description: result.description
   }
 }
+
+export const formatAddress = (address: string) => {
+  return `${address.substring(0, 10)}...${address.substring(address.length - 10, address.length)}`
+}

@@ -103,7 +103,6 @@ type PlayerScoreBoardProps = {
   name?: string,
   imgSrc?: string,
   battlePoints: number | string,
-  isLoading: boolean
   win: string
   loss: string
 }
