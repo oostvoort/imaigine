@@ -23,6 +23,7 @@ contract MinigameTest is MudV2Test {
 
   address private constant PLAYER_1 = address(1);
   address private constant PLAYER_2 = address(2);
+  address private constant PLAYER_3 = address(3);
 
   // int -> uint -> bytes32
   bytes32 private constant LOCATION_ID = bytes32(uint256(1));
@@ -34,6 +35,7 @@ contract MinigameTest is MudV2Test {
     // address -> uint160 -> uint256 -> bytes32
     world.setUpPlayer(bytes32(uint256(uint160(PLAYER_1))), LOCATION_ID);
     world.setUpPlayer(bytes32(uint256(uint160(PLAYER_2))), LOCATION_ID);
+    world.setUpPlayer(bytes32(uint256(uint160(PLAYER_3))), LOCATION_ID);
   }
 
   function test_play() public {
@@ -275,11 +277,34 @@ contract MinigameTest is MudV2Test {
     vm.prank(PLAYER_2, PLAYER_2);
     world.play();
 
+    // PLAYER_1 and PLAYER_2
+    BattleComponentData memory player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    BattleComponentData memory player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    assertEq(uint256(player1_battleData.status), uint256(BattleStatus.IN_BATTLE), "test_leaveWithSomeoneInQueue::1");
+    assertEq(uint256(player2_battleData.status), uint256(BattleStatus.IN_BATTLE), "test_leaveWithSomeoneInQueue::2");
+    assertEq(player1_battleData.opponent, bytes32(uint256(uint160(PLAYER_2))), "test_leaveWithSomeoneInQueue::3");
+    assertEq(player2_battleData.opponent, bytes32(uint256(uint160(PLAYER_1))), "test_leaveWithSomeoneInQueue::4");
+
+    // PLAYER_3
     vm.prank(PLAYER_3, PLAYER_3);
     world.play();
 
+    // PLAYER_3 must inside the quee
+    bytes32 playerInQueue = BattleQueueComponent.get(world, LOCATION_ID);
+    assertEq(playerInQueue, bytes32(uint256(uint160(PLAYER_3))), "test_leaveWithSomeoneInQueue::5");
+
     vm.prank(PLAYER_2, PLAYER_2);
     world.leave();
+
+    // PLAYER_1 and Player_3 must in battle
+    player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+    BattleComponentData memory player3_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_3))));
+
+    assertEq(player1_battleData.opponent, bytes32(uint256(uint160(PLAYER_3))), "test_leaveWithSomeoneInQueue::6");
+    assertEq(player3_battleData.opponent, bytes32(uint256(uint160(PLAYER_1))), "test_leaveWithSomeoneInQueue::7");
+    assertEq(uint256(player2_battleData.status), uint256(BattleStatus.NOT_IN_BATTLE), "test_leaveWithSomeoneInQueue::8");
   }
 
   function doSelect(address player, BattleOptions selection, bool reveal) internal {
