@@ -28,7 +28,7 @@ struct BattleComponentData {
   BattleOptions option;
   bytes32 hashedOption;
   BattleStatus status;
-  uint256 timestamp;
+  uint256 deadline;
   BattleOutcomeType outcome;
   string hashSalt;
 }
@@ -62,7 +62,7 @@ library BattleComponent {
     _fieldNames[1] = "option";
     _fieldNames[2] = "hashedOption";
     _fieldNames[3] = "status";
-    _fieldNames[4] = "timestamp";
+    _fieldNames[4] = "deadline";
     _fieldNames[5] = "outcome";
     _fieldNames[6] = "hashSalt";
     return ("BattleComponent", _fieldNames);
@@ -226,8 +226,8 @@ library BattleComponent {
     _store.setField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(status)));
   }
 
-  /** Get timestamp */
-  function getTimestamp(bytes32 key) internal view returns (uint256 timestamp) {
+  /** Get deadline */
+  function getDeadline(bytes32 key) internal view returns (uint256 deadline) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -235,8 +235,8 @@ library BattleComponent {
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Get timestamp (using the specified store) */
-  function getTimestamp(IStore _store, bytes32 key) internal view returns (uint256 timestamp) {
+  /** Get deadline (using the specified store) */
+  function getDeadline(IStore _store, bytes32 key) internal view returns (uint256 deadline) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -244,20 +244,20 @@ library BattleComponent {
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Set timestamp */
-  function setTimestamp(bytes32 key, uint256 timestamp) internal {
+  /** Set deadline */
+  function setDeadline(bytes32 key, uint256 deadline) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)));
+    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((deadline)));
   }
 
-  /** Set timestamp (using the specified store) */
-  function setTimestamp(IStore _store, bytes32 key, uint256 timestamp) internal {
+  /** Set deadline (using the specified store) */
+  function setDeadline(IStore _store, bytes32 key, uint256 deadline) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)));
+    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((deadline)));
   }
 
   /** Get outcome */
@@ -437,11 +437,11 @@ library BattleComponent {
     BattleOptions option,
     bytes32 hashedOption,
     BattleStatus status,
-    uint256 timestamp,
+    uint256 deadline,
     BattleOutcomeType outcome,
     string memory hashSalt
   ) internal {
-    bytes memory _data = encode(opponent, option, hashedOption, status, timestamp, outcome, hashSalt);
+    bytes memory _data = encode(opponent, option, hashedOption, status, deadline, outcome, hashSalt);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -457,11 +457,11 @@ library BattleComponent {
     BattleOptions option,
     bytes32 hashedOption,
     BattleStatus status,
-    uint256 timestamp,
+    uint256 deadline,
     BattleOutcomeType outcome,
     string memory hashSalt
   ) internal {
-    bytes memory _data = encode(opponent, option, hashedOption, status, timestamp, outcome, hashSalt);
+    bytes memory _data = encode(opponent, option, hashedOption, status, deadline, outcome, hashSalt);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -477,7 +477,7 @@ library BattleComponent {
       _table.option,
       _table.hashedOption,
       _table.status,
-      _table.timestamp,
+      _table.deadline,
       _table.outcome,
       _table.hashSalt
     );
@@ -492,7 +492,7 @@ library BattleComponent {
       _table.option,
       _table.hashedOption,
       _table.status,
-      _table.timestamp,
+      _table.deadline,
       _table.outcome,
       _table.hashSalt
     );
@@ -511,7 +511,7 @@ library BattleComponent {
 
     _table.status = BattleStatus(uint8(Bytes.slice1(_blob, 65)));
 
-    _table.timestamp = (uint256(Bytes.slice32(_blob, 66)));
+    _table.deadline = (uint256(Bytes.slice32(_blob, 66)));
 
     _table.outcome = BattleOutcomeType(uint8(Bytes.slice1(_blob, 98)));
 
@@ -533,7 +533,7 @@ library BattleComponent {
     BattleOptions option,
     bytes32 hashedOption,
     BattleStatus status,
-    uint256 timestamp,
+    uint256 deadline,
     BattleOutcomeType outcome,
     string memory hashSalt
   ) internal view returns (bytes memory) {
@@ -547,7 +547,7 @@ library BattleComponent {
         option,
         hashedOption,
         status,
-        timestamp,
+        deadline,
         outcome,
         _encodedLengths.unwrap(),
         bytes((hashSalt))

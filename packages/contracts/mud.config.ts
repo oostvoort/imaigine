@@ -56,23 +56,23 @@ export default mudConfig({
             toRevealAtDestination: "bytes" // array of cells that will reveal itself once player is in the new location
           }
         },
-        BattleQueueComponent: {
+        BattleQueueComponent: { // key: locationID
           schema: {
             playerId: "bytes32",
           }
         },
-        BattleComponent: {
+        BattleComponent: { // key: playerID
           schema: {
             opponent: "bytes32",
             option: "BattleOptions",
             hashedOption: "bytes32",
             status: "BattleStatus",
-            timestamp: "uint256",
+            deadline: "uint256", // round time
             outcome: "BattleOutcomeType",
             hashSalt: "string"
           }
         },
-        BattleTimeComponent: "uint256",
+        BattleTimeComponent: "uint256", // ???
         BattleHistoryComponent: {
           keySchema: {
             id: "uint256"

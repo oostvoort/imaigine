@@ -1,247 +1,272 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { System } from "@latticexyz/world/src/System.sol";
+import {System} from "@latticexyz/world/src/System.sol";
+
+import {console} from "forge-std/console.sol";
 
 import {
-  BattleQueueComponent,
-  BattleComponent,
-  BattleComponentData,
-  LocationComponent,
-  BattleHistoryCounter,
-  BattleHistoryComponent,
-  BattlePointsComponent,
-  BattleResultsComponents,
-  BattlePreResultsComponents,
-  BattleTimeComponent
+BattleQueueComponent,
+BattleComponent,
+BattleComponentData,
+LocationComponent,
+BattleHistoryCounter,
+BattleHistoryComponent,
+BattlePointsComponent,
+BattleResultsComponents,
+BattleResultsComponentsData,
+BattlePreResultsComponents,
+BattleTimeComponent
 } from "../codegen/Tables.sol";
 
-import { BattleStatus, BattleOptions, BattleOutcomeType } from "../codegen/Types.sol";
+import {BattleStatus, BattleOptions, BattleOutcomeType} from "../codegen/Types.sol";
 
 contract MinigameSystem is System {
 
-  uint256 private constant FORFEIT_TIME = 30; // the time elapsed wherein a user is considered forfeited
+  function setUpPlayer(bytes32 playerId, bytes32 locationId) public {
+    LocationComponent.set(playerId, locationId);
+  }
 
-  /// @notice called by the player to play rps
-  function play() public returns (bytes32) {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    bytes32 locationId = LocationComponent.get(playerID);
-    bytes32 opponent = BattleQueueComponent.get(locationId);
+  function play() public {
+    // get player id
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
 
-    require(opponent != playerID, "rejoining the same game");
+    // get player location
+    bytes32 playerLocationId = LocationComponent.get(playerId);
 
-    // TODO: get player to leave from current interaction
+    playInternal(playerId, playerLocationId);
+  }
 
-    if (opponent == 0) {
-      BattleQueueComponent.set(locationId, playerID);
-      return opponent;
+  function playInternal(bytes32 playerId, bytes32 playerLocationId) internal {
+    bytes32 opponentInQueue = BattleQueueComponent.get(playerLocationId);
+
+    // check if player in queue has nothing
+    if (opponentInQueue == 0) {
+      BattleQueueComponent.set(playerLocationId, playerId);
+    } else {
+      BattleQueueComponent.deleteRecord(playerLocationId);
+      beginMatch(playerId, opponentInQueue);
+    }
+  }
+
+  // @note Call to select battle options, encrypted
+  // @dev hash is keccack256(abi.encode(uint256, string)) of;
+  // selection  => selected option
+  // salt       => can be anything from timestamp to uuid
+  function onSelect(bytes32 hash) public {
+    // get player id
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+    uint256 deadline = BattleComponent.getDeadline(playerId);
+
+    // deadline should be defined
+    require(deadline != 0, "onSelect: not in battle");
+    // should be within the deadline
+    require(block.timestamp < deadline, "onSelect: already deadline");
+
+    // update hash of battle component of player id
+    BattleComponent.setHashedOption(playerId, hash);
+
+    // update battle status into DONE_SELECTING by player id
+    BattleComponent.setStatus(playerId, BattleStatus.DONE_SELECTING);
+  }
+
+  // @note Call to evaluate battle, reveal player's selection
+  // @dev selection must be acompandies by salt
+  function reveal(BattleOptions selection, string memory salt) public {
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+
+    // encrypt option, salt
+    bytes32 encrypted = encodeHash(selection, salt);
+
+    bytes32 hash = BattleComponent.getHashedOption(playerId);
+    uint256 deadline = BattleComponent.getDeadline(playerId);
+
+    // only accept when outside the deadline
+    require(block.timestamp >= deadline, "reveal: not yet deadline");
+    // check if encrypted is equal to hash
+    require(encrypted == hash, "reveal: incorrect option or salt");
+
+    // update player battle status to LOCKED_IN
+    BattleComponent.setStatus(playerId, BattleStatus.LOCKED_IN);
+
+    // set player battle selection
+    BattleComponent.setOption(playerId, selection);
+
+    beginBattle(playerId);
+  }
+
+  function encodeHash(BattleOptions selection, string memory salt) public pure returns (bytes32) {
+    return keccak256(abi.encode(uint256(selection), salt));
+  }
+
+  // @note Call to re-calculate battle after deadline, used for kicking inactive opponent
+  function validateBattle() public {
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+    bytes32 opponentId = BattleComponent.getOpponent(playerId);
+
+    require(opponentId != 0, "validateBattle: not in battle");
+
+    beginBattle(playerId);
+  }
+
+  // @dev Can only be called after deadline
+  function beginBattle(bytes32 playerId) internal {
+    // get player's selection
+    BattleOptions playerSelection = BattleComponent.getOption(playerId);
+
+    // get player's opponent
+    bytes32 opponentId = BattleComponent.getOpponent(playerId);
+
+    // get opponent's battle status and selection
+    BattleStatus opponentStatus = BattleComponent.getStatus(opponentId);
+    BattleOptions opponentSelection = BattleComponent.getOption(opponentId);
+
+    uint256 deadline = BattleComponent.getDeadline(playerId);
+    // either; -1, 0, 1, 2
+    int256 winner = - 1;
+    bool isForfieted = false;
+
+    if (opponentStatus == BattleStatus.LOCKED_IN) {
+      winner = calculateBattle(playerSelection, opponentSelection);
+    } else {
+      uint256 forfeitDeadline = deadline + 30; // 30secs after deadline
+      if (block.timestamp < forfeitDeadline) return;
+
+      // opponent forfieted, so player is the winner
+      winner = 1;
+      isForfieted = true;
     }
 
-    beginMatch(playerID, opponent, locationId, true);
-    return opponent;
+    if (winner > - 1) {
+      recordPoints(playerId, opponentId, winner);
+
+      if (isForfieted) {
+
+        // back player to queue
+        bytes32 locationId = LocationComponent.get(playerId);
+        BattleQueueComponent.set(locationId, playerId);
+
+        // clean up battle
+        BattleComponent.deleteRecord(playerId);
+        BattleComponent.deleteRecord(opponentId);
+
+        BattleResultsComponents.deleteRecord(playerId);
+        BattleResultsComponents.deleteRecord(opponentId);
+      } else {
+        recordBattleResult(playerId, opponentId, winner);
+      }
+    }
   }
 
-  /// @notice called by the player to battle
-  /// @param hashedOption is the option hashed by a salt in the frontend
-  function battle(bytes32 hashedOption) public {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    bytes32 opponent = BattleComponent.getOpponent(playerID);
-    BattleComponent.setHashedOption(playerID, hashedOption);
-    BattleComponent.setStatus(playerID, BattleStatus.DONE_SELECTING);
-    // BattleComponent.setTimestamp(playerID, block.timestamp);
+  function rematch() public {
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+    BattleComponentData memory playerBattleData = BattleComponent.get(playerId);
+
+    require(playerBattleData.opponent != 0, "rematch: no opponent");
+    if (playerBattleData.status == BattleStatus.IN_BATTLE) return;
+
+    beginMatch(playerId, playerBattleData.opponent);
   }
 
-  /// @notice called by the player to lock in a battle
-  function battleLock() public {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
+  function leave() public {
+    bytes32 playerId = bytes32(uint256(uint160(_msgSender())));
+    bytes32 locationId = LocationComponent.get(playerId);
+
+
+    bytes32 playerInQueue = BattleQueueComponent.get(locationId);
+    bytes32 opponentId = BattleComponent.getOpponent(playerId);
+
+    if (playerId == playerInQueue) {
+      // clear queue if applicable
+      BattleQueueComponent.deleteRecord(locationId);
+    } else if (opponentId != 0) {
+      // clear battle
+      BattleComponent.deleteRecord(playerId);
+      BattleResultsComponents.deleteRecord(playerId);
+      // push opponent to queue if applicable
+      BattleComponent.deleteRecord(opponentId);
+      BattleResultsComponents.deleteRecord(opponentId);
+
+      // +1 point for opponent if applicable
+      recordPoints(playerId, opponentId, 2);
+
+      // try to push opponent to another player or in queue
+      playInternal(opponentId, locationId);
+    } else {
+      require(false, "leave: not in queue or battle");
+    }
   }
 
-  /// @notice called by the timer to execute pre-result in a battle
-  /// @param option is the actual option the player gave
-  function preResult(BattleOptions option) public {
-    require(option != BattleOptions.NONE, "option cannot be none");
+  function beginMatch(bytes32 playerId, bytes32 opponentId) internal {
+    uint256 deadline = block.timestamp + 30; // 30 sec
 
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    BattleComponent.setOption(playerID, option);
-    BattlePreResultsComponents.setOption(playerID, option);
-  }
-
-  function rematch(bool resetTimestamp) public {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
-//    if (battleComponentData.status == BattleStatus.LOCKED_IN) return;
-    require(battleComponentData.status == BattleStatus.LOCKED_IN, "player has not locked in");
-    BattleComponentData memory opponentBattleData = BattleComponent.get(battleComponentData.opponent);
-//    if(opponentBattleData.status == BattleStatus.LOCKED_IN) return;
-    require(opponentBattleData.status == BattleStatus.LOCKED_IN, "opponent has not locked in");
-    beginMatch(playerID, battleComponentData.opponent, 0, resetTimestamp);
-  }
-
-  /// @notice called by the player to evaluate battle
-  /// @param hashSalt was the salt used to hash the option
-  /// @param option is the actual option the player gave
-  function lockIn(string memory hashSalt, BattleOptions option) public {
-    require(option != BattleOptions.NONE, "option cannot be none");
-
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
-
-    require(
-      keccak256(abi.encodePacked(hashSalt, option)) ==
-      battleComponentData.hashedOption,
-      "incorrect hash salt or option provided"
+    // Player1
+    BattleComponent.set(
+      playerId,
+      opponentId,
+      BattleOptions.NONE,
+      0,
+      BattleStatus.IN_BATTLE,
+      deadline,
+      BattleOutcomeType.NONE,
+      ""
     );
 
-    BattleComponentData memory opponentBattleData = BattleComponent.get(battleComponentData.opponent);
-    if (opponentBattleData.status == BattleStatus.LOCKED_IN) {
-      if (option == opponentBattleData.option) {
-        logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, true);
-      } else if (option == BattleOptions.Sword) {
-        if (opponentBattleData.option == BattleOptions.Scroll)
-          logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
-        else
-          logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
-      } else if (option == BattleOptions.Scroll) {
-        if (opponentBattleData.option == BattleOptions.Potion)
-          logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
-        else
-          logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
-      } else {
-        if (opponentBattleData.option == BattleOptions.Sword)
-          logHistory(playerID, battleComponentData.opponent, option, opponentBattleData.option, false);
-        else
-          logHistory(battleComponentData.opponent, playerID, opponentBattleData.option, option, false);
-      }
-      BattleComponent.setOption(playerID, option);
-      BattleComponent.setHashSalt(playerID, hashSalt);
-      BattleComponent.setStatus(playerID, BattleStatus.LOCKED_IN);
+    // Opponent
+    BattleComponent.set(
+      opponentId,
+      playerId,
+      BattleOptions.NONE,
+      0,
+      BattleStatus.IN_BATTLE,
+      deadline,
+      BattleOutcomeType.NONE,
+      ""
+    );
+  }
+
+  // @return battle winner
+  // 0 => draw
+  // 1 => option1 winner
+  // 2 => option2 winner
+  function calculateBattle(BattleOptions option1, BattleOptions option2) internal view returns (int256){
+    if (option1 == option2) {
+      return 0;
+    }
+
+    if (option1 == BattleOptions.Sword) {
+      if (option2 == BattleOptions.Scroll) return 1; // option1.Sword, option2.Scroll
+      else return 2; // option1.Sword, option2.Potion
+    } else if (option1 == BattleOptions.Scroll) {
+      if (option2 == BattleOptions.Potion) return 1; // option1.Scroll, option2.Potion
+      else return 2; // option1.Scroll, option2.Sword
     } else {
-      if (opponentBattleData.timestamp + FORFEIT_TIME <= block.timestamp) {
-        bytes32 locationId = LocationComponent.get(playerID);
-        bytes32 playerInQueue = BattleQueueComponent.get(locationId);
-        kickOutPlayer(battleComponentData.opponent, playerID, playerInQueue, locationId);
-      } else {
-        BattleComponent.set(
-          playerID,
-          battleComponentData.opponent,
-          option,
-          battleComponentData.hashedOption,
-          BattleStatus.LOCKED_IN,
-          battleComponentData.timestamp,
-          BattleOutcomeType.NONE,
-          hashSalt
-        );
-      }
+      if (option2 == BattleOptions.Sword) return 1; // option1.Potion, option2.Sword
+      else return 2; // option1.Potion, option2.Scroll
     }
   }
 
-  /// @notice called by the player to leave rps
-  function leave(uint256[] memory battleHistoryArray) public returns (bytes32) {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    bytes32 locationId = LocationComponent.get(playerID);
-    bytes32 playerInQueue = BattleQueueComponent.get(locationId);
+  function recordBattleResult(bytes32 playerId, bytes32 opponentId, int256 winner) internal {
+    BattleResultsComponentsData memory playerBattleResult = BattleResultsComponents.get(playerId);
+    BattleResultsComponentsData memory opponentBattleResult = BattleResultsComponents.get(opponentId);
 
-    clearLogsHistory(battleHistoryArray);
-
-    if (playerID == playerInQueue) BattleQueueComponent.set(locationId, 0);
-
-    else {
-      BattleComponentData memory battleData = BattleComponent.get(playerID);
-      kickOutPlayer(playerID, battleData.opponent, playerInQueue, locationId);
-    }
-    return locationId;
-  }
-
-  function beginMatch(bytes32 player1, bytes32 player2, bytes32 locationId, bool resetTimestamp) internal {
-    BattleComponent.set(player1, player2, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, BattleOutcomeType.NONE, "");
-    BattleComponent.set(player2, player1, BattleOptions.NONE, 0, BattleStatus.IN_BATTLE, block.timestamp, BattleOutcomeType.NONE, "");
-    BattlePreResultsComponents.set(player1, BattleOptions.NONE, "");
-    BattlePreResultsComponents.set(player2, BattleOptions.NONE, "");
-    BattleQueueComponent.set(locationId, 0);
-    if (resetTimestamp) {
-      BattleTimeComponent.set(player1, block.timestamp);
-      BattleTimeComponent.set(player2, block.timestamp);
+    if (winner == 1) {
+      BattleResultsComponents.setTotalWins(playerId, playerBattleResult.totalWins + 1);
+      BattleResultsComponents.setTotalLoses(opponentId, opponentBattleResult.totalLoses + 1);
+    } else if (winner == 2) {
+      BattleResultsComponents.setTotalWins(opponentId, opponentBattleResult.totalWins + 1);
+      BattleResultsComponents.setTotalLoses(playerId, playerBattleResult.totalLoses + 1);
     }
   }
 
-  function kickOutPlayer(bytes32 playerToKickOut, bytes32 stayingPlayer, bytes32 playerInQueue, bytes32 locationId) internal {
-    logHistory(stayingPlayer, playerToKickOut, BattleOptions.NONE, BattleOptions.NONE, false);
-    BattleComponent.set(playerToKickOut, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
+  function recordPoints(bytes32 playerId, bytes32 opponentId, int256 winner) internal {
+    uint256 playerPoints = BattlePointsComponent.get(playerId);
+    uint256 opponentPoints = BattlePointsComponent.get(opponentId);
 
-    if (playerInQueue != 0) {
-      beginMatch(stayingPlayer, playerInQueue, locationId, true);
-    } else {
-      BattleQueueComponent.set(locationId, stayingPlayer);
-      BattlePreResultsComponents.deleteRecord(stayingPlayer);
-      BattleResultsComponents.deleteRecord(stayingPlayer);
-      BattlePreResultsComponents.deleteRecord(playerToKickOut);
-      BattleResultsComponents.deleteRecord(playerToKickOut);
-      BattleComponent.set(stayingPlayer, 0, BattleOptions.NONE, 0, BattleStatus.NOT_IN_BATTLE, 0, BattleOutcomeType.NONE, "");
+    if (winner == 1) {
+      BattlePointsComponent.set(playerId, playerPoints + 1);
+    } else if (winner == 2) {
+      BattlePointsComponent.set(opponentId, opponentPoints + 1);
     }
-  }
-
-  function logHistory(
-    bytes32 winner,
-    bytes32 loser,
-    BattleOptions winnerOption,
-    BattleOptions loserOption,
-    bool draw
-  ) internal {
-    uint256 id = BattleHistoryCounter.get();
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-
-    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
-    BattleHistoryCounter.set(id + 1);
-
-    if (!draw) {
-      BattleComponent.setOutcome(winner, BattleOutcomeType.WIN);
-      BattleComponent.setOutcome(loser, BattleOutcomeType.LOSE);
-    }
-
-    if (!!draw) {
-      BattleComponent.setOutcome(winner, BattleOutcomeType.DRAW);
-      BattleComponent.setOutcome(loser, BattleOutcomeType.DRAW);
-      BattlePreResultsComponents.setResult(winner, "Draw");
-      BattlePreResultsComponents.setResult(loser, "Draw");
-      BattleHistoryComponent.set(id, playerID, battleComponentData.opponent, winner, winnerOption, loser, loserOption, draw);
-    }
-
-
-
-    if(!draw && (BattleComponent.getStatus(winner) != BattleStatus.IN_BATTLE && BattleComponent.getStatus(loser) != BattleStatus.IN_BATTLE)) {
-      uint256 winnerPoints = BattlePointsComponent.get(winner) + 1;
-      uint256 loserPoints = BattlePointsComponent.get(loser);
-      uint256 finalLoserPoints = loserPoints == 0 ? 0 : loserPoints - 1;
-      BattlePointsComponent.set(winner, winnerPoints);
-      BattlePointsComponent.set(loser, loserPoints);
-      BattlePreResultsComponents.setResult(winner, "Win");
-      BattlePreResultsComponents.setResult(loser, "Lose");
-      resultsBattle(1, 0, winner);
-      resultsBattle(0, 1, loser);
-      BattleHistoryComponent.set(id, playerID, battleComponentData.opponent, winner, winnerOption, loser, loserOption, draw);
-    }
-  }
-
-  function clearLogsHistory(uint[] memory battleHistoryArray) public {
-    bytes32 playerID = bytes32(uint256(uint160(_msgSender())));
-    BattleComponentData memory battleComponentData = BattleComponent.get(playerID);
-
-    for (uint i = 0; i < battleHistoryArray.length; i++) {
-      BattleHistoryComponent.deleteRecord(battleHistoryArray[i]);
-    }
-
-    BattlePreResultsComponents.deleteRecord(playerID);
-    BattleResultsComponents.deleteRecord(playerID);
-    BattlePreResultsComponents.deleteRecord(battleComponentData.opponent);
-    BattleResultsComponents.deleteRecord(battleComponentData.opponent);
-  }
-
-  function resultsBattle (uint32 win, uint32 lose, bytes32 playerId) internal {
-
-    uint32 totalWin = BattleResultsComponents.get(playerId).totalWins;
-    uint32 totalLose = BattleResultsComponents.get(playerId).totalLoses;
-
-    BattleResultsComponents.set(playerId, (totalWin + win), (totalLose + lose));
   }
 }
