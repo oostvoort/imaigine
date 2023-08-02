@@ -48,7 +48,13 @@ const MinigameLayout = ({ children, className }: { children: React.ReactNode, cl
         className={clsx([ 'flex items-center', 'h-screen w-screen', 'bg-no-repeat bg-cover', 'relative', className ])}>
         <div className={'absolute h-full w-full backdrop-blur inset-0 '} />
         <Header />
-        {children}
+
+        <div
+          className={clsx([ 'max-w-[1920px] mx-auto max-h-[1080px] h-full w-full', 'overflow-hidden', 'relative flex justify-center items-center' ])}>
+          <div className={clsx([ 'h-[75%] max-w-[90%] w-full', 'relative', 'mt-[5rem]', 'flex justify-between', 'gap-3' ])}>
+            {children}
+          </div>
+        </div>
       </div>
     </React.Fragment>
   )
