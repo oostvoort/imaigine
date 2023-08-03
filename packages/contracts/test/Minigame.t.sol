@@ -17,7 +17,8 @@ BattleHistoryComponentData
 } from "../src/codegen/Tables.sol";
 import {
 BattleStatus,
-BattleOptions
+BattleOptions,
+BattleOutcomeType
 } from "../src/codegen/Types.sol";
 
 contract MinigameTest is MudV2Test {
@@ -410,6 +411,96 @@ contract MinigameTest is MudV2Test {
     // player1 and player2 check must draw
     assertEq(player_1_history.draw, true, "test_battleLogs::24");
     assertEq(player_2_history.draw, true, "test_battleLogs::25");
+  }
+
+  function test_battleOutcome() public {
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.play();
+
+    vm.prank(PLAYER_2, PLAYER_2);
+    world.play();
+
+    // Player 1, lock In
+    doSelect(PLAYER_1, BattleOptions.Scroll, false);
+    doSelect(PLAYER_2, BattleOptions.Sword, false);
+
+    vm.warp(block.timestamp + 31); // warp to deadline
+
+    // Players lock In
+    doSelect(PLAYER_1, BattleOptions.Scroll, true);
+    doSelect(PLAYER_2, BattleOptions.Sword, true);
+
+    BattleComponentData memory player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    BattleComponentData memory player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    uint256 player1_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    uint256 player2_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    BattleResultsComponentsData memory player1_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    BattleResultsComponentsData memory player2_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    assertEq(uint256(player1_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_battleOutcome::1");
+    assertEq(uint256(player2_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_battleOutcome::2");
+
+    // Player 2 wins
+    assertEq(player1_points, 0, "test_battleOutcome::3");
+    assertEq(player2_points, 1, "test_battleOutcome::4");
+
+    assertEq(player1_battleResult.totalWins, 0, "test_battleOutcome::5");
+    assertEq(player1_battleResult.totalLoses, 1, "test_battleOutcome::6");
+    assertEq(player2_battleResult.totalWins, 1, "test_battleOutcome::7");
+    assertEq(player2_battleResult.totalLoses, 0, "test_battleOutcome::8");
+
+    // Expect Battle Outcome
+    assertEq(uint256(player1_battleData.outcome), uint256(BattleOutcomeType.LOSE), "test_battleOutcome::9");
+    assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.WIN), "test_battleOutcome::10");
+
+    // Rematch
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.rematch();
+
+    vm.prank(PLAYER_2, PLAYER_2);
+    world.rematch();
+
+    player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    assertEq(uint256(player1_battleData.option), uint256(BattleOptions.NONE), "test_battleLogs::11");
+    assertEq(uint256(player2_battleData.option), uint256(BattleOptions.NONE), "test_battleLogs::12");
+    assertEq(uint256(player1_battleData.status), uint256(BattleStatus.IN_BATTLE), "test_battleLogs::13");
+    assertEq(uint256(player2_battleData.status), uint256(BattleStatus.IN_BATTLE), "test_battleLogs::14");
+    assertEq(uint256(player1_battleData.outcome), uint256(BattleOutcomeType.NONE), "test_battleOutcome::15");
+    assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.NONE), "test_battleOutcome::16");
+
+    // Player 1, lock In
+    doSelect(PLAYER_1, BattleOptions.Sword, false);
+    doSelect(PLAYER_2, BattleOptions.Sword, false);
+
+    vm.warp(block.timestamp + 31); // warp to deadline
+
+    // Players lock In
+    doSelect(PLAYER_1, BattleOptions.Sword, true);
+    doSelect(PLAYER_2, BattleOptions.Sword, true);
+
+    player1_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    player2_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    player1_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    player2_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    assertEq(player1_points, 0, "test_battleLogs::17");
+    assertEq(player2_points, 1, "test_battleLogs::18");
+
+    assertEq(player1_battleResult.totalWins, 0, "test_battleLogs::19");
+    assertEq(player1_battleResult.totalLoses, 1, "test_battleLogs::20");
+    assertEq(player2_battleResult.totalWins, 1, "test_battleLogs::21");
+    assertEq(player2_battleResult.totalLoses, 0, "test_battleLogs::22");
+
+    player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    assertEq(uint256(player1_battleData.outcome), uint256(BattleOutcomeType.DRAW), "test_battleOutcome::23");
+    assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.DRAW), "test_battleOutcome::24");
   }
 
   function doSelect(address player, BattleOptions selection, bool reveal) internal {
