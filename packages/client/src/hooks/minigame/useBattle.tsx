@@ -3,12 +3,9 @@ import { ComponentValue, Entity } from '@latticexyz/recs'
 import { useComponentValue } from '@latticexyz/react'
 import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
-import { PromiseOrValue } from 'contracts/types/ethers-contracts/common'
-import { useState } from 'react'
-import { utils } from 'ethers'
-import { useAtom } from 'jotai'
-import { hash_options_set_value, hash_options_value } from '@/states/minigame'
-import { BattleOptions, HashOptionsTypes } from '@/hooks/minigame/types/battle'
+import { BATTLE_OPTIONS } from '@/hooks/minigame/types/battle'
+import { extractErrorMessage } from '@/global/utils'
+import { toast } from 'react-toastify'
 
 export default function useBattle(playerId: Entity) {
   const {
@@ -21,43 +18,96 @@ export default function useBattle(playerId: Entity) {
       LocationComponent,
       BattleResultsComponents,
       BattlePreResultsComponents,
-      BattleTimeComponent,
     },
     network: {
       worldSend,
       txReduced$,
-    }
+      worldContract,
+    },
   } = useMUD()
 
-  const DEFAULT_BATTLE_POINTS: unknown = "0"
-
-  const [, setHashAtom] = useAtom(hash_options_set_value)
-  const [hashAtom] = useAtom<HashOptionsTypes>(hash_options_value)
-
-  const [battleOption, setBattleOption] = useState<PromiseOrValue<string>>("NONE")
+  const DEFAULT_BATTLE_POINTS: unknown = '0'
 
   /**
-   * Gets the battle start time component value for the player.
-   *
-   * @param BattleTimeComponent - The battle start time component to get the value from.
-   * @param playerId - The ID of the player to get the battle start time for.
-   *
-   * The useComponentValue hook is used to get the latest value from the BattleTimeComponent for the player.
-   *
-   * The returned value is a timestamp number.
-   *
-   * battleTime then calculates the start and end times for the battle:
-   * - start: The start time component value.
-   * - end: The start time plus 6000 milliseconds (battle length).
-   *
-   * So this allows getting the start and end times for a battle given the player ID.
+   * Generates a hash of the selected battle options.
+   * @param options The selected battle options.
+   * Generates a key hash from the string "SECRET_ID".
+   * Generates a data hash from the selected options.
+   * Gets the current timestamp.
+   * Generates a hash of the key, data and timestamp using solidityKeccak256.
+   * Sets the battleOption state to the generated hash.
+   * Sets the hash_options_set_value atom to an object containing the key, data and timestamp.
    */
-  const timer = useComponentValue(BattleTimeComponent, playerId);
+  const onSelectOptions = async (options: BATTLE_OPTIONS) => {
+    const hashedSalt = await worldContract.encodeHash(options, '123')
 
-  const battleTime = {
-      start: Number(timer?.value),
-      end: Number(timer?.value) + 60
+    const tx = await worldSend('onSelect', [ hashedSalt ])
+    await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
   }
+
+  /**
+   * Defines a mutation hook to lock in battle options.
+   * @param mutationKey The key for the mutation.
+   * @param mutationFn The function to execute the mutation.
+   * @throws Error if hashSalt or options are undefined.
+   * Gets the key, data and timestamp from the hash_options_value atom.
+   * Checks that key, data and timestamp are defined.
+   * Sends a transaction to lock in the battle options with the key, timestamp and options.
+   * Waits for the transaction to be confirmed.
+   * Returns the battle data.
+   */
+  const lockIn = useMutation({
+    mutationKey: [ 'lockIn' ],
+    mutationFn: async (options: BATTLE_OPTIONS) => {
+      const tx = await worldSend('reveal', [ options, '123' ])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+    },
+    onError: (err) => {
+      toast(`Error on lockin Fn: ${extractErrorMessage(err)}`, {
+        position: 'bottom-right',
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+      })
+      console.error(extractErrorMessage(err))
+    },
+  })
+
+  /**
+   * Defines a mutation hook to rematch in battle.
+   * @param mutationKey The key for the mutation.
+   * @param mutationFn The function to execute the mutation.
+   * Sends a transaction to rematch in the battle.
+   * Waits for the transaction to be confirmed.
+   * Returns the battle data.
+   */
+  const rematch = useMutation({
+    mutationKey: [ 'rematch' ],
+    mutationFn: async () => {
+      const tx = await worldSend('rematch', [])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+    },
+    onError: (err) => {
+      toast(`Error on rematch Fn: ${extractErrorMessage(err)}`)
+      console.error(extractErrorMessage(err))
+    },
+  })
+
+  const validateBattle = useMutation({
+    mutationKey: [ 'validateBattle' ],
+    mutationFn: async () => {
+      const tx = await worldSend('validateBattle', [])
+      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
+    },
+    onError: (err) => {
+      toast(`Error on validate battle Fn: ${extractErrorMessage(err)}`)
+      console.error(extractErrorMessage(err))
+    },
+  })
 
   /**
    * Custom hook to get battle data for a player.
@@ -131,145 +181,14 @@ export default function useBattle(playerId: Entity) {
   const playerInfo = usePlayerData(playerId)
   const opponentInfo =  usePlayerData(battleData.battle?.opponent as Entity)
 
-  /**
-   * Generates a hash of the selected battle options.
-   * @param options The selected battle options.
-   * Generates a key hash from the string "SECRET_ID".
-   * Generates a data hash from the selected options.
-   * Gets the current timestamp.
-   * Generates a hash of the key, data and timestamp using solidityKeccak256.
-   * Sets the battleOption state to the generated hash.
-   * Sets the hash_options_set_value atom to an object containing the key, data and timestamp.
-   */
-  const onSelectOptions = async (options: BattleOptions) => {
-    const key = utils.keccak256(utils.toUtf8Bytes("SECRET_ID"))
-    const timestamp = new Date().getTime()
-    const data = options
-
-    const hashOptions = utils.solidityKeccak256(["string", "uint8"], [String(key + timestamp), data])
-
-    setBattleOption(hashOptions)
-    setHashAtom({ key, data, timestamp })
-
-    await setBattle.mutateAsync()
-  }
-
-  /**
-   * ### @DEPRECATED!
-   * Defines a mutation hook to set battle lock.
-   * @param mutationKey The key for the mutation.
-   * @param mutationFn The function to execute the mutation.
-   * Sends a transaction to set lock in the battle options
-   * Waits for the transaction to be confirmed.
-   * Returns the battle data.
-   * */
-  const setLockBattle = useMutation({
-    mutationKey: ["setLockBattle"],
-    mutationFn: async () => {
-      // const tx = await worldSend('battleLock', [])
-      // // await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return battleData
-    }
-  })
-
-  /**
-   * Defines a mutation hook to set the battle pre-result.
-   *
-   * @param mutationKey - The key for the mutation.
-   * @param mutationFn - The async function to execute the mutation.
-   *
-   * The mutation function:
-   * - Gets the selected battle options data from the hashAtom state.
-   * - Throws error if no data.
-   * - Sends a transaction to set the pre-result with the options data.
-   * - Waits for the transaction to be confirmed.
-   * - Returns the battle data.
-   */
-  const setBattlePreResult = useMutation({
-    mutationKey: ["preResult"],
-    mutationFn: async () => {
-
-      const { data } = hashAtom
-      if (data == undefined) throw new Error("Requested options is empty")
-
-      const tx = await worldSend('preResult', [data])
-      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return battleData
-    }
-  })
-
-  /**
-   * Defines a mutation hook to set battle options.
-   * @throws Error if battleOption is undefined.
-   * Sends a transaction with the battle options.
-   * Waits for the transaction to be confirmed.
-   * Returns the battle data.
-   */
-  const setBattle = useMutation({
-    mutationKey: ["setBattle"],
-    mutationFn: async () => {
-
-      if (battleOption == undefined) throw new Error("Requested options is empty")
-
-      const tx = await worldSend('battle', [battleOption])
-      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return battleData
-    }
-  })
-
-  /**
-   * Defines a mutation hook to lock in battle options.
-   * @param mutationKey The key for the mutation.
-   * @param mutationFn The function to execute the mutation.
-   * @throws Error if hashSalt or options are undefined.
-   * Gets the key, data and timestamp from the hash_options_value atom.
-   * Checks that key, data and timestamp are defined.
-   * Sends a transaction to lock in the battle options with the key, timestamp and options.
-   * Waits for the transaction to be confirmed.
-   * Returns the battle data.
-   */
-  const lockIn = useMutation({
-    mutationKey: ["lockIn"],
-    mutationFn: async () => {
-      const { key, data, timestamp } = hashAtom
-
-      if (key == undefined || (data == undefined || data == BattleOptions.NONE) || timestamp == undefined) throw new Error("Requested options is empty")
-
-      const tx = await worldSend('lockIn', [String(key + timestamp), data])
-      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return battleData
-    }
-  })
-
-
-  /**
-   * Defines a mutation hook to rematch in battle.
-   * @param mutationKey The key for the mutation.
-   * @param mutationFn The function to execute the mutation.
-   * Sends a transaction to rematch in the battle.
-   * Waits for the transaction to be confirmed.
-   * Returns the battle data.
-   */
-  const rematch = useMutation({
-    mutationKey: ["rematch"],
-    mutationFn: async (options: boolean) => {
-      const tx = await worldSend('rematch', [options])
-      await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return battleData
-    }
-  })
-
   return {
     battleData,
-    setBattle,
-    lockIn,
-    onSelectOptions,
+    opponentBattleData,
     playerInfo,
     opponentInfo,
-    setLockBattle,
-    opponentBattleData,
-    setBattlePreResult,
+    lockIn,
     rematch,
-    battleTime,
+    onSelectOptions,
+    validateBattle,
   }
 }

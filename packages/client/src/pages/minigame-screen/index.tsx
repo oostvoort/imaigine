@@ -1,157 +1,68 @@
 import React from 'react'
 import { clsx } from 'clsx'
-import { Card, CardTimer, PlayerScoreBoard } from '@/components/base/Card'
-import { Button } from '@/components/base/Button'
-import { HEX_ZERO, IPFS_URL_PREFIX } from '@/global/constants'
+import { Card, PlayerScoreBoard } from '@/components/base/Card'
+import { IPFS_URL_PREFIX } from '@/global/constants'
 import usePlayer from '@/hooks/usePlayer'
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import Template from '@/components/layouts/MainLayout'
 import { Entity } from '@latticexyz/recs'
 import useBattle from '@/hooks/minigame/useBattle'
-import { formatTime } from '@/global/utils'
-import { BattleOptions } from '@/hooks/minigame/types/battle'
-import { useAtom } from 'jotai'
-import { hash_options_set_value } from '@/states/minigame'
+import { BATTLE_OPTIONS, BATTLE_OUTCOME } from '@/hooks/minigame/types/battle'
 import useHistory from '@/hooks/minigame/useHistory'
-import useLeave from '@/hooks/minigame/useLeave'
-import { activeScreen_atom, SCREENS } from '@/states/global'
 import DialogWidget from '@/components/base/Dialog/FormDialog/DialogWidget'
 import { BattleGuide } from '@/components/base/Dialog/FormDialog/DialogContent/BattleGuide'
 import useGetFromIPFS from '@/hooks/useGetFromIPFS'
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import { constants } from 'ethers/lib.esm'
 
 export default function MinigameScreen() {
   const { player } = usePlayer()
-  const { leave } = useLeave(player.location?.value as Entity)
+  const { getWinnerInfo } = useHistory(player.id as Entity)
 
-  const { getBattleResult, getWinnerInfo, clearLogsHistory } = useHistory(player.id as Entity)
   const {
     battleData,
-    battleTime,
+    opponentBattleData,
     playerInfo,
     opponentInfo,
-    opponentBattleData,
     lockIn,
     rematch,
-    setBattlePreResult,
-    setLockBattle,
     onSelectOptions,
   } = useBattle(player.id as Entity)
 
   const _opponentInfo = useGetFromIPFS(opponentInfo?.config?.value ?? '', 'opponent')
   const _playerInfo = useGetFromIPFS(playerInfo?.config?.value ?? '', 'player')
 
+  const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(BATTLE_OPTIONS.NONE)
+  const [ resetCountdownTimerKey, setResetCountdownTimerKey ] = React.useState<number>(0)
 
-  const [ , setActiveScreen ] = useAtom(activeScreen_atom)
-  const [ , setHashAtom ] = useAtom(hash_options_set_value)
+  const playerInQueue = !battleData.battle?.opponent
+  const showPrompt = !!battleData.battle?.outcome
+  const showWeapon = battleData.battle?.option && opponentBattleData.battle?.option
+  const pendingSelection = !battleData.battle?.option
+  const playerSelectedAWeapon = battleData.battle?.hashedOption !== constants.HashZero
 
-  const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(3)
-  const [ showWeapon, setShowWeapon ] = React.useState<boolean>(false)
-  const [ showPrompt, setShowPrompt ] = React.useState<boolean>(false)
-
-  const [ isChooseWeaponComponent, setIsChooseWeaponComponent ] = React.useState<boolean>(true)
-  const [ isMatchResultComponent, setIsMatchResultComponent ] = React.useState<boolean>(false)
-  const [ isForefeit, setIsForfeit ] = React.useState<boolean>(false)
-  //to reset the countdown circle timer component
-  const [ key, setKey ] = React.useState<number>(0)
-  const [ remainingGameTime, setRemainingGameTime ] = React.useState<number>(0)
-  const [ remainingCountdownTime, setRemainingCountdownTime ] = React.useState<number>(10)
-
-  const isWaitingForOpponent = battleData.battle?.opponent === undefined || battleData.battle?.opponent === HEX_ZERO
-
-  const hasOpponentSelectedWeapon = opponentBattleData.battle?.hashedOption === HEX_ZERO
-
-  //IF BOTH PLAYERS CHOOSE A WEAPON WITH IN THE COUNTDOWN TIMER
   React.useEffect(() => {
-    if (!isWaitingForOpponent) {
-      if (selectedWeapon !== 3 && !hasOpponentSelectedWeapon) {
-        setIsChooseWeaponComponent(false)
-        setLockBattle.mutateAsync().then(() => {
-          setBattlePreResult.mutateAsync().then(() => {
-            setShowWeapon(true)
-
-            lockIn.mutate()
-
-            const delayRoundResultPrompt = setTimeout(() => setShowPrompt(true), 1000)
-
-            const nextRound = setTimeout(() => {
-              setSelectedWeapon(3)
-              setShowWeapon(false)
-              setShowPrompt(false)
-              setIsChooseWeaponComponent(true)
-
-              setHashAtom({ key: '', data: BattleOptions.NONE, timestamp: 0 })
-              rematch.mutateAsync(false).finally(() => {
-                setKey(prevkey => prevkey + 1)
-              })
-            }, 3000)
-
-            return () => {
-              clearTimeout(delayRoundResultPrompt)
-              clearTimeout(nextRound)
-            }
-          })
-        })
-      }
-    }
-  }, [ isWaitingForOpponent, selectedWeapon, hasOpponentSelectedWeapon ])
-
-  //Game Timer
-  React.useEffect(() => {
-    if (isWaitingForOpponent) {
-      setRemainingGameTime(0)
-      setIsMatchResultComponent(false)
-    }
-
-    if (!isWaitingForOpponent) {
-      const interval = setInterval(() => {
-        const currentTime = Math.floor(Date.now() / 1000)
-        const timeDifference = battleTime.end - currentTime
-
-        if (timeDifference > 0) {
-          setRemainingGameTime(timeDifference)
-        } else {
-          setRemainingGameTime(0)
-          clearInterval(interval)
-          setIsMatchResultComponent(true)
-        }
-      }, 1000)
+    if (showPrompt) {
+      const _timer = setTimeout(async () => {
+        setSelectedWeapon(BATTLE_OPTIONS.NONE)
+        await rematch.mutateAsync()
+      }, 3000)
 
       return () => {
-        clearInterval(interval)
+        clearTimeout(_timer)
       }
     }
-  }, [ battleTime.end, isWaitingForOpponent ])
+  }, [ showPrompt ])
 
-  function handleLeaveBattle() {
-    try {
-      leave.mutate()
-      setActiveScreen(SCREENS.CURRENT_LOCATION)
-    } catch (e) {
-      console.error(e)
+  React.useEffect(() => {
+    if (battleData.battle?.deadline || opponentBattleData.battle?.deadline) {
+      setResetCountdownTimerKey(prevState => prevState + 1)
     }
-  }
+  }, [ battleData.battle?.deadline, opponentBattleData.battle?.deadline ])
 
-  function displayGameResult() {
-    // if (hasOpponentSelectedWeapon) return 'Forfeit'
-    if (getBattleResult.isDraw) return 'Draw'
-    if (getBattleResult.isWin) return 'Victory!'
-    if (getBattleResult.isWin != undefined && !getBattleResult.isWin) return 'Defeat!'
-    if (getBattleResult.isWin == undefined || isForefeit && hasOpponentSelectedWeapon) return 'FORFEIT!'
-  }
-
-  function displayRoundResult(battleDataOutcome: number) {
-    if (battleDataOutcome === 1) return 'You Win!'
-    if (battleDataOutcome === 2) return 'You Lost!'
-    if (battleDataOutcome === 3) return 'Draw'
-
-    return ''
-  }
-
-  function displayWeapon(battleOption: number | undefined) {
-    if (battleOption === 1) return '/assets/minigame/icon_rps_sword.jpg'
-    if (battleOption === 2) return '/assets/minigame/icon_rps_scroll.jpg'
-    if (battleOption === 3) return '/assets/minigame/icon_rps_potion.jpg'
-
+  function displayWeapon(battleOption?: number) {
+    if (battleOption === BATTLE_OPTIONS.Sword) return '/assets/minigame/icon_rps_sword.jpg'
+    if (battleOption === BATTLE_OPTIONS.Scroll) return '/assets/minigame/icon_rps_scroll.jpg'
+    if (battleOption === BATTLE_OPTIONS.Potion) return '/assets/minigame/icon_rps_potion.jpg'
     return ''
   }
 
@@ -160,26 +71,25 @@ export default function MinigameScreen() {
       src: '/assets/minigame/icon_rps_sword.jpg',
       alt: 'Sword Icon',
       onClick: async () => {
-        setSelectedWeapon(0)
-        await onSelectOptions(BattleOptions.Sword)
+        setSelectedWeapon(BATTLE_OPTIONS.Sword)
+        await onSelectOptions(BATTLE_OPTIONS.Sword)
       },
     },
     {
       src: '/assets/minigame/icon_rps_scroll.jpg',
       alt: 'Scroll Icon',
       onClick: async () => {
-        setSelectedWeapon(1)
-        await onSelectOptions(BattleOptions.Scroll)
+        setSelectedWeapon(BATTLE_OPTIONS.Scroll)
+        await onSelectOptions(BATTLE_OPTIONS.Scroll)
       },
     },
     {
       src: '/assets/minigame/icon_rps_potion.jpg',
       alt: 'Potion Icon',
       onClick: async () => {
-        setSelectedWeapon(2)
-        await onSelectOptions(BattleOptions.Potion)
+        setSelectedWeapon(BATTLE_OPTIONS.Potion)
+        await onSelectOptions(BATTLE_OPTIONS.Potion)
       },
-
     },
   ]
 
@@ -187,7 +97,7 @@ export default function MinigameScreen() {
     <React.Fragment>
       {/*Timer and Player Info*/}
       <Card className={'minigame-card'}>
-        <CardTimer timer={formatTime(remainingGameTime)} />
+        {/*<CardTimer timer={formatTime(remainingGameTime)} />*/}
         <div
           className={
             clsx([
@@ -211,8 +121,8 @@ export default function MinigameScreen() {
                    clsx([
                      'w-[64px] h-[64px] object-cover',
                      'absolute left-1/2 top-1/2',
-                     { 'zoomHidden': isWaitingForOpponent },
-                     { 'zoomActive': !isWaitingForOpponent },
+                     { 'zoomHidden': playerInQueue },
+                     { 'zoomActive': !playerInQueue },
                    ])}
                  draggable={false}
                  loading={'eager'}
@@ -233,184 +143,174 @@ export default function MinigameScreen() {
       </Card>
 
       <div
-        className={clsx([ 'w-full h-full text-center', 'absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 ' ])}>
+        className={clsx([ ' w-full h-full text-center', 'absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 ' ])}>
         {/*Chair*/}
-        <img src={'/assets/minigame/img_battle_chair.png'} alt={'Chair Icon'}
-             className={clsx('absolute left-1/2 top-[39%] -translate-y-1/2 -translate-x-1/2 w-[740px] h-auto')}
-             draggable={false} />
+        <img
+          src={'/assets/minigame/img_battle_chair.png'}
+          alt={'Chair Icon'}
+          className={clsx('absolute left-1/2 top-[39%] -translate-y-1/2 -translate-x-1/2 w-[740px] h-auto')}
+          draggable={false}
+        />
 
         {/*Opponent Image In Chair*/}
         {
-          player.image?.value
-            ? <img
+          _opponentInfo.data?.image ?
+            <img
               src={`${IPFS_URL_PREFIX}/${_opponentInfo.data?.image}`}
               alt={`Character image of ${_opponentInfo.data?.name}`}
               className={
-                clsx([ { 'hidden': _opponentInfo.data?.image === undefined }, 'h-[373px] w-[290px]', 'absolute left-1/2 top-[15%] -translate-y-1/2 -translate-x-1/2', 'rounded-3xl', { 'hidden': battleData.battle === undefined || isWaitingForOpponent } ])}
-              draggable={false} />
-            :
-            <div
-              className={clsx([ 'h-[373px] w-[290px]', ' bg-[#485476]', 'absolute left-1/2 top-[15%] -translate-y-1/2 -translate-x-1/2', 'rounded-3xl' ])} />
+                clsx([
+                  'h-[373px] w-[290px]',
+                  'absolute left-1/2 top-[15%] -translate-y-1/2 -translate-x-1/2',
+                  'rounded-3xl',
+                ])}
+              draggable={false}
+            /> : null
         }
 
         {/*Table*/}
-        <img src={'/assets/minigame/img_battle_table.png'} alt={'Chair Icon'}
-             className={'absolute left-1/2 bottom-[14%] translate-y-1/2 -translate-x-1/2 w-[965px] h-auto'}
-             draggable={false} />
+        <img
+          src={'/assets/minigame/img_battle_table.png'}
+          alt={'Chair Icon'}
+          className={'absolute left-1/2 bottom-[14%] translate-y-1/2 -translate-x-1/2 w-[965px] h-auto'}
+          draggable={false}
+        />
 
         {/*Waiting for opponent*/}
+        <Template.MinigameLayout.WaitingForOpponent
+          className={clsx([ { 'hidden': battleData.battle?.opponent } ])}>
+          <>
+            <div
+              className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+              <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
+                   className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
+              <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5', '' ])}>Waiting for the other
+                player</p>
+            </div>
 
+            <div
+              className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
+              <p
+                className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
+                THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
+                MAP FOR
+                INCOMING PLAYERS.
+              </p>
+            </div>
+          </>
+        </Template.MinigameLayout.WaitingForOpponent>
 
-        <Template.MinigameLayout.WaitingForOpponent>
-          {
-            isWaitingForOpponent ?
-              <React.Fragment>
-                <div
-                  className={clsx([ { 'hidden': lockIn.isLoading }, 'bg-lining bg-cover h-[64px] w-[980px]', 'flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                  <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                       className={'animate-custom-spin h-[30px] w-[18px]'} draggable={false} />
-                  <p className={clsx([ 'text-3xl font-amiri text-white mt-1.5', '' ])}>Waiting for the other
-                    player</p>
-                </div>
+        {/*Comparison of Weapons*/}
+        <Template.MinigameLayout.MatchComparison
+          className={clsx([ { 'hidden': !showPrompt && !showWeapon } ])}>
+          {/*Opponent Weapon*/}
+          <div
+            className={clsx([ { 'zoomHidden': !showWeapon }, { 'zoomActive': showWeapon }, 'w-[136px] h-[136px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'absolute left-1/2 top-[33%] -translate-y-2/4 -translate-x-1/2', 'delay-[3000]' ])}>
+            <img src={displayWeapon(opponentBattleData.battle?.option)} alt={''} loading={'eager'}
+                 className={clsx([ 'rounded-full' ])} draggable={false}
+                 placeholder={'/assets/minigame/icon_rps_sword.jpg'} />
+          </div>
 
-                <div
-                  className={clsx([ 'hidden bg-noLining bg-cover h-[70px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[62%] -translate-y-2/4 -translate-x-1/2' ])}>
-                  <p
-                    className={clsx([ 'text-sm text-accent text-center w-[720px]', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>
-                    THERE ARE NO OTHER PLAYERS IN THE AREA. THIS MAY TAKE A WHILE. OR FOREVER. PLEASE CHECK YOUR
-                    MAP FOR
-                    INCOMING PLAYERS.
-                  </p>
-                </div>
-              </React.Fragment>
-                    : null
+          {/*Player Weapon*/}
+          <div
+            className={clsx([ { 'zoomHidden': !showWeapon }, { 'zoomActive': showWeapon }, 'w-[190px] h-[190px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'absolute left-1/2 bottom-[10%] -translate-y-2/4 -translate-x-1/2' ])}>
+            <img
+              src={displayWeapon(battleData.battle?.option)}
+              alt={''}
+              className={clsx([ 'rounded-full' ])}
+              draggable={false}
+              loading={'eager'}
+            />
+          </div>
+
+          <div
+            className={clsx([ {
+              'zoomHidden': !showPrompt,
+              'zoomActive': showPrompt,
+            }, 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[46%] ' ])}>
+            <p
+              className={
+                clsx([
+                  'text-[68px]',
+                  'font-amiri uppercase leading-[36px] mt-4',
+                  { 'text-dangerAccent': Number(battleData.battle?.outcome) === BATTLE_OUTCOME["You Lost!"] },
+                  { 'text-option-8': Number(battleData.battle?.outcome) !== BATTLE_OUTCOME["You Lost!"] } ])}
+            >
+              {BATTLE_OUTCOME[(Number(battleData.battle?.outcome))]}
+            </p>
+            <p
+              className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>Next
+              Round Starts in 3...</p>
+          </div>
+        </Template.MinigameLayout.MatchComparison>
+
+        {/*Choosing Weapon*/}
+        <Template.MinigameLayout.ChooseWeapon
+          className={clsx([
+            { 'hidden': playerInQueue || showPrompt || showWeapon } ])}>
+          <div
+            className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+            {
+              !playerInQueue &&
+              <CountdownCircleTimer
+                key={resetCountdownTimerKey}
+                isPlaying={true}
+                duration={30}
+                onComplete={() => {
+                  if (!playerInQueue) {
+                    lockIn.mutate(selectedWeapon)
+                  }
+                }}
+                colors={'#FFBB00'}
+                size={96}
+                strokeWidth={10}
+                trailColor={'#704E00'}
+              >
+                {({ remainingTime }) => {
+                  return (
+                    <p
+                      className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>
+                  )
                 }
-              </Template.MinigameLayout.WaitingForOpponent>
+                }
+              </CountdownCircleTimer>
+            }
+          </div>
 
+          <div
+            className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': showPrompt } ])}>
+            <img
+              src={'/assets/svg/hourglass.svg'}
+              alt={'Hourglass Icon'}
+              className={clsx([ 'animate-custom-spin h-[30px] w-[18px]' ])}
+              draggable={false}
+            />
+            <p
+              className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>{playerSelectedAWeapon ? 'Waiting for opponent' : 'Choose your weapon'}</p>
+          </div>
 
-              {/*Comparison of Weapons*/}
-              <Template.MinigameLayout.MatchComparison
-                className={clsx([ { 'hidden': isChooseWeaponComponent || isMatchResultComponent } ])}>
-                {/*Opponent Weapon*/}
-                <div
-                  className={clsx([ { 'zoomHidden': !showWeapon }, { 'zoomActive': showWeapon }, 'w-[136px] h-[136px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'absolute left-1/2 top-[33%] -translate-y-2/4 -translate-x-1/2' ])}>
-                  {/*TODO: Fix issue where image doesn't load immediately*/}
-                  <img src={displayWeapon(opponentBattleData.battlePreResults?.option)} alt={''} loading={'eager'}
-                       className={clsx([ 'rounded-full' ])} draggable={false} />
-                </div>
-
-                {/*Player Weapon*/}
-                <div
-                  className={clsx([ { 'zoomHidden': !showWeapon }, { 'zoomActive': showWeapon }, 'w-[190px] h-[190px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'absolute left-1/2 bottom-[10%] -translate-y-2/4 -translate-x-1/2' ])}>
-                  {/*TODO: Fix issue where image doesn't load immediately*/}
-                  <img src={displayWeapon(battleData.battlePreResults?.option)} alt={''}
-                       className={clsx([ 'rounded-full' ])} draggable={false} loading={'eager'} />
-                </div>
-
-                <div
-                  className={clsx([ { 'zoomHidden': !showPrompt }, { 'zoomActive': showPrompt }, 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute mx-auto left-1/2 top-[46%] ' ])}>
-                  <p
-                    className={clsx([ 'text-[68px]', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': Number(battleData.battle?.outcome) === 2 }, { 'text-option-8': Number(battleData.battle?.outcome) !== 2 } ])}>{displayRoundResult(Number(battleData.battle?.outcome))}</p>
-                  <p
-                    className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>Next
-                    Round Starts in 3...</p>
-                </div>
-              </Template.MinigameLayout.MatchComparison>
-
-              {/*Status of match*/}
-              <Template.MinigameLayout.MatchStatus
-                className={clsx([ { 'zoomHidden relative': !isMatchResultComponent }, { 'hidden': isForefeit && !hasOpponentSelectedWeapon} ])}>
-                <div
-                  className={clsx([ 'bg-liningBig h-[134px] w-[980px] flex flex-col items-center justify-center gap-3', 'absolute left-1/2 top-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent } ])}>
-                  <p
-                    className={clsx([ 'text-[68px]', 'font-amiri uppercase leading-[36px] mt-4', { 'text-dangerAccent': !getBattleResult?.isWin }, { 'text-option-8': getBattleResult?.isWin || getBattleResult?.isWin == undefined || getBattleResult?.isDraw } ])}>{displayGameResult()}</p>
-                  <p
-                    className={clsx([ 'hidden text-sm text-accent', 'font-jost font-medium uppercase tracking-[1.4px]' ])}>{`You've earned 100 battle points!`}</p>
-                </div>
-
-                <div
-                  className={clsx([ 'flex flex-col gap-md', 'absolute -bottom-[10%] left-1/2', { 'zoomHidden': !isMatchResultComponent }, { 'zoomActive': isMatchResultComponent }, { 'hidden': isForefeit && hasOpponentSelectedWeapon} ])}>
-                  {/*<Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleRematchBattle}>Rematch</Button>*/}
-                  <div className={clsx([ { 'hidden': !isMatchResultComponent } ])}>
-                    <Button variant={'neutral'} size={'btnWithBgImg'} onClick={handleLeaveBattle}>Leave Battle</Button>
-                  </div>
-                </div>
-              </Template.MinigameLayout.MatchStatus>
-
-              {/*Choosing Weapon*/}
-              <Template.MinigameLayout.ChooseWeapon
-                className={clsx([ { 'hidden': isWaitingForOpponent || !isChooseWeaponComponent || isMatchResultComponent } ])}>
-                <div
-                  className={clsx([ { 'hidden': rematch.isLoading }, 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
-                  {
-                    !isWaitingForOpponent &&
-                    <CountdownCircleTimer
-                      key={key}
-                      isPlaying={true}
-                      duration={10}
-                      onComplete={() => {
-                        if (!isWaitingForOpponent) {
-                          lockIn.mutate()
-                          clearLogsHistory.mutate()
-                          setSelectedWeapon(3)
-                          setShowWeapon(false)
-                          setShowPrompt(false)
-                          setIsMatchResultComponent(true)
-
-                          setIsForfeit(true)
-                        }
-                      }}
-                      onUpdate={(remainingTime) => {
-                        setRemainingCountdownTime(remainingTime)
-                      }}
-                      colors={'#FFBB00'}
-                      size={96}
-                      strokeWidth={10}
-                      trailColor={'#704E00'}
-                    >
-                      {({ remainingTime }) => {
-                        return (
-                          <p
-                            className={'text-[46px] leading-[121px] text-center text-[#FFBB00] font-amiri'}>{remainingTime}</p>
-                        )
-                      }
-                      }
-                    </CountdownCircleTimer>
-                  }
-                </div>
-
-                <div
-                  className={clsx([ 'bg-lining bg-cover h-[64px] w-[980px] flex items-center justify-center gap-3', 'absolute mx-auto left-1/2 bottom-[25%] -translate-y-2/4 -translate-x-1/2', { 'hidden': selectedWeapon !== 3 && !hasOpponentSelectedWeapon } ])}>
-                  <img src={'/assets/svg/hourglass.svg'} alt={'Hourglass Icon'}
-                       className={clsx([ 'animate-custom-spin h-[30px] w-[18px]', { 'hidden': !hasOpponentSelectedWeapon || selectedWeapon === 3 } ])}
-                       draggable={false} />
-                  <p
-                    className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon !== 3 } ])}>{'Choose your weapon'}</p>
-                  <p
-                    className={clsx([ 'text-3xl font-amiri text-white mt-1.5', { 'hidden': selectedWeapon === 3 } ])}>{hasOpponentSelectedWeapon && 'Waiting for opponent'}</p>
-                </div>
-
-                <div
-                  className={clsx([ 'flex gap-md', 'absolute left-1/2 -bottom-[10%] -translate-x-1/2 -translate-y-2/4' ])}>
-                  {
-                    weapons.map((weapon, key) => {
-                      const isSelectedWeapon = selectedWeapon === key
-                      return (
-                        <button key={key} onClick={weapon.onClick} disabled={rematch.isLoading || remainingCountdownTime == 1}
-                                className={clsx([ 'w-[160px] h-[160px]', 'rounded-full border border-[2px] border-[#2C3B47]',
-                                  { 'scale-100 opacity-100': selectedWeapon === 3 },
-                                  { 'scale-100 opacity-100 border-[5px] border-option-9': isSelectedWeapon && selectedWeapon !== 3 },
-                                  { 'scale-[0.8] opacity-50': rematch.isLoading },
-                                ])}
-                        >
-                          <img src={weapon.src} alt={weapon.alt} className={clsx([ 'rounded-full' ])}
-                               draggable={false} />
-                        </button>
-                      )
-                    })
-                  }
-                </div>
-              </Template.MinigameLayout.ChooseWeapon>
+          <div
+            className={clsx(['flex gap-md', 'absolute left-1/2 -bottom-[10%] -translate-x-1/2 -translate-y-2/4' ])}>
+            {
+              weapons.map((weapon, key) => {
+                const isSelectedWeapon = selectedWeapon === key + 1
+                return (
+                  <button key={key} onClick={weapon.onClick}
+                          disabled={!pendingSelection}
+                          className={clsx([ 'w-[160px] h-[160px]', 'rounded-full border border-[2px] border-[#2C3B47]',
+                            { 'scale-100 opacity-100': selectedWeapon === BATTLE_OPTIONS.NONE },
+                            { 'scale-100 opacity-100 border-[5px] border-option-9': isSelectedWeapon && selectedWeapon !== BATTLE_OPTIONS.NONE },
+                            { 'scale-[0.8] opacity-50': !pendingSelection },
+                          ])}
+                  >
+                    <img src={weapon.src} alt={weapon.alt} className={clsx([ 'rounded-full' ])}
+                         draggable={false} />
+                  </button>
+                )
+              })
+            }
+          </div>
+        </Template.MinigameLayout.ChooseWeapon>
       </div>
 
       {/*Battle Logs*/}

@@ -1,15 +1,14 @@
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import { BattleOptions } from '@/hooks/minigame/types/battle'
+import { BATTLE_OPTIONS } from '@/hooks/minigame/types/battle'
 
-type HashOptionsTypes = {key : string, data : BattleOptions, timestamp : number}
+type HashOptionsTypes = {key : string, data : BATTLE_OPTIONS, timestamp : number}
 
 export const hash_options_value = atomWithStorage<HashOptionsTypes>('hash_options_value', {
   key : '',
-  data : BattleOptions.NONE,
+  data : BATTLE_OPTIONS.NONE,
   timestamp : 0
 })
-
 export const hash_options_set_value = atom(
   null,
   (_, set, hashOptions: HashOptionsTypes) => {

@@ -4,20 +4,33 @@ export type SETBATTLETYPES = {
   opponentId: PromiseOrValue<string>
 }
 
-export enum BattleOptions {
+export enum BATTLE_OUTCOME {
+  'You Win!' = 1,
+  'You Lost!' = 2,
+  'Draw' = 3
+}
+
+export enum BATTLE_OPTIONS {
   NONE,
   Sword,
   Scroll,
   Potion
 }
 
+export enum BATTLE_STATUS {
+  NOT_IN_BATTLE,
+  IN_BATTLE,
+  DONE_SELECTING,
+  LOCKED_IN
+}
+
 export type LOCKINTYPES = {
   hashSalt: PromiseOrValue<string>,
-  options: PromiseOrValue<BattleOptions>
+  options: PromiseOrValue<BATTLE_OPTIONS>
 }
 
 export type HashOptionsTypes = {
   key : string,
-  data : BattleOptions,
+  data : BATTLE_OPTIONS,
   timestamp : number
 }

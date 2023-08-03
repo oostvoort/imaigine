@@ -19,9 +19,6 @@ export default function useLeave(locationId: Entity) {
 
   const setActiveScreen = useSetAtom(activeScreen_atom)
 
-  const { playdata } = usePlay(locationId)
-  const { player } = usePlayer()
-  const { getBattleLogs} = useHistory(player.id as Entity)
   /**
    * Defines a mutation hook to leave a location.
    * @param mutationKey The key for the mutation.
@@ -33,9 +30,8 @@ export default function useLeave(locationId: Entity) {
   const leave = useMutation({
     mutationKey: [ 'leave' ],
     mutationFn: async () => {
-      const tx = await worldSend('leave', [getBattleLogs])
+      const tx = await worldSend('leave', [])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return playdata
     },
     onSuccess: () => {
       setActiveScreen(SCREENS.CURRENT_LOCATION)
