@@ -18,6 +18,8 @@ interface IMinigameSystem {
 
   function validateBattle() external;
 
+  function removeBattleLogs(uint256[] memory battleHistoryIds) external;
+
   function rematch() external;
 
   function leave() external;

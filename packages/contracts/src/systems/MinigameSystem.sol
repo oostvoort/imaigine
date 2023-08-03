@@ -109,6 +109,15 @@ contract MinigameSystem is System {
     beginBattle(playerId);
   }
 
+  // @param battleHistoryIds, array of battle history ids
+  // @dev removes BattleHistory Records based on battleHistoryIds
+  // @note call from front-end and passed an ids array
+  function removeBattleLogs(uint256[] memory battleHistoryIds) public {
+    for (uint256 i = 0; i < battleHistoryIds.length; i++) {
+      BattleHistoryComponent.deleteRecord(battleHistoryIds[i]);
+    }
+  }
+
   // @dev Can only be called after deadline
   function beginBattle(bytes32 playerId) internal {
     // get player's selection
