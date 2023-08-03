@@ -503,6 +503,73 @@ contract MinigameTest is MudV2Test {
     assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.DRAW), "test_battleOutcome::24");
   }
 
+  function test_removeBattleLogs() public {
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.play();
+
+    vm.prank(PLAYER_2, PLAYER_2);
+    world.play();
+
+    // Player 1, lock In
+    doSelect(PLAYER_1, BattleOptions.Scroll, false);
+    doSelect(PLAYER_2, BattleOptions.Sword, false);
+
+    vm.warp(block.timestamp + 31); // warp to deadline
+
+    // Players lock In
+    doSelect(PLAYER_1, BattleOptions.Scroll, true);
+    doSelect(PLAYER_2, BattleOptions.Sword, true);
+
+    BattleComponentData memory player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    BattleComponentData memory player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    uint256 player1_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    uint256 player2_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    BattleResultsComponentsData memory player1_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_1))));
+    BattleResultsComponentsData memory player2_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    assertEq(uint256(player1_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_removeBattleLogs::1");
+    assertEq(uint256(player2_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_removeBattleLogs::2");
+
+    // Player 2 wins
+    assertEq(player1_points, 0, "test_removeBattleLogs::3");
+    assertEq(player2_points, 1, "test_removeBattleLogs::4");
+
+    assertEq(player1_battleResult.totalWins, 0, "test_removeBattleLogs::5");
+    assertEq(player1_battleResult.totalLoses, 1, "test_removeBattleLogs::6");
+    assertEq(player2_battleResult.totalWins, 1, "test_removeBattleLogs::7");
+    assertEq(player2_battleResult.totalLoses, 0, "test_removeBattleLogs::8");
+
+    // GET PLAYER_1 Battle Logs
+    BattleHistoryComponentData memory player_1_history = BattleHistoryComponent.get(world, 1);
+
+    // GET PLAYER_2 Battle logs
+    BattleHistoryComponentData memory player_2_history = BattleHistoryComponent.get(world, 2);
+
+    // player1 and player2 check for winner and loser
+    assertEq(player_1_history.winner, bytes32(uint256(uint160(PLAYER_2))), "test_removeBattleLogs::9");
+    assertEq(player_2_history.loser, bytes32(uint256(uint160(PLAYER_1))), "test_removeBattleLogs::10");
+
+    // player1 and player2 check must not draw
+    assertEq(player_1_history.draw, false, "test_removeBattleLogs::11");
+    assertEq(player_2_history.draw, false, "test_removeBattleLogs::12");
+
+    uint256[] memory battleLogsIds = new uint256[](2);
+    battleLogsIds[0] = 1;
+    battleLogsIds[1] = 2;
+
+    // expect PLAYER_1 remove the Battle Logs and remove the winner and loser
+    vm.prank(PLAYER_1, PLAYER_1);
+    world.removeBattleLogs(battleLogsIds);
+
+    player_1_history = BattleHistoryComponent.get(world, 1);
+    player_2_history = BattleHistoryComponent.get(world, 2);
+
+    assertEq(player_1_history.winner, bytes32(0), "test_removeBattleLogs::13");
+    assertEq(player_2_history.loser, bytes32(0), "test_removeBattleLogs::14");
+  }
+
   function doSelect(address player, BattleOptions selection, bool reveal) internal {
     if (reveal) {
       vm.prank(player, player);
