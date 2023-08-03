@@ -269,12 +269,17 @@ contract MinigameSystem is System {
     }
   }
 
-  function deleteBattleRecord(bytes32 playerId, bytes32 opponentId) internal {
-    BattleComponent.deleteRecord(playerId);
-    BattleComponent.deleteRecord(opponentId);
+  function setBattleOutcome(bytes32 playerId, bytes32 opponentId, BattleOutcomeType playerOutcome, BattleOutcomeType opponentOutcome) internal {
+    BattleComponent.setOutcome(playerId, playerOutcome);
+    BattleComponent.setOutcome(opponentId, opponentOutcome);
+  }
 
-    BattleResultsComponents.deleteRecord(playerId);
-    BattleResultsComponents.deleteRecord(opponentId);
+  function setBattleWinsAndLoses(bytes32 winnerId, bytes32 loserId) internal {
+    BattleResultsComponentsData memory winnerBattleResult = BattleResultsComponents.get(winnerId);
+    BattleResultsComponentsData memory loserBattleResult = BattleResultsComponents.get(loserId);
+
+    BattleResultsComponents.setTotalWins(winnerId, winnerBattleResult.totalWins + 1);
+    BattleResultsComponents.setTotalLoses(loserId, loserBattleResult.totalLoses + 1);
   }
 
   function resetBattleComponent(bytes32 playerId, bytes32 opponentId) internal {
@@ -291,17 +296,12 @@ contract MinigameSystem is System {
     );
   }
 
-  function setBattleOutcome(bytes32 playerId, bytes32 opponentId, BattleOutcomeType playerOutcome, BattleOutcomeType opponentOutcome) internal {
-    BattleComponent.setOutcome(playerId, playerOutcome);
-    BattleComponent.setOutcome(opponentId, opponentOutcome);
-  }
+  function deleteBattleRecord(bytes32 playerId, bytes32 opponentId) internal {
+    BattleComponent.deleteRecord(playerId);
+    BattleComponent.deleteRecord(opponentId);
 
-  function setBattleWinsAndLoses(bytes32 winnerId, bytes32 loserId) internal {
-    BattleResultsComponentsData memory winnerBattleResult = BattleResultsComponents.get(winnerId);
-    BattleResultsComponentsData memory loserBattleResult = BattleResultsComponents.get(loserId);
-
-    BattleResultsComponents.setTotalWins(winnerId, winnerBattleResult.totalWins + 1);
-    BattleResultsComponents.setTotalLoses(loserId, loserBattleResult.totalLoses + 1);
+    BattleResultsComponents.deleteRecord(playerId);
+    BattleResultsComponents.deleteRecord(opponentId);
   }
 
 }
