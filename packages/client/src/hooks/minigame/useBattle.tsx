@@ -6,6 +6,8 @@ import { awaitStreamValue } from '@latticexyz/utils'
 import { BATTLE_OPTIONS } from '@/hooks/minigame/types/battle'
 import { extractErrorMessage } from '@/global/utils'
 import { toast } from 'react-toastify'
+// import { useSetAtom } from 'jotai'
+// import { activeScreen_atom } from '@/states/global'
 
 export default function useBattle(playerId: Entity) {
   const {
@@ -25,6 +27,8 @@ export default function useBattle(playerId: Entity) {
       worldContract,
     },
   } = useMUD()
+
+  // const setActiveScreen = useSetAtom(activeScreen_atom)
 
   const DEFAULT_BATTLE_POINTS: unknown = '0'
 
@@ -63,17 +67,22 @@ export default function useBattle(playerId: Entity) {
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
     },
     onError: (err) => {
-      toast(`Error on lockin Fn: ${extractErrorMessage(err)}`, {
-        position: 'bottom-right',
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      })
       console.error(extractErrorMessage(err))
+      toast(`ERROR: ${extractErrorMessage(err)}`)
+
+      // const toast_info = setTimeout(() => {
+      //   toast(`Returning to your current location`)
+      // }, 3000)
+      //
+      // const returning_states = setTimeout(() => {
+      //   setActiveScreen(SCREENS.CURRENT_LOCATION)
+      // }, 4000)
+      //
+      // return () => {
+      //   clearTimeout(toast_info)
+      //   clearTimeout(returning_states)
+      // }
+
     },
   })
 
