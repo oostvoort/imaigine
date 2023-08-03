@@ -237,22 +237,24 @@ contract MinigameSystem is System {
   }
 
   function recordBattleResult(bytes32 playerId, bytes32 opponentId, int256 winner, BattleOptions playerOptions, BattleOptions opponentOptions) internal {
-    BattleResultsComponentsData memory playerBattleResult = BattleResultsComponents.get(playerId);
-    BattleResultsComponentsData memory opponentBattleResult = BattleResultsComponents.get(opponentId);
-
     uint256 battleHistoryCounterId = BattleHistoryCounter.get();
 
     if (winner == 1) {
-      BattleResultsComponents.setTotalWins(playerId, playerBattleResult.totalWins + 1);
-      BattleResultsComponents.setTotalLoses(opponentId, opponentBattleResult.totalLoses + 1);
-      BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, playerId, playerOptions, opponentId, opponentOptions, false);
+      setBattleWinsAndLoses(playerId, opponentId);
+      recordHistory(playerId, opponentId, playerId, playerOptions, opponentId, opponentOptions, false);
     } else if (winner == 2) {
-      BattleResultsComponents.setTotalWins(opponentId, opponentBattleResult.totalWins + 1);
-      BattleResultsComponents.setTotalLoses(playerId, playerBattleResult.totalLoses + 1);
-      BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, opponentId, opponentOptions, playerId, playerOptions, false);
+      setBattleWinsAndLoses(opponentId, playerId);
+      recordHistory(playerId, opponentId, opponentId, opponentOptions, playerId, playerOptions, false);
     } else {
-      BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
+      recordHistory(playerId, opponentId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
     }
+  }
+
+  function recordHistory(bytes32 playerId, bytes32 opponentId, bytes32 winnerId, BattleOptions winnerOption, bytes32 loserId, BattleOptions loserOption, bool isDraw) internal {
+    uint256 battleHistoryCounterId = BattleHistoryCounter.get();
+
+    BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, winnerId, winnerOption, loserId, loserOption, isDraw);
+
     BattleHistoryCounter.set(battleHistoryCounterId + 1);
   }
 
@@ -293,4 +295,13 @@ contract MinigameSystem is System {
     BattleComponent.setOutcome(playerId, playerOutcome);
     BattleComponent.setOutcome(opponentId, opponentOutcome);
   }
+
+  function setBattleWinsAndLoses(bytes32 winnerId, bytes32 loserId) internal {
+    BattleResultsComponentsData memory winnerBattleResult = BattleResultsComponents.get(winnerId);
+    BattleResultsComponentsData memory loserBattleResult = BattleResultsComponents.get(loserId);
+
+    BattleResultsComponents.setTotalWins(winnerId, winnerBattleResult.totalWins + 1);
+    BattleResultsComponents.setTotalLoses(loserId, loserBattleResult.totalLoses + 1);
+  }
+
 }
