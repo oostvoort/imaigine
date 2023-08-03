@@ -13,12 +13,14 @@ import usePlay from '@/hooks/minigame/usePlay'
 import { Entity } from '@latticexyz/recs'
 import useLeave from '@/hooks/minigame/useLeave'
 import Leaderboard from '@/components/base/Dialog/FormDialog/DialogContent/Leaderboard'
+import useHistory from '@/hooks/minigame/useHistory'
 
 export default function Header() {
   const { player } = usePlayer()
   const activeScreen = useGameState()
   const { play } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
+  const { clearLogsHistory } = useHistory(player.location?.value as Entity)
 
   const setActiveScreen = useSetAtom(activeScreen_atom)
   const isTravelling = useAtomValue(isTravelling_atom)
@@ -35,9 +37,10 @@ export default function Header() {
     }
   }
 
-  const handleLeaveBattle = () => {
+  const handleLeaveBattle = async () => {
     try {
-      leave.mutate()
+      await clearLogsHistory.mutate()
+      await leave.mutate()
     } catch (e) {
       console.error(e)
     }

@@ -126,12 +126,11 @@ export default function useHistory(playerId: Entity) {
   })
 
   const clearLogsHistory = useMutation({
-    mutationKey: ["clearLogsHistory:"],
+    mutationKey: ["clearLogsHistory"],
     mutationFn: async () => {
-      const tx = await worldSend('clearLogsHistory', [getBattleLogs])
+      const tx = await worldSend('removeBattleLogs', [getBattleLogs])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-      return getBattleLogs
-    }
+    },
 
   })
 
