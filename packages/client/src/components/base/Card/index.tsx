@@ -117,8 +117,11 @@ const PlayerScoreBoard = ({ imgSrc, name, battlePoints, win, loss }: PlayerScore
 
           <div
             className={clsx([ 'flex-none', 'w-[100px] h-[100px]', 'border border-[#2C3B47] rounded-full' ])}>
-            <img src={`${IPFS_URL_PREFIX}/${imgSrc}`} alt={''}
-                 className={clsx([ 'rounded-full', 'h-full w-full', 'object-cover object-top', { 'hidden': imgSrc === undefined } ])} />
+            {
+              imgSrc &&
+              <img src={`${IPFS_URL_PREFIX}/${imgSrc}`} alt={''}
+                   className={clsx([ 'rounded-full', 'h-full w-full', 'object-cover object-top' ])} />
+            }
           </div>
 
           {/*Player Status Win / Loss*/}

@@ -121,7 +121,7 @@
   }
 
   .minigame-card{
-    @apply max-h-[684px] h-full w-[375px] border border-accent rounded-2xl bg-modal bg-cover bg-center bg-no-repeat px-sm py-md flex flex-col flex-none overflow-y-auto;
+    @apply z-10 max-h-[684px] h-full w-[375px] border border-accent rounded-2xl bg-modal bg-cover bg-center bg-no-repeat px-sm py-md flex flex-col flex-none overflow-y-auto;
   }
 
   #react-root {

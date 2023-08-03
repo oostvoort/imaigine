@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { IPFS_URL_PREFIX } from '@/global/constants'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { concat, hexlify, keccak256, solidityPack, toUtf8Bytes } from 'ethers/lib/utils'
 import { constants } from 'ethers'
 
@@ -96,4 +96,14 @@ export const parsePlayerConfig = async (config: string) => {
 
 export const formatAddress = (address: string) => {
   return `${address.substring(0, 10)}...${address.substring(address.length - 10, address.length)}`
+}
+
+export const extractErrorMessage = (
+  error: any
+): string => {
+  const errorString = error.toString()
+  const transactionStart = errorString.indexOf('execution reverted: ')
+  const transactionEnd = errorString.indexOf('", method')
+  return  errorString.slice(transactionStart, transactionEnd)
+
 }

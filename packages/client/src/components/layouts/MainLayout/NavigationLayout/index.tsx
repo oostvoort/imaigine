@@ -59,7 +59,7 @@ export default function Header() {
           </DialogWidget>
 
           <div className={'pl-md h-[67px]'}>
-            <Button variant={'menu'} onClick={handleButtonClick} size={'menu'} disabled={isTravelling}>
+            <Button variant={'menu'} onClick={handleButtonClick} size={'menu'} disabled={isTravelling || activeScreen == SCREENS.MINIGAME}>
               <img
                 src={'/assets/svg/icon_map.png'}
                 alt="Map/Story"

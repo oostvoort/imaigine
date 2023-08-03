@@ -16,6 +16,7 @@ BattleHistoryComponent,
 BattleHistoryComponentData
 } from "../src/codegen/Tables.sol";
 import {
+
 BattleStatus,
 BattleOptions,
 BattleOutcomeType
@@ -114,7 +115,9 @@ contract MinigameTest is MudV2Test {
     BattleResultsComponentsData memory player2_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_2))));
 
     assertEq(uint256(player1_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_reveal::1");
+    assertEq(uint256(player1_battleData.outcome), uint256(BattleOutcomeType.LOSE), "test_reveal::1.1");
     assertEq(uint256(player2_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_reveal::2");
+    assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.WIN), "test_reveal::2.1");
 
     // Player 2 wins
     assertEq(player1_points, 0, "test_reveal::3");

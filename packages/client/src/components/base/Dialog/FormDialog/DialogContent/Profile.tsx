@@ -32,17 +32,20 @@ export function Profile() {
         <div className={clsx([ 'flex-1' ])}>
           <div className={clsx([ 'flex flex-col gap-y-md' ])}>
             <div className={clsx([ 'bg-option-13', 'p-sm', 'rounded-lg', 'border-b-[1px] border-option-12' ])}>
-              <div className={clsx([ 'flex items-center space-x-2' ])}>
-                <p className={clsx([ 'text-option-11 text-xl', 'font-segoe', 'leading-8 tracking-[0.4px]' ])}>Name :</p>
-                {
-                  playerInformation.name
-                    ? <TypingParagraph
-                      className={clsx([ 'text-white text-xl', 'font-segoe font-semibold', 'leading-8 tracking-[0.4px]' ])}
-                      text={playerInformation.name}
-                      typingSpeed={5} />
-                    : <Skeleton className={'bg-[#485476] rounded-[4px] w-2/4 h-[30px]'} />
-                }
-
+              <div className={clsx([ 'flex space-x-2' ])}>
+                <p
+                  className={clsx([ 'flex text-option-11 text-xl', 'font-segoe', 'leading-8 tracking-[0.4px] w-full' ])}>Name:
+                  <span className={'ml-2'}>
+                    {
+                      playerInformation.name
+                        ? <TypingParagraph
+                          className={clsx([ 'text-white text-xl', 'font-segoe font-semibold', 'leading-8 tracking-[0.4px]' ])}
+                          text={playerInformation.name}
+                          typingSpeed={5} />
+                        : <Skeleton className={'bg-[#485476] rounded-[4px] w-2/4 h-[30px]'} />
+                    }
+                </span>
+                </p>
               </div>
             </div>
 
