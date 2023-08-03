@@ -14,8 +14,10 @@ BattleResultsComponents,
 BattleResultsComponentsData
 } from "../src/codegen/Tables.sol";
 import {
+
 BattleStatus,
-BattleOptions
+BattleOptions,
+BattleOutcomeType
 } from "../src/codegen/Types.sol";
 
 contract MinigameTest is MudV2Test {
@@ -23,6 +25,7 @@ contract MinigameTest is MudV2Test {
 
   address private constant PLAYER_1 = address(1);
   address private constant PLAYER_2 = address(2);
+  address private constant PLAYER_3 = address(3);
 
   // int -> uint -> bytes32
   bytes32 private constant LOCATION_ID = bytes32(uint256(1));
@@ -109,7 +112,9 @@ contract MinigameTest is MudV2Test {
     BattleResultsComponentsData memory player2_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_2))));
 
     assertEq(uint256(player1_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_reveal::1");
+    assertEq(uint256(player1_battleData.outcome), uint256(BattleOutcomeType.LOSE), "test_reveal::1.1");
     assertEq(uint256(player2_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_reveal::2");
+    assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.WIN), "test_reveal::2.1");
 
     // Player 2 wins
     assertEq(player1_points, 0, "test_reveal::3");

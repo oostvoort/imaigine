@@ -155,6 +155,17 @@ contract MinigameSystem is System {
       } else {
         recordBattleResult(playerId, opponentId, winner);
       }
+
+      if (winner == 0) {
+        BattleComponent.setOutcome(playerId, BattleOutcomeType.DRAW);
+        BattleComponent.setOutcome(opponentId, BattleOutcomeType.DRAW);
+      } else if (winner == 1) {
+        BattleComponent.setOutcome(playerId, BattleOutcomeType.WIN);
+        BattleComponent.setOutcome(opponentId, BattleOutcomeType.LOSE);
+      } else if (winner == 2) {
+        BattleComponent.setOutcome(playerId, BattleOutcomeType.LOSE);
+        BattleComponent.setOutcome(opponentId, BattleOutcomeType.WIN);
+      }
     }
   }
 
