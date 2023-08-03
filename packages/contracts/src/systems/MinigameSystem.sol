@@ -156,20 +156,11 @@ contract MinigameSystem is System {
         recordBattleResult(playerId, opponentId, winner, playerSelection, opponentSelection);
       }
 
-      if (winner == 0) {
-        BattleComponent.setOutcome(playerId, BattleOutcomeType.DRAW);
-        BattleComponent.setOutcome(opponentId, BattleOutcomeType.DRAW);
-      }
+      if (winner == 0) setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
 
-      if (winner == 1) {
-        BattleComponent.setOutcome(playerId, BattleOutcomeType.WIN);
-        BattleComponent.setOutcome(opponentId, BattleOutcomeType.LOSE);
-      }
+      if (winner == 1) setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
 
-      if (winner == 2) {
-        BattleComponent.setOutcome(opponentId, BattleOutcomeType.WIN);
-        BattleComponent.setOutcome(playerId, BattleOutcomeType.LOSE);
-      }
+      if (winner == 2) setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
     }
   }
 
@@ -293,5 +284,10 @@ contract MinigameSystem is System {
     } else if (winner == 2) {
       BattlePointsComponent.set(opponentId, opponentPoints + 1);
     }
+  }
+
+  function setBattleOutcome(bytes32 playerId, bytes32 opponentId, BattleOutcomeType playerOutcome, BattleOutcomeType opponentOutcome) internal {
+    BattleComponent.setOutcome(playerId, playerOutcome);
+    BattleComponent.setOutcome(opponentId, opponentOutcome);
   }
 }
