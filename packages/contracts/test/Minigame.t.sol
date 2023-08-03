@@ -352,7 +352,7 @@ contract MinigameTest is MudV2Test {
     BattleHistoryComponentData memory player_1_history = BattleHistoryComponent.get(world, 1);
 
     // GET PLAYER_2 Battle logs
-    BattleHistoryComponentData memory player_2_history = BattleHistoryComponent.get(world, 2);
+    BattleHistoryComponentData memory player_2_history = BattleHistoryComponent.get(world, 1);
 
     // player1 and player2 check for winner and loser
     assertEq(player_1_history.winner, bytes32(uint256(uint160(PLAYER_2))), "test_battleLogs::9");
@@ -401,8 +401,8 @@ contract MinigameTest is MudV2Test {
     assertEq(player2_battleResult.totalWins, 1, "test_battleLogs::20");
     assertEq(player2_battleResult.totalLoses, 0, "test_battleLogs::21");
 
-    player_1_history = BattleHistoryComponent.get(world, 3);
-    player_2_history = BattleHistoryComponent.get(world, 4);
+    player_1_history = BattleHistoryComponent.get(world, 2);
+    player_2_history = BattleHistoryComponent.get(world, 2);
 
     // player1 and player2 check for winner and loser
     assertEq(player_1_history.winner, bytes32(0), "test_battleLogs::22");
@@ -545,7 +545,7 @@ contract MinigameTest is MudV2Test {
     BattleHistoryComponentData memory player_1_history = BattleHistoryComponent.get(world, 1);
 
     // GET PLAYER_2 Battle logs
-    BattleHistoryComponentData memory player_2_history = BattleHistoryComponent.get(world, 2);
+    BattleHistoryComponentData memory player_2_history = BattleHistoryComponent.get(world, 1);
 
     // player1 and player2 check for winner and loser
     assertEq(player_1_history.winner, bytes32(uint256(uint160(PLAYER_2))), "test_removeBattleLogs::9");
@@ -555,16 +555,15 @@ contract MinigameTest is MudV2Test {
     assertEq(player_1_history.draw, false, "test_removeBattleLogs::11");
     assertEq(player_2_history.draw, false, "test_removeBattleLogs::12");
 
-    uint256[] memory battleLogsIds = new uint256[](2);
+    uint256[] memory battleLogsIds = new uint256[](1);
     battleLogsIds[0] = 1;
-    battleLogsIds[1] = 2;
 
     // expect PLAYER_1 remove the Battle Logs and remove the winner and loser
     vm.prank(PLAYER_1, PLAYER_1);
     world.removeBattleLogs(battleLogsIds);
 
     player_1_history = BattleHistoryComponent.get(world, 1);
-    player_2_history = BattleHistoryComponent.get(world, 2);
+    player_2_history = BattleHistoryComponent.get(world, 1);
 
     assertEq(player_1_history.winner, bytes32(0), "test_removeBattleLogs::13");
     assertEq(player_2_history.loser, bytes32(0), "test_removeBattleLogs::14");
