@@ -109,6 +109,19 @@ contract MinigameSystem is System {
     beginBattle(playerId);
   }
 
+  // @param battleHistoryIds, array of battle history ids
+  // @dev removes BattleHistory Records based on battleHistoryIds
+  // @note call from front-end and passed an ids array
+  function removeBattleLogs(uint256[] memory battleHistoryIds) public {
+
+    if (battleHistoryIds.length > 0) {
+      for (uint256 i = 0; i < battleHistoryIds.length; i++) {
+        BattleHistoryComponent.deleteRecord(battleHistoryIds[i]);
+      }
+    }
+
+  }
+
   // @dev Can only be called after deadline
   function beginBattle(bytes32 playerId) internal {
     // get player's selection
@@ -153,19 +166,14 @@ contract MinigameSystem is System {
         BattleResultsComponents.deleteRecord(playerId);
         BattleResultsComponents.deleteRecord(opponentId);
       } else {
-        recordBattleResult(playerId, opponentId, winner);
+        recordBattleResult(playerId, opponentId, winner, playerSelection, opponentSelection);
       }
 
-      if (winner == 0) {
-        BattleComponent.setOutcome(playerId, BattleOutcomeType.DRAW);
-        BattleComponent.setOutcome(opponentId, BattleOutcomeType.DRAW);
-      } else if (winner == 1) {
-        BattleComponent.setOutcome(playerId, BattleOutcomeType.WIN);
-        BattleComponent.setOutcome(opponentId, BattleOutcomeType.LOSE);
-      } else if (winner == 2) {
-        BattleComponent.setOutcome(playerId, BattleOutcomeType.LOSE);
-        BattleComponent.setOutcome(opponentId, BattleOutcomeType.WIN);
-      }
+      if (winner == 0) setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
+
+      if (winner == 1) setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
+
+      if (winner == 2) setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
     }
   }
 
@@ -257,17 +265,27 @@ contract MinigameSystem is System {
     }
   }
 
-  function recordBattleResult(bytes32 playerId, bytes32 opponentId, int256 winner) internal {
+  function recordBattleResult(bytes32 playerId, bytes32 opponentId, int256 winner, BattleOptions playerOptions, BattleOptions opponentOptions) internal {
     BattleResultsComponentsData memory playerBattleResult = BattleResultsComponents.get(playerId);
     BattleResultsComponentsData memory opponentBattleResult = BattleResultsComponents.get(opponentId);
+
+    uint256 battleHistoryCounterId = BattleHistoryCounter.get();
 
     if (winner == 1) {
       BattleResultsComponents.setTotalWins(playerId, playerBattleResult.totalWins + 1);
       BattleResultsComponents.setTotalLoses(opponentId, opponentBattleResult.totalLoses + 1);
+      BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, playerId, playerOptions, opponentId, opponentOptions, false);
+      BattleHistoryComponent.set(battleHistoryCounterId + 2, opponentId, playerId, playerId, playerOptions, opponentId, opponentOptions, false);
     } else if (winner == 2) {
       BattleResultsComponents.setTotalWins(opponentId, opponentBattleResult.totalWins + 1);
       BattleResultsComponents.setTotalLoses(playerId, playerBattleResult.totalLoses + 1);
+      BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, opponentId, opponentOptions, playerId, playerOptions, false);
+      BattleHistoryComponent.set(battleHistoryCounterId + 2, opponentId, playerId, opponentId, opponentOptions, playerId, playerOptions, false);
+    } else {
+      BattleHistoryComponent.set(battleHistoryCounterId + 1, playerId, opponentId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
+      BattleHistoryComponent.set(battleHistoryCounterId + 2, opponentId, playerId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
     }
+    BattleHistoryCounter.set(battleHistoryCounterId + 2);
   }
 
   function recordPoints(bytes32 playerId, bytes32 opponentId, int256 winner) internal {
@@ -279,5 +297,10 @@ contract MinigameSystem is System {
     } else if (winner == 2) {
       BattlePointsComponent.set(opponentId, opponentPoints + 1);
     }
+  }
+
+  function setBattleOutcome(bytes32 playerId, bytes32 opponentId, BattleOutcomeType playerOutcome, BattleOutcomeType opponentOutcome) internal {
+    BattleComponent.setOutcome(playerId, playerOutcome);
+    BattleComponent.setOutcome(opponentId, opponentOutcome);
   }
 }
