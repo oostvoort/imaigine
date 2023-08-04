@@ -166,6 +166,7 @@ contract MinigameSystem is System {
         setBattleWinsAndLoses(playerId, opponentId);
 
         // update battle outcomes for player
+        // set player battleOutcome to Win and opponent to None
         setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.NONE);
 
         // back player to queue
@@ -175,6 +176,7 @@ contract MinigameSystem is System {
         // clean up battle
         deleteBattleRecord(playerId, opponentId);
       } else {
+        // update battle results
         updateBattleResults(playerId, opponentId, winner, playerSelection, opponentSelection);
       }
 
