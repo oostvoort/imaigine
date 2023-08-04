@@ -208,9 +208,11 @@ contract MinigameTest is MudV2Test {
   }
 
   function test_forfeit() public {
+    // Player 1 is Play the game
     vm.prank(PLAYER_1, PLAYER_1);
     world.play();
 
+    // Player 2 is Play the game
     vm.prank(PLAYER_2, PLAYER_2);
     world.play();
 
@@ -219,29 +221,43 @@ contract MinigameTest is MudV2Test {
     vm.warp(block.timestamp + 31); // after deadline
     doSelect(PLAYER_1, BattleOptions.Scroll, true);
 
+    // Get player 1 and player 2 battle data from Battle Component data
     BattleComponentData memory player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
     BattleComponentData memory player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
 
+    // Expect player 1 is lock-in and Player 2 is not
+    // Expect player 1 is Lock-in status and player 2 is In battle status
     assertEq(uint256(player1_battleData.status), uint256(BattleStatus.LOCKED_IN), "test_forfeit::1");
     assertEq(uint256(player2_battleData.status), uint256(BattleStatus.IN_BATTLE), "test_forfeit::2");
 
+    // Advanced running timestamp
     vm.warp(block.timestamp + 31); // 1min forfeitDeadline
     vm.roll(block.number + 1);
     vm.prank(PLAYER_1, PLAYER_1);
+
+    // Validate player opponent to check for forfeit
     world.validateBattle();
 
+    // Update player1 and player 2 battleComponent Data
     player1_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
     player2_battleData = BattleComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    // get player 1 and player 2 battle points
     uint256 player1_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_1))));
     uint256 player2_points = BattlePointsComponent.get(world, bytes32(uint256(uint160(PLAYER_2))));
+
+    // Get update playerInQueue from BatleQueue Component
     bytes32 playerInQueue = BattleQueueComponent.get(world, LOCATION_ID);
 
+    // get player 1 and player 2 battle results
     BattleResultsComponentsData memory player1_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_1))));
     BattleResultsComponentsData memory player2_battleResult = BattleResultsComponents.get(world, bytes32(uint256(uint160(PLAYER_2))));
 
+    // Expect player 1 got 1 points and player 2 got 0 points
     assertEq(player1_points, 1, "test_forfeit::3");
     assertEq(player2_points, 0, "test_forfeit::4");
 
+    // Expect player1 and player 2 battle status to be NOT_IN_BATTLE status
     assertEq(uint256(player1_battleData.status), uint256(BattleStatus.NOT_IN_BATTLE), "test_forfeit::5");
     assertEq(uint256(player2_battleData.status), uint256(BattleStatus.NOT_IN_BATTLE), "test_forfeit::6");
 
@@ -254,10 +270,11 @@ contract MinigameTest is MudV2Test {
     assertEq(playerInQueue, bytes32(uint256(uint160(PLAYER_1))), "test_forfeit::9");
 
     // battle should be cleaned up
-    assertEq(player1_battleResult.totalWins, 0, "test_forfeit::8");
-    assertEq(player1_battleResult.totalLoses, 0, "test_forfeit::9");
-    assertEq(player2_battleResult.totalWins, 0, "test_forfeit::10");
-    assertEq(player2_battleResult.totalLoses, 0, "test_forfeit::11");
+    // expect both player 1 and player 2 to clean up there battle records
+    assertEq(player1_battleResult.totalWins, 0, "test_forfeit::10");
+    assertEq(player1_battleResult.totalLoses, 0, "test_forfeit::11");
+    assertEq(player2_battleResult.totalWins, 0, "test_forfeit::12");
+    assertEq(player2_battleResult.totalLoses, 0, "test_forfeit::13");
   }
 
   function test_leave() public {
