@@ -1,10 +1,8 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useMUD } from '@/MUDContext'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { useComponentValue } from '@latticexyz/react'
 import { Entity } from '@latticexyz/recs'
-import { useSetAtom } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
 
 /**
   * Hook for initiating a play action in a location.
@@ -23,8 +21,6 @@ export default function usePlay(locationId: Entity) {
       playerEntity
     }
   } = useMUD()
-
-  const setActiveScreen = useSetAtom(activeScreen_atom)
 
     const playdata = {
       playerInQueue: useComponentValue(BattleQueueComponent, locationId),
@@ -47,10 +43,7 @@ export default function usePlay(locationId: Entity) {
       const tx = await worldSend('play', [])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
       return playdata
-    },
-      onSuccess: () => {
-        setActiveScreen(SCREENS.MINIGAME)
-      }
+    }
   })
 
     return {

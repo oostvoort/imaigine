@@ -2,11 +2,6 @@ import { useMutation } from '@tanstack/react-query'
 import { awaitStreamValue } from '@latticexyz/utils'
 import { useMUD } from '@/MUDContext'
 import { Entity } from '@latticexyz/recs'
-import usePlay from '@/hooks/minigame/usePlay'
-import useHistory from '@/hooks/minigame/useHistory'
-import usePlayer from '@/hooks/v1/usePlayer'
-import { useSetAtom } from 'jotai'
-import { activeScreen_atom, SCREENS } from '@/states/global'
 
 export default function useLeave(locationId: Entity) {
 
@@ -16,8 +11,6 @@ export default function useLeave(locationId: Entity) {
       txReduced$,
     },
   } = useMUD()
-
-  const setActiveScreen = useSetAtom(activeScreen_atom)
 
   /**
    * Defines a mutation hook to leave a location.
@@ -32,9 +25,6 @@ export default function useLeave(locationId: Entity) {
     mutationFn: async () => {
       const tx = await worldSend('leave', [])
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash)
-    },
-    onSuccess: () => {
-      setActiveScreen(SCREENS.CURRENT_LOCATION)
     }
   })
 
