@@ -171,7 +171,7 @@ contract MinigameSystem is System {
         // clean up battle
         deleteBattleRecord(playerId, opponentId);
       } else {
-        recordBattleResult(playerId, opponentId, winner, playerSelection, opponentSelection);
+        updateBattleResults(playerId, opponentId, winner, playerSelection, opponentSelection);
       }
     }
   }
@@ -223,9 +223,7 @@ contract MinigameSystem is System {
   // 1 => option1 winner
   // 2 => option2 winner
   function calculateBattle(BattleOptions option1, BattleOptions option2) internal view returns (int256){
-    if (option1 == option2) {
-      return 0;
-    }
+    if (option1 == option2) return 0;
 
     if (option1 == BattleOptions.Sword) {
       if (option2 == BattleOptions.Scroll) return 1; // option1.Sword, option2.Scroll
@@ -239,16 +237,19 @@ contract MinigameSystem is System {
     }
   }
 
-  function recordBattleResult(bytes32 playerId, bytes32 opponentId, int256 winner, BattleOptions playerOptions, BattleOptions opponentOptions) internal {
+  function updateBattleResults(bytes32 playerId, bytes32 opponentId, int256 winner, BattleOptions playerOptions, BattleOptions opponentOptions) internal {
     uint256 battleHistoryCounterId = BattleHistoryCounter.get();
 
     if (winner == 1) {
+      setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
       setBattleWinsAndLoses(playerId, opponentId);
       recordHistory(playerId, opponentId, playerId, playerOptions, opponentId, opponentOptions, false);
     } else if (winner == 2) {
+      setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
       setBattleWinsAndLoses(opponentId, playerId);
       recordHistory(playerId, opponentId, opponentId, opponentOptions, playerId, playerOptions, false);
     } else {
+      setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
       recordHistory(playerId, opponentId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
     }
   }
