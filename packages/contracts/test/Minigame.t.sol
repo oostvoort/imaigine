@@ -99,7 +99,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Scroll, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Scroll, true);
@@ -147,7 +147,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Potion, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Potion, true);
@@ -186,7 +186,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Potion, false);
     doSelect(PLAYER_2, BattleOptions.Potion, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Potion, true);
@@ -218,7 +218,7 @@ contract MinigameTest is MudV2Test {
 
     // Player 1, lock In
     doSelect(PLAYER_1, BattleOptions.Scroll, false);
-    vm.warp(block.timestamp + 31); // after deadline
+    vm.warp(block.timestamp + 16); // after deadline
     doSelect(PLAYER_1, BattleOptions.Scroll, true);
 
     // Get player 1 and player 2 battle data from Battle Component data
@@ -231,7 +231,7 @@ contract MinigameTest is MudV2Test {
     assertEq(uint256(player2_battleData.status), uint256(BattleStatus.IN_BATTLE), "test_forfeit::2");
 
     // Advanced running timestamp
-    vm.warp(block.timestamp + 31); // 1min forfeitDeadline
+    vm.warp(block.timestamp + 16); // 1min forfeitDeadline
     vm.roll(block.number + 1);
     vm.prank(PLAYER_1, PLAYER_1);
 
@@ -347,7 +347,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Scroll, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Scroll, true);
@@ -407,7 +407,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Sword, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Sword, true);
@@ -450,7 +450,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Scroll, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Scroll, true);
@@ -502,7 +502,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Sword, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Sword, true);
@@ -540,7 +540,7 @@ contract MinigameTest is MudV2Test {
     doSelect(PLAYER_1, BattleOptions.Scroll, false);
     doSelect(PLAYER_2, BattleOptions.Sword, false);
 
-    vm.warp(block.timestamp + 31); // warp to deadline
+    vm.warp(block.timestamp + 16); // warp to deadline
 
     // Players lock In
     doSelect(PLAYER_1, BattleOptions.Scroll, true);
