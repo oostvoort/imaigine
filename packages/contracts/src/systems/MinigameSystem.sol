@@ -23,6 +23,9 @@ import {BattleStatus, BattleOptions, BattleOutcomeType} from "../codegen/Types.s
 
 contract MinigameSystem is System {
 
+  uint256 public constant SELECTION_DEADLINE = 15; // 15 secs
+  uint256 public constant FORFEIT_DEADLINE = 15; // 15 secs
+
   function setUpPlayer(bytes32 playerId, bytes32 locationId) public {
     LocationComponent.set(playerId, locationId);
   }
@@ -142,7 +145,7 @@ contract MinigameSystem is System {
     if (opponentStatus == BattleStatus.LOCKED_IN) {
       winner = calculateBattle(playerSelection, opponentSelection);
     } else {
-      uint256 forfeitDeadline = deadline + 30; // 30secs after deadline
+      uint256 forfeitDeadline = deadline + FORFEIT_DEADLINE; // 30secs after deadline
       if (block.timestamp < forfeitDeadline) return;
 
       // opponent forfieted, so player is the winner
@@ -152,6 +155,12 @@ contract MinigameSystem is System {
 
     if (winner > - 1) {
       recordPoints(playerId, opponentId, winner);
+
+      if (winner == 0) setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
+
+      if (winner == 1) setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
+
+      if (winner == 2) setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
 
       if (isForfieted) {
 
@@ -164,12 +173,6 @@ contract MinigameSystem is System {
       } else {
         recordBattleResult(playerId, opponentId, winner, playerSelection, opponentSelection);
       }
-
-      if (winner == 0) setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
-
-      if (winner == 1) setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
-
-      if (winner == 2) setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
     }
   }
 
@@ -283,7 +286,7 @@ contract MinigameSystem is System {
   }
 
   function resetBattleComponent(bytes32 playerId, bytes32 opponentId) internal {
-    uint256 deadline = block.timestamp + 30; // 30 sec
+    uint256 deadline = block.timestamp + SELECTION_DEADLINE; // 30 sec
     BattleComponent.set(
       playerId,
       opponentId,
