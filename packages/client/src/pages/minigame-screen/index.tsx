@@ -25,6 +25,7 @@ export default function MinigameScreen() {
     opponentInfo,
     lockIn,
     rematch,
+    validateBattle,
     onSelectOptions,
   } = useBattle(player.id as Entity)
 
@@ -33,12 +34,27 @@ export default function MinigameScreen() {
 
   const [ selectedWeapon, setSelectedWeapon ] = React.useState<number>(BATTLE_OPTIONS.NONE)
   const [ resetCountdownTimerKey, setResetCountdownTimerKey ] = React.useState<number>(0)
+  const [ roundTimer, setRoundTimer ] = React.useState<number>(20)
 
   const playerInQueue = !battleData.battle?.opponent
   const showPrompt = !!battleData.battle?.outcome
   const showWeapon = battleData.battle?.option && opponentBattleData.battle?.option
   const pendingSelection = !battleData.battle?.option
   const playerSelectedAWeapon = battleData.battle?.hashedOption !== constants.HashZero
+
+  const FORFEIT_DEADLINE = 15
+
+  React.useEffect(() => {
+    if (roundTimer > 0) return
+    if (battleData.battle?.outcome === 0 && battleData.battle?.option !== 0) {
+      const validateBattleTimeout = setTimeout(() => {
+        console.info('validate battle inside timeout')
+        validateBattle.mutate()
+      }, 1000 * FORFEIT_DEADLINE)
+
+      return () => clearTimeout(validateBattleTimeout)
+    }
+  }, [ battleData.battle?.outcome, battleData.battle?.option, roundTimer ])
 
   React.useEffect(() => {
     if (showPrompt) {
@@ -255,7 +271,10 @@ export default function MinigameScreen() {
               <CountdownCircleTimer
                 key={resetCountdownTimerKey}
                 isPlaying={true}
-                duration={30}
+                duration={20}
+                onUpdate={(remainingTime) => {
+                  setRoundTimer(remainingTime)
+                }}
                 onComplete={() => {
                   if (!playerInQueue) {
                     lockIn.mutate(selectedWeapon)
