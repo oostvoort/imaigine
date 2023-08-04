@@ -6,7 +6,7 @@ export type SETBATTLETYPES = {
 
 export enum BATTLE_OUTCOME {
   'You Win!' = 1,
-  'You Lost!' = 2,
+  'You Lose!' = 2,
   'Draw' = 3
 }
 

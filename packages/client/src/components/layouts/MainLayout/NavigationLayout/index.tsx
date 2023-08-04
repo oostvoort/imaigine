@@ -20,7 +20,7 @@ export default function Header() {
   const activeScreen = useGameState()
   const { play } = usePlay(player.location?.value as Entity)
   const { leave } = useLeave(player.location?.value as Entity)
-  const { clearLogsHistory } = useHistory(player.location?.value as Entity)
+  const { clearLogsHistory } = useHistory(player.id as Entity)
 
   const setActiveScreen = useSetAtom(activeScreen_atom)
   const isTravelling = useAtomValue(isTravelling_atom)

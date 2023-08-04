@@ -17,6 +17,7 @@ import { constants } from 'ethers/lib.esm'
 export default function MinigameScreen() {
   const { player } = usePlayer()
   const { getWinnerInfo } = useHistory(player.id as Entity)
+  const { clearLogsHistory } = useHistory(player.id as Entity)
 
   const {
     battleData,
@@ -48,8 +49,8 @@ export default function MinigameScreen() {
     if (roundTimer > 0) return
     if (battleData.battle?.outcome === 0 && battleData.battle?.option !== 0) {
       const validateBattleTimeout = setTimeout(() => {
-        console.info('validate battle inside timeout')
         validateBattle.mutate()
+        clearLogsHistory.mutate()
       }, 1000 * FORFEIT_DEADLINE)
 
       return () => clearTimeout(validateBattleTimeout)
@@ -80,6 +81,13 @@ export default function MinigameScreen() {
     if (battleOption === BATTLE_OPTIONS.Scroll) return '/assets/minigame/icon_rps_scroll.jpg'
     if (battleOption === BATTLE_OPTIONS.Potion) return '/assets/minigame/icon_rps_potion.jpg'
     return ''
+  }
+
+  function displayRoundLoader() {
+    if (roundTimer <= 5) return 'Decrypting data'
+    if (battleData.battle?.hashedOption !== constants.HashZero && opponentBattleData.battle?.hashedOption !== constants.HashZero) return 'Waiting to finish the round timer'
+    if (playerSelectedAWeapon) return 'Waiting for opponent'
+    return 'Choose your weapon'
   }
 
   const weapons = [
@@ -249,8 +257,8 @@ export default function MinigameScreen() {
                 clsx([
                   'text-[68px]',
                   'font-amiri uppercase leading-[36px] mt-4',
-                  { 'text-dangerAccent': Number(battleData.battle?.outcome) === BATTLE_OUTCOME["You Lost!"] },
-                  { 'text-option-8': Number(battleData.battle?.outcome) !== BATTLE_OUTCOME["You Lost!"] } ])}
+                  { 'text-dangerAccent': Number(battleData.battle?.outcome) === BATTLE_OUTCOME['You Lose!'] },
+                  { 'text-option-8': Number(battleData.battle?.outcome) !== BATTLE_OUTCOME['You Lose!'] } ])}
             >
               {BATTLE_OUTCOME[(Number(battleData.battle?.outcome))]}
             </p>
@@ -265,7 +273,7 @@ export default function MinigameScreen() {
           className={clsx([
             { 'hidden': playerInQueue || showPrompt || showWeapon } ])}>
           <div
-            className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2' ])}>
+            className={clsx([ 'h-[96px] w-[96px]', 'absolute mx-auto left-1/2 top-1/2 -translate-y-2/4 -translate-x-1/2', { 'hidden': roundTimer <= 0 } ])}>
             {
               !playerInQueue &&
               <CountdownCircleTimer
@@ -305,21 +313,21 @@ export default function MinigameScreen() {
               draggable={false}
             />
             <p
-              className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>{playerSelectedAWeapon ? 'Waiting for opponent' : 'Choose your weapon'}</p>
+              className={clsx([ 'text-3xl font-amiri text-white mt-1.5' ])}>{displayRoundLoader()}</p>
           </div>
 
           <div
-            className={clsx(['flex gap-md', 'absolute left-1/2 -bottom-[10%] -translate-x-1/2 -translate-y-2/4' ])}>
+            className={clsx([ 'flex gap-md', 'absolute left-1/2 -bottom-[10%] -translate-x-1/2 -translate-y-2/4', { 'hidden': roundTimer <= 0 } ])}>
             {
               weapons.map((weapon, key) => {
                 const isSelectedWeapon = selectedWeapon === key + 1
                 return (
                   <button key={key} onClick={weapon.onClick}
-                          disabled={!pendingSelection}
-                          className={clsx([ 'w-[160px] h-[160px]', 'rounded-full border border-[2px] border-[#2C3B47]',
+                          disabled={!pendingSelection || roundTimer <= 5}
+                          className={clsx([ 'w-[160px] h-[160px]', 'rounded-full border border-[2px] border-[#2C3B47]', 'disabled:cursor-not-allowed',
                             { 'scale-100 opacity-100': selectedWeapon === BATTLE_OPTIONS.NONE },
-                            { 'scale-100 opacity-100 border-[5px] border-option-9': isSelectedWeapon && selectedWeapon !== BATTLE_OPTIONS.NONE },
-                            { 'scale-[0.8] opacity-50': !pendingSelection },
+                            { 'scale-125 opacity-100 border-[5px] border-option-9': isSelectedWeapon },
+                            { 'opacity-50': !pendingSelection || roundTimer <= 5 },
                           ])}
                   >
                     <img src={weapon.src} alt={weapon.alt} className={clsx([ 'rounded-full' ])}
