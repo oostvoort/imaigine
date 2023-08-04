@@ -48,7 +48,6 @@ const useGameState = () => {
   else if (
     !player.player ||
     activeScreen === SCREENS.WORLD_MAP ||
-    activeScreen === SCREENS.MINIGAME ||
     activeScreen === SCREENS.TRAVELLING
   ) return activeScreen
   else return overrideState ?? SCREENS.CURRENT_LOCATION
