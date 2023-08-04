@@ -51,6 +51,7 @@ export default function MinigameScreen() {
       const validateBattleTimeout = setTimeout(() => {
         validateBattle.mutate()
         clearLogsHistory.mutate()
+        setSelectedWeapon(BATTLE_OPTIONS.NONE)
       }, 1000 * FORFEIT_DEADLINE)
 
       return () => clearTimeout(validateBattleTimeout)
