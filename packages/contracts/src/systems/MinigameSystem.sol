@@ -154,9 +154,19 @@ contract MinigameSystem is System {
     }
 
     if (winner > - 1) {
+      // set battle outcome by winner,
+      setBattleOutComeByWinner(playerId, opponentId, int8(winner));
+
+      // record points function for winner
       recordPoints(playerId, opponentId, winner);
 
       if (isForfieted) {
+
+        // records wins and loses for players
+        setBattleWinsAndLoses(playerId, opponentId);
+
+        // update battle outcomes for player
+        setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.NONE);
 
         // back player to queue
         bytes32 locationId = LocationComponent.get(playerId);
@@ -167,6 +177,7 @@ contract MinigameSystem is System {
       } else {
         updateBattleResults(playerId, opponentId, winner, playerSelection, opponentSelection);
       }
+
     }
   }
 
@@ -234,18 +245,15 @@ contract MinigameSystem is System {
   function updateBattleResults(bytes32 playerId, bytes32 opponentId, int256 winner, BattleOptions playerOptions, BattleOptions opponentOptions) internal {
     uint256 battleHistoryCounterId = BattleHistoryCounter.get();
 
-    if (winner == 1) {
-      setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
-      setBattleWinsAndLoses(playerId, opponentId);
-      recordHistory(playerId, opponentId, playerId, playerOptions, opponentId, opponentOptions, false);
-    } else if (winner == 2) {
-      setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
-      setBattleWinsAndLoses(opponentId, playerId);
-      recordHistory(playerId, opponentId, opponentId, opponentOptions, playerId, playerOptions, false);
-    } else {
-      setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
-      recordHistory(playerId, opponentId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
-    }
+      if (winner == 1) {
+        setBattleWinsAndLoses(playerId, opponentId);
+        recordHistory(playerId, opponentId, playerId, playerOptions, opponentId, opponentOptions, false);
+      } else if (winner == 2) {
+        setBattleWinsAndLoses(opponentId, playerId);
+        recordHistory(playerId, opponentId, opponentId, opponentOptions, playerId, playerOptions, false);
+      } else {
+        recordHistory(playerId, opponentId, bytes32(0), BattleOptions.NONE, bytes32(0), BattleOptions.NONE, true);
+      }
   }
 
   function recordHistory(bytes32 playerId, bytes32 opponentId, bytes32 winnerId, BattleOptions winnerOption, bytes32 loserId, BattleOptions loserOption, bool isDraw) internal {
@@ -264,6 +272,18 @@ contract MinigameSystem is System {
       BattlePointsComponent.set(playerId, playerPoints + 1);
     } else if (winner == 2) {
       BattlePointsComponent.set(opponentId, opponentPoints + 1);
+    }
+  }
+
+  // @Helper
+  // @dev heler function to set the battle outcome function by winner
+  function setBattleOutComeByWinner(bytes32 playerId, bytes32 opponentId, int8 winner) internal {
+    if (winner == 1) {
+      setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
+    } else if (winner == 2) {
+      setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
+    } else {
+      setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
     }
   }
 
@@ -301,5 +321,6 @@ contract MinigameSystem is System {
     BattleResultsComponents.deleteRecord(playerId);
     BattleResultsComponents.deleteRecord(opponentId);
   }
+
 
 }
