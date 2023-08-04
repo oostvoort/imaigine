@@ -118,6 +118,8 @@ export default function MinigameScreen() {
     },
   ]
 
+  console.info("battle data hash option", battleData.battle?.hashedOption)
+
   return (
     <React.Fragment>
       {/*Timer and Player Info*/}
