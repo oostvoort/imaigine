@@ -145,7 +145,7 @@ contract MinigameSystem is System {
     if (opponentStatus == BattleStatus.LOCKED_IN) {
       winner = calculateBattle(playerSelection, opponentSelection);
     } else {
-      uint256 forfeitDeadline = deadline + FORFEIT_DEADLINE; // 30secs after deadline
+      uint256 forfeitDeadline = deadline + FORFEIT_DEADLINE; // 15secs after deadline
       if (block.timestamp < forfeitDeadline) return;
 
       // opponent forfieted, so player is the winner
@@ -155,12 +155,6 @@ contract MinigameSystem is System {
 
     if (winner > - 1) {
       recordPoints(playerId, opponentId, winner);
-
-      if (winner == 0) setBattleOutcome(playerId, opponentId, BattleOutcomeType.DRAW, BattleOutcomeType.DRAW);
-
-      if (winner == 1) setBattleOutcome(playerId, opponentId, BattleOutcomeType.WIN, BattleOutcomeType.LOSE);
-
-      if (winner == 2) setBattleOutcome(playerId, opponentId, BattleOutcomeType.LOSE, BattleOutcomeType.WIN);
 
       if (isForfieted) {
 
