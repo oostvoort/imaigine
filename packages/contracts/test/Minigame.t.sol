@@ -245,7 +245,13 @@ contract MinigameTest is MudV2Test {
     assertEq(uint256(player1_battleData.status), uint256(BattleStatus.NOT_IN_BATTLE), "test_forfeit::5");
     assertEq(uint256(player2_battleData.status), uint256(BattleStatus.NOT_IN_BATTLE), "test_forfeit::6");
 
-    assertEq(playerInQueue, bytes32(uint256(uint160(PLAYER_1))), "test_forfeit::7");
+    // Expect player 1 and player 2 battle outcome will be None
+    assertEq(uint256(player1_battleData.outcome), uint256(BattleOutcomeType.NONE), "test_forfeit::7");
+    assertEq(uint256(player2_battleData.outcome), uint256(BattleOutcomeType.NONE), "test_forfeit::8");
+
+    // Expect player in queue is Player 1
+    // Why?: Since player 2 is forfeited
+    assertEq(playerInQueue, bytes32(uint256(uint160(PLAYER_1))), "test_forfeit::9");
 
     // battle should be cleaned up
     assertEq(player1_battleResult.totalWins, 0, "test_forfeit::8");
