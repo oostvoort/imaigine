@@ -29,13 +29,13 @@ const Providers: React.FC<ProviderProps> = ({ children, mudValue }) => {
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
-        hideProgressBar
+        hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick
+        closeOnClick={false}
         rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
         theme="colored"
       />
     </>
