@@ -1,5 +1,22 @@
 FROM node:18 as builder
 WORKDIR /app
+ENV NODE_ENV=development
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
+ENV LEONARDO_API_KEY=$LEONARDO_API_KEY
+ENV PINATA_API_KEY=$PINATA_API_KEY
+ENV PINATA_API_SECRET=$PINATA_API_SECRET
+ENV IPFS_URL_PREFIX=$IPFS_URL_PREFIX
+ENV BASE_CONFIG_IPFS=$BASE_CONFIG_IPFS
+ENV LOCATION_LIST_IPFS=$LOCATION_LIST_IPFS
+ENV DB_SOURCE=logs.sqlite
+ENV GLOBAL_AI_PROMPT_PREFIX=Consider the storyteller to be very sarcastic.
+ENV LOG_PROMPTS=true
+# Contract
+ENV PRIVATE_KEY=$PRIVATE_KEY
+ENV JSON_RPC_URL=https://fork.oostvoort.work
+ENV CHAIN_ID=1
+#Map
+ENV MAP_SEED
 
 # Install prerequisites
 RUN apt-get update && apt-get install -y \
@@ -70,24 +87,5 @@ RUN pnpm prepare
 RUN pnpm build
 
 RUN cp -r ./packages/client/dist/* ./packages/server/public/
-
-
-#FROM node:18-alpine as runtime
-#WORKDIR /opt
-#
-#COPY --from=builder /app/package.json ./package.json
-#COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-#COPY --from=builder /app/packages/server ./packages/server
-#COPY --from=builder /app/packages/fantasy-map-generator ./packages/fantasy-map-generator
-#COPY --from=builder /app/node_modules ./node_modules
-#COPY --from=builder /app/packages/client/dist ./packages/server/public
-#COPY --from=builder /app/packages/types ./packages/types
-#COPY --from=builder /app/packages/contracts/types ./packages/contracts/types
-#COPY --from=builder /app/packages/contracts/worlds.json ./packages/contracts/worlds.json
-#COPY --from=builder /app/packages/contracts/package.json ./packages/contracts/package.json
-#COPY --from=builder /app/packages/contracts/node_modules ./packages/contracts/node_modules
-#
-## Install dependencies
-#RUN npm install -g pnpm
 
 ENTRYPOINT ["pnpm", "dev:server"]
