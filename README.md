@@ -1,4 +1,4 @@
-![](assets/full_logo_imaigine_onLight.svg)
+![](https://raw.githubusercontent.com/oostvoort/imaigine/main/assets/full_logo_imaigine_onLight.svg)
 # Imaigine
 An AI-powered text-based adventure on the blockchain. The WebApp is built on top of the [MUD 
 framework](https://mud.dev/) with a supporting NodeJS backend to communicate with 
