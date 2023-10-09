@@ -4,3 +4,4 @@ node_modules
 /packages/server/logs.sqlite
 .idea
 lib/mud
+.env
