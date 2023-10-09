@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   imaigine:
   - apiVersion: v2
+    appVersion: 0.0.6
+    created: "2023-10-09T06:28:47.010385501Z"
+    description: A Helm chart for Kubernetes
+    digest: 7081d5a94dba7fabf3d35527dbfdcbe0149ac34a18f2964919d229ce53912605
+    name: imaigine
+    type: application
+    urls:
+    - https://github.com/oostvoort/imaigine/releases/download/imaigine-0.0.6/imaigine-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
     appVersion: 0.0.5
     created: "2023-10-09T06:08:47.743509047Z"
     description: A Helm chart for Kubernetes
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/oostvoort/imaigine/releases/download/imaigine-0.0.3/imaigine-0.0.3.tgz
     version: 0.0.3
-generated: "2023-10-09T06:08:47.743521847Z"
+generated: "2023-10-09T06:28:47.010399102Z"
