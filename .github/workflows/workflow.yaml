@@ -43,18 +43,7 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME}}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: push README to Dockerhub
-        uses: christian-korneck/update-container-description-action@v1
-        env:
-          DOCKER_USER: ${{ vars.DOCKERHUB_USERNAME}}
-          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
-
-        with:
-          destination_container_repo: oostvoort/imaigine-dev
-          provider: dockerhub
-          short_description: ''
-          readme_file: 'README.md'          
-
+   
       - name: Build, tag, and push image
         id: build-image
         run: |
@@ -62,6 +51,17 @@ jobs:
           docker push $REGISTRY/$PROJECTNAME-dev:latest
           docker push $REGISTRY/$PROJECTNAME-dev:${VERSION}
 
+      - name: push README to Dockerhub
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ vars.DOCKERHUB_USERNAME}}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+  
+        with:
+          destination_container_repo: oostvoort/imaigine-dev
+          provider: dockerhub
+          short_description: ''
+          readme_file: 'README.md'     
 
       - name: Deploy to ArgoCD
         id: deploy-image
