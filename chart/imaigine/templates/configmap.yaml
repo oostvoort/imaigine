@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+  namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+data:
+  LOG_PROMPTS: "true"
+  GLOBAL_AI_PROMPT_PREFIX: "Consider the storyteller to be very sarcastic."
+  IPFS_URL_PREFIX: "https://plum-electrical-partridge-761.mypinata.cloud/ipfs"
+  DB_SOURCE: "logs.sqlite"
+  JSON_RPC_URL: "https://fork.oostvoort.work"
+  CHAIN_ID: "1"
+  MAP_SEED: "962218354"

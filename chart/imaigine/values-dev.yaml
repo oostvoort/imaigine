@@ -1,0 +1,17 @@
+projectName: imaigine
+nameSpace: dev
+appType:
+  frontend: webapp
+
+replicaSet: 1
+
+webappContainerService:
+  type: ClusterIP  # {{ .Values.webappContainerService.type }}
+  port: 3000       # {{ .Values.webappContainerService.port }}
+
+domainName: oostvoort.work                # {{ .Values.domainName }}
+
+subDomainName: 
+  imaigine: imaigine.dev.aw                 # {{ .Values.subDomainName.dojorps }}
+
+dockerImage: oostvoort/imaigine-dev:latest

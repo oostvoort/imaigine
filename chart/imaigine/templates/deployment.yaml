@@ -1,0 +1,109 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+  namespace: {{ .Values.projectName }}-{{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+spec:
+  replicas: {{ .Values.replicaSet }}
+  selector:
+    matchLabels:
+      app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+    spec: 
+      containers:
+      - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
+        image: {{ .Values.dockerImage }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.webappContainerService.port }}         
+
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: OPENAI_API_KEY
+
+        - name: LEONARDO_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: LEONARDO_API_KEY
+
+        - name: PINATA_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: PINATA_API_KEY
+
+        - name: PINATA_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: PINATA_API_SECRET
+
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: PRIVATE_KEY
+
+        - name: BASE_CONFIG_IPFS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: BASE_CONFIG_IPFS
+
+        - name: LOCATION_LIST_IPFS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: LOCATION_LIST_IPFS
+
+        - name: LOG_PROMPTS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: LOG_PROMPTS
+
+        - name: GLOBAL_AI_PROMPT_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: GLOBAL_AI_PROMPT_PREFIX
+
+        - name: IPFS_URL_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: IPFS_URL_PREFIX
+
+        - name: DB_SOURCE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: DB_SOURCE
+
+        - name: JSON_RPC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: JSON_RPC_URL
+
+        - name: CHAIN_ID
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: CHAIN_ID
+
+        - name: MAP_SEED
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
+              key: MAP_SEED                                                                      
