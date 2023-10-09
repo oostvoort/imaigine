@@ -50,7 +50,7 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
 
         with:
-          destination_container_repo: ${{ vars.DOCKERHUB_USERNAME}}/$PROJECTNAME-dev
+          destination_container_repo: oostvoort/imaigine-dev
           provider: dockerhub
           short_description: ''
           readme_file: 'README.md'          
