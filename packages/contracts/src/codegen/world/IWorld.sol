@@ -5,12 +5,15 @@ pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 
-import { IIncrementSystem } from "./IIncrementSystem.sol";
+import { ICreationSystem } from "./ICreationSystem.sol";
+import { IInteractionSystem } from "./IInteractionSystem.sol";
+import { IMinigameSystem } from "./IMinigameSystem.sol";
+import { ITravelSystem } from "./ITravelSystem.sol";
 
 /**
  * The IWorld interface includes all systems dynamically added to the World
  * during the deploy process.
  */
-interface IWorld is IBaseWorld, IIncrementSystem {
+interface IWorld is IBaseWorld, ICreationSystem, IInteractionSystem, IMinigameSystem, ITravelSystem {
 
 }

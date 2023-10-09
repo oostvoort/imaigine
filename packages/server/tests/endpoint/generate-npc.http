@@ -1,0 +1,7 @@
+POST localhost:3000/api/v1/generate-npc
+Content-Type: application/json
+
+{
+  "locationIpfsHash": "QmXAhHbjycyBsW7ubHCXB87us6WCkrJZ13i8pdA2ksHvJ4",
+  "locationId": "0x886b4be6a70e2eacc060d6e16947268361f95b575bec0e369c827351677ccde7"
+}

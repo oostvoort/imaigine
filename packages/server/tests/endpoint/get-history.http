@@ -1,0 +1,6 @@
+POST localhost:3000/api/v1/get-history
+Content-Type: application/json
+
+{
+  "playerEntityId": "0xc3b0acd499d7793c18b519aee79a585b823b44d70b61c8db1eed3e3690e60ce2"
+}

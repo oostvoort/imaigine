@@ -1,0 +1,12 @@
+POST localhost:3000/mock/api/v1/generate-story
+Content-Type: application/json
+
+{
+  "theme": "fantasy",
+  "races": [
+    "elves",
+    "orcs",
+    "humans"
+  ],
+  "currency": "gold"
+}

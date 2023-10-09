@@ -1,0 +1,66 @@
+{
+  "theme": "fantasy",
+  "races": [
+    "elves",
+    "orcs",
+    "humans"
+  ],
+  "currency": "gold",
+  "summary": "Crosswinds is a world filled with elves, orcs, and humans. It has two moons that cast pale silver light across the terrain, illuminating the seven continents and the many creatures that dwell there. Inhabitants of the world use gold as their currency and are exposed to technology ranging from primitive to aetherpunk. The ongoing war between the demon king and the church ravages the land of Crosswinds, creating a world of conflict and struggle. Whether it's an elf, an orc, or a human, all inhabitants of Crosswinds must work together in the hope of ensuring a brighter future for the world. ",
+  "name": "Crosswinds",
+  "locations": [
+    {
+      "name": "Frostreach",
+      "characters": [
+        {
+          "name": "Merthek Red-Eyes",
+          "summary": "Merthek Red-Eyes is an adult male human with a burly body type and a statuesque stature. He has bald wavy red hair and upturned orange eyes. His favorite color is red. He is strong yet clumsy, frail yet ignorant, foolish yet awkward. He hails from Frostreach, a sprawling metropolis nestled deep in the Arctic regions of Crosswinds. ",
+          "stats": {
+            "strength": "Herculean",
+            "dexterity": "Clumsy",
+            "constitution": "Frail",
+            "intelligence": "Ignorant",
+            "charisma": "Foolish",
+            "wisdom": "Awkward"
+          },
+          "initialMessage": "Greetings, I'm Merthek Red-Eyes of Frostreach. What can I do for you?",
+          "closingMessage": "Farewell, I hope to see you again soon.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+        },
+        {
+          "name": "Grayonor",
+          "summary": "Grayonor is a female orc of average height with a herculean strength, agile dexterity, and a healthy constitution. With a round face, bald curly brown hair, and yellow eyes, Grayonor's alluring, charming personality is sure to leave an impression on anyone she meets. Her quick-witted, discerning mind ensures that Grayonor is able to quickly evaluate any situation in order to act accordingly. Born in Frostreach, a bustling metropolis located in the icy tundra of Crosswinds, Grayonor ultimately desires to create a brighter future for the world.",
+          "stats": {
+            "strength": "Herculean",
+            "dexterity": "Agile",
+            "constitution": "Healthy",
+            "intelligence": "Average",
+            "charisma": "Charming",
+            "wisdom": "Discerning"
+          },
+          "initialMessage": "Greetings! I'm Grayonor, and it's a pleasure to meet you.",
+          "closingMessage": "Farewell for now! I will call upon you again soon.",
+          "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+        }
+      ],
+      "summary": "Frostreach is a sprawling metropolis located in the icy tundra of the north Arctic regions of Crosswinds. This grand city was founded centuries ago and has seen countless battles and upheavals over the years, as its borders shifted between the demon king and the church. Its people have since developed a prosperous economy, based on gold as currency and new advances in technology, and the city has become one of the wealthiest and safest places on the continent. Visitors are often astounded by the architecture of Frostreach, which features towers and spires of silver, white, and blue that often shimmer in the moonlight. Although the city has been heavily damaged and rebuilt over the years, it remains a testament to the power of human resilience and the desire for a better future.",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    },
+    {
+      "name": "The Golden Bokoblin Oasis",
+      "characters": [],
+      "summary": "The Golden Bokoblin Oasis, is located in the savanna biome of Crosswinds. This small oasis is home to a mix of elves, orcs, and humans who have been living in harmony for generations. Though the ongoing war between the demon king and the church ravages the lands, the inhabitants of the oasis have kept it moderately safe and protected from any external threat.The oasis is a highly sought-after destination for its plentiful resources and beautiful vistas. The village resides around the large lake which reflects the two silver moons in its placid waters. Here the inhabitants strive for peace, prosperity and the pursuit of interesting inventions and aetherpunk technology. Despite its middle class wealth, the oasis has seen a surge in population size as more and more individuals seek refuge from the war-torn lands.The Golden Bokoblin Oasis is a place for all races to come together in harmony, striving for a brighter future for Crosswinds.",
+      "items": [],
+      "imgHash": "QmWPh25Q6fZ1AtM2yviYHKcGp3hqy8iA24p15pyMRA6vEp"
+    }
+  ],
+  "paths": [
+    {
+      "name": "Path of Icy Winds and Burning Savanna",
+      "summary": "For those willing to embark on an adventure of a lifetime, the Path of Icy Winds and Burning Savanna allows travelers to journey between two of the most captivating regions of Crosswinds—Frostreach and the Golden Bokoblin Oasis. From Frostreach, travelers begin their journey through the icy tundra and the freezing winds that blow across the lands, taking them ever-closer to their destination. Soon, they reach the edges of the savanna biome, and encounter a drastic change in landscape from the rolling hills of snow to the arid warmth of the endless plains. The path slowly winds through the villages and outposts of the savanna until it eventually reaches the oasis. When travelers finally set foot in the oasis, with its placid lake, diverse populace, and impressive aetherpunk inventions, they’ll know that their courage and determination have brought them to a world unlike any other, and that their journey has come to an end.",
+      "fromLocation": "Frostreach",
+      "toLocation": "The Golden Bokoblin Oasis"
+    }
+  ]
+}

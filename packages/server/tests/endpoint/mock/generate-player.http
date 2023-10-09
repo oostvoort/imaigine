@@ -1,0 +1,11 @@
+POST localhost:3000/mock/api/v1/generate-player
+Content-Type: application/json
+
+{
+  "ageGroup": "young adult",
+  "genderIdentity": "female",
+  "race": "human",
+  "skinColor": "light",
+  "bodyType": "average",
+  "favColor": "white"
+}

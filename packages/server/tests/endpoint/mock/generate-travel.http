@@ -1,0 +1,6 @@
+POST {{host}}/mock/api/v1/generate-travel
+Content-Type: application/json
+
+{
+
+}

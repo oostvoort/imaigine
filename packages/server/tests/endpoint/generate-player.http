@@ -1,0 +1,32 @@
+POST localhost:3000/api/v1/generate-player
+Content-Type: application/json
+
+{
+  "ageGroup": "young adult",
+  "genderIdentity": "female",
+  "race": "elf",
+  "skinColor": "light",
+  "bodyType": "average",
+  "favColor": "blue"
+}
+
+###
+POST localhost:3000/api/v1/generate-player-image
+Content-Type: application/json
+
+{
+  "visualSummary": "Young adult elf, light skin, average build, acrobatic, healthy, genius, persuasive, insightful, loves adventure and secrets, seek treasures, colorful, loyal, favorite color is blue."
+}
+
+
+###
+POST localhost:3000/api/v1/create-player
+Content-Type: application/json
+
+{
+  "playerId": "0xc3b0acd499d7793c18b519aee79a585b823b44d70b61c8db1eed3e3690e60ce2",
+  "ipfsHash": "QmWoP45qHtVC8CmzdYtUvqsLEPMvdALCJG3AyUdj3XXVBc",
+  "imageIpfsHash": "QmY18HiBBcoh6GQqFzze3q7yxaLhpesX3ddQoG5Peb4rH9",
+  "locationId": "0x5050b8f8ad0565317ac83af0ace172433e2c59b55222906fe5696c7a3ed63cfa",
+  "cellId": 1808
+}

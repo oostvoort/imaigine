@@ -1,0 +1,43 @@
+#
+#   stage: deploy
+#   tags:
+#     - docker-node12
+
+stages:
+  - deploy
+
+deploy_production:
+  image: oostvoort/node-alpine-aws:node12
+  stage: deploy
+  only:
+    refs:
+      - dev
+    # changes:
+    #   - "*"
+    #   # - "./packages/"
+    #   # - "./gitlab-ci.yml"
+    #   # - "./Dockerfile"
+
+  before_script:
+  - eval $(ssh-agent -s)
+  - echo "$DEPLOY_KEY" | base64 -d | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan -p 22 174.138.22.99 >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  script:
+    # building docker on runner
+    - docker build . -t "imaigine_gameplay:0.1.0"
+
+    # save image to tar file
+    - docker save -o ./imaigine_gameplay.tar "imaigine_gameplay:0.1.0"
+
+    # rsyncing image tar file to server
+    - rsync -arv --progress -e 'ssh -o StrictHostKeyChecking=no -p 22' ./imaigine_gameplay.tar "root"@"174.138.22.99":/root/imaigine-gameplay-production/
+    - ssh "root"@"174.138.22.99" 'docker load -i /root/imaigine-gameplay-production/imaigine_gameplay.tar'
+
+    # rsyncing docker-compose.yml to server
+    - rsync -arv --progress -e 'ssh -o StrictHostKeyChecking=no -p 22' ./docker-compose-production.yml "root"@"174.138.22.99":/root/imaigine-gameplay-production/
+
+    # running docker compose
+    - ssh "root"@"174.138.22.99" 'docker compose -f /root/imaigine-gameplay-production/docker-compose-production.yml up -d'

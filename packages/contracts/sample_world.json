@@ -1,0 +1,57 @@
+{
+  "storyConfig": "QmcSDoVNyHzL8JYjgJUhWyXJwtDhwrgs6YNjRJ9LkUvZBr",
+  "locations": [
+    {
+      "config": "QmaghTrh3Jid59hXaDB5zmkpXaXSSjEiv2UdTjsWFkS4mN",
+      "imgHash": "QmfAgonk6ZV4DVrXD9EbGy1FkR7CEgvabMEzGEfCTAUBem",
+      "id": 2207
+    },
+    {
+      "config": "Qme9Y8xknTMiAr9Ka8anr9TVEWVnBnFRoE29GDpt2svYey",
+      "imgHash": "QmX6k6mK3WK3LDZA8aapqeJTpNjJA2o2u4FvdPqUtQtSwd",
+      "id": 3003
+    },
+    {
+      "config": "Qmbjj9pw8LzsfQeHzc8pteypJsMuqW3nK4UDE2WrVcC6We",
+      "imgHash": "QmaEYVi5g3edCV5vHnzbsQGzyTpBLxZJVYZLX6b1XFPvvs",
+      "id": 2500
+    },
+    {
+      "config": "QmZN96qa3YNPvyMqnUqaY2JACcnsxP13L5MAZ9m4YG55dK",
+      "imgHash": "Qmbvszn6K82sVT51e3GR7aFa61fM5tU2fR598qa5haz8Xb",
+      "id": 3171
+    },
+    {
+      "config": "QmX2kxdjSqjtUpiM19fnADARbXumo52kz1tFy96yxXhP4v",
+      "imgHash": "QmS5pMkCyTcRD8L94mitkwwuGsHagbjTNCAuYBQBdzadJb",
+      "id": 1808
+    }
+  ],
+  "npcs": [
+    {
+      "ipfsHash": "QmNzunE6pQ9VqYUxSsPLs5vZDMVfXeV3quETtgrczkjybU",
+      "imageHash": "QmUJg5ZfHkM7TbgRcQAohYqmPzYXJ3sKvzhFMWiXBVQ9zb",
+      "locationId": 2207
+    },
+    {
+      "ipfsHash": "QmaD6k6AnmVCHmdY7ro8C1Ti5xBAd2j6pRAyTf6TeVgzac",
+      "imageHash": "QmNbPRAYL33DHKwJ4LZZVGPF7PviyjJcxnZ6o6C4BhQDEL",
+      "locationId": 3003
+    },
+    {
+      "ipfsHash": "QmRS7xaiz11ou9CACVfMbwMNEjpNQwLXz8KKaYh15uESxP",
+      "imageHash": "QmSAuHntNSLvohLGppRJhjTW3LbnyomFWUn9Ron6C8hU61",
+      "locationId": 2500
+    },
+    {
+      "ipfsHash": "QmW4mJByMpUUXxwHmZmKqXnLDwLCpES84cmj7WZLNHXnNk",
+      "imageHash": "QmSd5kCFptDctRvyf8QMnzLkUo8yjE9EQnfP8u3ohGD7oY",
+      "locationId": 3171
+    },
+    {
+      "ipfsHash": "QmRJ4BWooWTYepvZczxRtx3oZW78cPze8MEaVnC7Gwf8jx",
+      "imageHash": "QmR49GWEuRgiXS13ZtyHamtWQBWSVQxQsFBJdsysNrfsN6",
+      "locationId": 1808
+    }
+  ]
+}

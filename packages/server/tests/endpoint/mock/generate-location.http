@@ -1,0 +1,6 @@
+POST localhost:3000/mock/api/v1/generate-location
+Content-Type: application/json
+
+{
+  "id": "0x0000000000000000000000000000000000000000000000000000000000000010"
+}
