@@ -9,5 +9,5 @@ data:
   IPFS_URL_PREFIX: "https://plum-electrical-partridge-761.mypinata.cloud/ipfs"
   DB_SOURCE: "logs.sqlite"
   JSON_RPC_URL: "https://fork.oostvoort.work"
-  CHAIN_ID: "31337"
+  CHAIN_ID: "439956433674"
   MAP_SEED: "962218354"
