@@ -1,8 +1,8 @@
-import { MUDChain, latticeTestnet } from "@latticexyz/common/chains";
-import { foundry, mainnet, optimismGoerli } from '@wagmi/chains'
+import { MUDChain } from "@latticexyz/common/chains";
+import { foundry, optimismGoerli } from '@wagmi/chains'
 
 const mainnet_forkserver = {
-  id: 1,
+  id: 439956433674,
   name: 'Forkserver',
   network: 'forkserver',
   nativeCurrency: {
