@@ -107,5 +107,5 @@ spec:
         - name: PRIVATE_KEY
           valueFrom:
             configMapKeyRef:
-              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
               key: PRIVATE_KEY                                                                             
