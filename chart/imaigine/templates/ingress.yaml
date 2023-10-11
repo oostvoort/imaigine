@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`{{ .Values.subDomainName.imaigine }}.{{ .Values.domainName }}`)
+    - match: Host(`{{ .Values.domainName }}`)
       kind: Rule
       middlewares:
         - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-ingress-redirect-scheme
@@ -26,7 +26,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ .Values.subDomainName.imaigine }}.{{ .Values.domainName }}`)
+    - match: Host(`{{ .Values.domainName }}`)
       kind: Rule
       services:
         - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
