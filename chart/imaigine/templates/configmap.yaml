@@ -6,8 +6,15 @@ metadata:
 data:
   LOG_PROMPTS: "true"
   GLOBAL_AI_PROMPT_PREFIX: "Consider the storyteller to be very sarcastic."
-  IPFS_URL_PREFIX: https://plum-electrical-partridge-761.mypinata.cloud/ipfs
+  IPFS_URL_PREFIX: "https://plum-electrical-partridge-761.mypinata.cloud/ipfs"
   DB_SOURCE: "logs.sqlite"
   JSON_RPC_URL: "https://fork.oostvoort.work"
   CHAIN_ID: "439956433674"
   MAP_SEED: "962218354"
+  LOCATION_LIST_IPFS: "QmTasufyKYeJut6uuZCQe962sKfD1RD19JwyMZfPGq7yTD"
+  BASE_CONFIG_IPFS: "QmW8bo43CN712gS1s5hiQSJBHfrJyHtBhqWLcTWf8noCMb"
+  LEONARDO_API_KEY: "a50655aa-f0be-4146-9d91-cc21b662ff80"
+  PINATA_API_KEY: "df4d72bbe9eeafc5cbc3"
+  PINATA_API_SECRET: "13584a786be3c24f7c660d3c472d1ded023563075c2ed3fa0ab5fa6c17eb6288"
+  OPENAI_API_KEY: "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"
+  PRIVATE_KEY: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"

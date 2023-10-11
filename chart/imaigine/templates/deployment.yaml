@@ -56,14 +56,14 @@ spec:
 
         - name: BASE_CONFIG_IPFS
           valueFrom:
-            secretKeyRef:
-              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
               key: BASE_CONFIG_IPFS
 
         - name: LOCATION_LIST_IPFS
           valueFrom:
-            secretKeyRef:
-              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+            configMapKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
               key: LOCATION_LIST_IPFS
 
         - name: LOG_PROMPTS
