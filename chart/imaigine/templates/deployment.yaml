@@ -48,7 +48,11 @@ spec:
               name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
               key: PINATA_API_SECRET
 
-
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-secret
+              key: PRIVATE_KEY   
 
         - name: BASE_CONFIG_IPFS
           valueFrom:
@@ -104,8 +108,4 @@ spec:
               name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
               key: MAP_SEED       
 
-        - name: PRIVATE_KEY
-          valueFrom:
-            configMapKeyRef:
-              name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}-cm
-              key: PRIVATE_KEY                                                                             
+                                                                          
