@@ -74,6 +74,7 @@ jobs:
           image-ref: 'oostvoort/imaigine-dev:latest'
           severity: 'HIGH,CRITICAL' 
           exit-code: '0'       
+          extraArgs: '--scanners vuln'
 
   helmTest:
     runs-on: ubuntu-latest
