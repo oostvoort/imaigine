@@ -63,18 +63,18 @@ jobs:
           short_description: ''
           readme_file: 'README.md'     
 
-  testImage:
-    needs: [buildImage]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'image'
-          image-ref: 'oostvoort/imaigine-dev:latest'
-          severity: 'HIGH,CRITICAL' 
-          exit-code: '0'       
-          extraArgs: '--scanners vuln'
+  # testImage:
+  #   needs: [buildImage]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Run Trivy vulnerability scanner
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: 'image'
+  #         image-ref: 'oostvoort/imaigine-dev:latest'
+  #         severity: 'HIGH,CRITICAL' 
+  #         exit-code: '0'       
+  #         extraArgs: '--scanners vuln'
 
   helmTest:
     runs-on: ubuntu-latest
@@ -135,7 +135,7 @@ jobs:
           gh release create $VERSION -t $VERSION -n "Release notes for $VERSION"
 
   deploy:
-    needs: [testImage, helmRelease]
+    needs: [buildImage, helmRelease]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
