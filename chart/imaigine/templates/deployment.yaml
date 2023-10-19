@@ -16,6 +16,7 @@ spec:
       labels:
         app: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
     spec: 
+      serviceAccountName: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }}
       containers:
       - name: {{ .Values.projectName }}-{{ .Values.nameSpace }}-{{ .Values.appType.frontend }} 
         image: {{ .Values.dockerImage }}
